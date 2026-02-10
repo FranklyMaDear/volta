@@ -22,35 +22,56 @@
         .container {
             max-width: 1200px;
             width: 100%;
-        }
-
-        .video-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(510px, 1fr));
-            gap: 20px;
-            justify-items: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
 
         .video-item {
             background: #000;
-            padding: 10px;
-            border-radius: 8px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+            padding: 15px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.7);
+            text-align: center;
         }
 
         iframe {
             max-width: 100%;
             border: none;
+            border-radius: 8px;
         }
 
         h1 {
-            margin-bottom: 20px;
+            margin-bottom: 30px;
             text-align: center;
         }
 
+        /* Στυλ για το κουμπί X (Twitter) */
+        .share-btn {
+            display: inline-flex;
+            align-items: center;
+            background-color: #000;
+            color: #fff;
+            text-decoration: none;
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-weight: bold;
+            font-size: 14px;
+            margin-top: 15px;
+            border: 1px solid #444;
+            transition: background 0.3s;
+        }
+
+        .share-btn:hover {
+            background-color: #222;
+            border-color: #666;
+        }
+
         @media (max-width: 600px) {
-            .video-grid {
-                grid-template-columns: 1fr;
+            iframe {
+                width: 100%;
+                height: auto;
+                aspect-ratio: 510 / 400;
             }
         }
     </style>
@@ -60,34 +81,16 @@
     <div class="container">
         <h1>Video Gallery</h1>
 
-        <div class="video-grid">
-            <div class="video-item">
-                <iframe src="https://www.xvideos.com/embedframe/okcufdk9065" frameborder=0 width=510 height=400 scrolling=no allowfullscreen=allowfullscreen></iframe>
-            </div>
-            <div class="video-item">
-                <iframe src="https://www.xvideos.com/embedframe/ouiohbbbf8e" frameborder=0 width=510 height=400 scrolling=no allowfullscreen=allowfullscreen></iframe>
-            </div>
-            <div class="video-item">
-                <iframe src="https://www.xvideos.com/embedframe/ouhidomcbc7" frameborder=0 width=510 height=400 scrolling=no allowfullscreen=allowfullscreen></iframe>
-            </div>
-            <div class="video-item">
-                <iframe src="https://www.xvideos.com/embedframe/ouuhchc3a2f" frameborder=0 width=510 height=400 scrolling=no allowfullscreen=allowfullscreen></iframe>
-            </div>
-            <div class="video-item">
-                <iframe src="https://www.xvideos.com/embedframe/uidtauobe0c" frameborder=0 width=510 height=400 scrolling=no allowfullscreen=allowfullscreen></iframe>
-            </div>
-            <div class="video-item">
-                <iframe src="https://www.xvideos.com/embedframe/vvfhmm86ae" frameborder=0 width=510 height=400 scrolling=no allowfullscreen=allowfullscreen></iframe>
-            </div>
-            <div class="video-item">
-                <iframe src="https://www.xvideos.com/embedframe/vovoove6b9" frameborder=0 width=510 height=400 scrolling=no allowfullscreen=allowfullscreen></iframe>
-            </div>
-            <div class="video-item">
-                <iframe src="https://www.xvideos.com/embedframe/ikcpmvd36ed" frameborder=0 width=510 height=400 scrolling=no allowfullscreen=allowfullscreen></iframe>
-            </div>
-            <div class="video-item">
-                <iframe src="https://www.xvideos.com/embedframe/ikcpmvd36ed" frameborder=0 width=510 height=400 scrolling=no allowfullscreen=allowfullscreen></iframe>
-            </div>
+        <div class="video-item">
+            <iframe src="https://www.xvideos.com/embedframe/keaodebf1ce" frameborder=0 width=510 height=400 scrolling=no allowfullscreen=allowfullscreen></iframe>
+            
+            <br>
+
+            <a href="https://twitter.com/intent/tweet?text=Check out this video!&url=https://www.xvideos.com/video.keaodebf1ce" 
+               target="_blank" 
+               class="share-btn">
+                Κοινοποίηση στο X
+            </a>
         </div>
     </div>
 
