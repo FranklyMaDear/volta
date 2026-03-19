@@ -292,7 +292,7 @@
 <div class="container">
     <header class="header">
         <h1>Ζήσε το Μέλλον σου</h1>
-        <p>Ανοιξε το μπισκότο, διάλεξε μια κάρτα και δες το μέλλον σου</p>
+        <p>Άνοιξε το μπισκότο, διάλεξε μια κάρτα και δες το μέλλον σου</p>
     </header>
 
     <!-- 1η διαφήμιση -->
@@ -323,7 +323,7 @@
             <!-- Οι κάρτες θα γεμίσουν με JavaScript -->
         </div>
         <div class="card-message-display" id="cardMessageDisplay">
-            Κλικ σε μια κάρτα και διάβασε μήνυμά σου
+            Κλικ σε μια κάρτα και διάβασε το μήνυμά σου
         </div>
     </div>
 
@@ -340,7 +340,7 @@
 
     <!-- ΕΝΔΕΙΞΗ ΟΤΙ ΟΛΟΚΛΗΡΩΘΗΚΑΝ ΤΑ ΠΑΙΧΝΙΔΙΑ -->
     <div id="gamesCompleteMessage" class="games-complete" style="display: none;">
-        ✅ Ολοκλήρωσες! Τώρα μπορείς να συμμετέχεις σε διαγωνισμούς
+        ✅ Ολοκλήρωσες! Τώρα μπορείς να συμμετέχεις στον διαγωνισμό
     </div>
 
     <!-- 2η διαφήμιση -->
@@ -358,8 +358,8 @@
     <div class="entry-block" id="entryBlock">
         <h3 style="font-size:1.5rem; font-weight:600; text-align:center;">✍️ Δήλωσε συμμετοχή</h3>
         
-        <form action="https://formsubmit.co/6ae291f8020d6a4e62242119b18a2f4f" method="POST" id="entryForm">
-            <input type="hidden" name="_subject" value="Ζήσε το Μέλλον σου ·">
+        <form action="https://formsubmit.co/el/wagofe" method="POST" id="entryForm">
+            <input type="hidden" name="_subject" value="Ζήσε το Μέλλον σου · Νέα συμμετοχή">
             <input type="hidden" name="_next" value="https://games-support.franklymadear.com/">
             <input type="hidden" name="_captcha" value="false">
             <input type="hidden" name="_template" value="box">
@@ -393,7 +393,7 @@
     </div>
 
     <footer class="footer-note">
-        <p>✅ Καλη επιτυχία </p>
+        <p>✅ Καλή επιτυχία!</p>
     </footer>
 </div>
 
@@ -412,7 +412,7 @@
             "❤️ Ένα βλέμμα θα είναι αρκετό για να καταλάβεις ότι είναι αυτός.",
             "💰 Η οικονομική σου ανεξαρτησία είναι πιο κοντά από όσο νομίζεις.",
             "❤️ Θα κοιμηθείς αγκαλιά με τον άνθρωπο που ονειρευόσουν χρόνια.",
-            "💰 Μια δωροεπιταγρά θα σου έρθει από εκεί που δεν το περιμένεις.",
+            "💰 Μια δωροεπιταγή θα σου έρθει από εκεί που δεν το περιμένεις.",
             "❤️ Το ροζ σημείωμα από το σύμπαν: ο έρωτας είναι προ των πυλών.",
             "💰 Ο λογαριασμός σου θα αυξηθεί – και εσύ θα το γιορτάσεις.",
             "❤️ Δύο χέρια θα σφίξουν τα δικά σου και δεν θα τα αφήσουν ποτέ.",
@@ -562,7 +562,7 @@
             }
 
             const formData = new FormData(form);
-            fetch('https://formsubmit.co/6ae291f8020d6a4e62242119b18a2f4f', {
+            fetch('https://formsubmit.co/el/wagofe', {
                 method: 'POST',
                 body: formData
             })
@@ -579,7 +579,7 @@
                 }
             })
             .catch(() => {
-                feedbackDiv.innerText = '❌ Προβλημα σύνδεσης.';
+                feedbackDiv.innerText = '❌ Πρόβλημα σύνδεσης.';
                 feedbackDiv.classList.remove('hidden-feedback');
             });
         });
