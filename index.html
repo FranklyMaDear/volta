@@ -27,6 +27,7 @@
             width: 100%;
         }
 
+        /* Header */
         .header {
             text-align: center;
             margin: 5px 0 10px;
@@ -42,21 +43,22 @@
         }
         .header p {
             background: #292f4a;
-            padding: 8px 20px;
+            padding: 8px 16px;
             border-radius: 60px;
-            font-size: 1rem;
+            font-size: 0.95rem;
             border: 2px solid #febf5e;
             display: inline-block;
             margin-top: 5px;
         }
 
+        /* Διαφημίσεις */
         .ad-box {
-            margin: 20px auto;
+            margin: 15px auto;
             width: 100%;
-            border-radius: 36px;
+            border-radius: 30px;
             overflow: hidden;
-            box-shadow: 0 20px 35px #000000aa;
-            border: 4px solid #fcba5c;
+            box-shadow: 0 15px 25px #000000aa;
+            border: 3px solid #fcba5c;
             background: #181e34;
         }
         .ad-box ins {
@@ -67,27 +69,27 @@
         /* ΜΠΙΣΚΟΤΟ */
         .cookie-section {
             background: #1f253f;
-            border-radius: 70px 70px 40px 40px;
-            padding: 30px 15px;
-            margin: 25px 0;
+            border-radius: 50px;
+            padding: 25px 15px;
+            margin: 20px 0;
             border: 4px solid #d4af37;
             text-align: center;
             box-shadow: 0 0 20px #ffd70055;
         }
         .cookie-title {
-            font-size: 1.5rem;
+            font-size: 1.4rem;
             font-weight: 600;
             color: #ffdab9;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
         }
         .fortune-cookie {
             background: #e5c28e;
             background-image: radial-gradient(circle at 30% 30%, #f5e1b5, #c9a15b);
-            width: 200px;
-            height: 150px;
+            width: 180px;
+            height: 135px;
             border-radius: 50% 50% 40% 40% / 60% 60% 30% 30%;
-            margin: 15px auto;
-            box-shadow: 0 20px 0 #a57c47, 0 30px 30px black;
+            margin: 10px auto;
+            box-shadow: 0 15px 0 #a57c47, 0 20px 25px black;
             cursor: pointer;
             transition: 0.15s;
             display: flex;
@@ -96,97 +98,104 @@
         }
         .fortune-cookie:active {
             transform: scale(0.96);
-            box-shadow: 0 8px 0 #a57c47, 0 20px 25px black;
+            box-shadow: 0 8px 0 #a57c47, 0 15px 20px black;
         }
         .cookie-emoji {
-            font-size: 5.5rem;
-            filter: drop-shadow(0 10px 8px #4f3e26);
+            font-size: 5rem;
+            filter: drop-shadow(0 8px 6px #4f3e26);
         }
         .cookie-message {
             background: #fef7e0;
             color: #2e1f0b;
-            padding: 18px 20px;
-            border-radius: 40px;
-            font-size: 1.1rem;
+            padding: 15px;
+            border-radius: 30px;
+            font-size: 1rem;
             font-weight: 500;
             border: 4px solid #b8560e;
-            max-width: 320px;
-            margin: 20px auto 10px;
-            box-shadow: 0 6px 0 #7b4314;
-            min-height: 100px;
+            max-width: 300px;
+            margin: 15px auto 5px;
+            box-shadow: 0 5px 0 #7b4314;
+            min-height: 80px;
             display: flex;
             align-items: center;
             justify-content: center;
+            word-break: break-word;
         }
 
-        /* ΠΑΙΧΝΙΔΙ ΜΕ ΚΑΡΤΕΣ */
+        /* ΠΑΙΧΝΙΔΙ ΜΕ ΚΑΡΤΕΣ - ΔΙΟΡΘΩΜΕΝΟ */
         .cards-section {
             background: #1f253f;
-            border-radius: 70px 70px 40px 40px;
-            padding: 30px 15px;
-            margin: 25px 0;
+            border-radius: 50px;
+            padding: 25px 15px;
+            margin: 20px 0;
             border: 4px solid #c06bae;
             text-align: center;
         }
         .cards-title {
-            font-size: 1.5rem;
+            font-size: 1.4rem;
             font-weight: 600;
             color: #f8c3e7;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
         }
         .cards-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 12px;
-            margin: 20px 0;
+            gap: 10px;
+            margin: 15px 0;
+            padding: 0 5px;
         }
         .card {
             background: linear-gradient(145deg, #6441a5, #2a0845);
-            border: 3px solid #ffb6c1;
-            border-radius: 20px;
-            padding: 20px 5px;
+            border: 2px solid #ffb6c1;
+            border-radius: 15px;
+            padding: 15px 3px;
             font-size: 1.8rem;
             cursor: pointer;
             transition: 0.2s;
-            box-shadow: 0 8px 0 #3d1e4a;
+            box-shadow: 0 6px 0 #3d1e4a;
             color: white;
             aspect-ratio: 3/4;
             display: flex;
             align-items: center;
             justify-content: center;
+            text-align: center;
+            word-break: break-word;
         }
         .card:active {
-            transform: translateY(6px);
+            transform: translateY(4px);
             box-shadow: 0 2px 0 #3d1e4a;
         }
         .card.flipped {
             background: #f9e0c0;
             color: #3d1e4a;
-            font-size: 0.9rem;
+            font-size: 0.8rem;
             line-height: 1.3;
-            padding: 10px;
+            padding: 8px 3px;
             border-color: gold;
-            pointer-events: none;
+            cursor: default;
+            box-shadow: 0 2px 0 #3d1e4a;
+            transform: translateY(4px);
         }
         .card-message-display {
             background: #2d2244;
             padding: 15px;
-            border-radius: 40px;
-            margin: 15px 0;
-            font-size: 1.1rem;
+            border-radius: 30px;
+            margin: 15px 0 5px;
+            font-size: 1rem;
             font-weight: 500;
             border: 3px solid #ff99cc;
-            min-height: 80px;
+            min-height: 70px;
             display: flex;
             align-items: center;
             justify-content: center;
+            word-break: break-word;
         }
 
         /* βίντεο */
         .video-ad-container {
-            margin: 20px auto;
+            margin: 15px auto;
             max-width: 500px;
-            border-radius: 40px;
+            border-radius: 30px;
             overflow: hidden;
             border: 4px solid #fdc859;
             display: none;
@@ -197,13 +206,13 @@
             width: 100%;
         }
 
-        /* ΦΟΡΜΑ TALLY - ΑΝΤΙΚΑΤΑΣΤΑΣΗ */
+        /* ΦΟΡΜΑ TALLY */
         .entry-block {
             background: #1b2140;
-            border-radius: 60px;
-            padding: 25px 20px;
+            border-radius: 50px;
+            padding: 20px 15px;
             border: 4px solid #fdcc6b;
-            margin: 25px 0 20px;
+            margin: 20px 0 15px;
             opacity: 0.6;
             pointer-events: none;
             transition: 0.3s;
@@ -215,8 +224,8 @@
         }
         .tally-container {
             width: 100%;
-            min-height: 250px;
-            margin: 15px 0;
+            min-height: 220px;
+            margin: 10px 0;
             background: transparent;
         }
         .tally-container iframe {
@@ -227,28 +236,51 @@
 
         .gift-note {
             background: #2a3153;
-            border-radius: 50px;
-            padding: 15px;
+            border-radius: 40px;
+            padding: 12px;
             text-align: center;
             border: 3px solid #fbbf24;
-            font-size: 1.1rem;
+            font-size: 1rem;
             font-weight: 500;
+            margin: 15px 0;
         }
         .footer-note {
             text-align: center;
-            padding: 20px 10px 5px;
+            padding: 15px 10px 5px;
             border-top: 4px solid #f9c45a;
-            margin-top: 15px;
+            margin-top: 10px;
             color: #cbc2ff;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
         }
         .games-complete {
             background: #4f3b7c;
             color: white;
             padding: 10px;
-            border-radius: 40px;
+            border-radius: 30px;
             margin: 10px 0;
             font-weight: 600;
+            font-size: 0.95rem;
+        }
+
+        /* Mobile βελτιστοποιήσεις */
+        @media (max-width: 480px) {
+            .card {
+                font-size: 1.5rem;
+                padding: 10px 2px;
+            }
+            .card.flipped {
+                font-size: 0.7rem;
+            }
+            .cards-grid {
+                gap: 6px;
+            }
+            .fortune-cookie {
+                width: 160px;
+                height: 120px;
+            }
+            .cookie-emoji {
+                font-size: 4.5rem;
+            }
         }
     </style>
 </head>
@@ -256,7 +288,7 @@
 <div class="container">
     <header class="header">
         <h1>Ζήσε το Μέλλον σου</h1>
-        <p>Άνοιξε το μπισκότο, διάλεξε μια κάρτα και δες το μέλλον σου</p>
+        <p>Άνοιξε το μπισκότο, διάλεξε κάρτα και δες το μέλλον σου</p>
     </header>
 
     <!-- 1η διαφήμιση -->
@@ -273,7 +305,6 @@
     <!-- ΜΠΙΣΚΟΤΟ -->
     <div class="cookie-section">
         <div class="cookie-title">Τυχερό Μπισκότο</div>
-
         <div class="fortune-cookie" id="fortuneCookie">
             <span class="cookie-emoji" id="cookieEmoji">🥠</span>
         </div>
@@ -283,11 +314,9 @@
     <!-- ΠΑΙΧΝΙΔΙ ΜΕ ΚΑΡΤΕΣ -->
     <div class="cards-section" id="cardsSection">
         <div class="cards-title">Διάλεξε μια κάρτα</div>
-        <div class="cards-grid" id="cardsGrid">
-            <!-- Οι κάρτες θα γεμίσουν με JavaScript -->
-        </div>
+        <div class="cards-grid" id="cardsGrid"></div>
         <div class="card-message-display" id="cardMessageDisplay">
-            Κλικ σε μια κάρτα και διάβασε το μήνυμά σου
+            ✨ Πάτησε μια κάρτα για το μήνυμά σου ✨
         </div>
     </div>
 
@@ -302,7 +331,7 @@
         <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
     </div>
 
-    <!-- ΕΝΔΕΙΞΗ ΟΤΙ ΟΛΟΚΛΗΡΩΘΗΚΑΝ ΤΑ ΠΑΙΧΝΙΔΙΑ -->
+    <!-- ΜΗΝΥΜΑ ΟΛΟΚΛΗΡΩΣΗΣ -->
     <div id="gamesCompleteMessage" class="games-complete" style="display: none;">
         ✅ Ολοκλήρωσες! Τώρα μπορείς να συμμετέχεις στον διαγωνισμό
     </div>
@@ -318,18 +347,16 @@
         <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
     </div>
 
-    <!-- ΦΟΡΜΑ ΣΥΜΜΕΤΟΧΗΣ - TALLY.SO (αντικατάσταση FormSubmit) -->
+    <!-- ΦΟΡΜΑ ΣΥΜΜΕΤΟΧΗΣ - TALLY.SO -->
     <div class="entry-block" id="entryBlock">
-        <h3 style="font-size:1.5rem; font-weight:600; text-align:center;">✍️ Δήλωσε συμμετοχή</h3>
+        <h3 style="font-size:1.3rem; font-weight:600; text-align:center;">✍️ Δήλωσε συμμετοχή</h3>
         
         <!-- Ενσωμάτωση Tally.so -->
         <div class="tally-container">
             <iframe data-tally-src="https://tally.so/embed/44jy95?alignLeft=1&hideTitle=1&transparentBackground=1&dynamicHeight=1" loading="lazy" width="100%" height="200" frameborder="0" marginheight="0" marginwidth="0" title="Φόρμα Διαγωνισμού"></iframe>
         </div>
         
-        <!-- Μήνυμα επιβεβαίωσης (θα εμφανίζεται από το Tally) -->
-        <div id="feedbackMessage" class="feedback-message hidden-feedback" style="margin-top:15px;"></div>
-        <p style="color:#b6a9ff; font-size:0.9rem; text-align:center; margin-top:10px;">✨ Η συμμετοχή σου καταγράφεται αυτόματα ✨</p>
+        <p style="color:#b6a9ff; font-size:0.85rem; text-align:center; margin-top:8px;">✨ Η συμμετοχή σου καταγράφεται αυτόματα ✨</p>
     </div>
 
     <!-- 3η διαφήμιση -->
@@ -352,14 +379,14 @@
     </footer>
 </div>
 
-<!-- Script για Tally.so (ακριβώς όπως το έδωσες) -->
+<!-- Script για Tally.so -->
 <script>
 var d=document,w="https://tally.so/widgets/embed.js",v=function(){"undefined"!=typeof Tally?Tally.loadEmbeds():d.querySelectorAll("iframe[data-tally-src]:not([src])").forEach((function(e){e.src=e.dataset.tallySrc}))};if("undefined"!=typeof Tally)v();else if(d.querySelector('script[src="'+w+'"]')==null){var s=d.createElement("script");s.src=w,s.onload=v,s.onerror=v,d.body.appendChild(s);}
 </script>
 
 <script>
     (function() {
-        // ---------- 50 ΜΗΝΥΜΑΤΑ ΓΙΑ ΓΥΝΑΙΚΕΣ (ερωτικά & οικονομικά) ----------
+        // ---------- 50 ΜΗΝΥΜΑΤΑ ΓΙΑ ΜΠΙΣΚΟΤΟ ----------
         const fortunes = [
             "❤️ Ένας άντρας θα σε κοιτάξει σαν να είσαι το τελευταίο ποτήρι νερό στην έρημο.",
             "💰 Μια απροσδόκητη οικονομική είδηση θα σε κάνει να χαμογελάσεις.",
@@ -466,7 +493,7 @@ var d=document,w="https://tally.so/widgets/embed.js",v=function(){"undefined"!=t
                 cardMessageDisplay.textContent = msg;
                 
                 this.classList.add('flipped');
-                this.textContent = msg.substring(0, 20) + '...';
+                this.textContent = msg.substring(0, 15) + '…';
                 
                 cardPlayed = true;
                 checkGamesComplete();
@@ -496,7 +523,7 @@ var d=document,w="https://tally.so/widgets/embed.js",v=function(){"undefined"!=t
                 
                 setTimeout(() => {
                     entryBlock.classList.add('unlocked');
-                }, 5000); // 5 δευτερόλεπτα βίντεο
+                }, 5000);
             }
         }
     })();
