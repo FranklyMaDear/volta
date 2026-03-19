@@ -2,481 +2,348 @@
 <html lang="el">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>3x Autorelaxed · 50% Διαγωνισμός</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <title>Δες και κέρδισε · Διαγωνισμός</title>
     <link rel="icon" type="image/png" href="index.png">
-    <link rel="apple-touch-icon" href="index.png">
-    <!-- Google AdSense (autorelaxed μόνο) -->
+    
+    <!-- Google AdSense · fluid για κινητά/tablet -->
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3186700611266549" crossorigin="anonymous"></script>
     
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,600;14..32,800&display=swap" rel="stylesheet">
     <style>
-        * { margin:0; padding:0; box-sizing: border-box; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
-            background: linear-gradient(145deg, #0b0c1a 0%, #1a1f35 100%);
-            font-family: 'Outfit', sans-serif;
-            color: #f0eaff;
+            font-family: 'Inter', sans-serif;
+            background: #10121e;
+            color: #f0edfa;
             display: flex;
             flex-direction: column;
             align-items: center;
-            padding: 10px 15px 30px;
+            padding: 8px 10px 30px;
+            min-height: 100vh;
         }
-        .wrap {
-            max-width: 1200px;
+        .container {
+            max-width: 700px;
             width: 100%;
         }
+
         /* header */
-        .hero {
+        .logo-area {
             text-align: center;
-            padding: 25px 0 5px;
+            margin: 15px 0 10px;
         }
-        .hero h1 {
-            font-size: 3.5rem;
-            font-weight: 900;
-            background: linear-gradient(145deg, #fedb62, #fa8f7a);
+        .logo-area h1 {
+            font-size: clamp(2.4rem, 10vw, 3.8rem);
+            font-weight: 800;
+            background: linear-gradient(145deg, #fee07a, #ffa06f);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            text-shadow: 0 0 30px #f6ae7a;
             letter-spacing: -0.5px;
+            text-shadow: 0 0 25px #ffae42;
         }
-        .hero p {
-            background: #252a4a;
-            display: inline-block;
-            padding: 12px 35px;
+        .logo-area p {
+            background: #252c4a;
+            padding: 10px 18px;
             border-radius: 60px;
-            font-size: 1.4rem;
-            font-weight: 700;
-            border: 3px solid #fdbb6b;
-            margin: 15px 0 5px;
-            box-shadow: 0 10px 20px black;
+            font-size: 1.2rem;
+            font-weight: 600;
+            border: 2px solid #ffb45e;
+            display: inline-block;
+            margin: 8px 0 0;
         }
 
-        /* AD STYLE — autorelaxed με έντονο πλαίσιο */
-        .ad-block {
-            margin: 35px auto;
-            max-width: 900px;
-            border-radius: 40px;
+        /* διαφημίσεις fluid */
+        .ad-fluid-box {
+            margin: 25px auto;
+            width: 100%;
+            border-radius: 32px;
             overflow: hidden;
-            box-shadow: 0 25px 40px rgba(0,0,0,0.8);
-            border: 5px solid #ffcf8a;
-            background: #100e1e;
-            transition: transform 0.2s;
+            box-shadow: 0 20px 35px rgba(0, 0, 0, 0.7);
+            border: 3px solid #fdc758;
+            background: #1b1f34;
         }
-        .ad-block:hover {
-            transform: scale(1.01);
-            border-color: #fee79f;
-        }
-        .ad-block ins {
+        .ad-fluid-box ins {
             display: block;
             width: 100%;
         }
 
-        /* ΠΑΙΧΝΙΔΙ / ΤΡΟΧΟΣ */
-        .game-panel {
-            background: #151d33;
-            border-radius: 70px 70px 40px 40px;
-            padding: 30px 20px 40px;
-            margin: 40px auto;
-            border: 4px solid #f3b35e;
-            box-shadow: 0 30px 40px #00000077;
+        /* παιχνίδι: "Δες και κέρδισε" */
+        .game-section {
+            background: #1d233b;
+            border-radius: 50px 50px 30px 30px;
+            padding: 35px 18px;
+            margin: 30px 0;
+            border: 4px solid #fabf5e;
+            box-shadow: 0 20px 30px #00000055;
+            text-align: center;
         }
-        .wheel-title {
+        .game-title {
             font-size: 2.4rem;
-            font-weight: 900;
+            font-weight: 800;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 15px;
+            gap: 12px;
             flex-wrap: wrap;
+            margin-bottom: 25px;
         }
-        .wheel-title span {
-            background: #fcb045;
-            color: #140c28;
-            padding: 8px 30px;
+        .game-title span {
+            background: #efb152;
+            color: #141b30;
+            padding: 8px 25px;
             border-radius: 50px;
+            font-size: 1.8rem;
         }
-        canvas {
-            background: #20263f;
-            border-radius: 50%;
-            box-shadow: 0 0 0 8px #facc6f, 0 30px 40px black;
-            max-width: 320px;
-            width: 100%;
-            aspect-ratio: 1/1;
-            display: block;
-            margin: 25px auto;
+        
+        /* μυστικό κουτί */
+        .mystery-box {
+            background: linear-gradient(145deg, #302b4e, #1b1f3a);
+            border-radius: 70px;
+            padding: 30px 20px;
+            border: 5px solid #ffd966;
+            box-shadow: 0 15px 0 #b17e3a;
             cursor: pointer;
-            transition: 0.1s;
+            transition: 0.1s linear;
+            max-width: 400px;
+            margin: 20px auto;
         }
-        canvas:active { transform: scale(0.98); }
-        .spin-btn {
-            background: linear-gradient(145deg, #fbbf24, #f97316);
-            border: none;
-            font-size: 2.4rem;
+        .mystery-box:active {
+            transform: translateY(10px);
+            box-shadow: 0 5px 0 #b17e3a;
+        }
+        .mystery-emoji {
+            font-size: 6rem;
+            line-height: 1;
+            filter: drop-shadow(0 10px 10px #ffb86b);
+        }
+        .mystery-text {
+            font-size: 2.2rem;
             font-weight: 900;
-            padding: 18px 45px;
-            border-radius: 120px;
-            border: 5px solid white;
-            box-shadow: 0 12px 0 #b45309;
-            color: #1c1427;
-            cursor: pointer;
-            margin: 15px auto 25px;
-            display: block;
-            letter-spacing: 2px;
+            color: #ffedb0;
+            text-transform: uppercase;
+            margin: 10px 0 0;
         }
-        .spin-btn:active {
-            transform: translateY(8px);
-            box-shadow: 0 4px 0 #b45309;
-        }
-        .prize-highlight {
-            background: #292f55;
-            border-radius: 60px;
-            padding: 20px;
-            border: 3px solid #f7d44a;
-            text-align: center;
-            font-size: 1.7rem;
-            font-weight: 700;
-        }
-        .prize-number {
-            background: gold;
-            color: #0b0b1f;
-            font-size: 3.2rem;
-            font-weight: 900;
-            padding: 10px 35px;
-            border-radius: 80px;
-            display: inline-block;
-            margin: 15px 0 10px;
+        .small-hint {
+            color: #c1b3ff;
+            font-size: 1.2rem;
+            margin-top: 15px;
         }
 
-        /* φόρμα συμμετοχής + email */
-        .entry-zone {
-            background: #202842;
+        /* φόρμα συμμετοχής – με το σωστό endpoint */
+        .entry-block {
+            background: #1a1f38;
             border-radius: 60px;
-            padding: 35px 25px;
-            border: 4px solid #f8c150;
-            max-width: 800px;
-            margin: 30px auto;
+            padding: 30px 20px;
+            border: 4px solid #fdcc6b;
+            margin: 35px 0;
         }
-        .entry-zone h3 {
+        .entry-block h3 {
             font-size: 2.2rem;
+            font-weight: 700;
             text-align: center;
         }
-        .flex-entry {
+        .entry-flex {
             display: flex;
-            flex-wrap: wrap;
-            gap: 15px;
-            justify-content: center;
-            margin-top: 30px;
+            flex-direction: column;
+            gap: 18px;
+            margin: 25px 0 15px;
         }
-        .flex-entry input {
-            flex: 1 1 200px;
-            padding: 18px 25px;
+        .entry-flex input {
+            padding: 18px 22px;
             border-radius: 60px;
-            border: 4px solid #fec260;
-            background: #edf0fa;
-            font-size: 1.3rem;
+            border: 4px solid #fbbf4d;
+            background: #eef2ff;
+            font-size: 1.2rem;
             font-weight: 600;
             outline: none;
-            min-width: 220px;
+            width: 100%;
         }
-        .flex-entry button {
+        .entry-flex button {
             background: #10b981;
             border: none;
-            padding: 0 45px;
+            padding: 20px 15px;
             border-radius: 60px;
             font-size: 2rem;
-            font-weight: 900;
-            color: #022c1a;
+            font-weight: 800;
+            color: #022c22;
             border: 5px solid #bef264;
-            box-shadow: 0 8px 0 #047857;
+            box-shadow: 0 9px 0 #047857;
             cursor: pointer;
-            transition: 0.06s;
+            transition: 0.07s;
+            width: 100%;
         }
-        .flex-entry button:active {
-            transform: translateY(8px);
-            box-shadow: 0 0 0 #047857;
+        .entry-flex button:active {
+            transform: translateY(7px);
+            box-shadow: 0 2px 0 #047857;
         }
-        .message {
-            font-size: 1.5rem;
-            padding: 15px;
-            border-radius: 50px;
-            text-align: center;
-            margin-top: 20px;
-        }
-        .success { background: #a2f5c4; color: #064e3b; }
-        .info { background: #fed7aa; color: #4b2c0c; }
-
-        /* footer */
-        .footer {
-            background: #0b0f21;
-            border-radius: 70px 70px 30px 30px;
-            padding: 30px;
-            text-align: center;
-            border-top: 6px solid #fbc84b;
-            margin-top: 50px;
+        .feedback-message {
             font-size: 1.3rem;
+            padding: 12px;
+            border-radius: 40px;
+            text-align: center;
+            font-weight: 700;
+            margin-top: 10px;
         }
-        .note {
-            color: #bfb3ff;
-            font-size: 1rem;
+        .success-msg { background: #a3f5c5; color: #064e3b; }
+        .info-msg { background: #fde4b5; color: #613e0b; }
+
+        .gift-note {
+            background: #292f4a;
+            border-radius: 50px;
+            padding: 18px;
+            text-align: center;
+            border: 3px solid #fbbf24;
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin: 20px 0;
+        }
+
+        .footer-note {
+            text-align: center;
+            padding: 30px 10px 10px;
+            border-top: 4px solid #fbc85a;
             margin-top: 20px;
+            font-size: 1rem;
+            color: #cac2ff;
+        }
+
+        @media (max-width: 450px) {
+            .game-title { font-size: 2rem; }
+            .mystery-emoji { font-size: 5rem; }
+            .mystery-text { font-size: 1.8rem; }
         }
     </style>
 </head>
 <body>
-<div class="wrap">
-    <header class="hero">
-        <h1>⚡ 3x AUTO RELAXED ⚡</h1>
-        <p>Τρεις διαφημίσεις – τριπλάσιες προβολές – 50% σε δωροεπιταγές</p>
+<div class="container">
+    <header class="logo-area">
+        <h1>Δες και κέρδισε</h1>
+        <p>✧ Διαγωνισμός με δωροεπιταγές ✧</p>
     </header>
 
-    <!-- 1η autorelaxed διαφήμιση (πάνω από το παιχνίδι) -->
-    <div class="ad-block">
+    <!-- 1η FLUID διαφήμιση -->
+    <div class="ad-fluid-box">
         <ins class="adsbygoogle"
              style="display:block"
-             data-ad-format="autorelaxed"
+             data-ad-format="fluid"
+             data-ad-layout-key="-fb+5w+4e-db+86"
              data-ad-client="ca-pub-3186700611266549"
-             data-ad-slot="9660744817"></ins>
+             data-ad-slot="3969235710"></ins>
         <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
     </div>
 
-    <!-- ΠΑΙΧΝΙΔΙ : ΤΡΟΧΟΣ + ΔΗΛΩΣΗ -->
-    <div class="game-panel">
-        <div class="wheel-title">
-            🎡 ΤΡΟΧΟΣ 50% 🎡
-            <span>5€ ή 10€</span>
+    <!-- ΠΑΙΧΝΙΔΙ: Μυστικό Κουτί -->
+    <div class="game-section">
+        <div class="game-title">
+            🎁 ΔΕΣ ΚΑΙ ΚΕΡΔΙΣΕ 🎁
+            <span>άνοιξε το κουτί</span>
         </div>
-        <canvas id="wheelCanvas" width="400" height="400"></canvas>
-        <button class="spin-btn" id="spinButton">🌀 ΓΥΡΙΣΕ</button>
 
-        <div class="prize-highlight">
-            <div>Το 50% των εσόδων ads → σε δωροεπιταγές</div>
-            <div class="prize-number" id="dynamicPrize">∼ 350€</div>
-            <div>Iris / PayPal · 5€ ή 10€ δωροεπιταγές</div>
+        <div class="mystery-box" id="mysteryBox">
+            <div class="mystery-emoji" id="boxEmoji">📦</div>
+            <div class="mystery-text" id="boxText">πάτα με!</div>
         </div>
+        <p class="small-hint">✨ κάθε πάτημα φέρνει τυχερό μήνυμα ✨</p>
     </div>
 
-    <!-- 2η autorelaxed διαφήμιση (ανάμεσα στο παιχνίδι και τη φόρμα) -->
-    <div class="ad-block">
+    <!-- 2η FLUID διαφήμιση -->
+    <div class="ad-fluid-box">
         <ins class="adsbygoogle"
              style="display:block"
-             data-ad-format="autorelaxed"
+             data-ad-format="fluid"
+             data-ad-layout-key="-fb+5w+4e-db+86"
              data-ad-client="ca-pub-3186700611266549"
-             data-ad-slot="9660744817"></ins>
+             data-ad-slot="3969235710"></ins>
         <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
     </div>
 
-    <!-- ΦΟΡΜΑ ΣΥΜΜΕΤΟΧΗΣ (τα στοιχεία πάνε στο email σου) -->
-    <div class="entry-zone">
-        <h3>🎁 Δήλωσε συμμετοχή – Μπες στην κλήρωση</h3>
-        <div class="flex-entry">
-            <input type="text" id="nameInput" placeholder="Ονοματεπώνυμο *">
-            <input type="email" id="emailInput" placeholder="Email *">
-            <button id="entryButton">ΣΥΜΜΕΤΟΧΗ</button>
-        </div>
-        <div id="formFeedback" class="message"></div>
-        <p style="color:#bfafff; margin-top: 25px;">✉️ Τα στοιχεία αποστέλλονται στο info.franklydear@gmail.com και κληρώνεσαι αυτόματα.</p>
+    <!-- ΦΟΡΜΑ ΣΥΜΜΕΤΟΧΗΣ - ΣΩΣΤΗ ΥΛΟΠΟΙΗΣΗ με το μοναδικό κλειδί -->
+    <div class="entry-block">
+        <h3>✍️ Δήλωσε συμμετοχή</h3>
+        
+        <!-- ΣΗΜΑΝΤΙΚΟ: Χρησιμοποιούμε το μοναδικό κλειδί αντί για το email -->
+        <form action="https://formsubmit.co/6ae291f8020d6a4e62242119b18a2f4f" method="POST" id="entryForm">
+            <!-- Κρυφά πεδία για σωστή λειτουργία -->
+            <input type="hidden" name="_subject" value="Νέα συμμετοχή στο Δες και κέρδισε!">
+            <input type="hidden" name="_next" value="https://games-support.franklymadear.com/success.html">
+            <input type="hidden" name="_captcha" value="false">
+            <input type="hidden" name="_template" value="box">
+            
+            <!-- Πεδία φόρμας -->
+            <div class="entry-flex">
+                <input type="text" name="name" id="nameField" placeholder="Το όνομά σου *" required>
+                <input type="email" name="email" id="emailField" placeholder="Το email σου *" required>
+                <button type="submit">ΣΥΜΜΕΤΟΧΗ</button>
+            </div>
+        </form>
+        
+        <div id="entryFeedback" class="feedback-message"></div>
+        <p style="color:#b8adff; font-size:1rem; margin-top: 20px;">✔ Θα λάβεις επιβεβαίωση. Τα στοιχεία αποστέλλονται με ασφάλεια.</p>
     </div>
 
-    <!-- 3η autorelaxed διαφήμιση (μετά τη φόρμα, πριν το footer) -->
-    <div class="ad-block">
+    <!-- 3η FLUID διαφήμιση -->
+    <div class="ad-fluid-box">
         <ins class="adsbygoogle"
              style="display:block"
-             data-ad-format="autorelaxed"
+             data-ad-format="fluid"
+             data-ad-layout-key="-fb+5w+4e-db+86"
              data-ad-client="ca-pub-3186700611266549"
-             data-ad-slot="9660744817"></ins>
+             data-ad-slot="3969235710"></ins>
         <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
     </div>
 
-    <!-- Επιπλέον μήνυμα + reminder -->
-    <div style="background:#303a60; border-radius:60px; padding:20px; margin:30px 0; text-align:center; border:3px solid #efb467;">
-        <span style="font-size:2rem;">💰 Τα έσοδα από 3 autorelaxed διαφημίσεις μαζεύονται γρήγορα! 💰</span>
+    <div class="gift-note">
+        🎫 Οι νικητές κερδίζουν δωροεπιταγές (Iris / PayPal)
     </div>
 
-    <footer class="footer">
-        <p>📧 info.franklydear@gmail.com – Όλες οι συμμετοχές φτάνουν εκεί.</p>
-        <p>50% των καθαρών εσόδων AdSense δίνεται σε δωροεπιταγές (Iris/PayPal).</p>
-        <p class="note">* Με την υποβολή συμφωνείτε με την αποθήκευση και αποστολή των στοιχείων για την κλήρωση.</p>
+    <footer class="footer-note">
+        <p>📧 Οι συμμετοχές καταλήγουν με ασφάλεια στον διοργανωτή</p>
+        <p style="opacity:0.7;">Δες και κέρδισε – με την υποστήριξη των διαφημίσεων</p>
     </footer>
 </div>
 
-<!-- JavaScript: τροχός + αποστολή email (FormSubmit) -->
+<!-- JavaScript για το παιχνίδι (μυστικό κουτί) -->
 <script>
     (function() {
-        // ------- ΤΡΟΧΟΣ ΤΥΧΗΣ -------
-        const canvas = document.getElementById('wheelCanvas');
-        const ctx = canvas.getContext('2d');
-        const segments = [
-            { label: '5€', color: '#ff8a8a' },
-            { label: '10€', color: '#facc6f' },
-            { label: '5€', color: '#7ee0b5' },
-            { label: '10€', color: '#fda4af' },
-            { label: '5€', color: '#c3b2ff' },
-            { label: '10€', color: '#fde164' },
-            { label: '5€', color: '#9be3a8' },
-            { label: '10€', color: '#ffb3c6' }
+        // ΠΑΙΧΝΙΔΙ: ΜΥΣΤΙΚΟ ΚΟΥΤΙ
+        const box = document.getElementById('mysteryBox');
+        const boxEmoji = document.getElementById('boxEmoji');
+        const boxText = document.getElementById('boxText');
+
+        const messages = [
+            { emoji: '🎉', text: 'Κέρδισες χαμόγελο!' },
+            { emoji: '🍀', text: 'Τυχερό τριφύλλι' },
+            { emoji: '🎰', text: 'Τζόκερ' },
+            { emoji: '💎', text: 'Διαμάντι!' },
+            { emoji: '⭐', text: 'Αστέρι' },
+            { emoji: '🎁', text: 'Δώρο' },
+            { emoji: '💰', text: 'Θησαυρός' },
+            { emoji: '✨', text: 'Λάμψη' }
         ];
-        let angle = 0;
-        let spinning = false;
 
-        function drawWheel(angle) {
-            ctx.clearRect(0, 0, 400, 400);
-            const centerX = 200, centerY = 200, radius = 170;
-            const slice = (2 * Math.PI) / segments.length;
-            for (let i = 0; i < segments.length; i++) {
-                const start = i * slice + angle;
-                const end = start + slice;
-                ctx.beginPath();
-                ctx.moveTo(centerX, centerY);
-                ctx.arc(centerX, centerY, radius, start, end);
-                ctx.closePath();
-                ctx.fillStyle = segments[i].color;
-                ctx.fill();
-                ctx.strokeStyle = '#fff';
-                ctx.lineWidth = 3;
-                ctx.stroke();
+        box.addEventListener('click', function() {
+            box.style.transform = 'scale(0.97)';
+            setTimeout(() => box.style.transform = '', 100);
 
-                ctx.save();
-                ctx.translate(centerX, centerY);
-                ctx.rotate(start + slice/2);
-                ctx.textAlign = 'right';
-                ctx.font = 'bold 22px Outfit';
-                ctx.fillStyle = '#1d172e';
-                ctx.shadowBlur = 8;
-                ctx.shadowColor = '#ffffff';
-                ctx.fillText(segments[i].label, 135, 12);
-                ctx.restore();
-            }
-            // βελάκι
-            ctx.beginPath();
-            ctx.moveTo(340, 190);
-            ctx.lineTo(375, 200);
-            ctx.lineTo(340, 210);
-            ctx.closePath();
-            ctx.fillStyle = '#fde047';
-            ctx.shadowBlur = 15;
-            ctx.fill();
+            const randomIndex = Math.floor(Math.random() * messages.length);
+            const selected = messages[randomIndex];
+            boxEmoji.textContent = selected.emoji;
+            boxText.textContent = selected.text;
+        });
+
+        // Μήνυμα επιτυχούς υποβολής (αν υπάρχει παράμετρος στο URL)
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.has('submit') && urlParams.get('submit') === 'success') {
+            const feedbackDiv = document.getElementById('entryFeedback');
+            feedbackDiv.innerText = '✅ Επιτυχία! Τα στοιχεία στάλθηκαν. Καλή τύχη!';
+            feedbackDiv.className = 'feedback-message success-msg';
         }
-        drawWheel(angle);
-
-        document.getElementById('spinButton').addEventListener('click', function() {
-            if (spinning) return;
-            spinning = true;
-            const steps = 20 + Math.floor(Math.random() * 20);
-            let spinAngle = angle;
-            let step = 0;
-            function spinAnim() {
-                if (step >= steps) {
-                    spinning = false;
-                    const idx = Math.floor(((spinAngle % (2*Math.PI)) + 2*Math.PI) % (2*Math.PI) / ((2*Math.PI)/segments.length));
-                    alert(`🎲 Σταμάτησες στο ${segments[idx].label} – συμπλήρωσε τη φόρμα για συμμετοχή!`);
-                    return;
-                }
-                spinAngle += 0.5 + Math.random()*0.6;
-                drawWheel(spinAngle);
-                step++;
-                requestAnimationFrame(spinAnim);
-            }
-            requestAnimationFrame(spinAnim);
-            angle += 0.8;
-        });
-
-        // εντυπωσιακή εκτίμηση prize
-        setInterval(() => {
-            let rand = Math.floor(Math.random() * 700) + 200;
-            document.getElementById('dynamicPrize').innerText = `∼ ${rand}€`;
-        }, 4000);
-
-        // ------- ΦΟΡΜΑ ΑΠΟΣΤΟΛΗΣ ΣΤΟ info.franklydear@gmail.com (FormSubmit) -------
-        const nameInput = document.getElementById('nameInput');
-        const emailInput = document.getElementById('emailInput');
-        const entryBtn = document.getElementById('entryButton');
-        const feedbackDiv = document.getElementById('formFeedback');
-
-        // δημιουργούμε ένα hidden iframe για να μη φεύγει η σελίδα
-        const form = document.createElement('form');
-        form.method = 'POST';
-        form.action = 'https://formsubmit.co/info.franklydear@gmail.com';
-        form.style.display = 'none';
-
-        const nameField = document.createElement('input');
-        nameField.type = 'text';
-        nameField.name = 'Όνομα';
-        const emailField = document.createElement('input');
-        emailField.type = 'email';
-        emailField.name = 'Email';
-        const subjectField = document.createElement('input');
-        subjectField.type = 'hidden';
-        subjectField.name = '_subject';
-        subjectField.value = 'Νέα συμμετοχή 3x autorelaxed competition';
-        const nextField = document.createElement('input');
-        nextField.type = 'hidden';
-        nextField.name = '_next';
-        nextField.value = window.location.href;
-        const captchaField = document.createElement('input');
-        captchaField.type = 'hidden';
-        captchaField.name = '_captcha';
-        captchaField.value = 'false';
-
-        form.appendChild(nameField);
-        form.appendChild(emailField);
-        form.appendChild(subjectField);
-        form.appendChild(nextField);
-        form.appendChild(captchaField);
-        document.body.appendChild(form);
-
-        entryBtn.addEventListener('click', function(e) {
-            e.preventDefault();
-            const name = nameInput.value.trim();
-            const email = emailInput.value.trim();
-
-            if (!name || !email) {
-                feedbackDiv.innerText = '⚠️ Συμπλήρωσε όνομα και email.';
-                feedbackDiv.className = 'message info';
-                return;
-            }
-            if (!email.includes('@') || email.indexOf('.') === -1) {
-                feedbackDiv.innerText = '⚠️ Βάλε ένα έγκυρο email.';
-                feedbackDiv.className = 'message info';
-                return;
-            }
-
-            // γέμισμα πεδίων
-            nameField.value = name;
-            emailField.value = email;
-
-            // iframe trick
-            const iframe = document.createElement('iframe');
-            iframe.name = 'submitiframe';
-            iframe.style.display = 'none';
-            document.body.appendChild(iframe);
-            form.target = 'submitiframe';
-            form.submit();
-
-            feedbackDiv.innerText = '✅ Μπράβο! Τα στοιχεία στάλθηκαν. Καλή επιτυχία στην κλήρωση!';
-            feedbackDiv.className = 'message success';
-            nameInput.value = '';
-            emailInput.value = '';
-
-            setTimeout(() => {
-                if (iframe.parentNode) iframe.parentNode.removeChild(iframe);
-            }, 3000);
-        });
-
     })();
 </script>
 
-<!-- επαναφορά ads (για τυχόν delayed push) -->
+<!-- AdSense push -->
 <script>
-    (function() {
-        // αν χρειαστεί να τρέξουν ξανά (κάποια adblock πρόληψη)
-        setTimeout(() => {
-            try {
-                (adsbygoogle = window.adsbygoogle || []).forEach(() => {
-                    // μικρή επαναφορά
-                })
-            } catch(e){}
-        }, 500);
-    })();
+    (adsbygoogle = window.adsbygoogle || []).push({});
 </script>
 </body>
 </html>
