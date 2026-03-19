@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
-    <title>Ζήσε το Μέλλον σου · διαγωνισμός</title>
+    <title>Ζήσε το Μέλλον σου · Διαγωνισμός</title>
     <link rel="icon" type="image/png" href="index.png">
     
     <!-- Google AdSense -->
@@ -323,7 +323,7 @@
             <!-- Οι κάρτες θα γεμίσουν με JavaScript -->
         </div>
         <div class="card-message-display" id="cardMessageDisplay">
-            πάτησε μια κάρτα για το μήνυμά σου
+            Κλικ σε μια κάρτα και διάβασε μήνυμά σου
         </div>
     </div>
 
@@ -340,7 +340,7 @@
 
     <!-- ΕΝΔΕΙΞΗ ΟΤΙ ΟΛΟΚΛΗΡΩΘΗΚΑΝ ΤΑ ΠΑΙΧΝΙΔΙΑ -->
     <div id="gamesCompleteMessage" class="games-complete" style="display: none;">
-        ✅ ολοκλήρωσες τα παιχνίδια! τώρα μπορείς να συμμετέχεις
+        ✅ Ολοκλήρωσες! Τώρα μπορείς να συμμετέχεις σε διαγωνισμούς
     </div>
 
     <!-- 2η διαφήμιση -->
@@ -359,7 +359,7 @@
         <h3 style="font-size:1.5rem; font-weight:600; text-align:center;">✍️ Δήλωσε συμμετοχή</h3>
         
         <form action="https://formsubmit.co/6ae291f8020d6a4e62242119b18a2f4f" method="POST" id="entryForm">
-            <input type="hidden" name="_subject" value="Ζήσε το Μέλλον σου · συμμετοχή">
+            <input type="hidden" name="_subject" value="Ζήσε το Μέλλον σου ·">
             <input type="hidden" name="_next" value="https://games-support.franklymadear.com/">
             <input type="hidden" name="_captcha" value="false">
             <input type="hidden" name="_template" value="box">
@@ -568,7 +568,7 @@
             })
             .then(response => {
                 if (response.ok) {
-                    feedbackDiv.innerText = '🎉 Ευχαριστούμε! Το μέλλον σου γράφτηκε στο Google Sheets. Καλή τύχη! 🎉';
+                    feedbackDiv.innerText = '🎉 Ευχαριστούμε! Το μέλλον σου γράφτηκε. Καλή τύχη! 🎉';
                     feedbackDiv.classList.remove('hidden-feedback');
                     nameInput.value = '';
                     emailInput.value = '';
