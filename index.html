@@ -29,21 +29,22 @@
 
         .header {
             text-align: center;
-            margin: 5px 0 15px;
+            margin: 5px 0 10px;
         }
         .header h1 {
-            font-size: clamp(2.2rem, 9vw, 3.5rem);
-            font-weight: 800;
+            font-size: 2rem;
+            font-weight: 600;
             background: linear-gradient(145deg, #ffb6c1, #ff69b4, #ffd700);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             text-shadow: 0 0 20px #ff99cc;
+            line-height: 1.2;
         }
         .header p {
             background: #292f4a;
             padding: 8px 20px;
             border-radius: 60px;
-            font-size: 1.1rem;
+            font-size: 1rem;
             border: 2px solid #febf5e;
             display: inline-block;
             margin-top: 5px;
@@ -74,15 +75,10 @@
             box-shadow: 0 0 20px #ffd70055;
         }
         .cookie-title {
-            font-size: 1.8rem;
-            font-weight: 800;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            flex-wrap: wrap;
-            margin-bottom: 20px;
+            font-size: 1.5rem;
+            font-weight: 600;
             color: #ffdab9;
+            margin-bottom: 20px;
         }
         .fortune-cookie {
             background: #e5c28e;
@@ -111,8 +107,8 @@
             color: #2e1f0b;
             padding: 18px 20px;
             border-radius: 40px;
-            font-size: 1.2rem;
-            font-weight: 600;
+            font-size: 1.1rem;
+            font-weight: 500;
             border: 4px solid #b8560e;
             max-width: 320px;
             margin: 20px auto 10px;
@@ -133,8 +129,8 @@
             text-align: center;
         }
         .cards-title {
-            font-size: 1.8rem;
-            font-weight: 800;
+            font-size: 1.5rem;
+            font-weight: 600;
             color: #f8c3e7;
             margin-bottom: 20px;
         }
@@ -177,7 +173,8 @@
             padding: 15px;
             border-radius: 40px;
             margin: 15px 0;
-            font-size: 1.2rem;
+            font-size: 1.1rem;
+            font-weight: 500;
             border: 3px solid #ff99cc;
             min-height: 80px;
             display: flex;
@@ -228,7 +225,7 @@
             border: 4px solid #fbbf4d;
             background: #f0f3ff;
             font-size: 1.1rem;
-            font-weight: 600;
+            font-weight: 500;
             outline: none;
             width: 100%;
         }
@@ -237,8 +234,8 @@
             border: none;
             padding: 18px 15px;
             border-radius: 60px;
-            font-size: 1.8rem;
-            font-weight: 800;
+            font-size: 1.5rem;
+            font-weight: 600;
             color: #022c22;
             border: 5px solid #bef264;
             box-shadow: 0 8px 0 #047857;
@@ -250,11 +247,11 @@
             box-shadow: 0 2px 0 #047857;
         }
         .feedback-message {
-            font-size: 1.3rem;
+            font-size: 1.2rem;
             padding: 15px;
             border-radius: 50px;
             text-align: center;
-            font-weight: 700;
+            font-weight: 600;
             margin: 10px 0;
             background: #d0f0c0;
             color: #1b4a1b;
@@ -271,6 +268,7 @@
             text-align: center;
             border: 3px solid #fbbf24;
             font-size: 1.1rem;
+            font-weight: 500;
         }
         .footer-note {
             text-align: center;
@@ -286,14 +284,14 @@
             padding: 10px;
             border-radius: 40px;
             margin: 10px 0;
-            font-weight: bold;
+            font-weight: 600;
         }
     </style>
 </head>
 <body>
 <div class="container">
     <header class="header">
-        <h1>🌸 Ζήσε το Μέλλον σου 🌸</h1>
+        <h1>Ζήσε το Μέλλον σου</h1>
         <p>άνοιξε το μπισκότο, διάλεξε κάρτα, γράψε τη μοίρα σου</p>
     </header>
 
@@ -310,19 +308,17 @@
 
     <!-- ΜΠΙΣΚΟΤΟ -->
     <div class="cookie-section">
-        <div class="cookie-title">
-            <span>🌟 τυχερό μπισκότο 🌟</span>
-        </div>
+        <div class="cookie-title">Τυχερό Μπισκότο</div>
 
         <div class="fortune-cookie" id="fortuneCookie">
             <span class="cookie-emoji" id="cookieEmoji">🥠</span>
         </div>
-        <div class="cookie-message" id="cookieMessage">πάτα να σπάσει ✨</div>
+        <div class="cookie-message" id="cookieMessage">Πάτησε το μπισκότο ✨</div>
     </div>
 
     <!-- ΠΑΙΧΝΙΔΙ ΜΕ ΚΑΡΤΕΣ -->
     <div class="cards-section" id="cardsSection">
-        <div class="cards-title">🔮 διάλεξε μια κάρτα 🔮</div>
+        <div class="cards-title">Διάλεξε μια κάρτα</div>
         <div class="cards-grid" id="cardsGrid">
             <!-- Οι κάρτες θα γεμίσουν με JavaScript -->
         </div>
@@ -360,7 +356,7 @@
 
     <!-- ΦΟΡΜΑ -->
     <div class="entry-block" id="entryBlock">
-        <h3>✍️ γράψε το όνομά σου στο μέλλον</h3>
+        <h3 style="font-size:1.5rem; font-weight:600; text-align:center;">✍️ Δήλωσε συμμετοχή</h3>
         
         <form action="https://formsubmit.co/6ae291f8020d6a4e62242119b18a2f4f" method="POST" id="entryForm">
             <input type="hidden" name="_subject" value="Ζήσε το Μέλλον σου · συμμετοχή">
@@ -393,7 +389,7 @@
     </div>
 
     <div class="gift-note">
-        🎁 50% των εσόδων → δωροεπιταγές Iris / PayPal
+        🎁 Δήλωσε συμμετοχή και κέρδισε δωροεπιταγή · Τρόπος πληρωμής PayPal
     </div>
 
     <footer class="footer-note">
@@ -470,7 +466,7 @@
             "💋 Ένα φιλί στο πιο απροσδόκητο μέρος θα σου φτιάξει τη μέρα.",
             "💸 Οικονομική άνοδος – τόλμησε να ζητήσεις αυτό που αξίζεις.",
             "💞 Ο έρωτας χτυπάει την πόρτα σου – κυριολεκτικά ή μεταφορικά.",
-            "💰 Μια δωροεπιταγρά 5€ ή 10€ είναι πιο κοντά από όσο νομίζεις.",
+            "💰 Μια δωροεπιταγή 5€ ή 10€ είναι πιο κοντά από όσο νομίζεις.",
             "💓 Δύο καρδιές που χτυπούν δυνατά – η μία είναι δική σου.",
             "💎 Μια επαγγελματική ευκαιρία θα σε κάνει οικονομικά ανεξάρτητη.",
             "💘 Θα λάβεις ένα μήνυμα που θα σε κάνει να κοκκινίσεις.",
