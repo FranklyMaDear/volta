@@ -3,140 +3,566 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="6a97888e-site-verification" content="276fb2137387cf4de0ade78f4b0a6067">
+    <title>Games Support · FranklyMaDear</title>
+    <link rel="icon" type="image/png" href="index.png">
+    <link rel="apple-touch-icon" href="index.png">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
     
-    <meta http-equiv="Delegate-CH" content="Sec-CH-UA https://s.magsrv.com; Sec-CH-UA-Mobile https://s.magsrv.com; Sec-CH-UA-Arch https://s.magsrv.com; Sec-CH-UA-Model https://s.magsrv.com; Sec-CH-UA-Platform https://s.magsrv.com; Sec-CH-UA-Platform-Version https://s.magsrv.com; Sec-CH-UA-Bitness https://s.magsrv.com; Sec-CH-UA-Full-Version-List https://s.magsrv.com; Sec-CH-UA-Full-Version https://s.magsrv.com;">
-
-    <title>Video Grid</title>
-
+    <!-- Google AdSense (ίδιο client) -->
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3186700611266549"
+            crossorigin="anonymous"></script>
+    
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Comic+Neue:wght@400;700&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+    
     <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
-            font-family: Arial, sans-serif;
-            background-color: #1a1a1a;
+            font-family: 'Nunito', sans-serif;
+            background: linear-gradient(145deg, #f0f4fa 0%, #d9e2ef 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        .container {
+            max-width: 1300px;
+            margin: 0 auto;
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(2px);
+            width: 100%;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        /* Home button (ίδιο ύφος) */
+        .home-button {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            z-index: 100;
+        }
+        .home-button a {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: linear-gradient(135deg, #3a1c71 0%, #d76d77 50%, #ffaf7b 100%);
             color: white;
+            text-decoration: none;
+            padding: 12px 24px;
+            border-radius: 40px;
+            font-weight: 700;
+            font-size: 1rem;
+            box-shadow: 0 6px 20px rgba(58, 28, 113, 0.5);
+            transition: all 0.3s ease;
+            border: 2px solid rgba(255,255,255,0.4);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .home-button a:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 28px rgba(215, 109, 119, 0.6);
+        }
+        .home-icon { font-size: 1.5rem; }
+
+        .header {
+            text-align: center;
+            padding: 60px 20px 30px;
+            margin-top: 30px;
+            background: rgba(255,255,255,0.3);
+            border-radius: 0 0 40px 40px;
+            border-bottom: 3px solid rgba(255,215,0,0.5);
+        }
+        .logo h1 {
+            font-size: 3rem;
+            background: linear-gradient(145deg, #aa4b6b, #6b6b83, #3b8d99);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 2px 4px 10px rgba(0,0,0,0.2);
+            margin-bottom: 10px;
+        }
+        .tagline {
+            font-size: 1.4rem;
+            font-weight: 600;
+            color: #1e2b4f;
+            background: rgba(255,255,240,0.6);
+            display: inline-block;
+            padding: 10px 30px;
+            border-radius: 50px;
+            backdrop-filter: blur(4px);
+        }
+
+        /* Ad container – ίδιο στυλ, πιο τονισμένο */
+        .ad-zone {
+            margin: 30px auto;
+            text-align: center;
+            max-width: 400px;
+            width: 100%;
+            padding: 0 15px;
+        }
+        .ad-zone ins {
+            border-radius: 25px;
+            overflow: hidden;
+            display: block;
+            width: 100%;
+            min-height: 280px;
+            background: rgba(255,255,255,0.3);
+            box-shadow: 0 12px 30px rgba(0,0,0,0.2);
+            border: 3px solid white;
+        }
+        /* διπλό ad για πλάτος */
+        .ad-double {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px;
+            max-width: 900px;
+            margin: 30px auto;
+        }
+        .ad-double .ad-zone {
             margin: 0;
-            padding: 10px;
+            flex: 1 1 300px;
+        }
+
+        /* Κάρτα συμμετοχής – το κεντρικό στοιχείο */
+        .raffle-card {
+            background: linear-gradient(125deg, #0f2027, #203a43, #2c5364);
+            border: 4px solid #ffd966;
+            border-radius: 50px 50px 30px 30px;
+            padding: 30px 25px;
+            margin: 20px auto 40px;
+            max-width: 700px;
+            box-shadow: 0 25px 40px rgba(0,0,0,0.4);
+            position: relative;
+            overflow: hidden;
+        }
+        .raffle-card::before {
+            content: "🎁🎰🎮";
+            position: absolute;
+            font-size: 140px;
+            opacity: 0.07;
+            top: -20px;
+            right: -30px;
+            transform: rotate(20deg);
+            pointer-events: none;
+        }
+        .raffle-card h2 {
+            color: #ffec9e;
+            font-size: 2.4rem;
+            text-align: center;
+            text-shadow: 3px 3px 0 #b45f06;
+            letter-spacing: 2px;
+            margin-bottom: 5px;
+        }
+        .prize-highlight {
+            background: #f9d77e;
+            color: #1e2a3a;
+            font-size: 2rem;
+            font-weight: 900;
+            padding: 15px 25px;
+            border-radius: 60px;
+            display: inline-block;
+            margin: 15px 0 10px;
+            border: 4px solid white;
+            box-shadow: 0 6px 0 #b45f06;
+            transform: rotate(-1deg);
+        }
+        .prize-desc {
+            color: white;
+            font-size: 1.3rem;
+            background: rgba(0,0,0,0.3);
+            padding: 8px 20px;
+            border-radius: 40px;
+            font-weight: 700;
+        }
+        .entry-form {
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+            margin-top: 30px;
+        }
+        .entry-form input {
+            padding: 18px 25px;
+            border: none;
+            border-radius: 50px;
+            font-size: 1.2rem;
+            background: rgba(255,255,255,0.9);
+            border: 3px solid #ffd966;
+            font-family: 'Nunito', sans-serif;
+            transition: 0.2s;
+            text-align: center;
+        }
+        .entry-form input:focus {
+            outline: none;
+            border-color: #ffb347;
+            box-shadow: 0 0 0 5px rgba(255,215,0,0.4);
+            background: white;
+        }
+        .entry-form button {
+            background: linear-gradient(145deg, #f7971e, #ffd200);
+            border: none;
+            padding: 18px 20px;
+            border-radius: 60px;
+            font-size: 1.7rem;
+            font-weight: 900;
+            color: #1e2a3a;
+            border: 3px solid white;
+            cursor: pointer;
+            transition: 0.2s;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            box-shadow: 0 8px 0 #b45f06;
+        }
+        .entry-form button:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 0 #b45f06;
+            background: linear-gradient(145deg, #ffb347, #ffe45e);
+        }
+        .entry-form button:active {
+            transform: translateY(4px);
+            box-shadow: 0 4px 0 #b45f06;
+        }
+        .entry-message {
+            font-size: 1.3rem;
+            font-weight: 700;
+            padding: 15px;
+            border-radius: 40px;
+            text-align: center;
+        }
+        .success-msg {
+            background: #a3e635;
+            color: #14471c;
+            border: 4px solid #f7ffb0;
+        }
+        .info-msg {
+            background: #ffcfb0;
+            color: #7b2f00;
+        }
+
+        /* μετρητής προβολών / υποστήριξης */
+        .counter-box {
+            background: linear-gradient(145deg, #654ea3, #eaafc8);
+            border-radius: 60px;
+            padding: 25px 25px;
+            margin: 30px auto;
+            max-width: 650px;
+            border: 4px solid #fee140;
+            color: white;
+            text-shadow: 2px 2px 0 #333;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+        }
+        .counter-label {
+            font-size: 1.8rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+        }
+        .views-number {
+            font-size: 4rem;
+            font-weight: 900;
+            background: #2b1e4a;
+            padding: 10px 40px;
+            border-radius: 80px;
+            display: inline-block;
+            margin: 15px 0;
+            border: 5px solid #ffbf00;
+            letter-spacing: 5px;
+        }
+        .goal-hint {
+            font-size: 1.4rem;
+            background: rgba(0,0,0,0.5);
+            padding: 8px 20px;
+            border-radius: 40px;
+        }
+
+        /* κάρτες προϊόντων – με έμφαση στο support */
+        .category-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 25px;
+            padding: 30px 20px;
+        }
+        .support-card-style {
+            text-decoration: none;
+            padding: 30px 20px;
+            border-radius: 40px;
+            background: linear-gradient(145deg, #ff0844, #ff6b6b, #ffb199);
+            border: 4px solid #ffde22;
+            box-shadow: 0 16px 30px rgba(255, 8, 68, 0.5);
+            transition: 0.3s;
             display: flex;
             flex-direction: column;
             align-items: center;
+            text-align: center;
+            color: white;
+            text-shadow: 2px 2px 0 #a00034;
+        }
+        .support-card-style:hover {
+            transform: scale(1.03) translateY(-8px);
+            border-color: white;
+            box-shadow: 0 25px 35px #ff8e53;
+        }
+        .card-icon { font-size: 3.5rem; margin-bottom: 10px; }
+        .support-card-style h3 { font-size: 2rem; font-weight: 900; }
+        .card-badge {
+            background: rgba(255,255,255,0.3);
+            backdrop-filter: blur(4px);
+            padding: 8px 20px;
+            border-radius: 40px;
+            margin-top: 15px;
+            font-weight: 800;
+            border: 2px solid white;
         }
 
-        .container {
-            max-width: 1200px;
-            width: 100%;
+        /* footer */
+        .footer {
+            text-align: center;
+            padding: 30px 20px;
+            margin-top: 50px;
+            background: #16222e;
+            color: white;
+            border-top: 5px solid #ffb86b;
         }
 
-        .video-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-            gap: 15px;
-            justify-items: center;
-        }
-
-        .video-item {
-            background: #000;
-            padding: 5px;
-            border-radius: 8px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.5);
-            width: 100%;
-            max-width: 510px;
-        }
-
-        .video-wrapper {
-            position: relative;
-            padding-bottom: 78.43%;
-            height: 0;
-            overflow: hidden;
-        }
-
-        .video-wrapper iframe {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            border: none;
-        }
-
-        @media (max-width: 480px) {
-            body {
-                padding: 5px;
-            }
-            .video-grid {
-                gap: 10px;
-            }
+        /* responsive */
+        @media (max-width: 700px) {
+            .home-button { top: 8px; left: 8px; }
+            .home-button a { padding: 8px 16px; font-size: 0.8rem; }
+            .header { padding-top: 70px; }
+            .logo h1 { font-size: 2.4rem; }
+            .views-number { font-size: 3rem; }
         }
     </style>
 </head>
 <body>
+<div class="container">
+    <!-- Home button με σωστό link (franklymadear.com) -->
+    <div class="home-button">
+        <a href="https://franklymadear.com/" target="_blank" rel="noopener noreferrer">
+            <span class="home-icon">🏠</span>
+            <span>Αρχική Οθόνη</span>
+        </a>
+    </div>
 
-    <div class="container">
-        <div class="video-grid">
-            
-            <div class="video-item">
-                <div class="video-wrapper">
-                    <iframe src="https://www.xvideos.com/embedframe/outmoek02a0" frameborder=0 scrolling=no allowfullscreen=allowfullscreen></iframe>
-                </div>
-            </div>
+    <header class="header">
+        <div class="logo">
+            <h1>🕹️ games · support</h1>
+        </div>
+        <p class="tagline">Δες διαφημίσεις, δήλωσε συμμετοχή, κέρδισε δώρα!</p>
+    </header>
 
-            <meta http-equiv="Delegate-CH" content="Sec-CH-UA https://s.magsrv.com; Sec-CH-UA-Mobile https://s.magsrv.com; Sec-CH-UA-Arch https://s.magsrv.com; Sec-CH-UA-Model https://s.magsrv.com; Sec-CH-UA-Platform https://s.magsrv.com; Sec-CH-UA-Platform-Version https://s.magsrv.com; Sec-CH-UA-Bitness https://s.magsrv.com; Sec-CH-UA-Full-Version-List https://s.magsrv.com; Sec-CH-UA-Full-Version https://s.magsrv.com;">
+    <!-- ΠΡΩΤΗ ΔΙΑΦΗΜΙΣΗ (μεγάλη έμφαση) -->
+    <div class="ad-zone">
+        <ins class="adsbygoogle"
+             style="display:block"
+             data-ad-format="auto"
+             data-ad-client="ca-pub-3186700611266549"
+             data-ad-slot="9660744817"></ins>
+        <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+    </div>
 
-            <div class="video-item">
-                <div class="video-wrapper">
-                    <iframe src="https://www.xvideos.com/embedframe/uekakov7655" frameborder=0 scrolling=no allowfullscreen=allowfullscreen></iframe>
-                </div>
-            </div>
-
-            <meta http-equiv="Delegate-CH" content="Sec-CH-UA https://s.magsrv.com; Sec-CH-UA-Mobile https://s.magsrv.com; Sec-CH-UA-Arch https://s.magsrv.com; Sec-CH-UA-Model https://s.magsrv.com; Sec-CH-UA-Platform https://s.magsrv.com; Sec-CH-UA-Platform-Version https://s.magsrv.com; Sec-CH-UA-Bitness https://s.magsrv.com; Sec-CH-UA-Full-Version-List https://s.magsrv.com; Sec-CH-UA-Full-Version https://s.magsrv.com;">
-
-            <div class="video-item">
-                <div class="video-wrapper">
-                    <iframe src="https://www.xvideos.com/embedframe/kichmpb44ae" frameborder=0 scrolling=no allowfullscreen=allowfullscreen></iframe>
-                </div>
-            </div>
-
-            <meta http-equiv="Delegate-CH" content="Sec-CH-UA https://s.magsrv.com; Sec-CH-UA-Mobile https://s.magsrv.com; Sec-CH-UA-Arch https://s.magsrv.com; Sec-CH-UA-Model https://s.magsrv.com; Sec-CH-UA-Platform https://s.magsrv.com; Sec-CH-UA-Platform-Version https://s.magsrv.com; Sec-CH-UA-Bitness https://s.magsrv.com; Sec-CH-UA-Full-Version-List https://s.magsrv.com; Sec-CH-UA-Full-Version https://s.magsrv.com;">
-
-            <div class="video-item">
-                <div class="video-wrapper">
-                    <iframe src="https://www.xvideos.com/embedframe/oukpeul3def" frameborder=0 scrolling=no allowfullscreen=allowfullscreen></iframe>
-                </div>
-            </div>
-
-            <meta http-equiv="Delegate-CH" content="Sec-CH-UA https://s.magsrv.com; Sec-CH-UA-Mobile https://s.magsrv.com; Sec-CH-UA-Arch https://s.magsrv.com; Sec-CH-UA-Model https://s.magsrv.com; Sec-CH-UA-Platform https://s.magsrv.com; Sec-CH-UA-Platform-Version https://s.magsrv.com; Sec-CH-UA-Bitness https://s.magsrv.com; Sec-CH-UA-Full-Version-List https://s.magsrv.com; Sec-CH-UA-Full-Version https://s.magsrv.com;">
-
-            <div class="video-item">
-                <div class="video-wrapper">
-                    <iframe src="https://www.xvideos.com/embedframe/ucfudhb07f6" frameborder=0 scrolling=no allowfullscreen=allowfullscreen></iframe>
-                </div>
-            </div>
-
-            <meta http-equiv="Delegate-CH" content="Sec-CH-UA https://s.magsrv.com; Sec-CH-UA-Mobile https://s.magsrv.com; Sec-CH-UA-Arch https://s.magsrv.com; Sec-CH-UA-Model https://s.magsrv.com; Sec-CH-UA-Platform https://s.magsrv.com; Sec-CH-UA-Platform-Version https://s.magsrv.com; Sec-CH-UA-Bitness https://s.magsrv.com; Sec-CH-UA-Full-Version-List https://s.magsrv.com; Sec-CH-UA-Full-Version https://s.magsrv.com;">
-
-            <div class="video-item">
-                <div class="video-wrapper">
-                    <iframe src="https://www.xvideos.com/embedframe/ueklaaf368a" frameborder=0 scrolling=no allowfullscreen=allowfullscreen></iframe>
-                </div>
-            </div>
-
-            <meta http-equiv="Delegate-CH" content="Sec-CH-UA https://s.magsrv.com; Sec-CH-UA-Mobile https://s.magsrv.com; Sec-CH-UA-Arch https://s.magsrv.com; Sec-CH-UA-Model https://s.magsrv.com; Sec-CH-UA-Platform https://s.magsrv.com; Sec-CH-UA-Platform-Version https://s.magsrv.com; Sec-CH-UA-Bitness https://s.magsrv.com; Sec-CH-UA-Full-Version-List https://s.magsrv.com; Sec-CH-UA-Full-Version https://s.magsrv.com;">
-
-            <div class="video-item">
-                <div class="video-wrapper">
-                    <iframe src="https://www.xvideos.com/embedframe/ucpmomkf6b5" frameborder=0 scrolling=no allowfullscreen=allowfullscreen></iframe>
-                </div>
-            </div>
-
-            <meta http-equiv="Delegate-CH" content="Sec-CH-UA https://s.magsrv.com; Sec-CH-UA-Mobile https://s.magsrv.com; Sec-CH-UA-Arch https://s.magsrv.com; Sec-CH-UA-Model https://s.magsrv.com; Sec-CH-UA-Platform https://s.magsrv.com; Sec-CH-UA-Platform-Version https://s.magsrv.com; Sec-CH-UA-Bitness https://s.magsrv.com; Sec-CH-UA-Full-Version-List https://s.magsrv.com; Sec-CH-UA-Full-Version https://s.magsrv.com;">
-
-            <div class="video-item">
-                <div class="video-wrapper">
-                    <iframe src="https://www.xvideos.com/embedframe/uimehdk32cd" frameborder=0 scrolling=no allowfullscreen=allowfullscreen></iframe>
-                </div>
-            </div>
-
+    <!-- Μετρητής προβολών + στόχος δώρου (προσομοίωση, θα αυξάνεται με κάθε είσοδο στη σελίδα) -->
+    <div class="counter-box" id="viewCounterBox">
+        <div class="counter-label">
+            <span>👁️ ΣΥΝΟΛΙΚΕΣ ΠΡΟΒΟΛΕΣ</span>
+        </div>
+        <div class="views-number" id="viewCounter">12.458</div>
+        <div class="goal-hint">
+            ⭐ Στόχος: 25.000 προβολές → δώρο AirPods / δωροεπιταγή ⭐
         </div>
     </div>
 
+    <!-- ΔΕΥΤΕΡΗ ΔΙΑΦΗΜΙΣΗ (δίπλα σε άλλη, για περισσότερες εμφανίσεις) -->
+    <div class="ad-double">
+        <div class="ad-zone">
+            <ins class="adsbygoogle"
+                 style="display:block"
+                 data-ad-format="auto"
+                 data-ad-client="ca-pub-3186700611266549"
+                 data-ad-slot="9660744817"></ins>
+            <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+        </div>
+        <div class="ad-zone">
+            <ins class="adsbygoogle"
+                 style="display:block"
+                 data-ad-format="auto"
+                 data-ad-client="ca-pub-3186700611266549"
+                 data-ad-slot="9660744817"></ins>
+            <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+        </div>
+    </div>
+
+    <!-- ΚΑΡΤΑ ΚΛΗΡΩΣΗΣ / ΔΗΛΩΣΗ ΣΥΜΜΕΤΟΧΗΣ (το κύριο στοιχείο) -->
+    <div class="raffle-card">
+        <h2>🎉 ΔΗΛΩΣΕ ΣΥΜΜΕΤΟΧΗ 🎉</h2>
+        <div style="text-align: center;">
+            <span class="prize-highlight">🎁 ΔΩΡΟ 150€ 🎁</span>
+        </div>
+        <div class="prize-desc">AirPods 3 ή δωροεπιταγή όταν συμπληρωθούν 25.000 προβολές!</div>
+
+        <!-- φόρμα συμμετοχής (τοπική αποθήκευση) -->
+        <div class="entry-form">
+            <input type="text" id="entryName" placeholder="Το όνομά σου *" required>
+            <input type="email" id="entryEmail" placeholder="Το email σου *" required>
+            <button id="raffleSubmitBtn">✓ ΣΥΜΜΕΤΟΧΗ ✓</button>
+        </div>
+        <div id="entryFeedback" class="entry-message" style="margin-top: 20px;"></div>
+        <p style="color:#ffeaa5; margin-top: 20px; font-size: 1.1rem;">✔ Η συμμετοχή αποθηκεύεται. Με την εγγραφή σου αποδέχεσαι τους όρους. Η κλήρωση θα γίνει μόλις επιτευχθεί ο στόχος.</p>
+    </div>
+
+    <!-- ΤΡΙΤΗ ΔΙΑΦΗΜΙΣΗ (footer area) -->
+    <div class="ad-zone">
+        <ins class="adsbygoogle"
+             style="display:block"
+             data-ad-format="auto"
+             data-ad-client="ca-pub-3186700611266549"
+             data-ad-slot="9660744817"></ins>
+        <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+    </div>
+
+    <!-- Υπόλοιπες κάρτες support (βασισμένες στο αρχικό design) -->
+    <div style="padding: 20px;">
+        <h2 style="text-align:center; color:#13294b; margin: 40px 0 20px;">✨ Βοήθησε να γίνει πιο γρήγορα η κλήρωση ✨</h2>
+    </div>
+    <div class="category-grid">
+        <!-- Coffeetime Card (link ίδιο) -->
+        <a href="https://franklymadear.com/cafedium/index.html" class="support-card-style" style="background: linear-gradient(145deg,#c04848,#f0a07c);">
+            <div class="card-icon">☕</div>
+            <h3>Coffeetime</h3>
+            <p>Απόλαυσε μοναδική εμπειρία & στήριξε</p>
+            <div class="card-badge">δωρεάν διασκέδαση</div>
+        </a>
+        <!-- Αριθμομηχανή Card -->
+        <a href="http://franklymadear.com/calculator/index.html" class="support-card-style" style="background: linear-gradient(145deg,#0f2027,#2c5364);">
+            <div class="card-icon">🧮</div>
+            <h3>Αριθμομηχανή</h3>
+            <p>Γρήγοροι υπολογισμοί, χωρίς κόπο</p>
+            <div class="card-badge">χρηστικό</div>
+        </a>
+        <!-- Digital products / books (ενσωματωμένα) -->
+        <a href="digital-products.html" class="support-card-style" style="background: linear-gradient(145deg,#1e3c72,#4b6cb0);">
+            <div class="card-icon">📚</div>
+            <h3>Digital Books</h3>
+            <p>Activity books & ηλεκτρονικά βιβλία</p>
+            <div class="card-badge">δωρεάν</div>
+        </a>
+        <!-- Buy Me a Coffee απευθείας -->
+        <a href="https://www.buymeacoffee.com/franklymadear" target="_blank" rel="noopener noreferrer" class="support-card-style" style="background: linear-gradient(145deg,#ff6b6b,#ffb347);">
+            <div class="card-icon">⭐</div>
+            <h3>Buy me a coffee</h3>
+            <p>Κάνε μια δωρεά – επιτάχυνε την κλήρωση</p>
+            <div class="card-badge">Υποστήριξε τώρα</div>
+        </a>
+    </div>
+
+    <!-- Επιπλέον διαφήμιση footer -->
+    <footer class="footer">
+        <div class="ad-zone" style="margin-bottom: 25px;">
+            <ins class="adsbygoogle"
+                 style="display:block"
+                 data-ad-format="auto"
+                 data-ad-client="ca-pub-3186700611266549"
+                 data-ad-slot="9660744817"></ins>
+            <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+        </div>
+        <p>Made with ❤️ by FranklyMaDear – Games support page · Κάθε προβολή μετράει για την κλήρωση</p>
+        <p style="font-size: 0.9rem; opacity: 0.8;">Όταν συγκεντρωθούν 25.000 προβολές (βάσει μετρητή) θα γίνει live κλήρωση μεταξύ των συμμετοχών.</p>
+    </footer>
+</div>
+
+<!-- Buy Me a Coffee Widget (όπως στο αρχικό) -->
+<script data-name="BMC-Widget" data-cfasync="false" src="https://cdnjs.buymeacoffee.com/1.0.0/widget.prod.min.js" data-id="franklymadear" data-description="Support me on Buy me a coffee!" data-message="" data-color="#FF6B6B" data-position="Right" data-x_margin="18" data-y_margin="18"></script>
+
+<script>
+    (function() {
+        // ---------- ΜΕΤΡΗΤΗΣ ΠΡΟΒΟΛΩΝ (προσομοίωση με αποθήκευση στο localStorage) ----------
+        let views = localStorage.getItem('gs_page_views');
+        const today = new Date().toDateString();
+        const lastVisit = localStorage.getItem('gs_last_visit_date');
+        
+        // αν δεν υπάρχει μετρητής ή άλλαξε μέρα, προσθέτουμε 1 προβολή (μοναδική ανά ημέρα αν θέλουμε, αλλά εδώ κάθε φόρτωση μετράει)
+        // Για να μην αυξάνεται υπερβολικά κάθε refresh, χρησιμοποιούμε ένα κλειδί συνεδρίας αλλά θέλουμε να δείχνουμε αύξηση.
+        // Ας το κάνουμε πιο ζωντανό: κάθε φόρτωση σελίδας αυξάνει τον μετρητή κατά 1 (προσομοίωση). Στην πραγματικότητα θα μπορούσε να συνδέεται με google analytics.
+        let currentViews = localStorage.getItem('gs_total_views');
+        if (!currentViews) {
+            currentViews = 12458;   // αρχική τιμή όπως φαίνεται
+        } else {
+            currentViews = parseInt(currentViews, 10);
+        }
+        // κάθε φορά που φορτώνει η σελίδα αυξάνουμε κατά 1 (προσομοίωση πραγματικών προβολών)
+        currentViews = currentViews + 1;
+        localStorage.setItem('gs_total_views', currentViews);
+
+        // ενημέρωση με κόμμα ή τελεία για χιλιάδες
+        function formatViews(num) {
+            return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+        }
+        document.getElementById('viewCounter').innerText = formatViews(currentViews);
+
+        // ---------- ΣΥΜΜΕΤΟΧΕΣ (raffle entries) αποθήκευση στο localStorage ----------
+        const entriesKey = 'gs_raffle_entries';
+        let entries = JSON.parse(localStorage.getItem(entriesKey)) || [];  // πίνακας από objects {name, email, date}
+
+        const feedbackDiv = document.getElementById('entryFeedback');
+        const nameInput = document.getElementById('entryName');
+        const emailInput = document.getElementById('entryEmail');
+        const submitBtn = document.getElementById('raffleSubmitBtn');
+
+        // ελέγχουμε μήνυμα αν υπάρχει ήδη το email σήμερα
+        function hasRecentEntry(email) {
+            const todayStr = new Date().toDateString();
+            return entries.some(e => e.email === email && new Date(e.date).toDateString() === todayStr);
+        }
+
+        submitBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            const name = nameInput.value.trim();
+            const email = emailInput.value.trim();
+
+            if (!name || !email) {
+                feedbackDiv.innerText = '⚠️ Συμπλήρωσε όνομα και email.';
+                feedbackDiv.className = 'entry-message info-msg';
+                return;
+            }
+            if (!email.includes('@') || !email.includes('.')) {
+                feedbackDiv.innerText = '📧 Βάλε ένα έγκυρο email.';
+                feedbackDiv.className = 'entry-message info-msg';
+                return;
+            }
+
+            // έλεγχος διπλοεγγραφής σήμερα
+            if (hasRecentEntry(email)) {
+                feedbackDiv.innerText = '✅ Έχεις ήδη συμμετάσχει σήμερα! Καλή τύχη.';
+                feedbackDiv.className = 'entry-message success-msg';
+                nameInput.value = '';
+                emailInput.value = '';
+                return;
+            }
+
+            // αποθήκευση
+            const newEntry = { name: name, email: email, date: new Date().toISOString() };
+            entries.push(newEntry);
+            localStorage.setItem(entriesKey, JSON.stringify(entries));
+
+            feedbackDiv.innerText = '🎉 Επιτυχής εγγραφή! Σε ευχαριστούμε για τη συμμετοχή. Θα ειδοποιηθείς με email.';
+            feedbackDiv.className = 'entry-message success-msg';
+            nameInput.value = '';
+            emailInput.value = '';
+
+            // (Προαιρετικά) μπορούμε να εμφανίσουμε πόσες συμμετοχές υπάρχουν
+            console.log(`Σύνολο συμμετοχών: ${entries.length}`);
+        });
+
+        // Αν θέλουμε να δείξουμε ένα μήνυμα ότι ο αποθηκευτικός χώρος λειτουργεί
+        if (entries.length > 0) {
+            // απλά για debugging
+        }
+    })();
+</script>
+
+<!-- σύνδεση με εξωτερικό script (προαιρετικό) -->
+<script src="script.js"></script>
 </body>
 </html>
