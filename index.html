@@ -3,23 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
-    <title>Δες και κέρδισε · Διαγωνισμός</title>
+    <title>Τυχερό Μπισκότο · Δες και κέρδισε</title>
     <link rel="icon" type="image/png" href="index.png">
     
-    <!-- Google AdSense · fluid για κινητά/tablet -->
+    <!-- Google AdSense · fluid + autorelaxed για κινητά/tablet -->
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3186700611266549" crossorigin="anonymous"></script>
     
-    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,600;14..32,800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600;800&display=swap" rel="stylesheet">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
-            font-family: 'Inter', sans-serif;
-            background: #10121e;
-            color: #f0edfa;
+            font-family: 'Quicksand', sans-serif;
+            background: linear-gradient(145deg, #0f0c1f, #1e1a35);
+            color: #f9f2e7;
             display: flex;
             flex-direction: column;
             align-items: center;
-            padding: 8px 10px 30px;
+            padding: 12px 10px 30px;
             min-height: 100vh;
         }
         .container {
@@ -28,56 +28,55 @@
         }
 
         /* header */
-        .logo-area {
+        .header {
             text-align: center;
-            margin: 15px 0 10px;
+            margin: 15px 0 20px;
         }
-        .logo-area h1 {
-            font-size: clamp(2.4rem, 10vw, 3.8rem);
+        .header h1 {
+            font-size: clamp(2.6rem, 10vw, 4rem);
             font-weight: 800;
-            background: linear-gradient(145deg, #fee07a, #ffa06f);
+            background: linear-gradient(145deg, #ffd966, #ff9366);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             letter-spacing: -0.5px;
-            text-shadow: 0 0 25px #ffae42;
+            text-shadow: 0 0 25px #ff9f4b;
         }
-        .logo-area p {
-            background: #252c4a;
-            padding: 10px 18px;
+        .header p {
+            background: #292f4a;
+            padding: 10px 22px;
             border-radius: 60px;
             font-size: 1.2rem;
             font-weight: 600;
-            border: 2px solid #ffb45e;
+            border: 2px solid #febf5e;
             display: inline-block;
-            margin: 8px 0 0;
+            margin-top: 8px;
         }
 
         /* διαφημίσεις fluid */
-        .ad-fluid-box {
+        .ad-box {
             margin: 25px auto;
             width: 100%;
-            border-radius: 32px;
+            border-radius: 36px;
             overflow: hidden;
-            box-shadow: 0 20px 35px rgba(0, 0, 0, 0.7);
-            border: 3px solid #fdc758;
-            background: #1b1f34;
+            box-shadow: 0 20px 35px #000000aa;
+            border: 4px solid #fcba5c;
+            background: #181e34;
         }
-        .ad-fluid-box ins {
+        .ad-box ins {
             display: block;
             width: 100%;
         }
 
-        /* παιχνίδι: "Δες και κέρδισε" */
-        .game-section {
-            background: #1d233b;
-            border-radius: 50px 50px 30px 30px;
-            padding: 35px 18px;
+        /* ΤΥΧΕΡΟ ΜΠΙΣΚΟΤΟ (αντί για κουτί) */
+        .cookie-section {
+            background: #1f253f;
+            border-radius: 70px 70px 40px 40px;
+            padding: 40px 18px;
             margin: 30px 0;
-            border: 4px solid #fabf5e;
-            box-shadow: 0 20px 30px #00000055;
+            border: 4px solid #fdbf68;
             text-align: center;
         }
-        .game-title {
+        .cookie-title {
             font-size: 2.4rem;
             font-weight: 800;
             display: flex;
@@ -87,55 +86,89 @@
             flex-wrap: wrap;
             margin-bottom: 25px;
         }
-        .game-title span {
-            background: #efb152;
-            color: #141b30;
-            padding: 8px 25px;
-            border-radius: 50px;
+        .cookie-title span {
+            background: #f1b354;
+            color: #171f38;
+            padding: 8px 28px;
+            border-radius: 60px;
             font-size: 1.8rem;
         }
-        
-        /* μυστικό κουτί */
-        .mystery-box {
-            background: linear-gradient(145deg, #302b4e, #1b1f3a);
-            border-radius: 70px;
-            padding: 30px 20px;
-            border: 5px solid #ffd966;
-            box-shadow: 0 15px 0 #b17e3a;
-            cursor: pointer;
-            transition: 0.1s linear;
-            max-width: 400px;
+
+        /* μπισκότο - κλικ να σπάσει */
+        .fortune-cookie {
+            background: #e5c28e;
+            background-image: radial-gradient(circle at 30% 30%, #f5e1b5, #c9a15b);
+            width: 240px;
+            height: 180px;
+            border-radius: 50% 50% 40% 40% / 60% 60% 30% 30%;
             margin: 20px auto;
+            box-shadow: 0 20px 0 #a57c47, 0 30px 30px rgba(0,0,0,0.5);
+            position: relative;
+            cursor: pointer;
+            transition: 0.15s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
-        .mystery-box:active {
-            transform: translateY(10px);
-            box-shadow: 0 5px 0 #b17e3a;
+        .fortune-cookie:active {
+            transform: scale(0.96);
+            box-shadow: 0 8px 0 #a57c47, 0 20px 25px black;
         }
-        .mystery-emoji {
-            font-size: 6rem;
-            line-height: 1;
-            filter: drop-shadow(0 10px 10px #ffb86b);
+        .cookie-emoji {
+            font-size: 7rem;
+            filter: drop-shadow(0 10px 8px #4f3e26);
+            transition: 0.2s;
         }
-        .mystery-text {
-            font-size: 2.2rem;
-            font-weight: 900;
-            color: #ffedb0;
-            text-transform: uppercase;
-            margin: 10px 0 0;
+        .cookie-message {
+            background: #fef7e0;
+            color: #2e1f0b;
+            padding: 18px 22px;
+            border-radius: 60px;
+            font-size: 1.6rem;
+            font-weight: 700;
+            border: 4px solid #b8560e;
+            max-width: 300px;
+            margin: 25px auto 15px;
+            box-shadow: 0 8px 0 #7b4314;
+            word-break: break-word;
         }
-        .small-hint {
-            color: #c1b3ff;
-            font-size: 1.2rem;
-            margin-top: 15px;
+        .hint-text {
+            color: #bfb3ff;
+            font-size: 1.1rem;
+            margin: 10px 0;
         }
 
-        /* φόρμα συμμετοχής – με το σωστό endpoint */
+        /* ΒΙΝΤΕΟ ΔΙΑΦΗΜΙΣΗ (πριν ξεκλειδώσει η φόρμα) */
+        .video-ad-container {
+            margin: 20px auto;
+            max-width: 500px;
+            border-radius: 40px;
+            overflow: hidden;
+            box-shadow: 0 15px 30px black;
+            border: 4px solid #fdc859;
+            display: none; /* αρχικά κρυφό */
+        }
+        .video-ad-container iframe {
+            width: 100%;
+            aspect-ratio: 16 / 9;
+            display: block;
+        }
+
+        /* ΦΟΡΜΑ ΣΥΜΜΕΤΟΧΗΣ - κλειδωμένη μέχρι να δει βίντεο */
         .entry-block {
-            background: #1a1f38;
+            background: #1b2140;
             border-radius: 60px;
             padding: 30px 20px;
             border: 4px solid #fdcc6b;
-            margin: 35px 0;
+            margin: 30px 0 20px;
+            opacity: 0.6;
+            pointer-events: none;
+            transition: 0.3s;
+        }
+        .entry-block.unlocked {
+            opacity: 1;
+            pointer-events: all;
+            box-shadow: 0 0 20px #ffd966;
         }
         .entry-block h3 {
             font-size: 2.2rem;
@@ -152,7 +185,7 @@
             padding: 18px 22px;
             border-radius: 60px;
             border: 4px solid #fbbf4d;
-            background: #eef2ff;
+            background: #f0f3ff;
             font-size: 1.2rem;
             font-weight: 600;
             outline: none;
@@ -177,52 +210,52 @@
             box-shadow: 0 2px 0 #047857;
         }
         .feedback-message {
-            font-size: 1.3rem;
-            padding: 12px;
-            border-radius: 40px;
+            font-size: 1.4rem;
+            padding: 18px;
+            border-radius: 50px;
             text-align: center;
             font-weight: 700;
-            margin-top: 10px;
+            margin: 15px 0 5px;
+            background: #d0f0c0;
+            color: #1b4a1b;
+            border: 4px solid #ffd966;
         }
-        .success-msg { background: #a3f5c5; color: #064e3b; }
-        .info-msg { background: #fde4b5; color: #613e0b; }
+        .hidden-feedback {
+            display: none;
+        }
 
         .gift-note {
-            background: #292f4a;
+            background: #2a3153;
             border-radius: 50px;
             padding: 18px;
             text-align: center;
             border: 3px solid #fbbf24;
-            font-size: 1.3rem;
+            font-size: 1.2rem;
             font-weight: 600;
-            margin: 20px 0;
         }
-
         .footer-note {
             text-align: center;
-            padding: 30px 10px 10px;
-            border-top: 4px solid #fbc85a;
+            padding: 25px 10px 10px;
+            border-top: 4px solid #f9c45a;
             margin-top: 20px;
-            font-size: 1rem;
-            color: #cac2ff;
+            color: #cbc2ff;
         }
-
         @media (max-width: 450px) {
-            .game-title { font-size: 2rem; }
-            .mystery-emoji { font-size: 5rem; }
-            .mystery-text { font-size: 1.8rem; }
+            .cookie-title { font-size: 2rem; }
+            .fortune-cookie { width: 200px; height: 150px; }
+            .cookie-emoji { font-size: 5rem; }
         }
     </style>
 </head>
 <body>
 <div class="container">
-    <header class="logo-area">
-        <h1>Δες και κέρδισε</h1>
-        <p>✧ Διαγωνισμός με δωροεπιταγές ✧</p>
+    <header class="header">
+        <h1>τυχερό μπισκότο</h1>
+        <p>✧ σπάσε το – δες το βίντεο – κέρδισε ✧</p>
     </header>
 
-    <!-- 1η FLUID διαφήμιση -->
-    <div class="ad-fluid-box">
+    <!-- 1η διαφήμιση fluid (πάνω) -->
+    <div class="ad-box">
         <ins class="adsbygoogle"
              style="display:block"
              data-ad-format="fluid"
@@ -232,22 +265,30 @@
         <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
     </div>
 
-    <!-- ΠΑΙΧΝΙΔΙ: Μυστικό Κουτί -->
-    <div class="game-section">
-        <div class="game-title">
-            🎁 ΔΕΣ ΚΑΙ ΚΕΡΔΙΣΕ 🎁
-            <span>άνοιξε το κουτί</span>
+    <!-- ΤΜΗΜΑ ΜΠΙΣΚΟΤΟΥ -->
+    <div class="cookie-section">
+        <div class="cookie-title">
+            🥠 ΚΙΝΕΖΙΚΟ ΜΠΙΣΚΟΤΟ 🥠
+            <span>τύχη</span>
         </div>
 
-        <div class="mystery-box" id="mysteryBox">
-            <div class="mystery-emoji" id="boxEmoji">📦</div>
-            <div class="mystery-text" id="boxText">πάτα με!</div>
+        <!-- το μπισκότο (πατάει ο χρήστης) -->
+        <div class="fortune-cookie" id="fortuneCookie">
+            <span class="cookie-emoji" id="cookieEmoji">🥠</span>
         </div>
-        <p class="small-hint">✨ κάθε πάτημα φέρνει τυχερό μήνυμα ✨</p>
+        <div class="cookie-message" id="cookieMessage">Πάτα το μπισκότο!</div>
+        <p class="hint-text">⬆️ πάτησέ το και θα ανοίξει ⬆️</p>
     </div>
 
-    <!-- 2η FLUID διαφήμιση -->
-    <div class="ad-fluid-box">
+    <!-- ΒΙΝΤΕΟ ΔΙΑΦΗΜΙΣΗ (εμφανίζεται αφού πατήσουν μπισκότο) -->
+    <div class="video-ad-container" id="videoAdContainer">
+        <!-- Αν θέλεις βάλε δικό σωστό video id, εδώ χρησιμοποιώ placeholder -->
+        <iframe src="https://www.youtube.com/embed/5qap5aO4i9A?autoplay=1&mute=1" 
+                title="video ad" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+    </div>
+
+    <!-- 2η διαφήμιση fluid (μεσαία) -->
+    <div class="ad-box">
         <ins class="adsbygoogle"
              style="display:block"
              data-ad-format="fluid"
@@ -257,32 +298,32 @@
         <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
     </div>
 
-    <!-- ΦΟΡΜΑ ΣΥΜΜΕΤΟΧΗΣ - ΣΩΣΤΗ ΥΛΟΠΟΙΗΣΗ με το μοναδικό κλειδί -->
-    <div class="entry-block">
+    <!-- ΦΟΡΜΑ ΣΥΜΜΕΤΟΧΗΣ (κλειδωμένη αρχικά) -->
+    <div class="entry-block" id="entryBlock">
         <h3>✍️ Δήλωσε συμμετοχή</h3>
         
-        <!-- ΣΗΜΑΝΤΙΚΟ: Χρησιμοποιούμε το μοναδικό κλειδί αντί για το email -->
         <form action="https://formsubmit.co/6ae291f8020d6a4e62242119b18a2f4f" method="POST" id="entryForm">
-            <!-- Κρυφά πεδία για σωστή λειτουργία -->
-            <input type="hidden" name="_subject" value="Νέα συμμετοχή στο Δες και κέρδισε!">
-            <input type="hidden" name="_next" value="https://games-support.franklymadear.com/success.html">
+            <input type="hidden" name="_subject" value="Νέα συμμετοχή από μπισκότο">
+            <input type="hidden" name="_next" value="https://games-support.franklymadear.com/">
             <input type="hidden" name="_captcha" value="false">
             <input type="hidden" name="_template" value="box">
             
-            <!-- Πεδία φόρμας -->
             <div class="entry-flex">
-                <input type="text" name="name" id="nameField" placeholder="Το όνομά σου *" required>
-                <input type="email" name="email" id="emailField" placeholder="Το email σου *" required>
+                <input type="text" name="name" id="nameField" placeholder="Όνομα *" required>
+                <input type="email" name="email" id="emailField" placeholder="Email *" required>
+                <!-- κρυφό flag ότι είδαν βίντεο -->
+                <input type="hidden" name="μπισκότο" value="άνοιξε">
                 <button type="submit">ΣΥΜΜΕΤΟΧΗ</button>
             </div>
         </form>
-        
-        <div id="entryFeedback" class="feedback-message"></div>
-        <p style="color:#b8adff; font-size:1rem; margin-top: 20px;">✔ Θα λάβεις επιβεβαίωση. Τα στοιχεία αποστέλλονται με ασφάλεια.</p>
+
+        <!-- Αρχικά κρυφό feedback, εμφανίζεται όταν γίνει submit (με ιστορία) -->
+        <div id="feedbackMessage" class="feedback-message hidden-feedback"></div>
+        <p style="color:#b6a9ff; font-size:0.95rem; margin-top:15px;">✔ Αφού δεις το βίντεο ξεκλειδώνει η φόρμα.</p>
     </div>
 
-    <!-- 3η FLUID διαφήμιση -->
-    <div class="ad-fluid-box">
+    <!-- 3η διαφήμιση fluid (κάτω) -->
+    <div class="ad-box">
         <ins class="adsbygoogle"
              style="display:block"
              data-ad-format="fluid"
@@ -293,57 +334,119 @@
     </div>
 
     <div class="gift-note">
-        🎫 Οι νικητές κερδίζουν δωροεπιταγές (Iris / PayPal)
+        🎁 δωροεπιταγές Iris / PayPal – 50% των εσόδων από διαφημίσεις
     </div>
 
     <footer class="footer-note">
-        <p>📧 Οι συμμετοχές καταλήγουν με ασφάλεια στον διοργανωτή</p>
-        <p style="opacity:0.7;">Δες και κέρδισε – με την υποστήριξη των διαφημίσεων</p>
+        <p>Οι συμμετοχές καταλήγουν με ασφάλεια στον διοργανωτή</p>
     </footer>
 </div>
 
-<!-- JavaScript για το παιχνίδι (μυστικό κουτί) -->
 <script>
     (function() {
-        // ΠΑΙΧΝΙΔΙ: ΜΥΣΤΙΚΟ ΚΟΥΤΙ
-        const box = document.getElementById('mysteryBox');
-        const boxEmoji = document.getElementById('boxEmoji');
-        const boxText = document.getElementById('boxText');
-
-        const messages = [
-            { emoji: '🎉', text: 'Κέρδισες χαμόγελο!' },
-            { emoji: '🍀', text: 'Τυχερό τριφύλλι' },
-            { emoji: '🎰', text: 'Τζόκερ' },
-            { emoji: '💎', text: 'Διαμάντι!' },
-            { emoji: '⭐', text: 'Αστέρι' },
-            { emoji: '🎁', text: 'Δώρο' },
-            { emoji: '💰', text: 'Θησαυρός' },
-            { emoji: '✨', text: 'Λάμψη' }
+        // ---------- ΤΥΧΕΡΟ ΜΠΙΣΚΟΤΟ (fortune cookie) ----------
+        const cookieEl = document.getElementById('fortuneCookie');
+        const cookieEmoji = document.getElementById('cookieEmoji');
+        const cookieMessage = document.getElementById('cookieMessage');
+        const videoContainer = document.getElementById('videoAdContainer');
+        const entryBlock = document.getElementById('entryBlock');
+        
+        // Μηνύματα για το μπισκότο (κινέζικες σοφίες / τυχερά)
+        const fortunes = [
+            '🍀 Η τύχη θα σου χαμογελάσει σήμερα.',
+            '🌟 Μια ευχάριστη έκπληξη σε περιμένει.',
+            '🎉 Κέρδισες μια δωροεπιταγή 5€! (αν κληρωθείς)',
+            '✨ Ο δρόμος προς την επιτυχία είναι ανοιχτός.',
+            '💰 Θα βρεις έναν μικρό θησαυρό.',
+            '🎁 Κάποιος σε σκέφτεται θετικά.',
+            '💫 Σύντομα θα ταξιδέψεις (έστω και διαδικτυακά).',
+            '⭐ Η υπομονή σου θα ανταμειφθεί.',
+            '🍪 Το μπισκότο δεν λέει ψέματα: δήλωσε συμμετοχή!',
+            '🎯 Η στιγμή σου είναι τώρα.'
         ];
 
-        box.addEventListener('click', function() {
-            box.style.transform = 'scale(0.97)';
-            setTimeout(() => box.style.transform = '', 100);
+        // Μεταβλητή για να μην ξαναπαίζει το βίντεο συνέχεια
+        let cookieOpened = false;
 
-            const randomIndex = Math.floor(Math.random() * messages.length);
-            const selected = messages[randomIndex];
-            boxEmoji.textContent = selected.emoji;
-            boxText.textContent = selected.text;
+        cookieEl.addEventListener('click', function() {
+            if (cookieOpened) return; // μόνο μία φορά ανοίγει
+
+            // άνοιγμα μπισκότου (αλλάζει emoji)
+            cookieEmoji.textContent = '🥡'; // ανοιγμένο κουτί/μπισκότο
+            const randomFortune = fortunes[Math.floor(Math.random() * fortunes.length)];
+            cookieMessage.textContent = randomFortune;
+
+            // Εμφάνιση video ad
+            videoContainer.style.display = 'block';
+
+            // Μετά από 5 δευτερόλεπτα (ή όσο διαρκεί το βίντεο) ξεκλειδώνουμε τη φόρμα
+            setTimeout(() => {
+                entryBlock.classList.add('unlocked');
+                // μπορούμε να κρύψουμε το βίντεο αν θέλουμε
+                // videoContainer.style.display = 'none'; // αν θέλουμε να κρυφτεί
+            }, 5000); // 5 δευτερόλεπτα προσομοίωσης διάρκειας βίντεο
+
+            cookieOpened = true;
         });
 
-        // Μήνυμα επιτυχούς υποβολής (αν υπάρχει παράμετρος στο URL)
-        const urlParams = new URLSearchParams(window.location.search);
-        if (urlParams.has('submit') && urlParams.get('submit') === 'success') {
-            const feedbackDiv = document.getElementById('entryFeedback');
-            feedbackDiv.innerText = '✅ Επιτυχία! Τα στοιχεία στάλθηκαν. Καλή τύχη!';
-            feedbackDiv.className = 'feedback-message success-msg';
-        }
+        // ---------- ΦΟΡΜΑ: ΑΠΟΣΤΟΛΗ ΜΕ FEEDBACK (χωρίς ανακατεύθυνση) ----------
+        const form = document.getElementById('entryForm');
+        const feedbackDiv = document.getElementById('feedbackMessage');
+        const nameInput = document.getElementById('nameField');
+        const emailInput = document.getElementById('emailField');
+
+        form.addEventListener('submit', function(e) {
+            e.preventDefault(); // σταματάμε κανονική υποβολή
+
+            const nameVal = nameInput.value.trim();
+            const emailVal = emailInput.value.trim();
+
+            if (!nameVal || !emailVal) {
+                feedbackDiv.innerText = '⚠️ Συμπλήρωσε όνομα και email.';
+                feedbackDiv.classList.remove('hidden-feedback');
+                return;
+            }
+            if (!emailVal.includes('@') || emailVal.indexOf('.') === -1) {
+                feedbackDiv.innerText = '📧 Βάλε σωστό email.';
+                feedbackDiv.classList.remove('hidden-feedback');
+                return;
+            }
+
+            // Αποστολή μέσω AJAX (fetch) ώστε να μείνουμε στην ίδια σελίδα
+            const formData = new FormData(form);
+
+            fetch('https://formsubmit.co/6ae291f8020d6a4e62242119b18a2f4f', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => {
+                if (response.ok) {
+                    // ΕΠΙΤΥΧΙΑ – εμφανίζουμε μήνυμα μέσα σε πλαίσιο
+                    feedbackDiv.innerText = '🎉 Ευχαριστούμε για την Συμμετοχή! Καλή τύχη στον διαγωνισμό. 🎉';
+                    feedbackDiv.classList.remove('hidden-feedback');
+                    
+                    // Καθαρισμός πεδίων
+                    nameInput.value = '';
+                    emailInput.value = '';
+
+                    // (προαιρετικά) μετά από 8 δευτερόλεπτα κρύβουμε το μήνυμα
+                    setTimeout(() => {
+                        feedbackDiv.classList.add('hidden-feedback');
+                    }, 8000);
+                } else {
+                    feedbackDiv.innerText = '❌ Σφάλμα. Δοκίμασε ξανά.';
+                    feedbackDiv.classList.remove('hidden-feedback');
+                }
+            })
+            .catch(error => {
+                feedbackDiv.innerText = '❌ Προβλημα σύνδεσης. Ξαναπροσπάθησε.';
+                feedbackDiv.classList.remove('hidden-feedback');
+            });
+        });
     })();
 </script>
 
-<!-- AdSense push -->
-<script>
-    (adsbygoogle = window.adsbygoogle || []).push({});
-</script>
+<!-- AdSense extra push -->
+<script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
 </body>
 </html>
