@@ -10,8 +10,12 @@
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3186700611266549" crossorigin="anonymous"></script>
     
     <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600;800&display=swap" rel="stylesheet">
-    <!-- Font Awesome για εικονίδια αντιγραφής -->
+    <!-- Font Awesome για εικονίδια -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <!-- Tally Script (το νέο που ζήτησες) -->
+    <script async src="https://tally.so/widgets/embed.js"></script>
+    
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
@@ -277,17 +281,17 @@
             width: 100%;
         }
 
-        /* ΦΟΡΜΑ TALLY */
+        /* ΦΟΡΜΑ ΣΥΜΜΕΤΟΧΗΣ - ΝΕΟ ΜΕ ΚΟΥΜΠΙ TALLY */
         .entry-block {
             background: #1b2140;
             border-radius: 50px;
-            padding: 20px 15px;
+            padding: 25px 15px;
             border: 4px solid #fdcc6b;
             margin: 20px 0 15px;
             opacity: 0.6;
             pointer-events: none;
             transition: 0.3s;
-            position: relative;
+            text-align: center;
         }
         .entry-block.unlocked {
             opacity: 1;
@@ -300,7 +304,7 @@
             background: linear-gradient(145deg, #4f3b7c, #2d1f4a);
             border-radius: 40px;
             padding: 15px;
-            margin-bottom: 15px;
+            margin-bottom: 20px;
             border: 3px solid #ffd966;
             text-align: center;
             font-size: 1.1rem;
@@ -313,19 +317,39 @@
             margin: 0 5px;
         }
         
-        .tally-container {
-            width: 100%;
-            min-height: 250px;
-            margin: 10px 0;
-            background: transparent;
-            position: relative;
-            z-index: 5;
-        }
-        .tally-container iframe {
-            width: 100%;
+        /* Νέο κουμπί Tally */
+        .tally-button {
+            background: linear-gradient(145deg, #10b981, #059669);
+            color: white;
             border: none;
-            background: transparent;
-            pointer-events: auto;
+            padding: 18px 25px;
+            border-radius: 60px;
+            font-size: 1.4rem;
+            font-weight: 700;
+            border: 4px solid #bef264;
+            box-shadow: 0 8px 0 #047857;
+            cursor: pointer;
+            width: 100%;
+            max-width: 350px;
+            margin: 15px auto;
+            transition: 0.1s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        .tally-button:active {
+            transform: translateY(6px);
+            box-shadow: 0 2px 0 #047857;
+        }
+        .tally-button i {
+            font-size: 1.6rem;
+        }
+        
+        .form-note {
+            color: #b6a9ff;
+            font-size: 0.9rem;
+            margin-top: 10px;
         }
 
         .gift-note {
@@ -396,6 +420,10 @@
             .invitation-text {
                 font-size: 1rem;
                 padding: 12px;
+            }
+            .tally-button {
+                font-size: 1.2rem;
+                padding: 15px 20px;
             }
         }
     </style>
@@ -473,7 +501,7 @@
         <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
     </div>
 
-    <!-- ΦΟΡΜΑ ΣΥΜΜΕΤΟΧΗΣ - TALLY.SO -->
+    <!-- ΦΟΡΜΑ ΣΥΜΜΕΤΟΧΗΣ - ΝΕΑ ΜΕ ΚΟΥΜΠΙ TALLY -->
     <div class="entry-block" id="entryBlock">
         <!-- Νέο κείμενο πάνω από τη φόρμα -->
         <div class="invitation-text">
@@ -482,14 +510,20 @@
             <i class="fas fa-gift"></i>
         </div>
         
-        <h3 style="font-size:1.3rem; font-weight:600; text-align:center; margin-bottom:10px;">✍️ Συμμετοχή στον διαγωνισμό</h3>
+        <h3 style="font-size:1.3rem; font-weight:600; text-align:center; margin-bottom:15px;">✍️ Συμπλήρωσε τα στοιχεία σου</h3>
         
-        <!-- Ενσωμάτωση Tally.so -->
-        <div class="tally-container" id="tallyContainer">
-            <iframe id="tallyIframe" data-tally-src="https://tally.so/embed/44jy95?alignLeft=1&hideTitle=1&transparentBackground=1&dynamicHeight=1" loading="lazy" width="100%" height="250" frameborder="0" marginheight="0" marginwidth="0" title="Φόρμα Διαγωνισμού"></iframe>
-        </div>
+        <!-- Νέο κουμπί Tally που ανοίγει modal με τη φόρμα -->
+        <button class="tally-button" 
+                data-tally-open="44jy95" 
+                data-tally-emoji-text="👋" 
+                data-tally-emoji-animation="wave">
+            <i class="fas fa-pen"></i> Συμπλήρωσε Όνομα & Email
+            <i class="fas fa-arrow-right"></i>
+        </button>
         
-        <p style="color:#b6a9ff; font-size:0.85rem; text-align:center; margin-top:8px;">✨ Η συμμετοχή σου καταγράφεται αυτόματα ✨</p>
+        <p class="form-note">
+            <i class="fas fa-lock"></i> Τα στοιχεία σου είναι ασφαλή
+        </p>
     </div>
 
     <!-- 3η διαφήμιση -->
@@ -514,11 +548,6 @@
 
 <!-- Toast μήνυμα για αντιγραφή -->
 <div class="toast-message" id="toastMessage">✓ Το κείμενο αντιγράφηκε!</div>
-
-<!-- Script για Tally.so -->
-<script>
-var d=document,w="https://tally.so/widgets/embed.js",v=function(){"undefined"!=typeof Tally?Tally.loadEmbeds():d.querySelectorAll("iframe[data-tally-src]:not([src])").forEach((function(e){e.src=e.dataset.tallySrc}))};if("undefined"!=typeof Tally)v();else if(d.querySelector('script[src="'+w+'"]')==null){var s=d.createElement("script");s.src=w,s.onload=v,s.onerror=v,d.body.appendChild(s);}
-</script>
 
 <script>
     // Συνάρτηση αντιγραφής κειμένου
@@ -639,7 +668,6 @@ var d=document,w="https://tally.so/widgets/embed.js",v=function(){"undefined"!=t
         const cardsGrid = document.getElementById('cardsGrid');
         const cardMessageDisplay = document.getElementById('cardMessageDisplay');
         const gamesCompleteMessage = document.getElementById('gamesCompleteMessage');
-        const tallyIframe = document.getElementById('tallyIframe');
         const copyCookieBtn = document.getElementById('copyCookieBtn');
         const copyCardBtn = document.getElementById('copyCardBtn');
 
@@ -699,15 +727,6 @@ var d=document,w="https://tally.so/widgets/embed.js",v=function(){"undefined"!=t
                 setTimeout(() => {
                     // Ξεκλείδωμα του entry block
                     entryBlock.classList.add('unlocked');
-                    
-                    // Αναγκάζουμε το iframe να ξαναφορτώσει για να είναι πλήρως λειτουργικό
-                    if (tallyIframe) {
-                        const currentSrc = tallyIframe.src;
-                        tallyIframe.src = '';
-                        setTimeout(() => {
-                            tallyIframe.src = currentSrc;
-                        }, 100);
-                    }
                 }, 5000);
             }
         }
