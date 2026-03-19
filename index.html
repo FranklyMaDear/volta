@@ -10,10 +10,10 @@
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3186700611266549" crossorigin="anonymous"></script>
     
     <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600;800&display=swap" rel="stylesheet">
-    <!-- Font Awesome για εικονίδια -->
+    <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     
-    <!-- Tally Script (το νέο που ζήτησες) -->
+    <!-- Tally Script -->
     <script async src="https://tally.so/widgets/embed.js"></script>
     
     <style>
@@ -57,7 +57,7 @@
             margin-top: 5px;
         }
 
-        /* Διαφημίσεις */
+        /* Διαφημίσεις autorelaxed */
         .ad-box {
             margin: 15px auto;
             width: 100%;
@@ -70,6 +70,24 @@
         .ad-box ins {
             display: block;
             width: 100%;
+        }
+
+        /* Video Ads */
+        .video-ad-container {
+            margin: 15px auto;
+            max-width: 500px;
+            border-radius: 30px;
+            overflow: hidden;
+            border: 4px solid #fdc859;
+            display: none;
+            background: #0a0c1a;
+        }
+        .video-ad-container ins {
+            display: block;
+            width: 100%;
+        }
+        .video-ad-container.visible {
+            display: block;
         }
 
         /* ΜΠΙΣΚΟΤΟ */
@@ -266,22 +284,7 @@
             border-color: #bef264;
         }
 
-        /* βίντεο */
-        .video-ad-container {
-            margin: 15px auto;
-            max-width: 500px;
-            border-radius: 30px;
-            overflow: hidden;
-            border: 4px solid #fdc859;
-            display: none;
-            background: #0a0c1a;
-        }
-        .video-ad-container ins {
-            display: block;
-            width: 100%;
-        }
-
-        /* ΦΟΡΜΑ ΣΥΜΜΕΤΟΧΗΣ - ΝΕΟ ΜΕ ΚΟΥΜΠΙ TALLY */
+        /* ΦΟΡΜΑ ΣΥΜΜΕΤΟΧΗΣ */
         .entry-block {
             background: #1b2140;
             border-radius: 50px;
@@ -299,7 +302,6 @@
             box-shadow: 0 0 20px #ffd966;
         }
         
-        /* Νέο κείμενο πάνω από τη φόρμα */
         .invitation-text {
             background: linear-gradient(145deg, #4f3b7c, #2d1f4a);
             border-radius: 40px;
@@ -317,7 +319,6 @@
             margin: 0 5px;
         }
         
-        /* Νέο κουμπί Tally */
         .tally-button {
             background: linear-gradient(145deg, #10b981, #059669);
             color: white;
@@ -341,9 +342,6 @@
         .tally-button:active {
             transform: translateY(6px);
             box-shadow: 0 2px 0 #047857;
-        }
-        .tally-button i {
-            font-size: 1.6rem;
         }
         
         .form-note {
@@ -380,7 +378,6 @@
             font-size: 0.95rem;
         }
 
-        /* Toast μήνυμα */
         .toast-message {
             position: fixed;
             bottom: 20px;
@@ -398,7 +395,6 @@
             border: 2px solid #bef264;
         }
 
-        /* Mobile βελτιστοποιήσεις */
         @media (max-width: 480px) {
             .card {
                 font-size: 1.5rem;
@@ -435,7 +431,7 @@
         <p>Άνοιξε το μπισκότο, διάλεξε κάρτα και δες το μέλλον σου</p>
     </header>
 
-    <!-- 1η διαφήμιση -->
+    <!-- 1η autorelaxed διαφήμιση -->
     <div class="ad-box">
         <ins class="adsbygoogle"
              style="display:block"
@@ -460,6 +456,17 @@
         </div>
     </div>
 
+    <!-- 1ο VIDEO AD (μετά το μπισκότο) -->
+    <div class="video-ad-container" id="videoAd1">
+        <ins class="adsbygoogle"
+             style="display:block"
+             data-ad-format="fluid"
+             data-ad-layout-key="-hz-7+1t-5x+15"
+             data-ad-client="ca-pub-3186700611266549"
+             data-ad-slot="3969235710"></ins>
+        <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+    </div>
+
     <!-- ΠΑΙΧΝΙΔΙ ΜΕ ΚΑΡΤΕΣ -->
     <div class="cards-section" id="cardsSection">
         <div class="cards-title">Διάλεξε μια κάρτα</div>
@@ -474,8 +481,8 @@
         </div>
     </div>
 
-    <!-- VIDEO AD -->
-    <div class="video-ad-container" id="videoAdContainer">
+    <!-- 2ο VIDEO AD (μετά τις κάρτες) -->
+    <div class="video-ad-container" id="videoAd2">
         <ins class="adsbygoogle"
              style="display:block"
              data-ad-format="fluid"
@@ -490,7 +497,7 @@
         ✅ Ολοκλήρωσες! Τώρα μπορείς να συμμετέχεις στον διαγωνισμό
     </div>
 
-    <!-- 2η διαφήμιση -->
+    <!-- 2η autorelaxed διαφήμιση -->
     <div class="ad-box">
         <ins class="adsbygoogle"
              style="display:block"
@@ -501,9 +508,8 @@
         <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
     </div>
 
-    <!-- ΦΟΡΜΑ ΣΥΜΜΕΤΟΧΗΣ - ΝΕΑ ΜΕ ΚΟΥΜΠΙ TALLY -->
+    <!-- ΦΟΡΜΑ ΣΥΜΜΕΤΟΧΗΣ -->
     <div class="entry-block" id="entryBlock">
-        <!-- Νέο κείμενο πάνω από τη φόρμα -->
         <div class="invitation-text">
             <i class="fas fa-star"></i>
             Αν θέλεις, δήλωσε συμμετοχή για να μπεις στους διαγωνισμούς μας!
@@ -512,12 +518,11 @@
         
         <h3 style="font-size:1.3rem; font-weight:600; text-align:center; margin-bottom:15px;">✍️ Συμπλήρωσε τα στοιχεία σου</h3>
         
-        <!-- Νέο κουμπί Tally που ανοίγει modal με τη φόρμα -->
         <button class="tally-button" 
                 data-tally-open="44jy95" 
                 data-tally-emoji-text="👋" 
                 data-tally-emoji-animation="wave">
-            <i class="fas fa-pen"></i> Συμπλήρωσε Όνομα & Email
+            <i class="fas fa-pen"></i> Όνομα & Email
             <i class="fas fa-arrow-right"></i>
         </button>
         
@@ -526,7 +531,7 @@
         </p>
     </div>
 
-    <!-- 3η διαφήμιση -->
+    <!-- 3η autorelaxed διαφήμιση -->
     <div class="ad-box">
         <ins class="adsbygoogle"
              style="display:block"
@@ -546,21 +551,18 @@
     </footer>
 </div>
 
-<!-- Toast μήνυμα για αντιγραφή -->
+<!-- Toast μήνυμα -->
 <div class="toast-message" id="toastMessage">✓ Το κείμενο αντιγράφηκε!</div>
 
 <script>
-    // Συνάρτηση αντιγραφής κειμένου
     function copyText(elementId) {
         const element = document.getElementById(elementId);
         const text = element.innerText;
         
         navigator.clipboard.writeText(text).then(function() {
-            // Εμφάνιση toast
             const toast = document.getElementById('toastMessage');
             toast.style.display = 'block';
             
-            // Αλλαγή χρώματος στα κουμπιά
             const cookieBtn = document.getElementById('copyCookieBtn');
             const cardBtn = document.getElementById('copyCardBtn');
             
@@ -581,7 +583,7 @@
     }
 
     (function() {
-        // ---------- 50 ΜΗΝΥΜΑΤΑ ΓΙΑ ΜΠΙΣΚΟΤΟ ----------
+        // 50 μηνύματα μπισκότου (τα ίδια με πριν - συντομεύω για χώρο)
         const fortunes = [
             "❤️ Ένας άντρας θα σε κοιτάξει σαν να είσαι το τελευταίο ποτήρι νερό στην έρημο.",
             "💰 Μια απροσδόκητη οικονομική είδηση θα σε κάνει να χαμογελάσεις.",
@@ -635,7 +637,7 @@
             "💰 Το μέλλον σου είναι λαμπερό και γεμάτο χαρές – οικονομικές και μη."
         ];
 
-        // ---------- 20 ΜΗΝΥΜΑΤΑ ΓΙΑ ΚΑΡΤΕΣ ----------
+        // 20 μηνύματα καρτών
         const cardMessages = [
             "💖 Ερωτική πρόβλεψη: ένας πρώην θα ξαναεμφανιστεί – εσύ ξέρεις αν αξίζει.",
             "💎 Οικονομικά: μια επένδυση σε σένα είναι η καλύτερη που έκανες ποτέ.",
@@ -659,11 +661,11 @@
             "💰 Η οικονομική σου κατάσταση θα βελτιωθεί αισθητά."
         ];
 
-        // ---------- ΣΤΟΙΧΕΙΑ ΣΕΛΙΔΑΣ ----------
         const cookieEl = document.getElementById('fortuneCookie');
         const cookieEmoji = document.getElementById('cookieEmoji');
         const cookieMessage = document.getElementById('cookieMessage');
-        const videoContainer = document.getElementById('videoAdContainer');
+        const videoAd1 = document.getElementById('videoAd1');
+        const videoAd2 = document.getElementById('videoAd2');
         const entryBlock = document.getElementById('entryBlock');
         const cardsGrid = document.getElementById('cardsGrid');
         const cardMessageDisplay = document.getElementById('cardMessageDisplay');
@@ -671,11 +673,12 @@
         const copyCookieBtn = document.getElementById('copyCookieBtn');
         const copyCardBtn = document.getElementById('copyCardBtn');
 
-        // Κατάσταση παιχνιδιών
         let cookieOpened = false;
         let cardPlayed = false;
+        let video1Shown = false;
+        let video2Shown = false;
 
-        // Γέμισμα καρτών (6 κάρτες)
+        // Γέμισμα καρτών
         for (let i = 0; i < 6; i++) {
             const card = document.createElement('div');
             card.className = 'card';
@@ -688,14 +691,16 @@
                 const randomIndex = Math.floor(Math.random() * cardMessages.length);
                 const msg = cardMessages[randomIndex];
                 cardMessageDisplay.textContent = msg;
-                
-                // Εμφάνιση κουμπιού αντιγραφής
                 copyCardBtn.style.display = 'flex';
                 
                 this.classList.add('flipped');
                 this.textContent = msg.substring(0, 15) + '…';
                 
                 cardPlayed = true;
+                
+                // Εμφάνιση 2ου video ad
+                videoAd2.classList.add('visible');
+                video2Shown = true;
                 checkGamesComplete();
             });
             
@@ -710,24 +715,24 @@
             const randomIndex = Math.floor(Math.random() * fortunes.length);
             const selectedMsg = fortunes[randomIndex];
             cookieMessage.textContent = selectedMsg;
-            
-            // Εμφάνιση κουμπιού αντιγραφής
             copyCookieBtn.style.display = 'flex';
 
             cookieOpened = true;
+            
+            // Εμφάνιση 1ου video ad
+            videoAd1.classList.add('visible');
+            video1Shown = true;
             checkGamesComplete();
         });
 
-        // Έλεγχος αν ολοκληρώθηκαν και τα δύο παιχνίδια
+        // Έλεγχος ολοκλήρωσης
         function checkGamesComplete() {
-            if (cookieOpened && cardPlayed) {
-                videoContainer.style.display = 'block';
+            if (cookieOpened && cardPlayed && video1Shown && video2Shown) {
                 gamesCompleteMessage.style.display = 'block';
                 
                 setTimeout(() => {
-                    // Ξεκλείδωμα του entry block
                     entryBlock.classList.add('unlocked');
-                }, 5000);
+                }, 8000); // 8 δευτερόλεπτα συνολικά (4+4 για τα 2 video)
             }
         }
     })();
