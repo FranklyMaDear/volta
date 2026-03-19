@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
-    <title>Μπισκότο · Δες και κέρδισε</title>
+    <title>Ζήσε το Μέλλον σου · διαγωνισμός</title>
     <link rel="icon" type="image/png" href="index.png">
     
-    <!-- Google AdSense (δικό σου) · fluid & in-feed για βίντεο -->
+    <!-- Google AdSense -->
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3186700611266549" crossorigin="anonymous"></script>
     
     <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600;800&display=swap" rel="stylesheet">
@@ -27,31 +27,28 @@
             width: 100%;
         }
 
-        /* header - μικρότερος τίτλος */
         .header {
             text-align: center;
             margin: 5px 0 15px;
         }
         .header h1 {
-            font-size: clamp(2rem, 8vw, 3rem);
+            font-size: clamp(2.2rem, 9vw, 3.5rem);
             font-weight: 800;
-            background: linear-gradient(145deg, #ffd966, #ff9366);
+            background: linear-gradient(145deg, #ffb6c1, #ff69b4, #ffd700);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            letter-spacing: -0.3px;
+            text-shadow: 0 0 20px #ff99cc;
         }
         .header p {
             background: #292f4a;
             padding: 8px 20px;
             border-radius: 60px;
             font-size: 1.1rem;
-            font-weight: 600;
             border: 2px solid #febf5e;
             display: inline-block;
             margin-top: 5px;
         }
 
-        /* διαφημίσεις fluid */
         .ad-box {
             margin: 20px auto;
             width: 100%;
@@ -66,14 +63,15 @@
             width: 100%;
         }
 
-        /* ΜΠΙΣΚΟΤΟ - μικρότερος τίτλος */
+        /* ΜΠΙΣΚΟΤΟ */
         .cookie-section {
             background: #1f253f;
             border-radius: 70px 70px 40px 40px;
             padding: 30px 15px;
             margin: 25px 0;
-            border: 4px solid #fdbf68;
+            border: 4px solid #d4af37;
             text-align: center;
+            box-shadow: 0 0 20px #ffd70055;
         }
         .cookie-title {
             font-size: 1.8rem;
@@ -84,16 +82,8 @@
             gap: 10px;
             flex-wrap: wrap;
             margin-bottom: 20px;
+            color: #ffdab9;
         }
-        .cookie-title span {
-            background: #f1b354;
-            color: #171f38;
-            padding: 5px 20px;
-            border-radius: 50px;
-            font-size: 1.4rem;
-        }
-
-        /* μπισκότο */
         .fortune-cookie {
             background: #e5c28e;
             background-image: radial-gradient(circle at 30% 30%, #f5e1b5, #c9a15b);
@@ -101,7 +91,7 @@
             height: 150px;
             border-radius: 50% 50% 40% 40% / 60% 60% 30% 30%;
             margin: 15px auto;
-            box-shadow: 0 20px 0 #a57c47, 0 30px 30px rgba(0,0,0,0.5);
+            box-shadow: 0 20px 0 #a57c47, 0 30px 30px black;
             cursor: pointer;
             transition: 0.15s;
             display: flex;
@@ -119,34 +109,98 @@
         .cookie-message {
             background: #fef7e0;
             color: #2e1f0b;
-            padding: 15px 20px;
-            border-radius: 50px;
-            font-size: 1.4rem;
-            font-weight: 700;
+            padding: 18px 20px;
+            border-radius: 40px;
+            font-size: 1.2rem;
+            font-weight: 600;
             border: 4px solid #b8560e;
             max-width: 320px;
             margin: 20px auto 10px;
             box-shadow: 0 6px 0 #7b4314;
+            min-height: 100px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
-        /* GOOGLE VIDEO AD (δικό σου) */
+        /* ΠΑΙΧΝΙΔΙ ΜΕ ΚΑΡΤΕΣ */
+        .cards-section {
+            background: #1f253f;
+            border-radius: 70px 70px 40px 40px;
+            padding: 30px 15px;
+            margin: 25px 0;
+            border: 4px solid #c06bae;
+            text-align: center;
+        }
+        .cards-title {
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: #f8c3e7;
+            margin-bottom: 20px;
+        }
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin: 20px 0;
+        }
+        .card {
+            background: linear-gradient(145deg, #6441a5, #2a0845);
+            border: 3px solid #ffb6c1;
+            border-radius: 20px;
+            padding: 20px 5px;
+            font-size: 1.8rem;
+            cursor: pointer;
+            transition: 0.2s;
+            box-shadow: 0 8px 0 #3d1e4a;
+            color: white;
+            aspect-ratio: 3/4;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .card:active {
+            transform: translateY(6px);
+            box-shadow: 0 2px 0 #3d1e4a;
+        }
+        .card.flipped {
+            background: #f9e0c0;
+            color: #3d1e4a;
+            font-size: 0.9rem;
+            line-height: 1.3;
+            padding: 10px;
+            border-color: gold;
+            pointer-events: none;
+        }
+        .card-message-display {
+            background: #2d2244;
+            padding: 15px;
+            border-radius: 40px;
+            margin: 15px 0;
+            font-size: 1.2rem;
+            border: 3px solid #ff99cc;
+            min-height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* βίντεο */
         .video-ad-container {
             margin: 20px auto;
             max-width: 500px;
             border-radius: 40px;
             overflow: hidden;
-            box-shadow: 0 15px 30px black;
             border: 4px solid #fdc859;
-            display: none; /* αρχικά κρυφό */
+            display: none;
             background: #0a0c1a;
         }
-        /* in-feed διαφήμιση (κατάλληλη για βίντεο) */
         .video-ad-container ins {
             display: block;
             width: 100%;
         }
 
-        /* ΦΟΡΜΑ - κλειδωμένη */
+        /* φόρμα */
         .entry-block {
             background: #1b2140;
             border-radius: 60px;
@@ -161,11 +215,6 @@
             opacity: 1;
             pointer-events: all;
             box-shadow: 0 0 20px #ffd966;
-        }
-        .entry-block h3 {
-            font-size: 2rem;
-            font-weight: 700;
-            text-align: center;
         }
         .entry-flex {
             display: flex;
@@ -194,7 +243,6 @@
             border: 5px solid #bef264;
             box-shadow: 0 8px 0 #047857;
             cursor: pointer;
-            transition: 0.07s;
             width: 100%;
         }
         .entry-flex button:active {
@@ -207,7 +255,7 @@
             border-radius: 50px;
             text-align: center;
             font-weight: 700;
-            margin: 10px 0 5px;
+            margin: 10px 0;
             background: #d0f0c0;
             color: #1b4a1b;
             border: 4px solid #ffd966;
@@ -232,22 +280,24 @@
             color: #cbc2ff;
             font-size: 0.9rem;
         }
-        @media (max-width: 450px) {
-            .cookie-title { font-size: 1.5rem; }
-            .fortune-cookie { width: 170px; height: 130px; }
-            .cookie-emoji { font-size: 4.5rem; }
-            .cookie-message { font-size: 1.2rem; }
+        .games-complete {
+            background: #4f3b7c;
+            color: white;
+            padding: 10px;
+            border-radius: 40px;
+            margin: 10px 0;
+            font-weight: bold;
         }
     </style>
 </head>
 <body>
 <div class="container">
     <header class="header">
-        <h1>🍪 μπισκότο</h1>
-        <p>σπάσε, δες βίντεο, συμμετέχεις</p>
+        <h1>🌸 Ζήσε το Μέλλον σου 🌸</h1>
+        <p>άνοιξε το μπισκότο, διάλεξε κάρτα, γράψε τη μοίρα σου</p>
     </header>
 
-    <!-- 1η fluid διαφήμιση -->
+    <!-- 1η διαφήμιση -->
     <div class="ad-box">
         <ins class="adsbygoogle"
              style="display:block"
@@ -258,20 +308,30 @@
         <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
     </div>
 
-    <!-- ΤΜΗΜΑ ΜΠΙΣΚΟΤΟΥ (με λογοπαίγνια) -->
+    <!-- ΜΠΙΣΚΟΤΟ -->
     <div class="cookie-section">
         <div class="cookie-title">
-            <span>κινέζικο</span>
-            🥠 μπισκότο 🥠
+            <span>🌟 τυχερό μπισκότο 🌟</span>
         </div>
 
         <div class="fortune-cookie" id="fortuneCookie">
             <span class="cookie-emoji" id="cookieEmoji">🥠</span>
         </div>
-        <div class="cookie-message" id="cookieMessage">πάτα να σπάσει!</div>
+        <div class="cookie-message" id="cookieMessage">πάτα να σπάσει ✨</div>
     </div>
 
-    <!-- GOOGLE VIDEO AD (δικό σου, in-feed) -->
+    <!-- ΠΑΙΧΝΙΔΙ ΜΕ ΚΑΡΤΕΣ -->
+    <div class="cards-section" id="cardsSection">
+        <div class="cards-title">🔮 διάλεξε μια κάρτα 🔮</div>
+        <div class="cards-grid" id="cardsGrid">
+            <!-- Οι κάρτες θα γεμίσουν με JavaScript -->
+        </div>
+        <div class="card-message-display" id="cardMessageDisplay">
+            πάτησε μια κάρτα για το μήνυμά σου
+        </div>
+    </div>
+
+    <!-- VIDEO AD -->
     <div class="video-ad-container" id="videoAdContainer">
         <ins class="adsbygoogle"
              style="display:block"
@@ -282,7 +342,12 @@
         <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
     </div>
 
-    <!-- 2η fluid διαφήμιση -->
+    <!-- ΕΝΔΕΙΞΗ ΟΤΙ ΟΛΟΚΛΗΡΩΘΗΚΑΝ ΤΑ ΠΑΙΧΝΙΔΙΑ -->
+    <div id="gamesCompleteMessage" class="games-complete" style="display: none;">
+        ✅ ολοκλήρωσες τα παιχνίδια! τώρα μπορείς να συμμετέχεις
+    </div>
+
+    <!-- 2η διαφήμιση -->
     <div class="ad-box">
         <ins class="adsbygoogle"
              style="display:block"
@@ -293,33 +358,30 @@
         <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
     </div>
 
-    <!-- ΦΟΡΜΑ ΣΥΜΜΕΤΟΧΗΣ (κλειδωμένη) -->
+    <!-- ΦΟΡΜΑ -->
     <div class="entry-block" id="entryBlock">
-        <h3>✍️ συμμετοχή</h3>
+        <h3>✍️ γράψε το όνομά σου στο μέλλον</h3>
         
-        <!-- Φόρμα που στέλνει στο Google Sheets μέσω FormSubmit -->
         <form action="https://formsubmit.co/6ae291f8020d6a4e62242119b18a2f4f" method="POST" id="entryForm">
-            <input type="hidden" name="_subject" value="Νέα συμμετοχή από μπισκότο">
+            <input type="hidden" name="_subject" value="Ζήσε το Μέλλον σου · συμμετοχή">
             <input type="hidden" name="_next" value="https://games-support.franklymadear.com/">
             <input type="hidden" name="_captcha" value="false">
             <input type="hidden" name="_template" value="box">
             
-            <!-- Αυτά τα πεδία θα πάνε αυτόματα στο Google Sheets -->
             <div class="entry-flex">
                 <input type="text" name="Όνομα" id="nameField" placeholder="το όνομά σου *" required>
                 <input type="email" name="Email" id="emailField" placeholder="το email σου *" required>
-                <!-- κρυφό πεδίο με timestamp -->
                 <input type="hidden" name="Ημερομηνία" id="dateField">
-                <input type="hidden" name="Μήνυμα_μπισκότου" id="fortuneField">
+                <input type="hidden" name="Μήνυμα μπισκότου" id="fortuneField">
+                <input type="hidden" name="Μήνυμα κάρτας" id="cardField">
                 <button type="submit">ΣΥΜΜΕΤΟΧΗ</button>
             </div>
         </form>
 
         <div id="feedbackMessage" class="feedback-message hidden-feedback"></div>
-        <p style="color:#b6a9ff; font-size:0.9rem; margin-top:10px;">✔ πρώτα σπάσε το μπισκότο και δες το βίντεο</p>
     </div>
 
-    <!-- 3η fluid διαφήμιση -->
+    <!-- 3η διαφήμιση -->
     <div class="ad-box">
         <ins class="adsbygoogle"
              style="display:block"
@@ -331,108 +393,190 @@
     </div>
 
     <div class="gift-note">
-        🎁 δωροεπιταγές Iris / PayPal – 50% των εσόδων από διαφημίσεις
+        🎁 50% των εσόδων → δωροεπιταγές Iris / PayPal
     </div>
 
     <footer class="footer-note">
-        <p>✅ Οι συμμετοχές αποθηκεύονται αυτόματα στο Google Sheets</p>
+        <p>✅ οι συμμετοχές πάνε στο Google Sheets</p>
     </footer>
 </div>
 
 <script>
     (function() {
-        // ---------- ΜΠΙΣΚΟΤΟ ΜΕ ΛΟΓΟΠΑΙΓΝΙΑ ----------
+        // ---------- 50 ΜΗΝΥΜΑΤΑ ΓΙΑ ΓΥΝΑΙΚΕΣ (ερωτικά & οικονομικά) ----------
+        const fortunes = [
+            "❤️ Ένας άντρας θα σε κοιτάξει σαν να είσαι το τελευταίο ποτήρι νερό στην έρημο.",
+            "💰 Μια απροσδόκητη οικονομική είδηση θα σε κάνει να χαμογελάσεις.",
+            "❤️ Θα φιληθείς κάτω από φεγγάρι που θυμάται προηγούμενες ζωές.",
+            "💰 Τα λεφτά θα έρθουν από εκεί που δεν τα περιμένεις – κράτα μυστικό.",
+            "❤️ Η καρδιά σου θα χτυπήσει δυνατά για κάποιον που δεν περίμενες.",
+            "💰 Μια επαγγελματική πρόταση θα αλλάξει το οικονομικό σου μέλλον.",
+            "❤️ Θα σε αγαπήσει όπως αγαπάει κανείς μόνο μια φορά στη ζωή του.",
+            "💰 Το πορτοφόλι σου θα γεμίσει από μια παλιά σου ιδέα.",
+            "❤️ Ένα βλέμμα θα είναι αρκετό για να καταλάβεις ότι είναι αυτός.",
+            "💰 Η οικονομική σου ανεξαρτησία είναι πιο κοντά από όσο νομίζεις.",
+            "❤️ Θα κοιμηθείς αγκαλιά με τον άνθρωπο που ονειρευόσουν χρόνια.",
+            "💰 Μια δωροεπιταγρά θα σου έρθει από εκεί που δεν το περιμένεις.",
+            "❤️ Το ροζ σημείωμα από το σύμπαν: ο έρωτας είναι προ των πυλών.",
+            "💰 Ο λογαριασμός σου θα αυξηθεί – και εσύ θα το γιορτάσεις.",
+            "❤️ Δύο χέρια θα σφίξουν τα δικά σου και δεν θα τα αφήσουν ποτέ.",
+            "💰 Μια επένδυση που ξέχασες θα αποδώσει καρπούς.",
+            "❤️ Η αγκαλιά του θα μυρίζει σαν το σπίτι που πάντα έψαχνες.",
+            "💰 Τα χρήματα είναι εργαλείο – εσύ είσαι η καλλιτέχνις.",
+            "❤️ Ένα ταξίδι για δύο σε περιμένει σύντομα.",
+            "💰 Η αφθονία έρχεται – άνοιξε τα χέρια σου να την υποδεχτείς.",
+            "❤️ Το στόμα του θα ψιθυρίσει το όνομά σου σαν προσευχή.",
+            "💰 Μια νέα πηγή εσόδων θα εμφανιστεί τον επόμενο μήνα.",
+            "❤️ Θα ξυπνήσεις με ένα μήνυμα που θα σου φτιάξει τη μέρα.",
+            "💰 Τα οικονομικά σου θα απογειωθούν με μια συνεργασία.",
+            "❤️ Ο έρωτας της ζωής σου είναι ήδη κοντά – απλά κάνε χώρο.",
+            "💰 Μια κληρονομιά – όχι αναγκαστικά χρηματική – θα σε γεμίσει.",
+            "❤️ Τα χείλη του θα μάθουν απέξω το σώμα σου.",
+            "💰 Θα βρεις λεφτά σε ένα παλιό σακάκι – κυριολεκτικά ή μεταφορικά.",
+            "❤️ Η ψυχή σου αναγνώρισε την ψυχή του – τώρα απλά περίμενε.",
+            "💰 Οικονομική ευημερία μέσω δημιουργικότητας.",
+            "❤️ Θα σε κρατήσει σαν να φοβάται μη σε χάσει.",
+            "💰 Μια αύξηση ή ένα μπόνους σε περιμένει σύντομα.",
+            "❤️ Το άγγιγμά του θα είναι σαν ηλεκτρικό ρεύμα.",
+            "💰 Τα λεφτά αγαπούν τις τολμηρές – κάνε την κίνηση.",
+            "❤️ Θα σου γράψει ποίημα – και θα κλάψεις από συγκίνηση.",
+            "💰 Ένα οικονομικό μάθημα από το παρελθόν θα σε ωφελήσει τώρα.",
+            "❤️ Η μοιραία συνάντηση είναι θέμα ημερών.",
+            "💰 Το σύμπαν συνωμοτεί για να γεμίσει η τσέπη σου.",
+            "❤️ Θα σε κοιτάξει και θα ξεχάσει πώς τον λένε – μόνο εσένα θα βλέπει.",
+            "💰 Μια επιταγή στα χέρια σου πριν το καλοκαίρι.",
+            "❤️ Το κρεβάτι σου θα γίνει το αγαπημένο του μέρος στη γη.",
+            "💰 Η οικονομική σου διαίσθηση είναι δυνατή – άκουσέ την.",
+            "❤️ Θα γελάσετε μέχρι δακρύων για κάτι πολύ απλό.",
+            "💰 Χρήματα από το εξωτερικό ή από ξένο νόμισμα.",
+            "❤️ Η αγκαλιά του θα σε κάνει να νιώσεις ασφαλής για πάντα.",
+            "💰 Μια καλή οικονομική περίοδο ξεκινά σε 3...2...1...",
+            "❤️ Θα σε φιλήσει σαν να σε αποχαιρετά – αλλά θα μείνει.",
+            "💰 Η αποταμίευση είναι καλή, αλλά και η απόλαυση – κάνε ένα δώρο στον εαυτό σου.",
+            "❤️ Ο έρωτας θα έρθει σαν καλοκαιρινή μπόρα – ξαφνικός και δροσερός.",
+            "💰 Το μέλλον σου είναι λαμπερό και γεμάτο χαρές – οικονομικές και μη."
+        ];
+
+        // ---------- 20 ΜΗΝΥΜΑΤΑ ΓΙΑ ΚΑΡΤΕΣ ----------
+        const cardMessages = [
+            "💖 Ερωτική πρόβλεψη: ένας πρώην θα ξαναεμφανιστεί – εσύ ξέρεις αν αξίζει.",
+            "💎 Οικονομικά: μια επένδυση σε σένα είναι η καλύτερη που έκανες ποτέ.",
+            "✨ Θα βρεθείς σε ένα ραντεβού που θα σε κάνει να πιστέψεις ξανά.",
+            "💰 Μια νέα πηγή εισοδήματος θα προκύψει από ένα χόμπι σου.",
+            "🌹 Κάποιος σε σκέφτεται αυτή τη στιγμή και ετοιμάζεται να σου μιλήσει.",
+            "💳 Οικονομική πρόβλεψη: η επιταγή που περιμένεις έρχεται.",
+            "💕 Θα ανταλλάξεις ματιές με έναν άγνωστο που θα γίνει γνωστός.",
+            "💵 Λεφτά από μια παλιά οφειλή θα σου επιστραφούν.",
+            "💋 Ένα φιλί στο πιο απροσδόκητο μέρος θα σου φτιάξει τη μέρα.",
+            "💸 Οικονομική άνοδος – τόλμησε να ζητήσεις αυτό που αξίζεις.",
+            "💞 Ο έρωτας χτυπάει την πόρτα σου – κυριολεκτικά ή μεταφορικά.",
+            "💰 Μια δωροεπιταγρά 5€ ή 10€ είναι πιο κοντά από όσο νομίζεις.",
+            "💓 Δύο καρδιές που χτυπούν δυνατά – η μία είναι δική σου.",
+            "💎 Μια επαγγελματική ευκαιρία θα σε κάνει οικονομικά ανεξάρτητη.",
+            "💘 Θα λάβεις ένα μήνυμα που θα σε κάνει να κοκκινίσεις.",
+            "💰 Τα χρήματα έρχονται – μην τα διώχνεις με αρνητικές σκέψεις.",
+            "💗 Ο έρωτας του καλοκαιριού σε περιμένει – και θα είναι δυνατός.",
+            "💵 Μια καλή συμφωνία θα σου αποφέρει κέρδος.",
+            "💕 Θα σε πάρουν αγκαλιά χωρίς να το περιμένεις.",
+            "💰 Η οικονομική σου κατάσταση θα βελτιωθεί αισθητά."
+        ];
+
+        // ---------- ΣΤΟΙΧΕΙΑ ΣΕΛΙΔΑΣ ----------
         const cookieEl = document.getElementById('fortuneCookie');
         const cookieEmoji = document.getElementById('cookieEmoji');
         const cookieMessage = document.getElementById('cookieMessage');
         const videoContainer = document.getElementById('videoAdContainer');
         const entryBlock = document.getElementById('entryBlock');
         const fortuneField = document.getElementById('fortuneField');
-        
-        // ΛΟΓΟΠΑΙΓΝΙΑ / ΑΣΤΕΙΑ ΜΗΝΥΜΑΤΑ (δικά σου)
-        const fortunes = [
-            '🥠 "Μπισκότο λέει: δήλωσε συμμετοχή, μην είσαι μπισκότο!"',
-            '🍪 "Σπάσε με, αλλά μετά τρέχα στο βίντεο!"',
-            '🎰 "Το μπισκότο προβλέπει: ένα δώρο σε περιμένει..."',
-            '⭐ "Κινέζικη σοφία: όποιος πατάει μπισκότο, κερδίζει!"',
-            '💰 "Το ταμείο λέει: 50% των εσόδων σε εσένα!"',
-            '📺 "Μετά από αυτό, δες το βίντεο! (το θέλει η τύχη)"',
-            '🎉 "Μπισκότο-χρησμός: θα λάβεις email νίκης στο μέλλον."',
-            '✨ "Το μπισκότο αστράφτει... μήπως είσαι ο τυχερός;"',
-            '🍀 "Σπάσε με και η τύχη θα σου γνέψει."',
-            '🎁 "Από μπισκότο σε δώρο: μια μικρή διαδρομή!"'
-        ];
+        const cardField = document.getElementById('cardField');
+        const cardsGrid = document.getElementById('cardsGrid');
+        const cardMessageDisplay = document.getElementById('cardMessageDisplay');
+        const gamesCompleteMessage = document.getElementById('gamesCompleteMessage');
 
+        // Κατάσταση παιχνιδιών
         let cookieOpened = false;
+        let cardPlayed = false;
 
+        // Γέμισμα καρτών (6 κάρτες)
+        for (let i = 0; i < 6; i++) {
+            const card = document.createElement('div');
+            card.className = 'card';
+            card.textContent = '🔮';
+            card.dataset.index = i;
+            
+            card.addEventListener('click', function() {
+                if (this.classList.contains('flipped') || cardPlayed) return;
+                
+                const randomIndex = Math.floor(Math.random() * cardMessages.length);
+                const msg = cardMessages[randomIndex];
+                cardMessageDisplay.textContent = msg;
+                cardField.value = msg; // αποθήκευση για τη φόρμα
+                
+                this.classList.add('flipped');
+                this.textContent = msg.substring(0, 20) + '...';
+                
+                cardPlayed = true;
+                checkGamesComplete();
+            });
+            
+            cardsGrid.appendChild(card);
+        }
+
+        // Μπισκότο
         cookieEl.addEventListener('click', function() {
             if (cookieOpened) return;
 
-            // Αλλάζει emoji σε σπασμένο μπισκότο
-            cookieEmoji.textContent = '🍪'; 
-            const randomMsg = fortunes[Math.floor(Math.random() * fortunes.length)];
-            cookieMessage.textContent = randomMsg;
-            
-            // Αποθήκευση του μηνύματος για να σταλεί με τη φόρμα
-            if (fortuneField) fortuneField.value = randomMsg;
-
-            // Εμφάνιση video ad container (Google AdSense in-feed)
-            videoContainer.style.display = 'block';
-
-            // Μετά από 6 δευτερόλεπτα ξεκλειδώνει η φόρμα
-            setTimeout(() => {
-                entryBlock.classList.add('unlocked');
-            }, 6000);
+            cookieEmoji.textContent = '🍪';
+            const randomIndex = Math.floor(Math.random() * fortunes.length);
+            const selectedMsg = fortunes[randomIndex];
+            cookieMessage.textContent = selectedMsg;
+            fortuneField.value = selectedMsg;
 
             cookieOpened = true;
+            checkGamesComplete();
         });
 
-        // ---------- ΣΥΝΔΕΣΗ ΜΕ GOOGLE SHEETS (μέσω FormSubmit + hidden fields) ----------
+        // Έλεγχος αν ολοκληρώθηκαν και τα δύο παιχνίδια
+        function checkGamesComplete() {
+            if (cookieOpened && cardPlayed) {
+                videoContainer.style.display = 'block';
+                gamesCompleteMessage.style.display = 'block';
+                
+                setTimeout(() => {
+                    entryBlock.classList.add('unlocked');
+                }, 5000); // 5 δευτερόλεπτα βίντεο
+            }
+        }
+
+        // ---------- ΦΟΡΜΑ ----------
         const form = document.getElementById('entryForm');
         const feedbackDiv = document.getElementById('feedbackMessage');
         const nameInput = document.getElementById('nameField');
         const emailInput = document.getElementById('emailField');
         const dateField = document.getElementById('dateField');
-
-        // Γέμισμα ημερομηνίας
-        const now = new Date();
-        dateField.value = now.toLocaleString('el-GR');
+        dateField.value = new Date().toLocaleString('el-GR');
 
         form.addEventListener('submit', function(e) {
             e.preventDefault();
 
-            const nameVal = nameInput.value.trim();
-            const emailVal = emailInput.value.trim();
-
-            if (!nameVal || !emailVal) {
+            if (!nameInput.value.trim() || !emailInput.value.trim()) {
                 feedbackDiv.innerText = '⚠️ Συμπλήρωσε όνομα και email.';
                 feedbackDiv.classList.remove('hidden-feedback');
                 return;
             }
-            if (!emailVal.includes('@') || emailVal.indexOf('.') === -1) {
-                feedbackDiv.innerText = '📧 Βάλε σωστό email.';
-                feedbackDiv.classList.remove('hidden-feedback');
-                return;
-            }
 
-            // Αποστολή με fetch (παραμένουμε στη σελίδα)
             const formData = new FormData(form);
-
             fetch('https://formsubmit.co/6ae291f8020d6a4e62242119b18a2f4f', {
                 method: 'POST',
                 body: formData
             })
             .then(response => {
                 if (response.ok) {
-                    feedbackDiv.innerText = '🎉 Ευχαριστούμε! Η συμμετοχή σου αποθηκεύτηκε στο Google Sheets. Καλή τύχη! 🎉';
+                    feedbackDiv.innerText = '🎉 Ευχαριστούμε! Το μέλλον σου γράφτηκε στο Google Sheets. Καλή τύχη! 🎉';
                     feedbackDiv.classList.remove('hidden-feedback');
-                    
                     nameInput.value = '';
                     emailInput.value = '';
-
-                    setTimeout(() => {
-                        feedbackDiv.classList.add('hidden-feedback');
-                    }, 8000);
+                    setTimeout(() => feedbackDiv.classList.add('hidden-feedback'), 8000);
                 } else {
                     feedbackDiv.innerText = '❌ Σφάλμα. Δοκίμασε ξανά.';
                     feedbackDiv.classList.remove('hidden-feedback');
@@ -446,7 +590,6 @@
     })();
 </script>
 
-<!-- AdSense push -->
 <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
 </body>
 </html>
