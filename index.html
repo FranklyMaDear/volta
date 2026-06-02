@@ -2,759 +2,773 @@
 <html lang="el">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
-    <title>Ζήσε το Μέλλον σου</title>
-    
-    <!-- Favicon -->
-    <link rel="icon" type="image/png" href="index.png">
-    
-    <!-- Open Graph / Social Media Meta Tags -->
-    <meta property="og:title" content="Ζήσε το Μέλλον σου">
-    <meta property="og:description" content="Άνοιξε το μπισκότο, διάλεξε κάρτα και δες το μέλλον σου! Μάθε τι σου επιφυλάσσει η τύχη για έρωτα και οικονομικά.">
-    <meta property="og:image" content="https://games-support.franklymadear.com/photos.png">
-    <meta property="og:image:width" content="1200">
-    <meta property="og:image:height" content="630">
-    <meta property="og:type" content="website">
-    <meta property="og:url" content="https://games-support.franklymadear.com/">
-    
-    <!-- Twitter Card Meta Tags -->
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="Ζήσε το Μέλλον σου">
-    <meta name="twitter:description" content="Άνοιξε το μπισκότο, διάλεξε κάρτα και δες το μέλλον σου! Μάθε τι σου επιφυλάσσει η τύχη για έρωτα και οικονομικά.">
-    <meta name="twitter:image" content="https://games-support.franklymadear.com/photos.png">
-    
-    <!-- Google AdSense -->
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3186700611266549" crossorigin="anonymous"></script>
-    
-    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600;800&display=swap" rel="stylesheet">
-    <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    
-    <!-- Tally Script -->
-    <script async src="https://tally.so/widgets/embed.js"></script>
-    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, maximum-scale=2.0">
+    <title>Omen & Lifeline · Ο Κόσμος της Τύχης</title>
+    <!-- Google Fonts για premium αίσθηση -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Lora:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         body {
-            font-family: 'Quicksand', sans-serif;
-            background: linear-gradient(145deg, #0f0c1f, #1e1a35);
-            color: #f9f2e7;
+            font-family: 'Lora', 'Segoe UI', serif;
+            background: #0a0c14;
+            color: #e8e0d3;
+            min-height: 100vh;
             display: flex;
             flex-direction: column;
             align-items: center;
-            padding: 12px 10px 30px;
-            min-height: 100vh;
-        }
-        .container {
-            max-width: 700px;
-            width: 100%;
+            justify-content: flex-start;
+            padding: 1.5rem 1rem 2.5rem;
+            position: relative;
+            overflow-x: hidden;
         }
 
-        /* Header */
-        .header {
-            text-align: center;
-            margin: 5px 0 10px;
+        /* --- Μυστηριακό αστρικό background με animated stars --- */
+        .stars-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            opacity: 0.8;
         }
-        .header h1 {
-            font-size: 2rem;
-            font-weight: 600;
-            background: linear-gradient(145deg, #ffb6c1, #ff69b4, #ffd700);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            text-shadow: 0 0 20px #ff99cc;
+
+        body::after {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background: radial-gradient(ellipse at 50% 0%, rgba(75, 0, 130, 0.25) 0%, transparent 65%),
+                radial-gradient(ellipse at 20% 80%, rgba(180, 100, 40, 0.15) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .container {
+            position: relative;
+            z-index: 2;
+            width: 100%;
+            max-width: 580px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        /* --- Τυπογραφία --- */
+        h1 {
+            font-family: 'Cinzel', 'Times New Roman', serif;
+            font-weight: 700;
+            font-size: clamp(2.3rem, 7vw, 3.4rem);
+            letter-spacing: 4px;
+            color: #f3e3c9;
+            text-shadow: 0 0 15px rgba(220, 170, 70, 0.5), 0 0 35px rgba(160, 100, 200, 0.35);
+            margin-bottom: 0.2rem;
+            text-align: center;
             line-height: 1.2;
         }
-        .header p {
-            background: #292f4a;
-            padding: 8px 16px;
-            border-radius: 60px;
-            font-size: 0.95rem;
-            border: 2px solid #febf5e;
-            display: inline-block;
-            margin-top: 5px;
+
+        .subtitle {
+            font-style: italic;
+            color: #c0a8d0;
+            font-size: 1.1rem;
+            letter-spacing: 2px;
+            margin-bottom: 0.5rem;
+            text-shadow: 0 0 8px rgba(180, 130, 200, 0.4);
         }
 
-        /* Διαφημίσεις autorelaxed */
-        .ad-box {
-            margin: 15px auto;
+        /* --- Sections --- */
+        .section {
+            background: rgba(20, 18, 35, 0.65);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(220, 180, 100, 0.2);
+            border-radius: 2rem;
+            padding: 1.8rem 1.5rem;
             width: 100%;
-            border-radius: 30px;
-            overflow: hidden;
-            box-shadow: 0 15px 25px #000000aa;
-            border: 3px solid #fcba5c;
-            background: #181e34;
-        }
-        .ad-box ins {
-            display: block;
-            width: 100%;
-        }
-
-        /* Video Ads */
-        .video-ad-container {
-            margin: 15px auto;
-            max-width: 500px;
-            border-radius: 30px;
-            overflow: hidden;
-            border: 4px solid #fdc859;
-            display: none;
-            background: #0a0c1a;
-        }
-        .video-ad-container ins {
-            display: block;
-            width: 100%;
-        }
-        .video-ad-container.visible {
-            display: block;
-        }
-
-        /* ΜΠΙΣΚΟΤΟ */
-        .cookie-section {
-            background: #1f253f;
-            border-radius: 50px;
-            padding: 25px 15px;
-            margin: 20px 0;
-            border: 4px solid #d4af37;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 215, 150, 0.08);
+            transition: transform 0.3s ease, border-color 0.3s;
             text-align: center;
-            box-shadow: 0 0 20px #ffd70055;
         }
-        .cookie-title {
-            font-size: 1.4rem;
+
+        .section:hover {
+            border-color: rgba(220, 180, 100, 0.45);
+            transform: translateY(-2px);
+        }
+
+        .section h3 {
+            font-family: 'Cinzel', serif;
+            font-size: 1.6rem;
             font-weight: 600;
-            color: #ffdab9;
-            margin-bottom: 15px;
-        }
-        .fortune-cookie {
-            background: #e5c28e;
-            background-image: radial-gradient(circle at 30% 30%, #f5e1b5, #c9a15b);
-            width: 180px;
-            height: 135px;
-            border-radius: 50% 50% 40% 40% / 60% 60% 30% 30%;
-            margin: 10px auto;
-            box-shadow: 0 15px 0 #a57c47, 0 20px 25px black;
-            cursor: pointer;
-            transition: 0.15s;
+            color: #e7c884;
+            margin-bottom: 1.2rem;
+            letter-spacing: 3px;
+            text-shadow: 0 0 12px rgba(200, 150, 60, 0.5);
             display: flex;
             align-items: center;
             justify-content: center;
+            gap: 0.5rem;
         }
-        .fortune-cookie:active {
-            transform: scale(0.96);
-            box-shadow: 0 8px 0 #a57c47, 0 15px 20px black;
+
+        .section h3::before,
+        .section h3::after {
+            content: '✦';
+            font-size: 1.1rem;
+            color: #b292d0;
+            opacity: 0.8;
         }
-        .cookie-emoji {
-            font-size: 5rem;
-            filter: drop-shadow(0 8px 6px #4f3e26);
-        }
-        
-        /* Μήνυμα μπισκότου με κουμπί αντιγραφής */
-        .cookie-message-container {
-            position: relative;
-            max-width: 320px;
-            margin: 15px auto 5px;
-        }
-        .cookie-message {
-            background: #fef7e0;
-            color: #2e1f0b;
-            padding: 18px 45px 18px 15px;
-            border-radius: 30px;
-            font-size: 1rem;
-            font-weight: 500;
-            border: 4px solid #b8560e;
-            box-shadow: 0 5px 0 #7b4314;
-            min-height: 80px;
+
+        /* --- BOTS BUTTONS --- */
+        .bot-buttons {
             display: flex;
-            align-items: center;
-            justify-content: center;
-            word-break: break-word;
-            text-align: center;
+            flex-direction: column;
+            gap: 1.5rem;
             width: 100%;
         }
-        .copy-btn {
+
+        @media (min-width: 500px) {
+            .bot-buttons {
+                flex-direction: row;
+                gap: 1.2rem;
+            }
+        }
+
+        .bot-btn {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(145deg, #1e1a2f, #151024);
+            border: 2px solid #c8a45c;
+            border-radius: 2rem;
+            padding: 1.4rem 0.8rem;
+            cursor: pointer;
+            text-decoration: none;
+            color: #f5e7d3;
+            transition: all 0.35s cubic-bezier(0.25, 0.8, 0.25, 1.2);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.6), 0 0 18px rgba(200, 150, 50, 0.25);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .bot-btn::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255, 215, 120, 0.2) 0%, transparent 60%);
+            opacity: 0;
+            transition: opacity 0.4s;
+        }
+
+        .bot-btn:active::before,
+        .bot-btn:hover::before {
+            opacity: 0.7;
+        }
+
+        .bot-btn:active {
+            transform: scale(0.96);
+            box-shadow: 0 4px 12px rgba(200, 150, 50, 0.5);
+        }
+
+        .bot-label {
+            font-family: 'Cinzel', serif;
+            font-size: 1.1rem;
+            font-weight: 700;
+            letter-spacing: 2px;
+            color: #deb887;
+            margin-bottom: 0.35rem;
+            text-transform: uppercase;
+        }
+
+        .bot-name {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #f0e6d2;
+            background: rgba(0, 0, 0, 0.4);
+            padding: 0.25rem 1.2rem;
+            border-radius: 2rem;
+            display: inline-block;
+        }
+
+        /* --- ZODIAC --- */
+        .zodiac-form {
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+            align-items: center;
+        }
+
+        #dob {
+            padding: 0.9rem 1.2rem;
+            border-radius: 2.5rem;
+            border: 1px solid #b4945a;
+            background: #1a1525;
+            color: #f0e0c0;
+            font-size: 1rem;
+            width: 100%;
+            max-width: 260px;
+            text-align: center;
+            outline: none;
+            font-family: 'Lora', serif;
+            letter-spacing: 1px;
+            box-shadow: inset 0 2px 8px rgba(0,0,0,0.5);
+        }
+
+        .zodiac-btn {
+            background: #c8a45c;
+            color: #0a0c14;
+            border: none;
+            padding: 0.9rem 2rem;
+            border-radius: 3rem;
+            font-weight: 700;
+            font-family: 'Cinzel', serif;
+            letter-spacing: 2px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: 0.3s;
+            box-shadow: 0 5px 15px rgba(200, 150, 60, 0.45);
+            text-transform: uppercase;
+        }
+
+        .zodiac-btn:active {
+            background: #e5b96b;
+            transform: scale(0.95);
+        }
+
+        #zodiac-res {
+            margin-top: 1rem;
+            font-size: 1.2rem;
+            font-style: italic;
+            color: #dbc07b;
+            min-height: 2.5rem;
+            text-shadow: 0 0 10px rgba(200,160,50,0.5);
+        }
+
+        /* --- SCRATCH FORTUNE COOKIE --- */
+        .scratch-wrapper {
+            position: relative;
+            width: 100%;
+            max-width: 280px;
+            height: 110px;
+            margin: 0 auto;
+            border-radius: 1.2rem;
+            overflow: hidden;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.7);
+            cursor: crosshair;
+            background: #2d2535;
+            border: 1px solid #b4945a;
+        }
+
+        .fortune-text-under {
             position: absolute;
             top: 50%;
-            right: 10px;
-            transform: translateY(-50%);
-            background: #b8560e;
-            color: white;
-            border: 2px solid #ffd966;
-            border-radius: 50%;
-            width: 36px;
-            height: 36px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: 0.2s;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-family: 'Cinzel', serif;
             font-size: 1.1rem;
-            box-shadow: 0 3px 0 #7b4314;
-        }
-        .copy-btn:active {
-            transform: translateY(-40%);
-            box-shadow: 0 1px 0 #7b4314;
-        }
-        .copy-btn.copied {
-            background: #10b981;
-            border-color: #bef264;
+            font-weight: 600;
+            color: #ffe6b3;
+            text-align: center;
+            width: 90%;
+            pointer-events: none;
+            text-shadow: 0 0 10px #c89c3e;
+            z-index: 2;
+            background: rgba(10, 8, 15, 0.75);
+            padding: 0.5rem;
+            border-radius: 8px;
         }
 
-        /* ΠΑΙΧΝΙΔΙ ΜΕ ΚΑΡΤΕΣ */
-        .cards-section {
-            background: #1f253f;
-            border-radius: 50px;
-            padding: 25px 15px;
-            margin: 20px 0;
-            border: 4px solid #c06bae;
-            text-align: center;
+        #scratch-canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 3;
+            touch-action: none;
         }
-        .cards-title {
-            font-size: 1.4rem;
-            font-weight: 600;
-            color: #f8c3e7;
-            margin-bottom: 15px;
+
+        .scratch-instruction {
+            font-size: 0.9rem;
+            color: #b8a2cc;
+            margin-top: 0.5rem;
+            letter-spacing: 1px;
         }
-        .cards-grid {
+
+        /* --- TAROT CARDS --- */
+        .tarot-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 10px;
-            margin: 15px 0;
-            padding: 0 5px;
+            gap: 0.8rem;
+            justify-items: center;
+            margin-top: 0.5rem;
         }
-        .card {
-            background: linear-gradient(145deg, #6441a5, #2a0845);
-            border: 2px solid #ffb6c1;
-            border-radius: 15px;
-            padding: 15px 3px;
-            font-size: 1.8rem;
-            cursor: pointer;
-            transition: 0.2s;
-            box-shadow: 0 6px 0 #3d1e4a;
-            color: white;
-            aspect-ratio: 3/4;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            word-break: break-word;
+
+        @media (max-width: 380px) {
+            .tarot-grid {
+                gap: 0.5rem;
+            }
         }
-        .card:active {
-            transform: translateY(4px);
-            box-shadow: 0 2px 0 #3d1e4a;
+
+        .card-scene {
+            width: 100%;
+            aspect-ratio: 2/3;
+            max-width: 110px;
+            perspective: 800px;
         }
-        .card.flipped {
-            background: #f9e0c0;
-            color: #3d1e4a;
-            font-size: 0.8rem;
-            line-height: 1.3;
-            padding: 8px 3px;
-            border-color: gold;
-            cursor: default;
-            box-shadow: 0 2px 0 #3d1e4a;
-            transform: translateY(4px);
-        }
-        
-        /* Μήνυμα κάρτας με κουμπί αντιγραφής */
-        .card-message-container {
+
+        .card-inner {
             position: relative;
-            max-width: 100%;
-            margin: 15px 0 5px;
-        }
-        .card-message-display {
-            background: #2d2244;
-            padding: 18px 45px 18px 15px;
-            border-radius: 30px;
-            font-size: 1rem;
-            font-weight: 500;
-            border: 3px solid #ff99cc;
-            min-height: 70px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            word-break: break-word;
-            text-align: center;
             width: 100%;
+            height: 100%;
+            transition: transform 0.7s cubic-bezier(0.4, 0.0, 0.2, 1);
+            transform-style: preserve-3d;
+            cursor: pointer;
         }
-        .copy-card-btn {
+
+        .card-inner.flipped {
+            transform: rotateY(180deg);
+        }
+
+        .card-front,
+        .card-back {
             position: absolute;
-            top: 50%;
-            right: 10px;
-            transform: translateY(-50%);
-            background: #c06bae;
-            color: white;
-            border: 2px solid #ffd966;
-            border-radius: 50%;
-            width: 36px;
-            height: 36px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: 0.2s;
-            font-size: 1.1rem;
-            box-shadow: 0 3px 0 #7b4314;
-        }
-        .copy-card-btn:active {
-            transform: translateY(-40%);
-            box-shadow: 0 1px 0 #7b4314;
-        }
-        .copy-card-btn.copied {
-            background: #10b981;
-            border-color: #bef264;
-        }
-
-        /* ΦΟΡΜΑ ΣΥΜΜΕΤΟΧΗΣ */
-        .entry-block {
-            background: #1b2140;
-            border-radius: 50px;
-            padding: 25px 15px;
-            border: 4px solid #fdcc6b;
-            margin: 20px 0 15px;
-            opacity: 0.6;
-            pointer-events: none;
-            transition: 0.3s;
-            text-align: center;
-        }
-        .entry-block.unlocked {
-            opacity: 1;
-            pointer-events: all;
-            box-shadow: 0 0 20px #ffd966;
-        }
-        
-        .invitation-text {
-            background: linear-gradient(145deg, #4f3b7c, #2d1f4a);
-            border-radius: 40px;
-            padding: 15px;
-            margin-bottom: 20px;
-            border: 3px solid #ffd966;
-            text-align: center;
-            font-size: 1.1rem;
-            font-weight: 600;
-            color: #fff2d7;
-            box-shadow: 0 5px 0 #7b4314;
-        }
-        .invitation-text i {
-            color: #ffd700;
-            margin: 0 5px;
-        }
-        
-        .tally-button {
-            background: linear-gradient(145deg, #10b981, #059669);
-            color: white;
-            border: none;
-            padding: 18px 25px;
-            border-radius: 60px;
-            font-size: 1.4rem;
-            font-weight: 700;
-            border: 4px solid #bef264;
-            box-shadow: 0 8px 0 #047857;
-            cursor: pointer;
             width: 100%;
-            max-width: 350px;
-            margin: 15px auto;
-            transition: 0.1s;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: 12px;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 10px;
-        }
-        .tally-button:active {
-            transform: translateY(6px);
-            box-shadow: 0 2px 0 #047857;
-        }
-        
-        .form-note {
-            color: #b6a9ff;
-            font-size: 0.9rem;
-            margin-top: 10px;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.7);
+            border: 2px solid #c8a45c;
         }
 
-        .gift-note {
-            background: #2a3153;
-            border-radius: 40px;
-            padding: 12px;
-            text-align: center;
-            border: 3px solid #fbbf24;
-            font-size: 1rem;
+        .card-front {
+            background: radial-gradient(circle at 30% 30%, #3b2b4f, #1a1225);
+            font-size: 2.8rem;
+            color: #e7c884;
+            text-shadow: 0 0 15px gold;
+            flex-direction: column;
+            gap: 0.2rem;
+            font-family: 'Cinzel', serif;
+        }
+
+        .card-front span {
+            font-size: 0.7rem;
+            letter-spacing: 2px;
+            color: #ccb280;
+        }
+
+        .card-back {
+            background: #0f0b1a;
+            background-image: repeating-linear-gradient(45deg, rgba(200,160,80,0.1) 0px, rgba(200,160,80,0.1) 2px, transparent 2px, transparent 8px);
+            transform: rotateY(180deg);
+            font-size: 0.7rem;
             font-weight: 500;
-            margin: 15px 0;
-        }
-        .footer-note {
-            text-align: center;
-            padding: 15px 10px 5px;
-            border-top: 4px solid #f9c45a;
-            margin-top: 10px;
-            color: #cbc2ff;
-            font-size: 0.85rem;
-        }
-        .games-complete {
-            background: #4f3b7c;
-            color: white;
-            padding: 10px;
-            border-radius: 30px;
-            margin: 10px 0;
-            font-weight: 600;
-            font-size: 0.95rem;
+            color: #f5e3c4;
+            padding: 0.5rem;
+            line-height: 1.3;
+            overflow-y: auto;
+            text-shadow: 0 0 6px black;
+            font-family: 'Lora', serif;
+            letter-spacing: 0.3px;
         }
 
-        .toast-message {
-            position: fixed;
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: #10b981;
-            color: white;
-            padding: 10px 20px;
-            border-radius: 50px;
+        /* --- ADS & GAMES --- */
+        .ads-space {
+            margin: 0.5rem 0;
+            padding: 1rem;
+            border: 2px dashed #e94560;
+            color: #e94560;
+            border-radius: 1rem;
             font-size: 0.9rem;
-            font-weight: 600;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-            z-index: 1000;
-            display: none;
-            border: 2px solid #bef264;
+            letter-spacing: 2px;
+            background: rgba(233, 69, 96, 0.05);
         }
 
-        @media (max-width: 480px) {
-            .card {
-                font-size: 1.5rem;
-                padding: 10px 2px;
-            }
-            .card.flipped {
-                font-size: 0.7rem;
-            }
-            .cards-grid {
-                gap: 6px;
-            }
-            .fortune-cookie {
-                width: 160px;
-                height: 120px;
-            }
-            .cookie-emoji {
-                font-size: 4.5rem;
-            }
-            .invitation-text {
-                font-size: 1rem;
-                padding: 12px;
-            }
-            .tally-button {
-                font-size: 1.2rem;
-                padding: 15px 20px;
-            }
+        .games-link {
+            display: inline-block;
+            margin-top: 0.8rem;
+            color: #a0d2f0;
+            text-decoration: none;
+            font-weight: 600;
+            border: 1px solid #4f7aa6;
+            padding: 0.6rem 1.4rem;
+            border-radius: 2rem;
+            transition: 0.3s;
+            letter-spacing: 1px;
+            background: rgba(30, 40, 60, 0.5);
+            backdrop-filter: blur(6px);
+        }
+
+        .games-link:hover {
+            background: rgba(70, 100, 150, 0.4);
+            border-color: #8ab3e0;
+            color: white;
+        }
+
+        footer {
+            margin-top: 1rem;
+            font-size: 0.8rem;
+            opacity: 0.7;
+            color: #9a8bb5;
         }
     </style>
 </head>
 <body>
-<div class="container">
-    <header class="header">
-        <h1>Ζήσε το Μέλλον σου</h1>
-        <p>Άνοιξε το μπισκότο, διάλεξε κάρτα και δες το μέλλον σου</p>
-    </header>
+    <!-- Αστρικό animated background -->
+    <canvas class="stars-canvas" id="starsCanvas"></canvas>
 
-    <!-- 1η autorelaxed διαφήμιση -->
-    <div class="ad-box">
-        <ins class="adsbygoogle"
-             style="display:block"
-             data-ad-format="fluid"
-             data-ad-layout-key="-fb+5w+4e-db+86"
-             data-ad-client="ca-pub-3186700611266549"
-             data-ad-slot="3969235710"></ins>
-        <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
-    </div>
+    <div class="container">
+        <h1>Omen & Lifeline</h1>
+        <p class="subtitle">Αποκάλυψε τη μοίρα σου</p>
 
-    <!-- ΜΠΙΣΚΟΤΟ -->
-    <div class="cookie-section">
-        <div class="cookie-title">Τυχερό Μπισκότο</div>
-        <div class="fortune-cookie" id="fortuneCookie">
-            <span class="cookie-emoji" id="cookieEmoji">🥠</span>
-        </div>
-        <div class="cookie-message-container">
-            <div class="cookie-message" id="cookieMessage">Πάτησε το μπισκότο ✨</div>
-            <div class="copy-btn" id="copyCookieBtn" onclick="copyText('cookieMessage')" style="display: none;">
-                <i class="fas fa-copy"></i>
+        <!-- 1. BOTS DIRECT ACCESS -->
+        <div class="section">
+            <h3>Διάλεξε το Μονοπάτι</h3>
+            <div class="bot-buttons">
+                <a href="https://t.me/omenread_bot?profile" target="_blank" rel="noopener" class="bot-btn">
+                    <span class="bot-label">Καφεμαντεία</span>
+                    <span class="bot-name">OmenRead Bot</span>
+                </a>
+                <a href="https://t.me/lifeline2026_bot?profile" target="_blank" rel="noopener" class="bot-btn">
+                    <span class="bot-label">Χειρομαντεία</span>
+                    <span class="bot-name">Lifeline 2026</span>
+                </a>
             </div>
         </div>
-    </div>
 
-    <!-- 1ο VIDEO AD (μετά το μπισκότο) -->
-    <div class="video-ad-container" id="videoAd1">
-        <ins class="adsbygoogle"
-             style="display:block"
-             data-ad-format="fluid"
-             data-ad-layout-key="-hz-7+1t-5x+15"
-             data-ad-client="ca-pub-3186700611266549"
-             data-ad-slot="3969235710"></ins>
-        <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
-    </div>
-
-    <!-- ΠΑΙΧΝΙΔΙ ΜΕ ΚΑΡΤΕΣ -->
-    <div class="cards-section" id="cardsSection">
-        <div class="cards-title">Διάλεξε μια κάρτα</div>
-        <div class="cards-grid" id="cardsGrid"></div>
-        <div class="card-message-container">
-            <div class="card-message-display" id="cardMessageDisplay">
-                ✨ Πάτησε μια κάρτα για το μήνυμά σου ✨
-            </div>
-            <div class="copy-card-btn" id="copyCardBtn" onclick="copyText('cardMessageDisplay')" style="display: none;">
-                <i class="fas fa-copy"></i>
+        <!-- 2. ΖΩΔΙΑ ΤΗΣ ΗΜΕΡΑΣ -->
+        <div class="section">
+            <h3>Ζώδια της Ημέρας</h3>
+            <div class="zodiac-form">
+                <input type="date" id="dob" aria-label="Ημερομηνία γέννησης">
+                <button class="zodiac-btn" onclick="getZodiac()">Δες την Πρόβλεψη</button>
+                <div id="zodiac-res"></div>
             </div>
         </div>
-    </div>
 
-    <!-- 2ο VIDEO AD (μετά τις κάρτες) -->
-    <div class="video-ad-container" id="videoAd2">
-        <ins class="adsbygoogle"
-             style="display:block"
-             data-ad-format="fluid"
-             data-ad-layout-key="-hz-7+1t-5x+15"
-             data-ad-client="ca-pub-3186700611266549"
-             data-ad-slot="3969235710"></ins>
-        <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
-    </div>
-
-    <!-- ΜΗΝΥΜΑ ΟΛΟΚΛΗΡΩΣΗΣ -->
-    <div id="gamesCompleteMessage" class="games-complete" style="display: none;">
-        ✅ Ολοκλήρωσες! Τώρα μπορείς να συμμετέχεις στον διαγωνισμό
-    </div>
-
-    <!-- 2η autorelaxed διαφήμιση -->
-    <div class="ad-box">
-        <ins class="adsbygoogle"
-             style="display:block"
-             data-ad-format="fluid"
-             data-ad-layout-key="-fb+5w+4e-db+86"
-             data-ad-client="ca-pub-3186700611266549"
-             data-ad-slot="3969235710"></ins>
-        <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
-    </div>
-
-    <!-- ΦΟΡΜΑ ΣΥΜΜΕΤΟΧΗΣ -->
-    <div class="entry-block" id="entryBlock">
-        <div class="invitation-text">
-            <i class="fas fa-star"></i>
-            Αν θέλεις, δήλωσε συμμετοχή για να μπεις στους διαγωνισμούς μας!
-            <i class="fas fa-gift"></i>
+        <!-- 3. ΤΥΧΕΡΟ ΜΠΙΣΚΟΤΟ (SCRATCH) -->
+        <div class="section">
+            <h3>Τυχερό Μπισκότο</h3>
+            <div class="scratch-wrapper" id="scratchWrapper">
+                <div class="fortune-text-under" id="fortuneDisplay">Καλή Τύχη!</div>
+                <canvas id="scratch-canvas"></canvas>
+            </div>
+            <p class="scratch-instruction">Ξύσε με το δάχτυλο για να αποκαλυφθεί</p>
         </div>
-        
-        <h3 style="font-size:1.3rem; font-weight:600; text-align:center; margin-bottom:15px;">✍️ Συμπλήρωσε τα στοιχεία σου</h3>
-        
-        <button class="tally-button" 
-                data-tally-open="44jy95" 
-                data-tally-emoji-text="👋" 
-                data-tally-emoji-animation="wave">
-            <i class="fas fa-pen"></i> Όνομα & Email
-            <i class="fas fa-arrow-right"></i>
-        </button>
-        
-        <p class="form-note">
-            <i class="fas fa-lock"></i> Τα στοιχεία σου είναι ασφαλή
-        </p>
+
+        <!-- 4. ΚΑΡΤΕΣ ΤΑΡΩ -->
+        <div class="section">
+            <h3>Επίλεξε μια Κάρτα Ταρώ</h3>
+            <div class="tarot-grid" id="tarotGrid">
+                <!-- Οι κάρτες θα δημιουργηθούν από JavaScript -->
+            </div>
+        </div>
+
+        <!-- 5. GAMES & ADS -->
+        <div class="section" style="padding: 1.5rem;">
+            <a href="https://games-support.franklymadear.com/download/index.html" target="_blank" rel="noopener" class="games-link">
+                🎮 Παιχνίδια (Chess, Sudoku & more)
+            </a>
+            <div class="ads-space">
+                [Διαφημιστικός χώρος · Adsgram]
+            </div>
+        </div>
+
+        <footer>© 2026 Omen & Lifeline · Μυστική Τέχνη</footer>
     </div>
 
-    <!-- 3η autorelaxed διαφήμιση -->
-    <div class="ad-box">
-        <ins class="adsbygoogle"
-             style="display:block"
-             data-ad-format="fluid"
-             data-ad-layout-key="-fb+5w+4e-db+86"
-             data-ad-client="ca-pub-3186700611266549"
-             data-ad-slot="3969235710"></ins>
-        <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
-    </div>
+    <script>
+        (function() {
+            // ---------- ΛΙΣΤΑ 50 ΣΤΙΧΑΚΙΩΝ ----------
+            const fortuneMessages = [
+                "Η τύχη είναι η προετοιμασία που συναντά την ευκαιρία.",
+                "Μια νέα πόρτα ανοίγει εκεί που νόμιζες πως υπήρχε τοίχος.",
+                "Μην φοβάσαι το σκοτάδι, εκεί γεννιούνται τα αστέρια.",
+                "Μια μικρή αλλαγή σήμερα θα φέρει μεγάλη ευτυχία αύριο.",
+                "Το σύμπαν έχει ένα σχέδιο για σένα, απλώς εμπιστεύσου τη ροή.",
+                "Μια αναπάντεχη βοήθεια έρχεται από εκεί που δεν το περιμένεις.",
+                "Η στιγμή που περιμένεις είναι πιο κοντά από όσο νομίζεις.",
+                "Άφησε το παρελθόν να φύγει για να χωρέσει το μέλλον.",
+                "Μια λάμψη έμπνευσης θα σου δώσει τη λύση που ψάχνεις.",
+                "Το φως της αλήθειας θα διαλύσει κάθε αμφιβολία.",
+                "Μια συνάντηση θα ανατρέψει ευχάριστα το πρόγραμμά σου.",
+                "Η ειλικρίνεια είναι το κλειδί για να ανοίξει η καρδιά του άλλου.",
+                "Κάποιος σκέφτεται εσένα με θαυμασμό και τρυφερότητα.",
+                "Μια παλιά φιλία θα αναζωπυρωθεί με νέα ενέργεια.",
+                "Η αγάπη είναι παντού, αρκεί να την κοιτάξεις με καθαρά μάτια.",
+                "Άνοιξε την αγκαλιά σου και άσε το καλό να έρθει μέσα.",
+                "Μια παρεξήγηση θα λυθεί με μια απλή κουβέντα.",
+                "Η ζεστασιά που προσφέρεις θα σου επιστραφεί διπλάσια.",
+                "Ένας νέος άνθρωπος θα μπει στη ζωή σου για να σε διδάξει.",
+                "Η εμπιστοσύνη είναι ο θεμέλιος λίθος της ευτυχίας σου.",
+                "Μια οικονομική ευκαιρία πλησιάζει, έχε τα μάτια σου ανοιχτά.",
+                "Η εργατικότητά σου θα ανταμειφθεί πέρα από κάθε προσδοκία.",
+                "Μην φοβάσαι να διεκδικήσεις αυτό που σου αξίζει πραγματικά.",
+                "Μια συνεργασία θα αποδειχθεί η καλύτερη απόφαση της χρονιάς.",
+                "Η επιμονή σου θα μετατρέψει κάθε εμπόδιο σε σκαλοπάτι.",
+                "Μια δημιουργική ιδέα θα σε οδηγήσει στην κορυφή.",
+                "Η υπομονή σου στα οικονομικά θα φέρει καρπούς σύντομα.",
+                "Είναι η ώρα να επενδύσεις στον εαυτό σου και τα ταλέντα σου.",
+                "Μια επαγγελματική πρόταση θα σου αλλάξει τη διαδρομή.",
+                "Η τάξη στο περιβάλλον σου θα φέρει τάξη στο μυαλό σου.",
+                "Η διαίσθησή σου είναι ο πιο αξιόπιστος οδηγός σου σήμερα.",
+                "Εμπιστεύσου τον εαυτό σου, γνωρίζεις ήδη την απάντηση.",
+                "Η δύναμη που ψάχνεις βρίσκεται μέσα σου από πάντα.",
+                "Μην αφήνεις τις γνώμες των άλλων να σβήσουν το φως σου.",
+                "Η ηρεμία είναι η μεγαλύτερη δύναμη που διαθέτεις.",
+                "Πρόσεξε τα σημάδια, το σύμπαν σου μιλά συνεχώς.",
+                "Μια βαθιά ανάσα θα σου δώσει τη διαύγεια που χρειάζεσαι.",
+                "Το ένστικτό σου είναι μια πυξίδα που δεν κάνει ποτέ λάθος.",
+                "Είσαι ο αρχιτέκτονας της μοίρας σου, χτίσε με τόλμη.",
+                "Η αλήθεια που κρύβεις είναι το πιο δυνατό σου όπλο.",
+                "Σήμερα είναι η μέρα που θα συμβεί κάτι το απρόσμενο.",
+                "Πρόσεξε τις λεπτομέρειες, εκεί κρύβεται η λύση του γρίφου.",
+                "Ένα ταξίδι, έστω και σύντομο, θα ανανεώσει την ψυχή σου.",
+                "Η ευτυχία βρίσκεται στις μικρές, καθημερινές στιγμές.",
+                "Μην βιάζεσαι, όλα θα γίνουν στην ώρα που πρέπει.",
+                "Κάτι σημαντικό θα συμβεί όταν πέσει το σκοτάδι.",
+                "Η αλλαγή είναι η μόνη σταθερά, αγκάλιασέ την.",
+                "Κράτησε το μυστικό σου μέχρι να έρθει η κατάλληλη στιγμή.",
+                "Ό,τι δίνεις, αυτό και εισπράττεις – φρόντισε να δίνεις φως.",
+                "Το αύριο είναι ένας λευκός καμβάς, ζωγράφισε κάτι όμορφο."
+            ];
 
-    <div class="gift-note">
-        🎁 Δήλωσε συμμετοχή και κέρδισε δωροεπιταγή · Τρόπος πληρωμής PayPal
-    </div>
-
-    <footer class="footer-note">
-        <p>✅ Οι συμμετοχές καταγράφονται στο Tally.so</p>
-    </footer>
-</div>
-
-<!-- Toast μήνυμα -->
-<div class="toast-message" id="toastMessage">✓ Το κείμενο αντιγράφηκε!</div>
-
-<script>
-    function copyText(elementId) {
-        const element = document.getElementById(elementId);
-        const text = element.innerText;
-        
-        navigator.clipboard.writeText(text).then(function() {
-            const toast = document.getElementById('toastMessage');
-            toast.style.display = 'block';
-            
-            const cookieBtn = document.getElementById('copyCookieBtn');
-            const cardBtn = document.getElementById('copyCardBtn');
-            
-            if (elementId === 'cookieMessage' && cookieBtn) {
-                cookieBtn.classList.add('copied');
-                setTimeout(() => cookieBtn.classList.remove('copied'), 2000);
-            } else if (elementId === 'cardMessageDisplay' && cardBtn) {
-                cardBtn.classList.add('copied');
-                setTimeout(() => cardBtn.classList.remove('copied'), 2000);
+            // Βοηθητική συνάρτηση τυχαίας επιλογής
+            function getRandomFortune() {
+                return fortuneMessages[Math.floor(Math.random() * fortuneMessages.length)];
             }
-            
-            setTimeout(() => {
-                toast.style.display = 'none';
-            }, 2000);
-        }).catch(function(err) {
-            alert('Δεν ήταν δυνατή η αντιγραφή');
-        });
-    }
 
-    (function() {
-        // 50 μηνύματα μπισκότου
-        const fortunes = [
-            "❤️ Ένας άντρας θα σε κοιτάξει σαν να είσαι το τελευταίο ποτήρι νερό στην έρημο.",
-            "💰 Μια απροσδόκητη οικονομική είδηση θα σε κάνει να χαμογελάσεις.",
-            "❤️ Θα φιληθείς κάτω από φεγγάρι που θυμάται προηγούμενες ζωές.",
-            "💰 Τα λεφτά θα έρθουν από εκεί που δεν τα περιμένεις – κράτα μυστικό.",
-            "❤️ Η καρδιά σου θα χτυπήσει δυνατά για κάποιον που δεν περίμενες.",
-            "💰 Μια επαγγελματική πρόταση θα αλλάξει το οικονομικό σου μέλλον.",
-            "❤️ Θα σε αγαπήσει όπως αγαπάει κανείς μόνο μια φορά στη ζωή του.",
-            "💰 Το πορτοφόλι σου θα γεμίσει από μια παλιά σου ιδέα.",
-            "❤️ Ένα βλέμμα θα είναι αρκετό για να καταλάβεις ότι είναι αυτός.",
-            "💰 Η οικονομική σου ανεξαρτησία είναι πιο κοντά από όσο νομίζεις.",
-            "❤️ Θα κοιμηθείς αγκαλιά με τον άνθρωπο που ονειρευόσουν χρόνια.",
-            "💰 Μια δωροεπιταγή θα σου έρθει από εκεί που δεν το περιμένεις.",
-            "❤️ Το ροζ σημείωμα από το σύμπαν: ο έρωτας είναι προ των πυλών.",
-            "💰 Ο λογαριασμός σου θα αυξηθεί – και εσύ θα το γιορτάσεις.",
-            "❤️ Δύο χέρια θα σφίξουν τα δικά σου και δεν θα τα αφήσουν ποτέ.",
-            "💰 Μια επένδυση που ξέχασες θα αποδώσει καρπούς.",
-            "❤️ Η αγκαλιά του θα μυρίζει σαν το σπίτι που πάντα έψαχνες.",
-            "💰 Τα χρήματα είναι εργαλείο – εσύ είσαι η καλλιτέχνις.",
-            "❤️ Ένα ταξίδι για δύο σε περιμένει σύντομα.",
-            "💰 Η αφθονία έρχεται – άνοιξε τα χέρια σου να την υποδεχτείς.",
-            "❤️ Το στόμα του θα ψιθυρίσει το όνομά σου σαν προσευχή.",
-            "💰 Μια νέα πηγή εσόδων θα εμφανιστεί τον επόμενο μήνα.",
-            "❤️ Θα ξυπνήσεις με ένα μήνυμα που θα σου φτιάξει τη μέρα.",
-            "💰 Τα οικονομικά σου θα απογειωθούν με μια συνεργασία.",
-            "❤️ Ο έρωτας της ζωής σου είναι ήδη κοντά – απλά κάνε χώρο.",
-            "💰 Μια κληρονομιά – όχι αναγκαστικά χρηματική – θα σε γεμίσει.",
-            "❤️ Τα χείλη του θα μάθουν απέξω το σώμα σου.",
-            "💰 Θα βρεις λεφτά σε ένα παλιό σακάκι – κυριολεκτικά ή μεταφορικά.",
-            "❤️ Η ψυχή σου αναγνώρισε την ψυχή του – τώρα απλά περίμενε.",
-            "💰 Οικονομική ευημερία μέσω δημιουργικότητας.",
-            "❤️ Θα σε κρατήσει σαν να φοβάται μη σε χάσει.",
-            "💰 Μια αύξηση ή ένα μπόνους σε περιμένει σύντομα.",
-            "❤️ Το άγγιγμά του θα είναι σαν ηλεκτρικό ρεύμα.",
-            "💰 Τα λεφτά αγαπούν τις τολμηρές – κάνε την κίνηση.",
-            "❤️ Θα σου γράψει ποίημα – και θα κλάψεις από συγκίνηση.",
-            "💰 Ένα οικονομικό μάθημα από το παρελθόν θα σε ωφελήσει τώρα.",
-            "❤️ Η μοιραία συνάντηση είναι θέμα ημερών.",
-            "💰 Το σύμπαν συνωμοτεί για να γεμίσει η τσέπη σου.",
-            "❤️ Θα σε κοιτάξει και θα ξεχάσει πώς τον λένε – μόνο εσένα θα βλέπει.",
-            "💰 Μια επιταγή στα χέρια σου πριν το καλοκαίρι.",
-            "❤️ Το κρεβάτι σου θα γίνει το αγαπημένο του μέρος στη γη.",
-            "💰 Η οικονομική σου διαίσθηση είναι δυνατή – άκουσέ την.",
-            "❤️ Θα γελάσετε μέχρι δακρύων για κάτι πολύ απλό.",
-            "💰 Χρήματα από το εξωτερικό ή από ξένο νόμισμα.",
-            "❤️ Η αγκαλιά του θα σε κάνει να νιώσεις ασφαλής για πάντα.",
-            "💰 Μια καλή οικονομική περίοδο ξεκινά σε 3...2...1...",
-            "❤️ Θα σε φιλήσει σαν να σε αποχαιρετά – αλλά θα μείνει.",
-            "💰 Η αποταμίευση είναι καλή, αλλά και η απόλαυση – κάνε ένα δώρο στον εαυτό σου.",
-            "❤️ Ο έρωτας θα έρθει σαν καλοκαιρινή μπόρα – ξαφνικός και δροσερός.",
-            "💰 Το μέλλον σου είναι λαμπερό και γεμάτο χαρές – οικονομικές και μη."
-        ];
+            // ---------- 1. SCRATCH FORTUNE COOKIE ----------
+            const canvas = document.getElementById('scratch-canvas');
+            const wrapper = document.getElementById('scratchWrapper');
+            const fortuneDisplay = document.getElementById('fortuneDisplay');
+            let isDrawing = false;
+            let ctx = canvas.getContext('2d');
 
-        // 20 μηνύματα καρτών
-        const cardMessages = [
-            "💖 Ερωτική πρόβλεψη: ένας πρώην θα ξαναεμφανιστεί – εσύ ξέρεις αν αξίζει.",
-            "💎 Οικονομικά: μια επένδυση σε σένα είναι η καλύτερη που έκανες ποτέ.",
-            "✨ Θα βρεθείς σε ένα ραντεβού που θα σε κάνει να πιστέψεις ξανά.",
-            "💰 Μια νέα πηγή εισοδήματος θα προκύψει από ένα χόμπι σου.",
-            "🌹 Κάποιος σε σκέφτεται αυτή τη στιγμή και ετοιμάζεται να σου μιλήσει.",
-            "💳 Οικονομική πρόβλεψη: η επιταγή που περιμένεις έρχεται.",
-            "💕 Θα ανταλλάξεις ματιές με έναν άγνωστο που θα γίνει γνωστός.",
-            "💵 Λεφτά από μια παλιά οφειλή θα σου επιστραφούν.",
-            "💋 Ένα φιλί στο πιο απροσδόκητο μέρος θα σου φτιάξει τη μέρα.",
-            "💸 Οικονομική άνοδος – τόλμησε να ζητήσεις αυτό που αξίζεις.",
-            "💞 Ο έρωτας χτυπάει την πόρτα σου – κυριολεκτικά ή μεταφορικά.",
-            "💰 Μια δωροεπιταγή 5€ ή 10€ είναι πιο κοντά από όσο νομίζεις.",
-            "💓 Δύο καρδιές που χτυπούν δυνατά – η μία είναι δική σου.",
-            "💎 Μια επαγγελματική ευκαιρία θα σε κάνει οικονομικά ανεξάρτητη.",
-            "💘 Θα λάβεις ένα μήνυμα που θα σε κάνει να κοκκινίσεις.",
-            "💰 Τα χρήματα έρχονται – μην τα διώχνεις με αρνητικές σκέψεις.",
-            "💗 Ο έρωτας του καλοκαιριού σε περιμένει – και θα είναι δυνατός.",
-            "💵 Μια καλή συμφωνία θα σου αποφέρει κέρδος.",
-            "💕 Θα σε πάρουν αγκαλιά χωρίς να το περιμένεις.",
-            "💰 Η οικονομική σου κατάσταση θα βελτιωθεί αισθητά."
-        ];
+            function initScratch() {
+                const rect = wrapper.getBoundingClientRect();
+                canvas.width = rect.width;
+                canvas.height = rect.height;
 
-        const cookieEl = document.getElementById('fortuneCookie');
-        const cookieEmoji = document.getElementById('cookieEmoji');
-        const cookieMessage = document.getElementById('cookieMessage');
-        const videoAd1 = document.getElementById('videoAd1');
-        const videoAd2 = document.getElementById('videoAd2');
-        const entryBlock = document.getElementById('entryBlock');
-        const cardsGrid = document.getElementById('cardsGrid');
-        const cardMessageDisplay = document.getElementById('cardMessageDisplay');
-        const gamesCompleteMessage = document.getElementById('gamesCompleteMessage');
-        const copyCookieBtn = document.getElementById('copyCookieBtn');
-        const copyCardBtn = document.getElementById('copyCardBtn');
+                ctx.fillStyle = '#4a3b5c';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                // Προσθήκη "ξυσίματος" υφής
+                ctx.fillStyle = '#5e4b72';
+                for (let i = 0; i < 200; i++) {
+                    ctx.beginPath();
+                    ctx.arc(Math.random() * canvas.width, Math.random() * canvas.height, Math.random() * 4 + 1, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+                ctx.font = 'bold 16px "Cinzel", serif';
+                ctx.fillStyle = '#d4af6b';
+                ctx.textAlign = 'center';
+                ctx.fillText('ΞΥΣΕ ΕΔΩ', canvas.width / 2, canvas.height / 2 + 6);
+                ctx.textAlign = 'start';
 
-        let cookieOpened = false;
-        let cardPlayed = false;
-        let video1Shown = false;
-        let video2Shown = false;
+                // Ορισμός τυχαίου μηνύματος
+                fortuneDisplay.textContent = getRandomFortune();
+            }
 
-        // Γέμισμα καρτών
-        for (let i = 0; i < 6; i++) {
-            const card = document.createElement('div');
-            card.className = 'card';
-            card.textContent = '🔮';
-            card.dataset.index = i;
-            
-            card.addEventListener('click', function() {
-                if (this.classList.contains('flipped') || cardPlayed) return;
-                
-                const randomIndex = Math.floor(Math.random() * cardMessages.length);
-                const msg = cardMessages[randomIndex];
-                cardMessageDisplay.textContent = msg;
-                copyCardBtn.style.display = 'flex';
-                
-                this.classList.add('flipped');
-                this.textContent = msg.substring(0, 15) + '…';
-                
-                cardPlayed = true;
-                
-                // Εμφάνιση 2ου video ad
-                videoAd2.classList.add('visible');
-                video2Shown = true;
-                checkGamesComplete();
+            function getPos(e) {
+                const rect = canvas.getBoundingClientRect();
+                const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+                const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+                return {
+                    x: clientX - rect.left,
+                    y: clientY - rect.top
+                };
+            }
+
+            function scratch(e) {
+                if (!isDrawing) return;
+                e.preventDefault();
+                const pos = getPos(e);
+                ctx.globalCompositeOperation = 'destination-out';
+                ctx.beginPath();
+                ctx.arc(pos.x, pos.y, 24, 0, Math.PI * 2);
+                ctx.fill();
+                // Έλεγχος ποσοστού αποκάλυψης (προαιρετικά για αυτόματη αποκάλυψη)
+                checkScratchProgress();
+            }
+
+            function checkScratchProgress() {
+                const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+                const pixels = imageData.data;
+                let transparentPixels = 0;
+                for (let i = 3; i < pixels.length; i += 4) {
+                    if (pixels[i] === 0) transparentPixels++;
+                }
+                const totalPixels = canvas.width * canvas.height;
+                const percent = (transparentPixels / totalPixels) * 100;
+                if (percent > 55) {
+                    // Αποκαλύπτουμε πλήρως
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                    canvas.style.pointerEvents = 'none';
+                }
+            }
+
+            function startDrawing(e) {
+                isDrawing = true;
+                scratch(e);
+            }
+
+            function stopDrawing() {
+                isDrawing = false;
+            }
+
+            canvas.addEventListener('mousedown', startDrawing);
+            canvas.addEventListener('mousemove', scratch);
+            canvas.addEventListener('mouseup', stopDrawing);
+            canvas.addEventListener('mouseleave', stopDrawing);
+            canvas.addEventListener('touchstart', startDrawing, { passive: false });
+            canvas.addEventListener('touchmove', scratch, { passive: false });
+            canvas.addEventListener('touchend', stopDrawing);
+            canvas.addEventListener('touchcancel', stopDrawing);
+
+            window.addEventListener('resize', () => {
+                initScratch();
             });
-            
-            cardsGrid.appendChild(card);
-        }
 
-        // Μπισκότο
-        cookieEl.addEventListener('click', function() {
-            if (cookieOpened) return;
+            initScratch();
 
-            cookieEmoji.textContent = '🍪';
-            const randomIndex = Math.floor(Math.random() * fortunes.length);
-            const selectedMsg = fortunes[randomIndex];
-            cookieMessage.textContent = selectedMsg;
-            copyCookieBtn.style.display = 'flex';
+            // ---------- 2. TAROT CARDS (FLIP) ----------
+            const tarotGrid = document.getElementById('tarotGrid');
+            const tarotSymbols = ['☽', '✧', '⚝', '☀', '♆', '☾'];
+            const tarotLabels = ['Σελήνη', 'Μοίρα', 'Άστρο', 'Ήλιος', 'Πεπρωμένο', 'Όνειρο'];
 
-            cookieOpened = true;
-            
-            // Εμφάνιση 1ου video ad
-            videoAd1.classList.add('visible');
-            video1Shown = true;
-            checkGamesComplete();
-        });
+            function buildTarotCards() {
+                tarotGrid.innerHTML = '';
+                for (let i = 0; i < 6; i++) {
+                    const scene = document.createElement('div');
+                    scene.className = 'card-scene';
 
-        // Έλεγχος ολοκλήρωσης
-        function checkGamesComplete() {
-            if (cookieOpened && cardPlayed && video1Shown && video2Shown) {
-                gamesCompleteMessage.style.display = 'block';
-                
-                setTimeout(() => {
-                    entryBlock.classList.add('unlocked');
-                }, 8000);
+                    const inner = document.createElement('div');
+                    inner.className = 'card-inner';
+
+                    const front = document.createElement('div');
+                    front.className = 'card-front';
+                    front.innerHTML = `${tarotSymbols[i]}<span>${tarotLabels[i]}</span>`;
+
+                    const back = document.createElement('div');
+                    back.className = 'card-back';
+                    back.textContent = getRandomFortune();
+
+                    inner.appendChild(front);
+                    inner.appendChild(back);
+                    scene.appendChild(inner);
+
+                    inner.addEventListener('click', function(e) {
+                        // Αν είναι ήδη flipped, μην κάνουμε τίποτα (ή toggle)
+                        if (this.classList.contains('flipped')) {
+                            // Προαιρετικά: επαναφορά; Θα το αφήσουμε flipped.
+                            return;
+                        }
+                        this.classList.add('flipped');
+                        // Αναπαραγωγή ήχου εφέ (δεν υποστηρίζεται χωρίς αρχείο, αλλά το animation αρκεί)
+                    });
+
+                    tarotGrid.appendChild(scene);
+                }
             }
-        }
-    })();
-</script>
+            buildTarotCards();
 
-<script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+            // ---------- 3. ΖΩΔΙΑ ----------
+            function getZodiacSign(day, month) {
+                if ((month === 1 && day >= 20) || (month === 2 && day <= 18)) return 'Υδροχόος';
+                if ((month === 2 && day >= 19) || (month === 3 && day <= 20)) return 'Ιχθύες';
+                if ((month === 3 && day >= 21) || (month === 4 && day <= 19)) return 'Κριός';
+                if ((month === 4 && day >= 20) || (month === 5 && day <= 20)) return 'Ταύρος';
+                if ((month === 5 && day >= 21) || (month === 6 && day <= 20)) return 'Δίδυμοι';
+                if ((month === 6 && day >= 21) || (month === 7 && day <= 22)) return 'Καρκίνος';
+                if ((month === 7 && day >= 23) || (month === 8 && day <= 22)) return 'Λέων';
+                if ((month === 8 && day >= 23) || (month === 9 && day <= 22)) return 'Παρθένος';
+                if ((month === 9 && day >= 23) || (month === 10 && day <= 22)) return 'Ζυγός';
+                if ((month === 10 && day >= 23) || (month === 11 && day <= 21)) return 'Σκορπιός';
+                if ((month === 11 && day >= 22) || (month === 12 && day <= 21)) return 'Τοξότης';
+                if ((month === 12 && day >= 22) || (month === 1 && day <= 19)) return 'Αιγόκερως';
+                return 'Άγνωστο';
+            }
+
+            window.getZodiac = function() {
+                const dobInput = document.getElementById('dob');
+                const resDiv = document.getElementById('zodiac-res');
+                if (!dobInput.value) {
+                    resDiv.textContent = 'Παρακαλώ εισήγαγε την ημερομηνία γέννησής σου.';
+                    return;
+                }
+                const dateParts = dobInput.value.split('-');
+                const month = parseInt(dateParts[1], 10);
+                const day = parseInt(dateParts[2], 10);
+                const sign = getZodiacSign(day, month);
+                const prediction = getRandomFortune();
+                resDiv.innerHTML = `<strong>${sign}</strong>: ${prediction}`;
+            };
+
+            // ---------- 4. ΑΣΤΡΙΚΟ BACKGROUND (CANVAS ANIMATION) ----------
+            const starsCanvas = document.getElementById('starsCanvas');
+            const starsCtx = starsCanvas.getContext('2d');
+            let starsArray = [];
+
+            function resizeStars() {
+                starsCanvas.width = window.innerWidth;
+                starsCanvas.height = window.innerHeight;
+                initStars();
+            }
+
+            function initStars() {
+                starsArray = [];
+                const count = Math.floor((starsCanvas.width * starsCanvas.height) / 1800);
+                for (let i = 0; i < count; i++) {
+                    starsArray.push({
+                        x: Math.random() * starsCanvas.width,
+                        y: Math.random() * starsCanvas.height,
+                        radius: Math.random() * 1.8 + 0.4,
+                        alpha: Math.random(),
+                        delta: Math.random() * 0.02 + 0.005,
+                        direction: Math.random() < 0.5 ? 1 : -1
+                    });
+                }
+            }
+
+            function animateStars() {
+                starsCtx.clearRect(0, 0, starsCanvas.width, starsCanvas.height);
+                for (let star of starsArray) {
+                    star.alpha += star.delta * star.direction;
+                    if (star.alpha >= 0.9 || star.alpha <= 0.15) star.direction *= -1;
+                    starsCtx.beginPath();
+                    starsCtx.arc(star.x, star.y, star.radius, 0, Math.PI * 2);
+                    starsCtx.fillStyle = `rgba(230,210,170,${star.alpha})`;
+                    starsCtx.fill();
+                    // λάμψη
+                    starsCtx.beginPath();
+                    starsCtx.arc(star.x, star.y, star.radius * 2.2, 0, Math.PI * 2);
+                    starsCtx.fillStyle = `rgba(200,160,200,${star.alpha * 0.25})`;
+                    starsCtx.fill();
+                }
+                requestAnimationFrame(animateStars);
+            }
+
+            window.addEventListener('resize', resizeStars);
+            resizeStars();
+            animateStars();
+
+            // Επαναφορά scratch canvas σε resize (ήδη υπάρχει listener)
+        })();
+    </script>
 </body>
 </html>
