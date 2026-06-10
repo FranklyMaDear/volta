@@ -1,433 +1,589 @@
 <!DOCTYPE html>
 <html lang="el">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pocket Pet Game</title>
-    <style>
-        :root {
-            --bg-color: #8faec4;
-            --device-color: #f35353;
-            --screen-bg: #a3b899;
-            --pixel-color: #22251e;
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>Gold Fest 2 – Infinite Scroll</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
 
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: 'Courier New', Courier, monospace;
-        }
+    body {
+      background: #02021a;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      overflow: hidden;
+    }
 
-        body {
-            background-color: var(--bg-color);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            padding: 20px;
-        }
+    .game-container {
+      width: 100%;
+      max-width: 430px;
+      height: 100vh;
+      max-height: 900px;
+      background: radial-gradient(circle at 50% 20%, #1a1a5e 0%, #0a0a3e 40%, #050528 100%);
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 0 60px rgba(0, 0, 0, 0.8);
+    }
 
-        /* Κέλυφος Συσκευής (Tamagotchi Toy) */
-        .pet-device {
-            background-color: var(--device-color);
-            width: 100%;
-            max-width: 360px;
-            border-radius: 40px;
-            padding: 30px 20px;
-            box-shadow: 0 15px 0 #b83232, 0 25px 20px rgba(0,0,0,0.3);
-            border: 4px solid #fff;
-        }
+    /* === DECORATIONS === */
+    .spaceship {
+      position: absolute;
+      top: 4%;
+      left: 6%;
+      font-size: 50px;
+      filter: drop-shadow(0 6px 8px rgba(0, 0, 0, 0.3));
+      transform: rotate(-20deg);
+      z-index: 10;
+      animation: float 3s ease-in-out infinite;
+    }
 
-        /* Επίσημος Τίτλος Συσκευής */
-        .device-header {
-            text-align: center;
-            color: white;
-            font-weight: bold;
-            font-size: 1.4rem;
-            margin-bottom: 20px;
-            text-transform: uppercase;
-            text-shadow: 2px 2px #b83232;
-            letter-spacing: 2px;
-        }
+    .meteor {
+      position: absolute;
+      top: 52%;
+      left: 4%;
+      width: 60px;
+      height: 60px;
+      background: radial-gradient(circle at 40% 40%, #ffcc80, #ff9100, #e65100);
+      border-radius: 50%;
+      box-shadow: -12px 12px 24px rgba(33, 150, 243, 0.5);
+      z-index: 10;
+      animation: float 4s ease-in-out infinite reverse;
+    }
 
-        /* Η Ψηφιακή Οθόνη */
-        .screen-container {
-            background-color: var(--screen-bg);
-            border: 8px solid #333;
-            border-radius: 10px;
-            padding: 15px;
-            box-shadow: inset 0 0 15px rgba(0,0,0,0.5);
-            position: relative;
-        }
+    .meteor::before {
+      content: '';
+      position: absolute;
+      top: -20px;
+      left: -30px;
+      width: 50px;
+      height: 40px;
+      background: linear-gradient(135deg, transparent, #29b6f6, #81d4fa);
+      filter: blur(10px);
+      transform: skewX(-35deg);
+      opacity: 0.9;
+    }
 
-        /* Μπάρες Κατάστασης (Stats) */
-        .stats-bar {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 15px;
-            font-size: 0.8rem;
-            color: var(--pixel-color);
-            font-weight: bold;
-        }
+    .meteor::after {
+      content: '• • •';
+      position: absolute;
+      top: 22%;
+      left: 16%;
+      font-size: 16px;
+      letter-spacing: 8px;
+      color: rgba(0, 0, 0, 0.35);
+      font-weight: bold;
+    }
 
-        .stat-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            width: 30%;
-        }
+    .cloud {
+      position: absolute;
+      top: 20%;
+      right: 6%;
+      font-size: 44px;
+      filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.2));
+      z-index: 10;
+      animation: float 3.5s ease-in-out infinite 0.5s;
+    }
 
-        .progress-bg {
-            background: rgba(0,0,0,0.1);
-            width: 100%;
-            height: 8px;
-            border: 1px solid var(--pixel-color);
-            margin-top: 4px;
-        }
+    .sparkle {
+      position: absolute;
+      color: #e1bee7;
+      font-size: 14px;
+      animation: twinkle 1.5s infinite ease-in-out;
+    }
 
-        .progress-fill {
-            background: var(--pixel-color);
-            height: 100%;
-            width: 100%;
-            transition: width 0.3s ease;
-        }
+    @keyframes float {
+      0%,
+      100% {
+        transform: translateY(0) rotate(var(--r, 0deg));
+      }
+      50% {
+        transform: translateY(-12px) rotate(var(--r, 0deg));
+      }
+    }
 
-        /* Κεντρικό Παράθυρο με το Ζωάκι */
-        .pet-display {
-            height: 160px;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            position: relative;
-        }
+    @keyframes twinkle {
+      0%,
+      100% {
+        opacity: 0.3;
+        transform: scale(1);
+      }
+      50% {
+        opacity: 1;
+        transform: scale(1.3);
+      }
+    }
 
-        .pet-avatar {
-            font-size: 4rem;
-            transition: transform 0.2s ease;
-            user-select: none;
-        }
+    /* === BOARD === */
+    .board {
+      position: absolute;
+      top: 20px;
+      left: 3%;
+      right: 3%;
+      height: 280px;
+      /* 4 rows visible */
+      overflow: hidden;
+      border-radius: 24px;
+      background: rgba(0, 0, 0, 0.25);
+      box-shadow: inset 0 0 30px rgba(0, 0, 0, 0.6), 0 10px 30px rgba(0, 0, 0, 0.5);
+      border: 2px solid rgba(255, 255, 255, 0.08);
+      z-index: 20;
+      pointer-events: none;
+    }
 
-        /* Animations για το Ζωάκι */
-        .bounce {
-            animation: bounceAnim 0.6s infinite alternate;
-        }
-        .eating {
-            animation: eatAnim 0.3s cubic-bezier(.36,.07,.19,.97) infinite;
-        }
-        .dead {
-            transform: rotate(180deg);
-        }
+    .tiles-container {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      grid-template-rows: repeat(5, 70px);
+      gap: 8px;
+      padding: 8px;
+      width: 100%;
+      height: 358px;
+      /* 5 * 70 + 4*8 = 350+32=382, ας το αφήσω auto */
+      transition: transform 0.3s cubic-bezier(0.22, 0.61, 0.36, 1);
+      will-change: transform;
+    }
 
-        @keyframes bounceAnim {
-            from { transform: translateY(0); }
-            to { transform: translateY(-10px); }
-        }
-        @keyframes eatAnim {
-            0% { transform: scale(1) translateX(0); }
-            50% { transform: scale(1.2) translateX(5px); }
-            100% { transform: scale(1) translateX(0); }
-        }
+    .tile {
+      border-radius: 16px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 13px;
+      color: #fff;
+      text-shadow: 0 2px 3px rgba(0, 0, 0, 0.3);
+      box-shadow: 0 5px 0 rgba(0, 0, 0, 0.3), 0 8px 16px rgba(0, 0, 0, 0.4);
+      position: relative;
+      pointer-events: auto;
+      transition: transform 0.2s;
+    }
 
-        .status-message {
-            margin-top: 10px;
-            font-size: 0.9rem;
-            font-weight: bold;
-            color: var(--pixel-color);
-            min-height: 20px;
-            text-align: center;
-        }
+    .tile .icon {
+      font-size: 28px;
+      line-height: 1;
+      filter: drop-shadow(0 3px 3px rgba(0, 0, 0, 0.3));
+      margin-bottom: 2px;
+    }
 
-        /* Τα Κουμπιά Ενεργειών */
-        .action-buttons {
-            display: grid;
-            grid-template-columns: repeat(3, 100px);
-            gap: 15px;
-            justify-content: center;
-            margin-top: 25px;
-        }
+    .tile .label {
+      font-size: 12px;
+      letter-spacing: 0.3px;
+    }
 
-        .btn {
-            background-color: #fff;
-            border: 3px solid #333;
-            padding: 12px 5px;
-            border-radius: 50%;
-            font-size: 1.2rem;
-            cursor: pointer;
-            box-shadow: 0 5px 0 #333;
-            transition: all 0.1s ease;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
+    /* Tile reward types */
+    .tile.gift {
+      background: linear-gradient(180deg, #ffb74d 0%, #e65100 100%);
+      box-shadow: 0 5px 0 #bf360c, 0 8px 16px rgba(0, 0, 0, 0.4);
+    }
 
-        .btn:active {
-            transform: translateY(4px);
-            box-shadow: 0 1px 0 #333;
-        }
+    .tile.spin {
+      background: linear-gradient(180deg, #ce93d8 0%, #6a1b9a 100%);
+      box-shadow: 0 5px 0 #4a148c, 0 8px 16px rgba(0, 0, 0, 0.4);
+    }
 
-        .btn:disabled {
-            background-color: #ccc;
-            cursor: not-allowed;
-            box-shadow: 0 5px 0 #666;
-            transform: none;
-        }
+    .tile.points {
+      background: linear-gradient(180deg, #66bb6a 0%, #2e7d32 100%);
+      box-shadow: 0 5px 0 #1b5e20, 0 8px 16px rgba(0, 0, 0, 0.4);
+    }
 
-        .btn-label {
-            font-size: 0.6rem;
-            font-weight: bold;
-            text-transform: uppercase;
-            margin-top: 2px;
-            color: #333;
-        }
-    </style>
+    .tile.ads {
+      background: linear-gradient(180deg, #ef5350 0%, #b71c1c 100%);
+      box-shadow: 0 5px 0 #7f0000, 0 8px 16px rgba(0, 0, 0, 0.4);
+    }
+
+    /* === PLAYER PAWN === */
+    .player {
+      position: absolute;
+      width: 44px;
+      height: 54px;
+      z-index: 60;
+      transform: translate(-50%, -50%);
+      filter: drop-shadow(0 8px 6px rgba(0, 0, 0, 0.4));
+      pointer-events: none;
+      transition: left 0.3s ease, top 0.3s ease;
+    }
+
+    .pawn-body {
+      width: 36px;
+      height: 36px;
+      background: radial-gradient(circle at 35% 30%, #42a5f5, #1565c0);
+      border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+      margin: 0 auto;
+      box-shadow: 0 4px 0 #0d47a1;
+    }
+
+    .pawn-base {
+      width: 28px;
+      height: 10px;
+      background: rgba(21, 101, 192, 0.6);
+      border-radius: 50%;
+      margin: 4px auto 0;
+      filter: blur(2px);
+    }
+
+    .player.hop {
+      animation: hop 0.3s ease-in-out;
+    }
+
+    @keyframes hop {
+      0% {
+        transform: translate(-50%, -50%) scale(1);
+      }
+      40% {
+        transform: translate(-50%, -110%) scale(1.15);
+      }
+      100% {
+        transform: translate(-50%, -50%) scale(1);
+      }
+    }
+
+    /* === BOTTOM BAR === */
+    .bottom-bar {
+      position: absolute;
+      bottom: 24px;
+      left: 4%;
+      right: 4%;
+      height: 72px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      z-index: 100;
+      pointer-events: none;
+    }
+
+    .bottom-bar>* {
+      pointer-events: auto;
+    }
+
+    .energy-badge {
+      background: linear-gradient(180deg, #1a1a1a 0%, #0d0d0d 100%);
+      border-radius: 20px;
+      padding: 10px 16px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      color: #fff;
+      font-weight: 800;
+      font-size: 15px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+      border: 1px solid #333;
+      min-width: 90px;
+    }
+
+    .energy-badge .bolt {
+      color: #76ff03;
+      font-size: 20px;
+    }
+
+    .energy-badge .current {
+      color: #76ff03;
+    }
+
+    .energy-badge .sep {
+      color: #666;
+      margin: 0 1px;
+    }
+
+    .roll-btn {
+      background: linear-gradient(180deg, #ff4081 0%, #c51162 100%);
+      border: none;
+      border-radius: 32px;
+      padding: 14px 28px;
+      color: white;
+      font-size: 22px;
+      font-weight: 900;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      box-shadow: 0 6px 0 #880e4f, 0 10px 20px rgba(0, 0, 0, 0.4);
+      cursor: pointer;
+      position: relative;
+      top: -4px;
+      transition: all 0.1s;
+      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+      letter-spacing: 0.5px;
+      white-space: nowrap;
+    }
+
+    .roll-btn:active {
+      top: 0;
+      box-shadow: 0 1px 0 #880e4f, 0 3px 8px rgba(0, 0, 0, 0.4);
+    }
+
+    .roll-btn .bolt {
+      color: #76ff03;
+      font-size: 24px;
+      margin: 0 2px;
+    }
+
+    .ticket-stack {
+      position: relative;
+      font-size: 44px;
+      filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.3));
+      cursor: pointer;
+      pointer-events: auto;
+    }
+
+    .ticket-stack::before {
+      content: '🎫';
+      position: absolute;
+      top: -6px;
+      left: -8px;
+      font-size: 38px;
+      filter: drop-shadow(0 2px 2px rgba(0, 0, 0, 0.2));
+      z-index: -1;
+    }
+
+    .ticket-stack::after {
+      content: 'G';
+      position: absolute;
+      bottom: 6px;
+      right: -4px;
+      font-size: 16px;
+      font-weight: 900;
+      color: #ffeb3b;
+      background: #5d4037;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 2px solid #ffeb3b;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    }
+  </style>
 </head>
 <body>
 
-    <div class="pet-device">
-        <div class="device-header">POCKET PET</div>
-        
-        <div class="screen-container">
-            <div class="stats-bar">
-                <div class="stat-item">
-                    <span>HUNGER</span>
-                    <div class="progress-bg"><div id="hunger-fill" class="progress-fill"></div></div>
-                </div>
-                <div class="stat-item">
-                    <span>CLEAN</span>
-                    <div class="progress-bg"><div id="clean-fill" class="progress-fill"></div></div>
-                </div>
-                <div class="stat-item">
-                    <span>HAPPY</span>
-                    <div class="progress-bg"><div id="happy-fill" class="progress-fill"></div></div>
-                </div>
-            </div>
+  <div class="game-container">
+    <!-- Decorations -->
+    <div class="spaceship">🛸</div>
+    <div class="meteor"></div>
+    <div class="cloud">☁️</div>
+    <div class="sparkle" style="top:18%; right:10%; animation-delay:0s;">✨</div>
+    <div class="sparkle" style="top:25%; right:16%; animation-delay:0.4s;">✨</div>
+    <div class="sparkle" style="top:16%; right:22%; animation-delay:0.8s;">✨</div>
 
-            <div class="pet-display">
-                <div id="pet-avatar" class="pet-avatar bounce">🐶</div>
-                <div id="status-message" class="status-message">Είμαι χαρούμενο!</div>
-            </div>
-        </div>
-
-        <div class="action-buttons">
-            <button class="btn" onclick="game.feed()" id="btn-feed">
-                🍖<span class="btn-label">Feed</span>
-            </button>
-            <button class="btn" onclick="game.clean()" id="btn-clean">
-                🧼<span class="btn-label">Shower</span>
-            </button>
-            <button class="btn" onclick="game.play()" id="btn-play">
-                🎮<span class="btn-label">Play</span>
-            </button>
-        </div>
+    <!-- Board -->
+    <div class="board" id="board">
+      <div class="tiles-container" id="tilesContainer"></div>
     </div>
 
-    <script>
-        /**
-         * Επαγγελματική Κλάση Διαχείρισης του Κατοικίδιου (Game Engine)
-         */
-        class PocketPet {
-            constructor() {
-                // Αρχικά Stats (Max: 100)
-                this.hunger = 80;
-                this.cleanliness = 80;
-                this.happiness = 80;
-                this.isDead = false;
-                
-                // Config ρυθμίσεις δυσκολίας (κάθε πόσα ms πέφτουν τα stats)
-                this.tickRate = 3000; 
+    <!-- Player -->
+    <div class="player" id="player">
+      <div class="pawn-body"></div>
+      <div class="pawn-base"></div>
+    </div>
 
-                // Cache τα DOM στοιχεία για καλύτερο performance
-                this.dom = {
-                    hungerFill: document.getElementById('hunger-fill'),
-                    cleanFill: document.getElementById('clean-fill'),
-                    happyFill: document.getElementById('happy-fill'),
-                    avatar: document.getElementById('pet-avatar'),
-                    message: document.getElementById('status-message'),
-                    btnFeed: document.getElementById('btn-feed'),
-                    btnClean: document.getElementById('btn-clean'),
-                    btnPlay: document.getElementById('btn-play')
-                };
+    <!-- Bottom Bar -->
+    <div class="bottom-bar">
+      <div class="energy-badge">
+        <span class="bolt">⚡</span>
+        <span class="current" id="energy">135</span>
+        <span class="sep">/</span>
+        <span>25</span>
+      </div>
+      <button class="roll-btn" id="rollBtn" onclick="roll()">
+        ROLL <span class="bolt">⚡</span>5
+      </button>
+      <div class="ticket-stack">🎟️</div>
+    </div>
+  </div>
 
-                this.init();
+  <script>
+    (function() {
+      const tilesContainer = document.getElementById('tilesContainer');
+      const player = document.getElementById('player');
+      const energyEl = document.getElementById('energy');
+      const rollBtn = document.getElementById('rollBtn');
+      const board = document.getElementById('board');
+
+      const rowHeight = 70; // must match grid-template-rows
+      const cols = 3;
+      const visibleRows = 4;
+      const totalRows = visibleRows + 1; // 5
+      const totalTiles = totalRows * cols; // 15
+
+      // Reward types
+      const rewardTypes = [
+        { type: 'gift', icon: '🎁', label: 'ΔΩΡΟ' },
+        { type: 'spin', icon: '🎰', label: '5 SPINS' },
+        { type: 'points', icon: '🪙', label: '5 ΠΟΝΤΟΙ' },
+        { type: 'ads', icon: '📺', label: 'ADS' }
+      ];
+
+      let boardData = [];
+      let energy = 135;
+      let isRolling = false;
+
+      // Create a random reward tile data
+      function createTileData() {
+        const rand = Math.floor(Math.random() * rewardTypes.length);
+        return { ...rewardTypes[rand] };
+      }
+
+      // Render all tiles in the container based on boardData
+      function renderTiles() {
+        tilesContainer.innerHTML = '';
+        boardData.forEach((data, index) => {
+          const tile = document.createElement('div');
+          tile.className = `tile ${data.type}`;
+          tile.innerHTML = `
+            <span class="icon">${data.icon}</span>
+            <span class="label">${data.label}</span>
+          `;
+          tile.dataset.index = index;
+          tilesContainer.appendChild(tile);
+        });
+      }
+
+      // Initialize board data
+      function initBoard() {
+        boardData = [];
+        for (let i = 0; i < totalTiles; i++) {
+          boardData.push(createTileData());
+        }
+        renderTiles();
+        // Set initial translateY to hide the first row (showing rows 1-4)
+        tilesContainer.style.transition = 'none';
+        tilesContainer.style.transform = `translateY(-${rowHeight}px)`;
+        positionPlayer();
+      }
+
+      // Position the player exactly on the middle tile of the 3rd row (index 7, 0-based)
+      function positionPlayer() {
+        // The tile at index 7 is the middle column of the 3rd row (visible 2nd row from top)
+        const tileIndex = 7; // row index 2, col index 1 (0: row0, 1: row1, 2: row2 ...)
+        const tile = tilesContainer.children[tileIndex];
+        if (!tile) return;
+        const tileRect = tile.getBoundingClientRect();
+        const boardRect = board.getBoundingClientRect();
+
+        const tileCenterX = tileRect.left + tileRect.width / 2;
+        const tileCenterY = tileRect.top + tileRect.height / 2;
+
+        const left = tileCenterX - boardRect.left;
+        const top = tileCenterY - boardRect.top;
+
+        player.style.left = left + 'px';
+        player.style.top = top + 'px';
+      }
+
+      // Shift the board up by one row, recycle data
+      function shiftUp() {
+        return new Promise(resolve => {
+          // Animate up
+          tilesContainer.style.transition = 'transform 0.3s cubic-bezier(0.22, 0.61, 0.36, 1)';
+          tilesContainer.style.transform = `translateY(-${2 * rowHeight}px)`;
+
+          const onTransitionEnd = () => {
+            tilesContainer.removeEventListener('transitionend', onTransitionEnd);
+            // Remove top row
+            boardData.splice(0, cols);
+            // Add new row at bottom
+            for (let i = 0; i < cols; i++) {
+              boardData.push(createTileData());
             }
+            renderTiles();
+            // Reset position without animation
+            tilesContainer.style.transition = 'none';
+            tilesContainer.style.transform = `translateY(-${rowHeight}px)`;
+            positionPlayer();
+            resolve();
+          };
 
-            /**
-             * Εκκίνηση του Game Loop
-             */
-            init() {
-                this.updateUI();
-                // Κάθε X δευτερόλεπτα το ζωάκι πεινάει, λερώνεται και βαριέται
-                this.gameInterval = setInterval(() => this.gameTick(), this.tickRate);
-            }
+          // Fallback in case transitionend doesn't fire
+          const fallback = setTimeout(() => {
+            tilesContainer.removeEventListener('transitionend', onTransitionEnd);
+            onTransitionEnd();
+          }, 350);
 
-            /**
-             * Ο βασικός "χτύπος" του παιχνιδιού ανά τακτά χρονικά διαστήματα
-             */
-            gameTick() {
-                if (this.isDead) return;
+          tilesContainer.addEventListener('transitionend', onTransitionEnd, { once: true });
+        });
+      }
 
-                // Μείωση stats
-                this.hunger = Math.max(0, this.hunger - 8);
-                this.cleanliness = Math.max(0, this.cleanliness - 5);
-                this.happiness = Math.max(0, this.happiness - 6);
+      // Animate player hop
+      function hopPlayer() {
+        return new Promise(resolve => {
+          player.classList.add('hop');
+          const onAnimEnd = () => {
+            player.removeEventListener('animationend', onAnimEnd);
+            player.classList.remove('hop');
+            resolve();
+          };
+          player.addEventListener('animationend', onAnimEnd, { once: true });
+          // Fallback
+          setTimeout(() => {
+            player.removeEventListener('animationend', onAnimEnd);
+            player.classList.remove('hop');
+            resolve();
+          }, 350);
+        });
+      }
 
-                this.checkVitalSigns();
-                this.updateUI();
-            }
-
-            /**
-             * Έλεγχος αν το ζωάκι έχει πεθάνει ή αν έχει κάποιο πρόβλημα
-             */
-            checkVitalSigns() {
-                if (this.hunger <= 0 || this.happiness <= 0) {
-                    this.isDead = true;
-                    clearInterval(this.gameInterval);
-                }
-            }
-
-            /**
-             * Μηχανισμός Ταΐσματος
-             */
-            feed() {
-                if (this.isDead) return;
-                this.hunger = Math.min(100, this.hunger + 20);
-                this.triggerAnimation('eating', 'Μιαμ μιαμ! Τέλειο!');
-            }
-
-            /**
-             * Μηχανισμός Καθαριότητας
-             */
-            clean() {
-                if (this.isDead) return;
-                this.cleanliness = Math.min(100, this.cleanliness + 30);
-                this.triggerAnimation('bounce', 'Έγινα λαμπίκο! 🧼');
-            }
-
-            /**
-             * Μηχανισμός Παιχνιδιού
-             */
-            play() {
-                if (this.isDead) return;
-                this.happiness = Math.min(100, this.happiness + 25);
-                this.hunger = Math.max(0, this.hunger - 5); // Το παιχνίδι κουράζει και φέρνει πείνα
-                this.triggerAnimation('bounce', 'Χαχα! Πολύ γέλιο! 🎮');
-            }
-
-            /**
-             * Διαχείριση των animations και των μηνυμάτων στην οθόνη
-             */
-            triggerAnimation(className, textMessage) {
-                this.dom.avatar.className = `pet-avatar ${className}`;
-                this.dom.message.innerText = textMessage;
-
-                // Επαναφορά στο κανονικό animation μετά από 1.5 δευτερόλεπτο
-                setTimeout(() => {
-                    if (!this.isDead) {
-                        this.dom.avatar.className = 'pet-avatar bounce';
-                        this.updateMessageBasedOnStats();
-                    }
-                }, 1500);
-
-                this.updateUI();
-            }
-
-            /**
-             * Δυναμικά μηνύματα ανάλογα με τα stats
-             */
-            updateMessageBasedOnStats() {
-                if (this.hunger < 30) this.dom.message.innerText = "Πεινάω πάρα πολύ! 🍖";
-                else if (this.cleanliness < 30) this.dom.message.innerText = "Μπλιάχ, θέλω μπάνιο! 🧼";
-                else if (this.happiness < 30) this.dom.message.innerText = "Βαριέμαι... παίξε μαζί μου!";
-                else this.dom.message.innerText = "Όλα τέλεια! 🥰";
-            }
-
-            /**
-             * Συγχρονισμός των δεδομένων (State) με την οθόνη (UI)
-             */
-            updateUI() {
-                // Ενημέρωση bars
-                this.dom.hungerFill.style.width = `${this.hunger}%`;
-                this.dom.cleanFill.style.width = `${this.cleanliness}%`;
-                this.dom.happyFill.style.width = `${this.happiness}%`;
-
-                // Έλεγχος αν πέθανε
-                if (this.isDead) {
-                    this.dom.avatar.innerText = "💀";
-                    this.dom.avatar.className = "pet-avatar dead";
-                    this.dom.message.innerText = "Το ζωάκι απεβίωσε... 😢";
-                    
-                    // Απενεργοποίηση κουμπιών
-                    this.dom.btnFeed.disabled = true;
-                    this.dom.btnClean.disabled = true;
-                    this.dom.btnPlay.disabled = true;
-                }
-            }
+      // Main roll function
+      async function roll() {
+        if (isRolling) return;
+        if (energy < 5) {
+          shakeElement(rollBtn);
+          return;
         }
 
-        // Object Initialization κατά το φόρτωμα της σελίδας
-        const game = new PocketPet();
-    </script>
-</body>
-</html>
+        isRolling = true;
+        energy -= 5;
+        energyEl.textContent = energy;
 
-<!DOCTYPE html>
-<html lang="el">
-<head>
-    <meta charset="UTF-8">
-    <title>FranklyGames - Λίστα Παιχνιδιών</title>
-    <style>
-        body { font-family: sans-serif; background: #0f0c29; color: #fff; padding: 20px; }
-        h2 { color: #f1c40f; border-bottom: 2px solid #302b63; padding-bottom: 10px; }
-        ul { list-style: none; padding: 0; }
-        li { background: rgba(255,255,255,0.05); margin: 10px 0; padding: 15px; border-radius: 8px; display: flex; justify-content: space-between; align-items: center; }
-        a { color: #2ecc71; text-decoration: none; font-weight: bold; }
-        a:hover { text-decoration: underline; }
-        .badge { background: #9b59b6; padding: 4px 8px; border-radius: 4px; font-size: 11px; }
-    </style>
-</head>
-<body>
+        const steps = Math.floor(Math.random() * 3) + 1; // 1, 2, or 3
+        rollBtn.innerHTML = `🎲 ${steps}`;
+        rollBtn.style.transform = 'scale(0.95)';
+        setTimeout(() => rollBtn.style.transform = 'scale(1)', 100);
 
-    <h2>Telegram Mini Apps (Crack the Codes)</h2>
-    <ul>
-        <li>
-            <span><strong>Crack Code</strong> - Telegram Bot App</span>
-            <a href="https://t.me/crackthecodes_bot/app" target="_blank">Άνοιγμα Παιχνιδιού</a>
-        </li>
-        <li>
-            <span><strong>Code Kids</strong> - Word Finder</span>
-            <a href="https://t.me/crackthecodes_bot/kids" target="_blank">Άνοιγμα Παιχνιδιού</a>
-        </li>
-        <li>
-            <span><strong>Code Words</strong> - Secret Words</span>
-            <a href="https://t.me/crackthecodes_bot/words" target="_blank">Άνοιγμα Παιχνιδιού</a>
-        </li>
-    </ul>
+        for (let i = 0; i < steps; i++) {
+          // Run hop and shift concurrently
+          await Promise.all([shiftUp(), hopPlayer()]);
+          // Small pause between steps
+          await sleep(150);
+        }
 
-    <h2>Κλασικά Παιχνίδια Web (Franklymadear Portal)</h2>
-    <ul>
-        <li>
-            <span><strong>Chess</strong> - Κλασική Στρατηγική</span>
-            <a href="https://games.franklymadear.com/chess/index.html" target="_blank">Άνοιγμα Παιχνιδιού</a>
-        </li>
-        <li>
-            <span><strong>Animals</strong> - Cute Animals Match</span>
-            <a href="https://games.franklymadear.com/animals/index.html" target="_blank">Άνοιγμα Παιχνιδιού</a>
-        </li>
-        <li>
-            <span><strong>Connect 4</strong> - Παιχνίδι για δύο</span>
-            <a href="https://games.franklymadear.com/4x4/connect4.html" target="_blank">Άνοιγμα Παιχνιδιού</a>
-        </li>
-        <li>
-            <span><strong>Balloons</strong> - Pop them all!</span>
-            <a href="https://games.franklymadear.com/balloon/index.html" target="_blank">Άνοιγμα Παιχνιδιού</a>
-        </li>
-        <li>
-            <span><strong>Sudoku</strong> - Τεστ Λογικής</span>
-            <a href="https://games.franklymadear.com/sudoku/sudoku.html" target="_blank">Άνοιγμα Παιχνιδιού</a>
-        </li>
-    </ul>
+        rollBtn.innerHTML = 'ROLL <span class="bolt">⚡</span>5';
+        isRolling = false;
+      }
 
+      function sleep(ms) {
+        return new Promise(resolve => setTimeout(resolve, ms));
+      }
+
+      function shakeElement(el) {
+        el.style.transform = 'translateX(5px)';
+        setTimeout(() => el.style.transform = 'translateX(-5px)', 50);
+        setTimeout(() => el.style.transform = 'translateX(5px)', 100);
+        setTimeout(() => el.style.transform = 'translateX(0)', 150);
+      }
+
+      // Re-position player on window resize / orientation change
+      window.addEventListener('resize', () => {
+        positionPlayer();
+      });
+
+      // Expose roll to global scope for onclick
+      window.roll = roll;
+
+      // Start the game
+      initBoard();
+
+      // Small delay to ensure layout is settled, then position player
+      setTimeout(positionPlayer, 100);
+    })();
+  </script>
 </body>
 </html>
