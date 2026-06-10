@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <title>Gold Fest 2 – Full Screen Board</title>
+  <title>Gold Fest 2 – Full Screen Path</title>
   <style>
     * {
       margin: 0;
@@ -61,19 +61,6 @@
       animation: float 4s ease-in-out infinite reverse;
     }
 
-    .meteor::before {
-      content: '';
-      position: absolute;
-      top: -20%;
-      left: -30%;
-      width: 80%;
-      height: 60%;
-      background: linear-gradient(135deg, transparent, #29b6f6, #81d4fa);
-      filter: blur(10px);
-      transform: skewX(-35deg);
-      opacity: 0.9;
-    }
-
     .cloud {
       position: absolute;
       top: 15%;
@@ -84,21 +71,9 @@
       animation: float 3.5s ease-in-out infinite 0.5s;
     }
 
-    .sparkle {
-      position: absolute;
-      color: #e1bee7;
-      font-size: 3vw;
-      animation: twinkle 1.5s infinite ease-in-out;
-    }
-
     @keyframes float {
       0%, 100% { transform: translateY(0) rotate(var(--r, 0deg)); }
       50% { transform: translateY(-12px) rotate(var(--r, 0deg)); }
-    }
-
-    @keyframes twinkle {
-      0%, 100% { opacity: 0.3; transform: scale(1); }
-      50% { opacity: 1; transform: scale(1.3); }
     }
 
     /* === BOARD AREA === */
@@ -110,7 +85,8 @@
       z-index: 20;
     }
 
-    .tiles-world {
+    /* === WORLD CONTAINER === */
+    .world {
       position: absolute;
       top: 0;
       left: 0;
@@ -120,21 +96,22 @@
       will-change: transform;
     }
 
+    /* === TILE STYLING === */
     .tile {
       position: absolute;
-      width: 18vw;
-      height: 18vw;
+      width: 20vw;
+      height: 20vw;
       max-width: 70px;
       max-height: 70px;
-      min-width: 50px;
-      min-height: 50px;
+      min-width: 55px;
+      min-height: 55px;
       border-radius: 16px;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
       font-weight: 800;
-      font-size: 2.5vw;
+      font-size: 2.2vw;
       color: #fff;
       text-shadow: 0 2px 3px rgba(0, 0, 0, 0.3);
       box-shadow: 0 5px 0 rgba(0, 0, 0, 0.3), 0 8px 16px rgba(0, 0, 0, 0.4);
@@ -143,17 +120,17 @@
     }
 
     .tile .icon {
-      font-size: 6vw;
+      font-size: 7vw;
       line-height: 1;
       filter: drop-shadow(0 3px 3px rgba(0, 0, 0, 0.3));
     }
 
     .tile .label {
       font-size: 2vw;
-      margin-top: 2px;
+      margin-top: 1px;
     }
 
-    /* Tile types */
+    /* Tile reward colors */
     .tile.lightning { background: linear-gradient(180deg, #ffd54f 0%, #f9a825 100%); }
     .tile.xp { background: linear-gradient(180deg, #81c784 0%, #2e7d32 100%); }
     .tile.ticket { background: linear-gradient(180deg, #ce93d8 0%, #6a1b9a 100%); }
@@ -162,14 +139,14 @@
     /* === PLAYER === */
     .player {
       position: absolute;
-      width: 16vw;
-      height: 20vw;
-      max-width: 60px;
-      max-height: 75px;
+      width: 18vw;
+      height: 22vw;
+      max-width: 65px;
+      max-height: 80px;
       z-index: 60;
       filter: drop-shadow(0 8px 6px rgba(0, 0, 0, 0.4));
       pointer-events: none;
-      transition: left 0.3s ease, top 0.3s ease;
+      transition: none;
     }
 
     .pawn-body {
@@ -209,7 +186,7 @@
       background: rgba(0, 0, 0, 0.9);
       border: 3px solid #ffd54f;
       border-radius: 30px;
-      padding: 6vw 10vw;
+      padding: 8vw 12vw;
       z-index: 200;
       display: flex;
       flex-direction: column;
@@ -226,14 +203,14 @@
     }
 
     .dice-number {
-      font-size: 20vw;
+      font-size: 22vw;
       font-weight: 900;
       color: #ffd54f;
       text-shadow: 0 0 20px #ffb300;
     }
 
     .dice-text {
-      font-size: 5vw;
+      font-size: 6vw;
       color: white;
       font-weight: bold;
     }
@@ -272,7 +249,7 @@
       gap: 2vw;
       z-index: 100;
       flex-wrap: wrap;
-      background: rgba(0, 0, 0, 0.4);
+      background: rgba(0, 0, 0, 0.5);
       backdrop-filter: blur(10px);
       border-radius: 20px 20px 0 0;
     }
@@ -329,13 +306,10 @@
   <div class="spaceship">🛸</div>
   <div class="meteor"></div>
   <div class="cloud">☁️</div>
-  <div class="sparkle" style="top:12%; right:8%;">✨</div>
-  <div class="sparkle" style="top:20%; right:15%; animation-delay:0.4s;">✨</div>
-  <div class="sparkle" style="top:10%; right:22%; animation-delay:0.8s;">✨</div>
 
   <!-- Board Area -->
   <div class="board-area" id="boardArea">
-    <div class="tiles-world" id="tilesWorld"></div>
+    <div class="world" id="world"></div>
     <div class="player" id="player">
       <div class="pawn-body"></div>
       <div class="pawn-base"></div>
@@ -369,54 +343,60 @@
 
 <script>
   (function() {
-    const tilesWorld = document.getElementById('tilesWorld');
+    const world = document.getElementById('world');
     const player = document.getElementById('player');
     const boardArea = document.getElementById('boardArea');
     const energyEl = document.getElementById('energy');
     const xpEl = document.getElementById('xp');
     const ticketsEl = document.getElementById('tickets');
-    const rollBtn = document.getElementById('rollBtn');
     const dicePopup = document.getElementById('dicePopup');
     const diceNumberEl = document.getElementById('diceNumber');
     const rewardPopup = document.getElementById('rewardPopup');
 
-    // Game state
     let energy = 135;
     let xp = 0;
     let tickets = 0;
     let isRolling = false;
 
-    // Board dimensions
-    const tileSize = Math.min(70, window.innerWidth * 0.18);
-    const gap = 8;
-    const stepSize = tileSize + gap;
+    const tileSize = Math.min(65, window.innerWidth * 0.2);
+    const gap = 6;
+    const step = tileSize + gap;
 
-    // Path generation: pattern 3 up, 3 right, 3 up, 3 left, repeat
-    let path = []; // {x, y} in grid coordinates, y negative means up
-    let currentPathIndex = 0; // which tile the player is on
+    // Path: sequence of directions following the pattern
+    // 3 UP, 3 RIGHT, 3 UP, 3 LEFT, 3 UP, 3 RIGHT, ...
+    let directions = [];
+    let pathPoints = []; // store {x, y} grid coordinates
+    let currentIdx = 0; // which tile the player stands on
 
-    // Player fixed position (center horizontally, 30% from bottom of board area)
-    function getPlayerFixedPosition() {
-      const areaRect = boardArea.getBoundingClientRect();
-      const centerX = areaRect.width / 2;
-      const bottomY = areaRect.height * 0.75; // 75% from top (25% from bottom)
-      return { x: centerX, y: bottomY };
+    function generateDirectionPattern() {
+      // Ensure we always have enough directions
+      while (directions.length < pathPoints.length + 10) {
+        const len = directions.length;
+        const segment = Math.floor(len / 3) % 4;
+        if (segment === 0 || segment === 2) {
+          directions.push('up');
+        } else if (segment === 1) {
+          directions.push('right');
+        } else if (segment === 3) {
+          directions.push('left');
+        }
+      }
     }
 
-    // Generate next tiles in the path (infinite)
-    function ensurePath(length) {
-      while (path.length < length) {
-        const last = path.length > 0 ? path[path.length - 1] : { x: 0, y: 0 };
-        const segmentType = Math.floor((path.length - 1) / 3) % 4; // 0: up, 1: right, 2: up, 3: left
-        let newX = last.x;
-        let newY = last.y;
-        switch (segmentType) {
-          case 0: newY -= 1; break; // up
-          case 1: newX += 1; break; // right
-          case 2: newY -= 1; break; // up
-          case 3: newX -= 1; break; // left
-        }
-        path.push({ x: newX, y: newY });
+    function buildPath() {
+      // Start from some point, e.g., (0,0)
+      if (pathPoints.length === 0) {
+        pathPoints.push({ x: 0, y: 0 });
+      }
+      generateDirectionPattern();
+      while (pathPoints.length < currentIdx + 15) {
+        const last = pathPoints[pathPoints.length - 1];
+        const dir = directions[pathPoints.length - 1];
+        let newPoint = { x: last.x, y: last.y };
+        if (dir === 'up') newPoint.y -= 1;
+        else if (dir === 'right') newPoint.x += 1;
+        else if (dir === 'left') newPoint.x -= 1;
+        pathPoints.push(newPoint);
       }
     }
 
@@ -428,134 +408,113 @@
       { type: 'box', icon: '📦', label: 'ΚΟΥΤΙ' }
     ];
 
-    // Store reward for each tile (by path index)
     let tileRewards = {};
 
-    function getRewardForIndex(index) {
-      if (!tileRewards[index]) {
+    function getReward(idx) {
+      if (!tileRewards[idx]) {
         const rand = Math.floor(Math.random() * rewardTypes.length);
-        tileRewards[index] = { ...rewardTypes[rand] };
+        tileRewards[idx] = { ...rewardTypes[rand] };
       }
-      return tileRewards[index];
+      return tileRewards[idx];
     }
 
-    // Render tiles currently visible around the player
-    function renderTiles() {
-      tilesWorld.innerHTML = '';
-      const visibleRadius = 10; // tiles ahead and behind
-      const startIdx = Math.max(0, currentPathIndex - 3);
-      const endIdx = Math.min(path.length - 1, currentPathIndex + visibleRadius);
-      
-      for (let i = startIdx; i <= endIdx; i++) {
-        const pos = path[i];
-        const reward = getRewardForIndex(i);
+    // Fixed position of player on screen (center horizontally, 30% from bottom)
+    function getPlayerScreenPos() {
+      const rect = boardArea.getBoundingClientRect();
+      return {
+        x: rect.width / 2,
+        y: rect.height * 0.72
+      };
+    }
+
+    function renderAllTiles() {
+      world.innerHTML = '';
+      const screenPos = getPlayerScreenPos();
+      const playerPoint = pathPoints[currentIdx];
+
+      // Render tiles from currentIdx-10 to currentIdx+15 (so plenty visible)
+      const start = Math.max(0, currentIdx - 8);
+      const end = Math.min(pathPoints.length - 1, currentIdx + 18);
+
+      for (let i = start; i <= end; i++) {
+        const pt = pathPoints[i];
+        const reward = getReward(i);
         const tile = document.createElement('div');
         tile.className = `tile ${reward.type}`;
         tile.innerHTML = `<span class="icon">${reward.icon}</span><span class="label">${reward.label}</span>`;
-        
-        // Position relative to player's current tile
-        const playerPos = path[currentPathIndex];
-        const relX = (pos.x - playerPos.x) * stepSize;
-        const relY = (pos.y - playerPos.y) * stepSize;
-        
-        const playerFixed = getPlayerFixedPosition();
-        tile.style.left = (playerFixed.x + relX - tileSize/2) + 'px';
-        tile.style.top = (playerFixed.y + relY - tileSize/2) + 'px';
-        
-        tilesWorld.appendChild(tile);
-      }
-    }
 
-    // Update world transform to show movement (we keep player fixed, tiles move)
-    function updateWorldTransform() {
-      // The world position is based on the player's current tile
-      const playerPos = path[currentPathIndex];
-      const playerFixed = getPlayerFixedPosition();
-      // We want the player's tile to be at playerFixed position
-      // So we shift the world by the difference
-      const offsetX = playerFixed.x - (playerPos.x * stepSize + tileSize/2);
-      const offsetY = playerFixed.y - (playerPos.y * stepSize + tileSize/2);
-      tilesWorld.style.transform = `translate(${offsetX}px, ${offsetY}px)`;
-      
-      // Position the player element exactly at fixed position
-      player.style.left = playerFixed.x + 'px';
-      player.style.top = playerFixed.y + 'px';
+        // Calculate position relative to player's tile
+        const relX = (pt.x - playerPoint.x) * step;
+        const relY = (pt.y - playerPoint.y) * step;
+
+        tile.style.left = (screenPos.x + relX - tileSize/2) + 'px';
+        tile.style.top = (screenPos.y + relY - tileSize/2) + 'px';
+
+        world.appendChild(tile);
+      }
+
+      // Position player exactly on screen
+      player.style.left = screenPos.x + 'px';
+      player.style.top = screenPos.y + 'px';
       player.style.transform = 'translate(-50%, -50%)';
     }
 
-    function movePlayerForward(steps) {
+    function movePlayer(steps) {
       return new Promise(resolve => {
-        let stepsLeft = steps;
-        const stepInterval = 300;
-        
-        function doStep() {
-          if (stepsLeft <= 0) {
+        let remaining = steps;
+        function stepForward() {
+          if (remaining <= 0) {
             resolve();
             return;
           }
-          currentPathIndex++;
-          ensurePath(currentPathIndex + 10);
-          updateWorldTransform();
-          renderTiles();
-          
-          // Animate player hop
+          currentIdx++;
+          buildPath(); // ensure path ahead
+          renderAllTiles();
+
+          // hop animation
           player.classList.remove('hop');
           void player.offsetWidth;
           player.classList.add('hop');
-          
-          stepsLeft--;
-          setTimeout(doStep, stepInterval);
+
+          remaining--;
+          setTimeout(stepForward, 280);
         }
-        doStep();
+        stepForward();
       });
     }
 
     function showDice(number) {
       diceNumberEl.textContent = number;
       dicePopup.classList.add('show');
-      setTimeout(() => dicePopup.classList.remove('show'), 1000);
+      setTimeout(() => dicePopup.classList.remove('show'), 900);
     }
 
     function showReward(text) {
       rewardPopup.textContent = text;
       rewardPopup.classList.add('show');
-      setTimeout(() => rewardPopup.classList.remove('show'), 1500);
+      setTimeout(() => rewardPopup.classList.remove('show'), 1400);
     }
 
-    function applyReward(tileType) {
-      switch (tileType) {
+    function applyReward(type) {
+      switch(type) {
         case 'lightning':
-          energy += 5;
-          energyEl.textContent = energy;
+          energy += 5; energyEl.textContent = energy;
           showReward('+5 ⚡ ΕΝΕΡΓΕΙΑ');
           break;
         case 'xp':
-          xp += 10;
-          xpEl.textContent = xp;
+          xp += 10; xpEl.textContent = xp;
           showReward('+10 🔵 XP');
           break;
         case 'ticket':
-          tickets += 1;
-          ticketsEl.textContent = tickets;
+          tickets += 1; ticketsEl.textContent = tickets;
           showReward('+1 🎟️ ΕΙΣΙΤΗΡΙΟ');
           break;
         case 'box':
-          const random = Math.random();
-          if (random < 0.4) {
-            energy += 3;
-            energyEl.textContent = energy;
-            showReward('📦 +3 ⚡');
-          } else if (random < 0.7) {
-            xp += 5;
-            xpEl.textContent = xp;
-            showReward('📦 +5 🔵 XP');
-          } else if (random < 0.9) {
-            tickets += 1;
-            ticketsEl.textContent = tickets;
-            showReward('📦 +1 🎟️');
-          } else {
-            showReward('📦 FREE SPIN!');
-          }
+          const r = Math.random();
+          if (r < 0.4) { energy += 3; energyEl.textContent = energy; showReward('📦 +3 ⚡'); }
+          else if (r < 0.7) { xp += 5; xpEl.textContent = xp; showReward('📦 +5 🔵 XP'); }
+          else if (r < 0.9) { tickets += 1; ticketsEl.textContent = tickets; showReward('📦 +1 🎟️'); }
+          else { showReward('📦 FREE SPIN!'); }
           break;
       }
     }
@@ -563,8 +522,9 @@
     async function roll() {
       if (isRolling) return;
       if (energy < 5) {
-        shakeElement(rollBtn);
-        showReward('ΑΝΕΠΑΡΚΗΣ ΕΝΕΡΓΕΙΑ ⚡');
+        rewardPopup.textContent = 'ΑΝΕΠΑΡΚΗΣ ΕΝΕΡΓΕΙΑ ⚡';
+        rewardPopup.classList.add('show');
+        setTimeout(() => rewardPopup.classList.remove('show'), 1200);
         return;
       }
 
@@ -572,45 +532,27 @@
       energy -= 5;
       energyEl.textContent = energy;
 
-      // Determine dice result (1-3)
       const diceResult = Math.floor(Math.random() * 3) + 1;
       showDice(diceResult);
-      
-      // Wait a bit for dice animation
-      await sleep(800);
-      
-      // Move player
-      await movePlayerForward(diceResult);
-      
-      // Apply reward from the tile we landed on
-      const reward = getRewardForIndex(currentPathIndex);
+      await sleep(700);
+      await movePlayer(diceResult);
+
+      const reward = getReward(currentIdx);
       applyReward(reward.type);
-      
+
       isRolling = false;
     }
 
-    function sleep(ms) {
-      return new Promise(resolve => setTimeout(resolve, ms));
-    }
+    function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
 
-    function shakeElement(el) {
-      el.style.transform = 'translateX(5px)';
-      setTimeout(() => el.style.transform = 'translateX(-5px)', 50);
-      setTimeout(() => el.style.transform = 'translateX(5px)', 100);
-      setTimeout(() => el.style.transform = '', 150);
-    }
-
-    // Initialize
+    // Initialization
     function init() {
-      ensurePath(20);
-      currentPathIndex = 0;
-      updateWorldTransform();
-      renderTiles();
+      buildPath();
+      renderAllTiles();
     }
 
     window.addEventListener('resize', () => {
-      updateWorldTransform();
-      renderTiles();
+      renderAllTiles();
     });
 
     window.roll = roll;
