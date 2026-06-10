@@ -157,50 +157,229 @@
     .tile.ticket { background: linear-gradient(180deg, #ce93d8 0%, #6a1b9a 100%); }
     .tile.box { background: linear-gradient(180deg, #ffb74d 0%, #e65100 100%); }
 
-    /* === PLAYER === */
+    /* === AVATAR SYSTEM === */
     .player {
       position: absolute;
-      width: 18vw;
-      height: 22vw;
-      max-width: 65px;
-      max-height: 80px;
+      width: 22vw;
+      height: 28vw;
+      max-width: 80px;
+      max-height: 100px;
       z-index: 60;
-      filter: drop-shadow(0 8px 6px rgba(0, 0, 0, 0.4));
+      filter: drop-shadow(0 8px 10px rgba(0, 0, 0, 0.5));
       pointer-events: none;
       transition: none;
     }
 
-    .pawn-body {
+    /* Avatar Container */
+    .avatar-container {
       width: 100%;
-      height: 65%;
-      background: radial-gradient(circle at 35% 30%, #42a5f5, #1565c0);
-      border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
-      margin: 0 auto;
-      box-shadow: 0 4px 0 #0d47a1;
-      animation: glow-pulse 1.5s ease-in-out infinite;
+      height: 100%;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
     }
 
-    .pawn-base {
-      width: 70%;
-      height: 15%;
-      background: rgba(21, 101, 192, 0.6);
+    /* Head */
+    .avatar-head {
+      width: 55%;
+      height: 40%;
+      background: radial-gradient(circle at 35% 30%, #f4c294, #d4a373);
+      border-radius: 50% 50% 40% 40%;
+      position: relative;
+      box-shadow: inset -2px -2px 4px rgba(0, 0, 0, 0.2);
+      animation: head-bob 2s ease-in-out infinite;
+    }
+
+    @keyframes head-bob {
+      0%, 100% { transform: translateY(0) rotateZ(0deg); }
+      25% { transform: translateY(-2px) rotateZ(1deg); }
+      75% { transform: translateY(-2px) rotateZ(-1deg); }
+    }
+
+    /* Eyes */
+    .avatar-eyes {
+      position: absolute;
+      top: 25%;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 8px;
+      width: 60%;
+    }
+
+    .avatar-eye {
+      width: 18%;
+      height: 20%;
+      background: white;
       border-radius: 50%;
-      margin: 4px auto 0;
-      filter: blur(2px);
+      position: relative;
+      box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.3);
     }
 
-    @keyframes glow-pulse {
-      0%, 100% { box-shadow: 0 4px 0 #0d47a1, 0 0 8px rgba(66, 165, 245, 0.4); }
-      50% { box-shadow: 0 4px 0 #0d47a1, 0 0 16px rgba(66, 165, 245, 0.8); }
+    .avatar-eye::after {
+      content: '';
+      position: absolute;
+      width: 50%;
+      height: 50%;
+      background: #1a1a1a;
+      border-radius: 50%;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      animation: pupil-blink 3s ease-in-out infinite;
     }
 
+    @keyframes pupil-blink {
+      0%, 100% { transform: translate(-50%, -50%) scale(1); }
+      15% { transform: translate(-50%, -30%) scale(0.8); }
+      20% { transform: translate(-50%, -50%) scale(1); }
+    }
+
+    /* Mouth */
+    .avatar-mouth {
+      position: absolute;
+      bottom: 15%;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 25%;
+      height: 12%;
+      border: 2px solid #c41e3a;
+      border-top: none;
+      border-radius: 0 0 50% 50%;
+      animation: mouth-smile 2.5s ease-in-out infinite;
+    }
+
+    @keyframes mouth-smile {
+      0%, 100% { transform: translateX(-50%) scaleY(1); }
+      50% { transform: translateX(-50%) scaleY(1.2); }
+    }
+
+    /* Body */
+    .avatar-body {
+      width: 70%;
+      height: 50%;
+      background: linear-gradient(135deg, #4a90e2 0%, #357abd 100%);
+      border-radius: 30% 30% 20% 20%;
+      position: relative;
+      margin-top: 2px;
+      box-shadow: inset -3px -3px 6px rgba(0, 0, 0, 0.2);
+    }
+
+    /* Chest Glow */
+    .avatar-body::before {
+      content: '';
+      position: absolute;
+      top: 20%;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 50%;
+      height: 40%;
+      background: radial-gradient(circle at 40% 40%, rgba(255, 255, 255, 0.3), transparent);
+      border-radius: 50%;
+    }
+
+    /* Arms */
+    .avatar-arms {
+      position: absolute;
+      top: 25%;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 110%;
+      height: 30%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .avatar-arm {
+      width: 20%;
+      height: 100%;
+      background: linear-gradient(90deg, #f4c294, #d4a373);
+      border-radius: 50%;
+      animation: arm-wave 1.5s ease-in-out infinite;
+      box-shadow: inset -1px -1px 2px rgba(0, 0, 0, 0.2);
+    }
+
+    .avatar-arm:first-child {
+      animation-delay: 0s;
+    }
+
+    .avatar-arm:last-child {
+      animation-delay: 0.75s;
+    }
+
+    @keyframes arm-wave {
+      0%, 100% { transform: rotateZ(0deg); }
+      50% { transform: rotateZ(15deg); }
+    }
+
+    /* Legs */
+    .avatar-legs {
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100%;
+      height: 35%;
+      display: flex;
+      justify-content: center;
+      gap: 8%;
+      align-items: flex-end;
+    }
+
+    .avatar-leg {
+      width: 22%;
+      height: 100%;
+      background: linear-gradient(90deg, #2c3e50, #1a252f);
+      border-radius: 8px;
+      animation: leg-walk 1s ease-in-out infinite;
+      box-shadow: inset -1px 0 2px rgba(0, 0, 0, 0.3);
+    }
+
+    .avatar-leg:first-child {
+      animation-delay: 0s;
+    }
+
+    .avatar-leg:last-child {
+      animation-delay: 0.5s;
+    }
+
+    @keyframes leg-walk {
+      0%, 100% { transform: rotateZ(0deg) translateY(0); }
+      50% { transform: rotateZ(8deg) translateY(-3px); }
+    }
+
+    /* Shoes */
+    .avatar-shoes {
+      position: absolute;
+      bottom: -8%;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100%;
+      height: 25%;
+      display: flex;
+      justify-content: center;
+      gap: 8%;
+    }
+
+    .avatar-shoe {
+      width: 28%;
+      height: 100%;
+      background: linear-gradient(90deg, #ff9800, #f57c00);
+      border-radius: 12px 12px 2px 2px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
+    }
+
+    /* Hop Animation */
     .player.hop {
-      animation: hop 0.3s ease-in-out;
+      animation: avatar-hop 0.3s ease-in-out;
     }
 
-    @keyframes hop {
+    @keyframes avatar-hop {
       0% { transform: scale(1) translateY(0); }
-      40% { transform: scale(1.2) translateY(-15px); }
+      40% { transform: scale(1.1) translateY(-20px); }
       100% { transform: scale(1) translateY(0); }
     }
 
@@ -402,6 +581,20 @@
       background: rgba(0, 0, 0, 0.7);
       transform: scale(1.1);
     }
+
+    /* === PERFORMANCE OPTIMIZATION === */
+    @media (prefers-reduced-motion: no-preference) {
+      * {
+        animation-timing-function: cubic-bezier(0.22, 0.61, 0.36, 1);
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      * {
+        animation-duration: 0s !important;
+        transition-duration: 0s !important;
+      }
+    }
   </style>
 </head>
 <body>
@@ -419,8 +612,29 @@
     <div class="board-area" id="boardArea">
       <div class="world" id="world"></div>
       <div class="player" id="player">
-        <div class="pawn-body"></div>
-        <div class="pawn-base"></div>
+        <div class="avatar-container">
+          <div class="avatar-head">
+            <div class="avatar-eyes">
+              <div class="avatar-eye"></div>
+              <div class="avatar-eye"></div>
+            </div>
+            <div class="avatar-mouth"></div>
+          </div>
+          <div class="avatar-body">
+            <div class="avatar-arms">
+              <div class="avatar-arm"></div>
+              <div class="avatar-arm"></div>
+            </div>
+          </div>
+          <div class="avatar-legs">
+            <div class="avatar-leg"></div>
+            <div class="avatar-leg"></div>
+          </div>
+          <div class="avatar-shoes">
+            <div class="avatar-shoe"></div>
+            <div class="avatar-shoe"></div>
+          </div>
+        </div>
       </div>
       <div class="dice-popup" id="dicePopup">
         <span class="dice-number" id="diceNumber">1</span>
@@ -451,18 +665,61 @@
 </div>
 
 <script>
-  // === AUDIO SYSTEM ===
+  'use strict';
+
+  // === PERFORMANCE: Request Animation Frame Manager ===
+  class AnimationFrameManager {
+    constructor() {
+      this.frameId = null;
+      this.callbacks = new Set();
+    }
+
+    add(callback) {
+      this.callbacks.add(callback);
+      this.schedule();
+    }
+
+    remove(callback) {
+      this.callbacks.delete(callback);
+    }
+
+    schedule() {
+      if (this.frameId === null && this.callbacks.size > 0) {
+        this.frameId = requestAnimationFrame(() => {
+          this.callbacks.forEach(cb => cb());
+          this.frameId = null;
+          if (this.callbacks.size > 0) {
+            this.schedule();
+          }
+        });
+      }
+    }
+
+    cancel() {
+      if (this.frameId !== null) {
+        cancelAnimationFrame(this.frameId);
+        this.frameId = null;
+      }
+    }
+  }
+
+  // === AUDIO SYSTEM with Caching ===
   class SoundManager {
     constructor() {
       this.enabled = true;
       this.audioContext = null;
       this.masterVolume = 0.5;
+      this.oscillators = new Map();
     }
 
     async init() {
       try {
         if (!this.audioContext) {
           this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
+          // Resume audio context if needed
+          if (this.audioContext.state === 'suspended') {
+            await this.audioContext.resume();
+          }
         }
       } catch (e) {
         console.warn('AudioContext not supported');
@@ -488,6 +745,12 @@
         
         osc.start(ctx.currentTime);
         osc.stop(ctx.currentTime + duration);
+        
+        // Cleanup
+        osc.onended = () => {
+          this.oscillators.delete(osc);
+        };
+        this.oscillators.set(osc, true);
       } catch (e) {
         console.warn('Error playing tone:', e);
       }
@@ -534,11 +797,54 @@
       this.enabled = !this.enabled;
       return this.enabled;
     }
+
+    cleanup() {
+      this.oscillators.forEach((_,osc) => {
+        try { osc.stop(); } catch(e) {}
+      });
+      this.oscillators.clear();
+    }
+  }
+
+  // === PERFORMANCE: Object Pool ===
+  class ObjectPool {
+    constructor(factory, resetFn, initialSize = 10) {
+      this.factory = factory;
+      this.resetFn = resetFn;
+      this.available = [];
+      this.in_use = new Set();
+
+      for (let i = 0; i < initialSize; i++) {
+        this.available.push(factory());
+      }
+    }
+
+    acquire() {
+      let obj;
+      if (this.available.length > 0) {
+        obj = this.available.pop();
+      } else {
+        obj = this.factory();
+      }
+      this.in_use.add(obj);
+      return obj;
+    }
+
+    release(obj) {
+      if (this.in_use.has(obj)) {
+        this.in_use.delete(obj);
+        this.resetFn(obj);
+        this.available.push(obj);
+      }
+    }
   }
 
   const soundManager = new SoundManager();
+  const animFrameManager = new AnimationFrameManager();
 
   (function() {
+    'use strict';
+
     const world = document.getElementById('world');
     const player = document.getElementById('player');
     const boardArea = document.getElementById('boardArea');
@@ -551,6 +857,7 @@
     const rollBtn = document.getElementById('rollBtn');
     const soundToggle = document.getElementById('soundToggle');
 
+    // === STATE ===
     let energy = 135;
     let xp = 0;
     let tickets = 0;
@@ -563,6 +870,21 @@
     let directions = [];
     let pathPoints = [];
     let currentIdx = 0;
+
+    // === PARTICLE POOL ===
+    const particlePool = new ObjectPool(
+      () => {
+        const div = document.createElement('div');
+        div.className = 'particle';
+        return div;
+      },
+      (particle) => {
+        particle.textContent = '';
+        particle.style.left = '0';
+        particle.style.top = '0';
+      },
+      20
+    );
 
     function generateDirectionPattern() {
       while (directions.length < pathPoints.length + 10) {
@@ -626,8 +948,7 @@
         const tx = Math.cos(angle) * distance;
         const ty = Math.sin(angle) * distance;
 
-        const particle = document.createElement('div');
-        particle.className = 'particle';
+        const particle = particlePool.acquire();
         particle.textContent = icon;
         particle.style.left = x + 'px';
         particle.style.top = y + 'px';
@@ -635,7 +956,11 @@
         particle.style.setProperty('--ty', ty + 'px');
 
         boardArea.appendChild(particle);
-        setTimeout(() => particle.remove(), 800);
+        
+        setTimeout(() => {
+          boardArea.removeChild(particle);
+          particlePool.release(particle);
+        }, 800);
       }
     }
 
@@ -683,7 +1008,7 @@
           soundManager.moveStep();
 
           player.classList.remove('hop');
-          void player.offsetWidth;
+          void player.offsetWidth; // Force reflow
           player.classList.add('hop');
 
           remaining--;
@@ -727,7 +1052,7 @@
         case 'ticket':
           tickets += 1; 
           ticketsEl.textContent = tickets;
-          showReward('+1 🎟️ Ε��ΣΙΤΗΡΙΟ', '🎟️', type);
+          showReward('+1 🎟️ ΕΙΣΙΤΗΡΙΟ', '🎟️', type);
           break;
         case 'box':
           const r = Math.random();
@@ -795,11 +1120,23 @@
       renderAllTiles();
     }
 
-    window.addEventListener('resize', () => {
+    const resizeListener = () => {
       renderAllTiles();
-    });
+    };
+
+    window.addEventListener('resize', resizeListener);
 
     window.roll = roll;
+
+    // Cleanup on page unload
+    window.addEventListener('beforeunload', () => {
+      soundManager.cleanup();
+      animFrameManager.cancel();
+      particlePool.in_use.forEach(p => {
+        if (p.parentNode) p.parentNode.removeChild(p);
+      });
+    });
+
     init();
   })();
 </script>
