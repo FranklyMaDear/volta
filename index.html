@@ -5,19 +5,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="Mariza Games">
     <meta name="theme-color" content="#0a0e27">
-    <title>Mariza Games</title>
+    <title>Mariza Games - Board</title>
+    <script src="//libtl.com/sdk.js" data-zone="11108267" data-sdk="show_11108267"></script>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            -webkit-tap-highlight-color: transparent;
+        :root {
+            --tile-size: 75px;
+            --gap: 14px;
+            --step: calc(var(--tile-size) + var(--gap));
         }
 
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
         body {
-            background: linear-gradient(135deg, #0a0e27 0%, #16213e 50%, #0f3460 100%);
+            background: #0a0a14;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -36,92 +37,93 @@
             height: 100%;
             display: flex;
             flex-direction: column;
+            position: relative;
         }
 
+        /* ========== ΕΝΤΥΠΩΣΙΑΚΟ BACKGROUND ΜΕ ΕΦΕ ========== */
+        .bg-layer {
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            z-index: 0;
+            overflow: hidden;
+        }
+
+        .bg-orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0.25;
+            animation: orbFloat 12s ease-in-out infinite;
+        }
+
+        .bg-orb.orb1 {
+            width: 250px; height: 250px;
+            background: radial-gradient(circle, #6366f1, transparent);
+            top: -5%; left: -10%;
+            animation-delay: 0s;
+        }
+
+        .bg-orb.orb2 {
+            width: 200px; height: 200px;
+            background: radial-gradient(circle, #d946ef, transparent);
+            bottom: 10%; right: -5%;
+            animation-delay: -4s;
+        }
+
+        .bg-orb.orb3 {
+            width: 180px; height: 180px;
+            background: radial-gradient(circle, #06b6d4, transparent);
+            top: 50%; left: 40%;
+            animation-delay: -8s;
+        }
+
+        @keyframes orbFloat {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            25% { transform: translate(30px, -20px) scale(1.1); }
+            50% { transform: translate(-20px, 30px) scale(0.9); }
+            75% { transform: translate(-40px, -10px) scale(1.05); }
+        }
+
+        /* Σωματίδια φόντου */
+        .bg-particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: #84cc16;
+            border-radius: 50%;
+            opacity: 0.6;
+            animation: particleFloat 8s linear infinite;
+            box-shadow: 0 0 8px #84cc16, 0 0 20px rgba(132,204,22,0.4);
+        }
+
+        @keyframes particleFloat {
+            0% { transform: translateY(110vh) rotate(0deg); opacity: 0; }
+            10% { opacity: 0.8; }
+            90% { opacity: 0.6; }
+            100% { transform: translateY(-10vh) rotate(720deg); opacity: 0; }
+        }
+
+        /* ========== ΚΥΡΙΟ CONTAINER ========== */
         .game-container {
             width: 100%;
             height: 100%;
-            background: linear-gradient(180deg, #0f1f3f 0%, #1a3a5c 50%, #0d1e35 100%);
             position: relative;
             overflow: hidden;
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: space-between;
+            justify-content: flex-end;
+            z-index: 1;
         }
 
-        /* Decorations */
-        .decoration {
-            position: absolute;
-            filter: drop-shadow(0 6px 10px rgba(0, 0, 0, 0.4));
-            z-index: 15;
-            pointer-events: none;
-        }
-
-        .decoration.rocket {
-            top: 12%;
-            left: 4%;
-            font-size: 40px;
-            animation: rocket-float 4s ease-in-out infinite;
-            transform: rotate(-25deg);
-        }
-
-        .decoration.cloud {
-            top: 8%;
-            right: 4%;
-            font-size: 50px;
-            animation: cloud-float 5s ease-in-out infinite;
-        }
-
-        .decoration.crown {
-            bottom: 18%;
-            right: 4%;
-            font-size: 40px;
-            animation: crown-bounce 3s ease-in-out infinite;
-        }
-
-        .decoration.star1 {
-            top: 20%;
-            right: 15%;
-            font-size: 30px;
-            animation: star-twinkle 2s ease-in-out infinite;
-        }
-
-        .decoration.star2 {
-            bottom: 25%;
-            left: 10%;
-            font-size: 25px;
-            animation: star-twinkle 3s ease-in-out infinite 0.5s;
-        }
-
-        @keyframes rocket-float {
-            0%, 100% { transform: translateY(0) rotate(-25deg); }
-            50% { transform: translateY(-15px) rotate(-20deg); }
-        }
-
-        @keyframes cloud-float {
-            0%, 100% { transform: translateX(0) translateY(0); }
-            50% { transform: translateX(-10px) translateY(-8px); }
-        }
-
-        @keyframes crown-bounce {
-            0%, 100% { transform: translateY(0) rotateZ(0deg); }
-            50% { transform: translateY(-12px) rotateZ(5deg); }
-        }
-
-        @keyframes star-twinkle {
-            0%, 100% { opacity: 1; transform: scale(1); }
-            50% { opacity: 0.5; transform: scale(0.8); }
-        }
-
-        /* Board Area */
         .board-area {
             flex: 1;
             width: 100%;
             position: relative;
-            overflow: hidden;
+            overflow: visible;
             z-index: 20;
-            margin-bottom: 100px; /* space for bottom bar */
+            margin-bottom: 90px;
         }
 
         .world {
@@ -130,19 +132,18 @@
             left: 0;
             width: 100%;
             height: 100%;
-            transition: transform 0.3s cubic-bezier(0.22, 0.61, 0.36, 1);
+            transition: transform 0.35s cubic-bezier(0.22, 0.61, 0.36, 1);
             will-change: transform;
         }
 
-        /* Tiles – 3D κύβοι */
+        /* ========== 3D ΚΟΥΤΑΚΙΑ ========== */
         .tile {
             position: absolute;
-            width: 80px;
-            height: 80px;
+            width: var(--tile-size);
+            height: var(--tile-size);
             z-index: 5;
-            transition: all 0.2s ease;
-            perspective: 1000px;
-            filter: drop-shadow(0 10px 15px rgba(0, 0, 0, 0.5));
+            perspective: 800px;
+            transition: transform 0.3s ease;
         }
 
         .tile-inner {
@@ -150,12 +151,15 @@
             height: 100%;
             position: relative;
             transform-style: preserve-3d;
-            transform: rotateX(20deg) rotateZ(45deg);
-            transition: all 0.2s ease;
+            transform: rotateX(25deg) rotateZ(45deg);
+            transition: all 0.35s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            will-change: transform;
         }
 
-        .tile:hover .tile-inner {
-            transform: rotateX(20deg) rotateZ(45deg) scale(1.05);
+        /* ΑΝΑΔΥΣΗ ΟΤΑΝ ΕΙΝΑΙ ΤΟ ΤΡΕΧΟΝ */
+        .tile.active .tile-inner {
+            transform: rotateX(25deg) rotateZ(45deg) translateZ(25px) scale(1.08);
+            filter: brightness(1.3) drop-shadow(0 15px 25px rgba(255,215,0,0.7));
         }
 
         .tile-top {
@@ -163,50 +167,66 @@
             width: 100%;
             height: 100%;
             border-radius: 12px;
-            border: 3px solid;
+            border: 3px solid rgba(255,255,255,0.3);
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            font-size: 13px;
+            font-size: 12px;
             font-weight: 900;
             color: #fff;
-            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-            box-shadow: -10px 10px 20px rgba(0, 0, 0, 0.4),
-                        inset 0 1px 2px rgba(255, 255, 255, 0.2),
-                        0 0 20px rgba(0, 0, 0, 0.2);
+            text-shadow: 0 2px 4px rgba(0,0,0,0.4);
+            box-shadow: 
+                -8px 8px 16px rgba(0,0,0,0.4),
+                inset 0 2px 4px rgba(255,255,255,0.15);
             gap: 2px;
+            backface-visibility: hidden;
         }
 
         .tile-side {
             position: absolute;
             width: 100%;
-            height: 50%;
-            border: 2px solid;
-            box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.1);
-            opacity: 0.8;
+            height: 40%;
+            border: 2px solid rgba(255,255,255,0.15);
+            box-shadow: inset 0 1px 1px rgba(255,255,255,0.05);
         }
 
         .tile-side.left {
-            top: 50%;
-            left: -50%;
+            top: 60%;
+            left: -40%;
             transform: rotateY(90deg);
             border-radius: 0 0 6px 0;
         }
 
         .tile-side.right {
-            top: 50%;
-            right: -50%;
+            top: 60%;
+            right: -40%;
             transform: rotateY(-90deg);
             border-radius: 0 0 0 6px;
         }
 
-        /* Tile types */
+        /* ========== ΛΕΥΚΟ 3D DESIGN ΓΙΑ ΑΔΕΙΑ ΚΟΥΤΑΚΙΑ ========== */
+        .tile.empty .tile-top {
+            background: linear-gradient(135deg, #e8e8ec 0%, #d4d4dc 30%, #c8c8d0 70%, #b0b0b8 100%);
+            border-color: rgba(255,255,255,0.5);
+            color: #555;
+            text-shadow: 0 1px 2px rgba(255,255,255,0.5);
+            box-shadow: 
+                -8px 8px 16px rgba(0,0,0,0.3),
+                inset 0 2px 4px rgba(255,255,255,0.6),
+                0 0 15px rgba(255,255,255,0.2);
+        }
+
+        .tile.empty .tile-side {
+            background: linear-gradient(90deg, #c0c0c8, #a0a0a8);
+            border-color: #b0b0b8;
+        }
+
+        /* ========== ΤΥΠΟΙ ΚΟΥΤΙΩΝ ΜΕ ΔΩΡΑ ========== */
         .tile.points .tile-top {
             background: linear-gradient(135deg, #42a5f5, #1565c0);
             border-color: #64b5f6;
         }
-
         .tile.points .tile-side {
             background: linear-gradient(90deg, #1565c0, #0d47a1);
             border-color: #1565c0;
@@ -216,7 +236,6 @@
             background: linear-gradient(135deg, #f06292, #c2185b);
             border-color: #f48fb1;
         }
-
         .tile.stars .tile-side {
             background: linear-gradient(90deg, #c2185b, #880e4f);
             border-color: #c2185b;
@@ -226,7 +245,6 @@
             background: linear-gradient(135deg, #66bb6a, #2e7d32);
             border-color: #81c784;
         }
-
         .tile.rolls .tile-side {
             background: linear-gradient(90deg, #2e7d32, #1b5e20);
             border-color: #2e7d32;
@@ -236,7 +254,6 @@
             background: linear-gradient(135deg, #ef5350, #b71c1c);
             border-color: #e57373;
         }
-
         .tile.trap .tile-side {
             background: linear-gradient(90deg, #b71c1c, #7f0000);
             border-color: #b71c1c;
@@ -246,7 +263,6 @@
             background: linear-gradient(135deg, #ab47bc, #6a1b9a);
             border-color: #ce93d8;
         }
-
         .tile.mystery .tile-side {
             background: linear-gradient(90deg, #6a1b9a, #4a148c);
             border-color: #6a1b9a;
@@ -256,199 +272,164 @@
             background: linear-gradient(135deg, #ffa726, #e65100);
             border-color: #ffb74d;
         }
-
         .tile.bonus .tile-side {
             background: linear-gradient(90deg, #e65100, #bf360c);
             border-color: #e65100;
         }
 
-        .tile.empty .tile-top {
-            background: linear-gradient(135deg, #455a64, #263238);
-            border-color: #546e7a;
-        }
-
-        .tile.empty .tile-side {
-            background: linear-gradient(90deg, #263238, #1a2327);
-            border-color: #263238;
-        }
-
-        /* Badge διαφήμισης */
+        /* ========== BADGE ΔΙΑΦΗΜΙΣΗΣ ========== */
         .ad-badge {
             position: absolute;
-            top: -10px;
-            right: -10px;
-            background: #ffd700;
+            top: -12px;
+            right: -12px;
+            background: linear-gradient(135deg, #ffd700, #ff8c00);
             color: #000;
             border-radius: 50%;
-            width: 28px;
-            height: 28px;
-            font-size: 16px;
+            width: 30px;
+            height: 30px;
+            font-size: 15px;
             display: flex;
             align-items: center;
             justify-content: center;
             font-weight: bold;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+            box-shadow: 0 3px 10px rgba(0,0,0,0.5), 0 0 20px rgba(255,215,0,0.6);
             z-index: 70;
             cursor: pointer;
-            transition: transform 0.2s;
             pointer-events: auto;
+            animation: badgePulse 2s ease-in-out infinite;
+        }
+
+        @keyframes badgePulse {
+            0%, 100% { box-shadow: 0 3px 10px rgba(0,0,0,0.5), 0 0 20px rgba(255,215,0,0.6); }
+            50% { box-shadow: 0 3px 15px rgba(0,0,0,0.6), 0 0 35px rgba(255,215,0,0.9); }
         }
 
         .ad-badge:active {
-            transform: scale(1.2);
+            transform: scale(1.3);
         }
 
-        /* Player – Chess King (Βασιλιάς) */
+        /* ========== ΠΙΟΝΙ ΒΑΣΙΛΙΑΣ – ΣΤΕΚΕΤΑΙ ΣΤΟ ΚΟΥΤΑΚΙ ========== */
         .player {
             position: absolute;
-            width: 65px;
-            height: 95px;
+            width: 60px;
+            height: 90px;
             z-index: 60;
-            filter: drop-shadow(0 10px 18px rgba(0, 0, 0, 0.8));
             pointer-events: none;
+            transition: left 0.35s ease, top 0.35s ease;
+            filter: drop-shadow(0 12px 20px rgba(0,0,0,0.7));
+            will-change: left, top;
         }
 
         .king {
             width: 100%;
             height: 100%;
             position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-end;
         }
 
         .king-base {
-            position: absolute;
-            bottom: 0;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 48px;
-            height: 14px;
+            width: 44px;
+            height: 12px;
             background: linear-gradient(135deg, #5d4037, #3e2723);
-            border-radius: 10px 10px 4px 4px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
+            border-radius: 10px 10px 5px 5px;
+            box-shadow: 0 3px 6px rgba(0,0,0,0.5);
+            position: relative;
+            z-index: 1;
         }
 
-        .king-stem {
-            position: absolute;
-            bottom: 12px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 24px;
-            height: 35px;
+        .king-body {
+            width: 28px;
+            height: 32px;
             background: linear-gradient(135deg, #795548, #4e342e);
-            border-radius: 4px 4px 0 0;
+            border-radius: 6px 6px 2px 2px;
+            box-shadow: inset 0 2px 4px rgba(255,255,255,0.1);
+            position: relative;
         }
 
         .king-collar {
-            position: absolute;
-            bottom: 45px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 32px;
-            height: 10px;
+            width: 34px;
+            height: 8px;
             background: linear-gradient(135deg, #8d6e63, #5d4037);
             border-radius: 5px;
+            margin-bottom: -2px;
             box-shadow: 0 2px 4px rgba(0,0,0,0.3);
         }
 
         .king-head {
-            position: absolute;
-            bottom: 53px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 30px;
-            height: 28px;
+            width: 32px;
+            height: 26px;
             background: radial-gradient(circle at 40% 35%, #8d6e63, #4e342e);
-            border-radius: 50% 50% 20% 20%;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-            transition: all 0.3s ease;
+            border-radius: 50% 50% 15% 15%;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+            position: relative;
         }
 
-        .king-cross {
+        .king-crown {
             position: absolute;
-            bottom: 77px;
+            top: -22px;
             left: 50%;
             transform: translateX(-50%);
-            width: 20px;
-            height: 20px;
+            font-size: 28px;
+            line-height: 1;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));
+            z-index: 2;
         }
 
-        .king-cross::before,
-        .king-cross::after {
-            content: '';
-            position: absolute;
+        /* Χρώματα – αλλάζουν το σώμα και το κεφάλι */
+        .player.color-blue .king-body,
+        .player.color-blue .king-head {
+            background: linear-gradient(135deg, #2196F3, #1565c0);
+        }
+
+        .player.color-gold .king-body,
+        .player.color-gold .king-head {
             background: linear-gradient(135deg, #FFD700, #FFA500);
-            border-radius: 2px;
-            box-shadow: 0 0 6px gold;
         }
 
-        .king-cross::before {
-            width: 6px;
-            height: 20px;
-            left: 7px;
-            top: 0;
+        .player.color-purple .king-body,
+        .player.color-purple .king-head {
+            background: linear-gradient(135deg, #9C27B0, #6A1B9A);
         }
 
-        .king-cross::after {
-            width: 20px;
-            height: 6px;
-            top: 7px;
-            left: 0;
+        .player.color-red .king-body,
+        .player.color-red .king-head {
+            background: linear-gradient(135deg, #EF5350, #C62828);
         }
 
-        /* Χρώματα πιονιού – επηρεάζουν το κεφάλι και το στέλεχος */
-        .player.color-blue .king-head,
-        .player.color-blue .king-stem {
-            background: radial-gradient(circle at 40% 35%, #2196F3, #1565c0);
+        .player.color-green .king-body,
+        .player.color-green .king-head {
+            background: linear-gradient(135deg, #66BB6A, #2E7D32);
         }
 
-        .player.color-gold .king-head,
-        .player.color-gold .king-stem {
-            background: radial-gradient(circle at 40% 35%, #FFD700, #FFA500);
-        }
-
-        .player.color-purple .king-head,
-        .player.color-purple .king-stem {
-            background: radial-gradient(circle at 40% 35%, #9C27B0, #6A1B9A);
-        }
-
-        .player.color-red .king-head,
-        .player.color-red .king-stem {
-            background: radial-gradient(circle at 40% 35%, #EF5350, #C62828);
-        }
-
-        .player.color-green .king-head,
-        .player.color-green .king-stem {
-            background: radial-gradient(circle at 40% 35%, #66BB6A, #2E7D32);
-        }
-
+        /* Hop animation */
         .player.hop {
-            animation: avatar-hop 0.45s ease-in-out !important;
+            animation: kingHop 0.4s ease-in-out !important;
         }
 
-        @keyframes avatar-hop {
-            0% { transform: scale(1) translateY(0); }
-            30% { transform: scale(1.15) translateY(-18px); }
-            100% { transform: scale(1) translateY(0); }
+        @keyframes kingHop {
+            0% { transform: translateY(0) scale(1); }
+            35% { transform: translateY(-22px) scale(1.1); }
+            100% { transform: translateY(0) scale(1); }
         }
 
-        /* Dice Popup */
+        /* ========== DICE POPUP ========== */
         .dice-popup {
             position: absolute;
             top: 40%;
             left: 50%;
-            transform: translate(-50%, -50%) scale(0.8);
-            background: linear-gradient(135deg, rgba(0, 0, 0, 0.95), rgba(20, 20, 40, 0.95));
+            transform: translate(-50%, -50%) scale(0.7);
+            background: rgba(0,0,0,0.9);
             border: 4px solid #ffd54f;
-            border-radius: 16px;
-            padding: 14px 20px;
+            border-radius: 20px;
+            padding: 16px 22px;
             z-index: 200;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 8px;
             opacity: 0;
             pointer-events: none;
             transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-            box-shadow: 0 0 40px rgba(255, 215, 0, 0.8);
+            box-shadow: 0 0 50px rgba(255,215,0,0.9);
         }
 
         .dice-popup.show {
@@ -457,88 +438,71 @@
         }
 
         .dice-display {
-            font-size: 60px;
+            font-size: 64px;
             font-weight: 900;
-            animation: dice-roll 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-            line-height: 1;
+            animation: diceRoll 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
         }
 
-        @keyframes dice-roll {
-            0% { transform: rotateY(0deg) rotateX(0deg) scale(0.5); }
-            50% { transform: rotateY(180deg) rotateX(180deg) scale(1.1); }
-            100% { transform: rotateY(360deg) rotateX(0deg) scale(1); }
+        @keyframes diceRoll {
+            0% { transform: rotateY(0) scale(0.4); }
+            50% { transform: rotateY(180deg) scale(1.1); }
+            100% { transform: rotateY(360deg) scale(1); }
         }
 
-        /* Toast */
-        .toast-notification {
-            position: fixed;
-            top: 20px;
-            left: 50%;
-            transform: translateX(-50%) translateY(-100px);
-            background: linear-gradient(135deg, #FFD700, #FFA500);
-            color: #000;
-            padding: 12px 24px;
-            border-radius: 20px;
-            font-weight: 900;
-            font-size: 16px;
-            z-index: 300;
-            transition: all 0.3s ease;
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
-            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
-        }
-
-        .toast-notification.show {
-            transform: translateX(-50%) translateY(0);
-        }
-
-        /* Floating Reward Banner */
+        /* ========== REWARD BANNER ========== */
         .reward-banner {
             position: absolute;
-            top: 5%;
+            top: 8%;
             left: 50%;
-            transform: translate(-50%, -20px);
-            background: rgba(0, 0, 0, 0.85);
+            transform: translate(-50%, -30px);
+            background: rgba(0,0,0,0.9);
             color: #ffeb3b;
-            padding: 10px 24px;
+            padding: 12px 28px;
             border-radius: 30px;
             font-weight: 900;
-            font-size: 18px;
+            font-size: 19px;
             z-index: 150;
             pointer-events: none;
-            animation: bannerIn 0.4s ease-out, bannerOut 0.4s 1.6s ease-in forwards;
+            animation: bannerIn 0.4s ease-out, bannerOut 0.4s 1.8s ease-in forwards;
             display: flex;
             align-items: center;
             gap: 8px;
-            box-shadow: 0 0 25px rgba(255, 235, 59, 0.7);
+            box-shadow: 0 0 30px rgba(255,235,59,0.8);
             border: 2px solid #ffd700;
         }
 
         @keyframes bannerIn {
-            from { opacity: 0; transform: translate(-50%, -30px); }
-            to { opacity: 1; transform: translate(-50%, -20px); }
+            from { opacity: 0; transform: translate(-50%, -40px); }
+            to { opacity: 1; transform: translate(-50%, -30px); }
         }
 
         @keyframes bannerOut {
-            from { opacity: 1; transform: translate(-50%, -20px); }
-            to { opacity: 0; transform: translate(-50%, -40px); }
+            from { opacity: 1; transform: translate(-50%, -30px); }
+            to { opacity: 0; transform: translate(-50%, -50px); }
         }
 
-        /* Particles */
-        .particle {
-            position: absolute;
-            pointer-events: none;
-            font-size: 18px;
+        /* ========== TOAST ========== */
+        .toast {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%) translateY(-120px);
+            background: #ffd700;
+            color: #000;
+            padding: 12px 26px;
+            border-radius: 30px;
             font-weight: 900;
-            z-index: 100;
-            animation: particle-burst 0.8s ease-out forwards;
+            font-size: 16px;
+            z-index: 500;
+            transition: transform 0.3s ease;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.4);
         }
 
-        @keyframes particle-burst {
-            0% { opacity: 1; transform: translate(0, 0) scale(1); }
-            100% { opacity: 0; transform: translate(var(--tx), var(--ty)) scale(0); }
+        .toast.show {
+            transform: translateX(-50%) translateY(0);
         }
 
-        /* Bottom Bar – ΣΤΑΘΕΡΟ */
+        /* ========== BOTTOM BAR ========== */
         .bottom-bar {
             position: fixed;
             bottom: 0;
@@ -547,40 +511,35 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 16px 12px;
-            padding-bottom: max(16px, env(safe-area-inset-bottom));
-            gap: 12px;
+            padding: 14px 12px;
+            padding-bottom: max(14px, env(safe-area-inset-bottom));
             z-index: 100;
-            background: linear-gradient(180deg, rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.9));
-            backdrop-filter: blur(10px);
-            border-top: 2px solid rgba(0, 212, 255, 0.3);
-            height: auto;
-            min-height: 80px;
+            background: linear-gradient(180deg, rgba(0,0,0,0.2), rgba(0,0,0,0.95));
+            backdrop-filter: blur(12px);
+            border-top: 2px solid rgba(255,255,255,0.1);
         }
 
         .roll-btn {
-            background: linear-gradient(135deg, #ff4081 0%, #c51162 100%);
+            background: linear-gradient(135deg, #ff4081, #c51162);
             border: 2px solid #ff69b4;
-            border-radius: 35px;
-            padding: 14px 40px;
-            color: white;
+            border-radius: 40px;
+            padding: 14px 44px;
+            color: #fff;
             font-size: 20px;
             font-weight: 900;
             display: flex;
             align-items: center;
             gap: 10px;
-            box-shadow: 0 8px 0 #880e4f, 0 12px 25px rgba(0, 0, 0, 0.5);
+            box-shadow: 0 8px 0 #880e4f, 0 12px 28px rgba(0,0,0,0.5);
             cursor: pointer;
             transition: all 0.1s;
-            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
             letter-spacing: 2px;
             -webkit-appearance: none;
-            appearance: none;
         }
 
         .roll-btn:active {
             transform: translateY(4px);
-            box-shadow: 0 3px 0 #880e4f, 0 6px 12px rgba(0, 0, 0, 0.4);
+            box-shadow: 0 3px 0 #880e4f, 0 6px 14px rgba(0,0,0,0.4);
         }
 
         .roll-btn:disabled {
@@ -588,555 +547,455 @@
             cursor: not-allowed;
         }
 
-        /* Sound Toggle */
-        .sound-toggle {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            width: 36px;
-            height: 36px;
-            background: linear-gradient(135deg, rgba(0, 0, 0, 0.6), rgba(20, 20, 40, 0.8));
-            border: 2px solid #00d4ff;
-            border-radius: 50%;
-            font-size: 18px;
-            cursor: pointer;
+        /* ========== MODAL ========== */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.8);
+            z-index: 1000;
             display: flex;
             align-items: center;
             justify-content: center;
-            z-index: 300;
-            transition: all 0.2s;
-            box-shadow: 0 4px 12px rgba(0, 212, 255, 0.3);
-            -webkit-appearance: none;
-            appearance: none;
         }
 
-        /* Modals */
-        .modal {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.8);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 500;
-            opacity: 0;
-            pointer-events: none;
-            transition: all 0.3s;
-            border-radius: 16px;
-        }
-
-        .modal.show {
-            opacity: 1;
-            pointer-events: auto;
-        }
-
-        .modal-content {
-            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
-            border: 3px solid #00d4ff;
-            border-radius: 20px;
-            padding: 22px 18px;
+        .modal-box {
+            background: linear-gradient(135deg, #1a1a2e, #16213e);
+            border: 3px solid #ffd700;
+            border-radius: 24px;
+            padding: 24px 20px;
             text-align: center;
             color: #fff;
-            max-width: 320px;
+            max-width: 340px;
             width: 90%;
-            box-shadow: 0 0 50px rgba(0, 212, 255, 0.5);
-            animation: slideIn 0.4s ease-out;
+            box-shadow: 0 0 60px rgba(255,215,0,0.5);
+            animation: popIn 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
         }
 
-        @keyframes slideIn {
-            from { transform: translateY(-40px); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
+        @keyframes popIn {
+            from { transform: scale(0.3); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
         }
 
         .modal-title {
             font-size: 22px;
             font-weight: 900;
-            margin-bottom: 14px;
+            margin-bottom: 10px;
             color: #ffeb3b;
         }
 
-        .modal-text {
-            font-size: 14px;
-            margin-bottom: 16px;
-            line-height: 1.5;
-            color: #e8e8ed;
-        }
-
-        .modal-buttons {
-            display: flex;
-            gap: 8px;
-            justify-content: center;
-            flex-wrap: wrap;
+        .modal-emoji {
+            font-size: 50px;
+            display: block;
+            margin: 8px 0;
         }
 
         .modal-btn {
-            background: linear-gradient(135deg, #00d4ff 0%, #0099ff 100%);
+            display: block;
+            width: 100%;
+            margin: 8px 0;
+            padding: 14px;
             border: none;
-            border-radius: 20px;
-            padding: 12px 20px;
-            color: #000;
+            border-radius: 30px;
             font-weight: 900;
+            font-size: 15px;
             cursor: pointer;
-            transition: all 0.2s;
-            flex: 1;
-            min-width: 110px;
-            font-size: 14px;
-            -webkit-appearance: none;
-            appearance: none;
+            transition: 0.2s;
+            letter-spacing: 0.5px;
         }
 
-        .modal-btn:hover {
-            transform: scale(1.05);
-        }
-
-        .modal-btn.secondary {
-            background: linear-gradient(135deg, #ff6b6b, #ee5a6f);
-            color: #fff;
-        }
-
-        .modal-btn.claim-btn {
+        .modal-btn.claim {
             background: linear-gradient(135deg, #66bb6a, #2e7d32);
             color: #fff;
         }
 
-        .modal-btn.double-btn {
+        .modal-btn.double {
             background: linear-gradient(135deg, #ffa726, #e65100);
             color: #fff;
         }
 
+        .modal-btn.cancel {
+            background: transparent;
+            border: 1px solid #888;
+            color: #ccc;
+        }
+
+        /* ========== RESPONSIVE ========== */
         @media (max-width: 480px) {
-            .board-area {
-                margin-bottom: 110px;
+            :root {
+                --tile-size: 62px;
+                --gap: 10px;
             }
-            .tile {
-                width: 65px;
-                height: 65px;
-            }
-            .tile-top {
-                font-size: 11px;
-            }
-            .player {
-                width: 55px;
-                height: 80px;
-            }
-            .roll-btn {
-                font-size: 18px;
-                padding: 12px 32px;
-            }
+            .board-area { margin-bottom: 100px; }
+            .player { width: 50px; height: 75px; }
+            .roll-btn { font-size: 17px; padding: 12px 34px; }
         }
     </style>
 </head>
 <body>
-<div class="game-wrapper">
-    <div class="game-container">
-        <button class="sound-toggle" id="soundToggle" onclick="toggleSound()">🔊</button>
 
-        <div class="decoration rocket">🚀</div>
-        <div class="decoration cloud">☁️</div>
-        <div class="decoration crown">👑</div>
-        <div class="decoration star1">✨</div>
-        <div class="decoration star2">✨</div>
+    <!-- ΕΦΕ ΦΟΝΤΟΥ -->
+    <div class="bg-layer">
+        <div class="bg-orb orb1"></div>
+        <div class="bg-orb orb2"></div>
+        <div class="bg-orb orb3"></div>
+        <div id="bgParticles"></div>
+    </div>
 
-        <div class="board-area" id="boardArea">
-            <div class="world" id="world"></div>
-            <div class="player" id="player">
-                <div class="king">
-                    <div class="king-base"></div>
-                    <div class="king-stem"></div>
-                    <div class="king-collar"></div>
-                    <div class="king-head"></div>
-                    <div class="king-cross"></div>
+    <div class="game-wrapper">
+        <div class="game-container">
+            <div class="board-area" id="boardArea">
+                <div class="world" id="world"></div>
+                <div class="player" id="player">
+                    <div class="king">
+                        <div class="king-head"></div>
+                        <div class="king-crown">👑</div>
+                        <div class="king-collar"></div>
+                        <div class="king-body"></div>
+                        <div class="king-base"></div>
+                    </div>
+                </div>
+                <div class="dice-popup" id="dicePopup">
+                    <div class="dice-display" id="diceDisplay">🎲</div>
                 </div>
             </div>
-            <div class="dice-popup" id="dicePopup">
-                <div class="dice-display" id="diceDisplay">🎲</div>
-            </div>
-        </div>
 
-        <div class="bottom-bar">
-            <button class="roll-btn" id="rollBtn" onclick="rollDice()">🎲 ROLL</button>
-        </div>
-
-        <!-- Ad Modal (μόνο για έλλειψη rolls) -->
-        <div class="modal" id="adModal">
-            <div class="modal-content">
-                <div class="modal-title">📢 Out of Rolls</div>
-                <div class="modal-text">Watch an ad to get +3 Rolls</div>
-                <div class="modal-buttons">
-                    <button class="modal-btn claim-btn" onclick="requestAd()">Watch Ad</button>
-                    <button class="modal-btn secondary" onclick="closeModal('adModal')">Close</button>
-                </div>
-            </div>
-        </div>
-
-        <!-- Daily Modal -->
-        <div class="modal" id="dailyRewardsModal">
-            <div class="modal-content">
-                <div class="modal-title">🎁 Daily Rewards</div>
-                <div class="modal-text">Claim your daily bonuses!</div>
-                <div class="modal-buttons">
-                    <button class="modal-btn claim-btn" onclick="claimDaily('rolls')">+5 Rolls</button>
-                    <button class="modal-btn claim-btn" onclick="claimDaily('stars')">+5 Stars</button>
-                    <button class="modal-btn claim-btn" onclick="claimDaily('points')">+5 Points</button>
-                </div>
-                <div class="modal-buttons">
-                    <button class="modal-btn secondary" onclick="closeModal('dailyRewardsModal')">Close</button>
-                </div>
+            <div class="bottom-bar">
+                <button class="roll-btn" id="rollBtn" onclick="rollDice()">🎲 ROLL</button>
             </div>
         </div>
     </div>
-</div>
 
 <script>
-    'use strict';
+'use strict';
 
-    // Parent communication
-    function sendToParent(msg) { window.parent.postMessage(msg, '*'); }
+// ===== MONETAG AD HELPER =====
+function showMonetagAd() {
+    return new Promise((resolve, reject) => {
+        if (typeof show_11108267 === 'function') {
+            show_11108267()
+                .then(() => resolve(true))
+                .catch(() => reject('Ad failed'));
+        } else {
+            // fallback αν δεν έχει φορτώσει το SDK
+            setTimeout(() => {
+                if (typeof show_11108267 === 'function') {
+                    show_11108267().then(resolve).catch(reject);
+                } else {
+                    resolve(true); // περνάμε χωρίς διαφήμιση
+                }
+            }, 800);
+        }
+    });
+}
 
-    // Listen for state & ad callbacks
+// ===== DOM ELEMENTS =====
+const world = document.getElementById('world');
+const player = document.getElementById('player');
+const boardArea = document.getElementById('boardArea');
+const dicePopup = document.getElementById('dicePopup');
+const diceDisplay = document.getElementById('diceDisplay');
+const rollBtn = document.getElementById('rollBtn');
+
+// ===== GAME STATE =====
+let gameState = {
+    spins: 50,
+    points: 0,
+    stars: 0,
+    totalScore: 0
+};
+let isRolling = false;
+let pendingReward = null;
+let currentIdx = 0;
+
+const tileSize = 75;
+const gap = 14;
+const step = tileSize + gap;
+
+let directions = [];
+let pathPoints = [];
+
+// ===== BUILD PATH =====
+function generateDirections() {
+    while (directions.length < pathPoints.length + 50) {
+        const l = directions.length;
+        const s = Math.floor(l / 3) % 4;
+        if (s === 0 || s === 2) directions.push('up');
+        else if (s === 1) directions.push('right');
+        else directions.push('left');
+    }
+}
+
+function buildPath() {
+    if (pathPoints.length === 0) pathPoints.push({ x: 0, y: 0 });
+    generateDirections();
+    while (pathPoints.length < currentIdx + 25) {
+        const last = pathPoints[pathPoints.length - 1];
+        const dir = directions[pathPoints.length - 1];
+        const np = { ...last };
+        if (dir === 'up') np.y--;
+        else if (dir === 'down') np.y++;
+        else if (dir === 'left') np.x--;
+        else np.x++;
+        pathPoints.push(np);
+    }
+}
+
+// ===== REWARDS =====
+function getRewardType(idx) {
+    if (idx <= 0) return { type: 'empty', icon: '', label: '', value: 0 };
+    if (idx % 15 === 0) return { type: 'stars', icon: '🌟', label: 'Stars', value: 3 };
+    if (idx % 10 === 0) return { type: 'rolls', icon: '🎰', label: 'Rolls', value: 5 };
+    if (idx % 5 === 0)  return { type: 'points', icon: '⭐', label: 'Points', value: 10 };
+    if (idx % 7 === 0)  return { type: 'mystery', icon: '❓', label: 'Mystery', value: 0 };
+    if (idx % 12 === 0) return { type: 'trap', icon: '🕳️', label: 'Trap', value: -2 };
+    if (idx % 20 === 0) return { type: 'bonus', icon: '🎁', label: 'Bonus Roll', value: 1 };
+    return { type: 'empty', icon: '', label: '', value: 0 };
+}
+
+// ===== PLAYER SCREEN POSITION =====
+function getPlayerScreenPos() {
+    const r = boardArea.getBoundingClientRect();
+    return { x: r.width / 2, y: r.height * 0.65 };
+}
+
+// ===== RENDER =====
+function renderAllTiles() {
+    world.innerHTML = '';
+    const sp = getPlayerScreenPos();
+    const pp = pathPoints[currentIdx];
+    const start = Math.max(0, currentIdx - 8);
+    const end = Math.min(pathPoints.length - 1, currentIdx + 18);
+
+    for (let i = start; i <= end; i++) {
+        const pt = pathPoints[i];
+        const rew = getRewardType(i);
+        const tile = document.createElement('div');
+        tile.className = `tile ${rew.type}`;
+        if (i === currentIdx) tile.classList.add('active');
+
+        tile.innerHTML = `
+            <div class="tile-inner">
+                <div class="tile-top">${rew.icon ? rew.icon + ' ' + rew.label : (rew.type === 'empty' ? '' : '')}</div>
+                <div class="tile-side left"></div>
+                <div class="tile-side right"></div>
+            </div>`;
+
+        const rx = (pt.x - pp.x) * step;
+        const ry = (pt.y - pp.y) * step;
+        tile.style.left = (sp.x + rx - tileSize / 2) + 'px';
+        tile.style.top = (sp.y + ry - tileSize / 2) + 'px';
+
+        // Badge διαφήμισης
+        if ((rew.type === 'points' || rew.type === 'stars' || rew.type === 'rolls') && rew.value > 0) {
+            const badge = document.createElement('div');
+            badge.className = 'ad-badge';
+            badge.textContent = '📢';
+            badge.addEventListener('click', (e) => {
+                e.stopPropagation();
+                pendingReward = rew;
+                handleAdDouble(rew);
+            });
+            tile.appendChild(badge);
+        }
+
+        world.appendChild(tile);
+    }
+
+    // Τοποθέτηση πιονιού ΑΚΡΙΒΩΣ ΣΤΟ ΚΕΝΤΡΟ ΤΟΥ ΤΡΕΧΟΝΤΟΣ ΚΟΥΤΙΟΥ
+    player.style.left = sp.x + 'px';
+    player.style.top = sp.y + 'px';
+    player.style.transform = 'translate(-50%, -100%)'; // η βάση ακουμπάει στο κουτάκι
+}
+
+// ===== MOVE =====
+function movePlayer(steps) {
+    return new Promise(resolve => {
+        let remaining = steps;
+        const delay = 420;
+
+        function step() {
+            if (remaining <= 0) {
+                resolve();
+                return;
+            }
+            currentIdx++;
+            buildPath();
+            renderAllTiles();
+            player.classList.remove('hop');
+            void player.offsetWidth;
+            player.classList.add('hop');
+            remaining--;
+            setTimeout(step, delay);
+        }
+        step();
+    });
+}
+
+// ===== DICE =====
+function showDice(n) {
+    const icons = ['🎲', '1️⃣', '2️⃣', '3️⃣'];
+    diceDisplay.textContent = icons[n] || '🎲';
+    dicePopup.classList.add('show');
+    setTimeout(() => dicePopup.classList.remove('show'), 550);
+}
+
+// ===== REWARD BANNER =====
+function showRewardBanner(icon, label, value) {
+    const banner = document.createElement('div');
+    banner.className = 'reward-banner';
+    banner.innerHTML = `<span>${icon}</span> <span>+${value} ${label}</span>`;
+    boardArea.appendChild(banner);
+    setTimeout(() => banner.remove(), 2200);
+}
+
+// ===== TOAST =====
+function showToast(msg) {
+    const toast = document.createElement('div');
+    toast.className = 'toast';
+    toast.textContent = msg;
+    document.body.appendChild(toast);
+    requestAnimationFrame(() => toast.classList.add('show'));
+    setTimeout(() => {
+        toast.classList.remove('show');
+        setTimeout(() => toast.remove(), 300);
+    }, 2000);
+}
+
+// ===== HANDLE AD DOUBLE =====
+async function handleAdDouble(rew) {
+    showMonetagAd()
+        .then(() => {
+            const doubled = rew.value * 2;
+            applyReward(rew.type, doubled);
+            showRewardBanner(rew.icon, rew.label, doubled);
+        })
+        .catch(() => {
+            applyReward(rew.type, rew.value);
+            showRewardBanner(rew.icon, rew.label, rew.value);
+        });
+    pendingReward = null;
+}
+
+function applyReward(type, value) {
+    if (type === 'points') gameState.points += value;
+    else if (type === 'stars') gameState.stars += value;
+    else if (type === 'rolls') gameState.spins += value;
+}
+
+// ===== HANDLE REWARD =====
+function handleReward(reward) {
+    if (reward.type === 'empty') return;
+
+    if (reward.type === 'trap') {
+        gameState.spins = Math.max(0, gameState.spins + reward.value);
+        showToast(`Trap! ${reward.value} rolls 😢`);
+        return;
+    }
+
+    if (reward.type === 'mystery') {
+        const outcomes = [
+            { type: 'points', icon: '⭐', label: 'Points', value: 8 },
+            { type: 'stars', icon: '🌟', label: 'Stars', value: 2 },
+            { type: 'rolls', icon: '🎰', label: 'Rolls', value: 3 },
+            { type: 'none', icon: '💨', label: 'Nothing', value: 0 }
+        ];
+        const chosen = outcomes[Math.floor(Math.random() * outcomes.length)];
+        if (chosen.value > 0) applyReward(chosen.type, chosen.value);
+        showRewardBanner(chosen.icon, chosen.label, chosen.value);
+        return;
+    }
+
+    if (reward.type === 'bonus') {
+        gameState.spins += 1;
+        showRewardBanner('🎁', 'Bonus Roll', 1);
+        return;
+    }
+
+    // Κανονική ανταμοιβή – άμεση απονομή
+    applyReward(reward.type, reward.value);
+    showRewardBanner(reward.icon, reward.label, reward.value);
+}
+
+// ===== ROLL DICE =====
+function rollDice() {
+    if (isRolling) return;
+    if (gameState.spins <= 0) {
+        showToast('No Rolls! Watch an ad 📢');
+        showMonetagAd().then(() => {
+            gameState.spins += 3;
+            showToast('+3 Rolls!');
+        });
+        return;
+    }
+
+    isRolling = true;
+    rollBtn.disabled = true;
+    gameState.spins--;
+
+    const dice = Math.floor(Math.random() * 3) + 1;
+    showDice(dice);
+
+    setTimeout(async () => {
+        await movePlayer(dice);
+        const rew = getRewardType(currentIdx);
+        handleReward(rew);
+        isRolling = false;
+        rollBtn.disabled = false;
+    }, 600);
+}
+
+// ===== BACKGROUND PARTICLES =====
+function createBgParticles() {
+    const container = document.getElementById('bgParticles');
+    for (let i = 0; i < 25; i++) {
+        const particle = document.createElement('div');
+        particle.className = 'bg-particle';
+        particle.style.left = Math.random() * 100 + '%';
+        particle.style.animationDuration = (6 + Math.random() * 12) + 's';
+        particle.style.animationDelay = Math.random() * 8 + 's';
+        container.appendChild(particle);
+    }
+}
+
+// ===== COLOR =====
+function randomizeColor() {
+    const colors = ['blue', 'gold', 'purple', 'red', 'green'];
+    const color = colors[Math.floor(Math.random() * colors.length)];
+    player.className = `player color-${color}`;
+}
+
+// ===== INIT =====
+function init() {
+    // 50 δωρεάν spins για νέο παίκτη
+    if (!localStorage.getItem('mariza_board_50spins')) {
+        gameState.spins = 50;
+        localStorage.setItem('mariza_board_50spins', '1');
+        showToast('🎉 50 Free Rolls!');
+    }
+
+    randomizeColor();
+    buildPath();
+    renderAllTiles();
+    createBgParticles();
+
+    // Επικοινωνία με parent (αν υπάρχει)
     window.addEventListener('message', (event) => {
         const data = event.data;
         if (!data || !data.type) return;
-
-        switch (data.type) {
-            case 'setState':
-                gameState.stars = data.stars || 0;
-                gameState.points = data.points || 0;
-                gameState.spins = data.spins || 0;
-                break;
-            case 'adWatched':
-                if (pendingReward) {
-                    const r = pendingReward;
-                    const doubled = r.value * 2;
-                    if (r.type === 'points') {
-                        gameState.points += doubled;
-                        sendToParent({ type:'addPoints', value: doubled });
-                    } else if (r.type === 'stars') {
-                        gameState.stars += doubled;
-                        sendToParent({ type:'addStars', value: doubled });
-                    } else if (r.type === 'rolls') {
-                        gameState.spins += doubled;
-                        sendToParent({ type:'addStars', value:0 });
-                    }
-                    showRewardBanner(r.label, r.icon, doubled);
-                    pendingReward = null;
-                    gameState.totalScore += 2;
-                    gameState.difficulty = Math.floor(gameState.totalScore/50)+1;
-                }
-                break;
-            case 'adFailed':
-                if (pendingReward) { showToast('Ad cancelled', 'none'); pendingReward = null; }
-                break;
-            case 'dailyClaimed':
-                break;
+        if (data.type === 'setState') {
+            gameState.points = data.points || 0;
+            gameState.stars = data.stars || 0;
+            gameState.spins = data.spins || gameState.spins;
         }
     });
 
-    // Sound Manager
-    let audioCtx = null, soundEnabled = true;
-    function initAudio() { if(!audioCtx) try { audioCtx = new (window.AudioContext||window.webkitAudioContext)(); } catch(e){} }
-    function playTone(f,d,t='sine',v=0.3) {
-        if(!soundEnabled||!audioCtx) return;
-        try {
-            const ctx=audioCtx, o=ctx.createOscillator(), g=ctx.createGain();
-            o.type=t; o.frequency.value=f;
-            g.gain.setValueAtTime(v, ctx.currentTime);
-            g.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime+d);
-            o.connect(g); g.connect(ctx.destination);
-            o.start(ctx.currentTime); o.stop(ctx.currentTime+d);
-        } catch(e){}
+    // Στείλε τα αρχικά spins στο parent
+    if (window.parent !== window) {
+        window.parent.postMessage({ type: 'initRolls', spins: 50 }, '*');
     }
-    function diceSound() { playTone(800,0.1); setTimeout(()=>playTone(600,0.1),50); setTimeout(()=>playTone(1000,0.2),100); }
-    function rewardSound(type) { if(type==='points') playTone(1200,0.15); else if(type==='stars') playTone(1000,0.1); else playTone(1400,0.15); }
-    function moveSound() { playTone(700,0.06,'sine',0.12); }
-    function failSound() { playTone(300,0.25); }
-    window.toggleSound = () => { soundEnabled=!soundEnabled; document.getElementById('soundToggle').textContent = soundEnabled ? '🔊' : '🔇'; };
+}
 
-    // DOM
-    const world = document.getElementById('world'), player = document.getElementById('player'), boardArea = document.getElementById('boardArea');
-    const dicePopup = document.getElementById('dicePopup'), diceDisplay = document.getElementById('diceDisplay');
-    const rollBtn = document.getElementById('rollBtn');
-
-    let gameState = { stars:0, points:0, spins:0, totalScore:0, difficulty:1 };
-    let isRolling = false, pendingReward = null;
-    const tileSize = 80, gap = 16, step = tileSize + gap;
-    let directions = [], pathPoints = [], currentIdx = 0;
-
-    // Ανταμοιβές – κάθε 5ο, 10ο, 15ο, κλπ.
-    function getRewardType(idx) {
-        if (idx <= 0) return { type:'empty', icon:'', label:'', value:0 };
-        if (idx % 15 === 0) return { type:'stars', icon:'🌟', label:'Stars', value:3 };
-        if (idx % 10 === 0) return { type:'rolls', icon:'🎰', label:'Rolls', value:5 };
-        if (idx % 5 === 0) return { type:'points', icon:'⭐', label:'Points', value:10 };
-        if (idx % 7 === 0) return { type:'mystery', icon:'❓', label:'Mystery', value:0 };
-        if (idx % 12 === 0) return { type:'trap', icon:'🕳️', label:'Trap', value:-2 };
-        if (idx % 20 === 0) return { type:'bonus', icon:'🎁', label:'Bonus Roll', value:1 };
-        return { type:'empty', icon:'', label:'', value:0 };
-    }
-
-    // Τοποθέτηση του πιονιού και των κουτιών ΠΙΟ ΚΑΤΩ (y = 0.7)
-    function getPlayerScreenPos() {
-        const r = boardArea.getBoundingClientRect();
-        return { x: r.width/2, y: r.height * 0.7 }; // πιο κοντά στο κουμπί
-    }
-
-    function createParticles(x,y,icon,n=8) {
-        for(let i=0;i<n;i++) {
-            const a=(i/n)*Math.PI*2, d=50+Math.random()*30;
-            const p=document.createElement('div');
-            p.className='particle';
-            p.textContent=icon;
-            p.style.left=x+'px';
-            p.style.top=y+'px';
-            p.style.setProperty('--tx', Math.cos(a)*d+'px');
-            p.style.setProperty('--ty', Math.sin(a)*d+'px');
-            boardArea.appendChild(p);
-            setTimeout(()=>p.remove(), 800);
-        }
-    }
-
-    function generateDirectionPattern() {
-        while(directions.length < pathPoints.length+10) {
-            const l=directions.length;
-            const s=Math.floor(l/3)%4;
-            if(s===0||s===2) directions.push('up');
-            else if(s===1) directions.push('right');
-            else directions.push('left');
-        }
-    }
-
-    function buildPath() {
-        if(pathPoints.length===0) pathPoints.push({x:0,y:0});
-        generateDirectionPattern();
-        while(pathPoints.length < currentIdx+20) { // μεγαλύτερο buffer
-            const last=pathPoints[pathPoints.length-1];
-            const dir=directions[pathPoints.length-1];
-            let np={...last};
-            if(dir==='up') np.y--;
-            else if(dir==='down') np.y++;
-            else if(dir==='left') np.x--;
-            else np.x++;
-            pathPoints.push(np);
-        }
-    }
-
-    function renderAllTiles() {
-        world.innerHTML='';
-        const sp=getPlayerScreenPos();
-        const pp=pathPoints[currentIdx];
-        // Διευρυμένο ορατό εύρος: 10 πίσω, 20 μπροστά
-        const start=Math.max(0,currentIdx-10), end=Math.min(pathPoints.length-1,currentIdx+20);
-        for(let i=start;i<=end;i++) {
-            const pt=pathPoints[i];
-            const rew=getRewardType(i);
-            const tile=document.createElement('div');
-            tile.className=`tile ${rew.type}`;
-            tile.innerHTML=`
-                <div class="tile-inner">
-                    <div class="tile-top">${rew.icon ? rew.icon+' '+rew.label : ''}</div>
-                    <div class="tile-side left"></div>
-                    <div class="tile-side right"></div>
-                </div>`;
-            const rx=(pt.x-pp.x)*step, ry=(pt.y-pp.y)*step;
-            tile.style.left=(sp.x+rx-tileSize/2)+'px';
-            tile.style.top=(sp.y+ry-tileSize/2)+'px';
-
-            if ((rew.type==='points'||rew.type==='stars'||rew.type==='rolls') && rew.value>0) {
-                const badge = document.createElement('div');
-                badge.className = 'ad-badge';
-                badge.textContent = '📢';
-                badge.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    pendingReward = rew;
-                    sendToParent({ type:'watchAd', value:3 });
-                });
-                tile.appendChild(badge);
-            }
-
-            world.appendChild(tile);
-        }
-        player.style.left=sp.x+'px';
-        player.style.top=sp.y+'px';
-        player.style.transform='translate(-50%,-50%)';
-    }
-
-    function movePlayer(steps) {
-        return new Promise(resolve => {
-            let rem=steps;
-            const delay = 480;
-            function step() {
-                if(rem<=0) { resolve(); return; }
-                currentIdx++;
-                buildPath();
-                renderAllTiles();
-                moveSound();
-                player.classList.remove('hop');
-                void player.offsetWidth;
-                player.classList.add('hop');
-                rem--;
-                setTimeout(step, delay);
-            }
-            step();
-        });
-    }
-
-    function showDice(n) {
-        const icons = ['🎲','1️⃣','2️⃣','3️⃣'];
-        diceDisplay.textContent = icons[n] || '🎲';
-        dicePopup.classList.add('show');
-        diceSound();
-        setTimeout(()=>dicePopup.classList.remove('show'), 600);
-    }
-
-    function showRewardBanner(text, icon, value) {
-        const banner = document.createElement('div');
-        banner.className = 'reward-banner';
-        banner.innerHTML = `<span>${icon}</span> <span>+${value} ${text}</span>`;
-        boardArea.appendChild(banner);
-        rewardSound(text.toLowerCase());
-        setTimeout(() => banner.remove(), 2000);
-    }
-
-    function showToast(text, type) {
-        const toast = document.createElement('div');
-        toast.className = 'toast-notification';
-        toast.innerHTML = `<span>${text}</span>`;
-        document.body.appendChild(toast);
-        toast.offsetHeight;
-        toast.classList.add('show');
-        if (type && type !== 'none') rewardSound(type);
-        setTimeout(() => {
-            toast.classList.remove('show');
-            setTimeout(() => toast.remove(), 300);
-        }, 2000);
-    }
-
-    function handleReward(reward) {
-        if (reward.type === 'empty') return;
-
-        if (reward.type === 'trap') {
-            gameState.spins = Math.max(0, gameState.spins + reward.value);
-            showToast(`Trap! ${reward.value} rolls 😢`, 'none');
-            failSound();
-            return;
-        }
-
-        if (reward.type === 'mystery') {
-            const outcomes = [
-                { type:'points', icon:'⭐', label:'Points', value:8 },
-                { type:'stars', icon:'🌟', label:'Stars', value:2 },
-                { type:'rolls', icon:'🎰', label:'Rolls', value:3 },
-                { type:'none', icon:'💨', label:'Nothing', value:0 }
-            ];
-            const chosen = outcomes[Math.floor(Math.random()*outcomes.length)];
-            if (chosen.value > 0) {
-                if (chosen.type==='points') gameState.points += chosen.value;
-                else if (chosen.type==='stars') gameState.stars += chosen.value;
-                else if (chosen.type==='rolls') gameState.spins += chosen.value;
-                sendToParent({ type:'add'+chosen.type.charAt(0).toUpperCase()+chosen.type.slice(1), value: chosen.value });
-            }
-            showRewardBanner(chosen.label, chosen.icon, chosen.value);
-            gameState.totalScore++;
-            gameState.difficulty = Math.floor(gameState.totalScore/50)+1;
-            return;
-        }
-
-        if (reward.type === 'bonus') {
-            gameState.spins += 1;
-            sendToParent({ type:'addStars', value:0 });
-            showRewardBanner('Bonus Roll', '🎁', 1);
-            return;
-        }
-
-        // Κανονικές ανταμοιβές
-        if (reward.type === 'points') {
-            gameState.points += reward.value;
-            sendToParent({ type:'addPoints', value: reward.value });
-        } else if (reward.type === 'stars') {
-            gameState.stars += reward.value;
-            sendToParent({ type:'addStars', value: reward.value });
-        } else if (reward.type === 'rolls') {
-            gameState.spins += reward.value;
-            sendToParent({ type:'addStars', value:0 });
-        }
-
-        showRewardBanner(reward.label, reward.icon, reward.value);
-        gameState.totalScore++;
-        gameState.difficulty = Math.floor(gameState.totalScore/50)+1;
-
-        const sp = getPlayerScreenPos();
-        createParticles(sp.x, sp.y, reward.icon, 10);
-    }
-
-    function randomizePawnColor() {
-        const colors = ['blue', 'gold', 'purple', 'red', 'green'];
-        const color = colors[Math.floor(Math.random() * colors.length)];
-        player.className = `player color-${color}`;
-    }
-
-    // 50 δωρεάν spins για νέο χρήστη
-    function giveInitialRolls() {
-        if (!localStorage.getItem('mariza_initial_rolls_given')) {
-            gameState.spins = 50;
-            localStorage.setItem('mariza_initial_rolls_given', '1');
-            sendToParent({ type:'setSpins', value: 50 }); // ενημέρωση parent αν υπάρχει
-            showToast('🎉 50 Free Rolls!', 'rolls');
-        }
-    }
-
-    window.rollDice = function() {
-        if (isRolling) return;
-        if (gameState.spins <= 0) {
-            showToast('No Rolls! 😢', 'none');
-            failSound();
-            setTimeout(() => openModal('adModal'), 1000);
-            return;
-        }
-        isRolling = true;
-        rollBtn.disabled = true;
-        gameState.spins--;
-        sendToParent({ type:'useSpin' });
-        const dice = Math.floor(Math.random() * 3) + 1;
-        showDice(dice);
-        setTimeout(async () => {
-            await movePlayer(dice);
-            const rew = getRewardType(currentIdx);
-            handleReward(rew);
-            isRolling = false;
-            rollBtn.disabled = false;
-        }, 700);
-    };
-
-    window.openModal = id => document.getElementById(id).classList.add('show');
-    window.closeModal = id => document.getElementById(id).classList.remove('show');
-    window.requestAd = () => { closeModal('adModal'); sendToParent({ type:'watchAd', value:3 }); };
-    window.claimDaily = (type) => {
-        closeModal('dailyRewardsModal');
-        if (type === 'rolls') gameState.spins += 5;
-        else if (type === 'stars') gameState.stars += 5;
-        else if (type === 'points') gameState.points += 5;
-        sendToParent({ type:'claimDaily', rewardType: type });
-        showToast(`+5 ${type}`, type);
-    };
-
-    window.addEventListener('resize', renderAllTiles);
-
-    initAudio();
-    randomizePawnColor();
-    giveInitialRolls();  // <-- 50 rolls για νέο παίκτη
-    buildPath();
-    renderAllTiles();
-
-    // Daily modal
-    const lastReward = localStorage.getItem('mariza_board_lastReward');
-    const now = Date.now();
-    if (!lastReward || now - parseInt(lastReward) > 86400000) {
-        setTimeout(() => openModal('dailyRewardsModal'), 1500);
-        localStorage.setItem('mariza_board_lastReward', now);
-    }
+init();
 </script>
 </body>
 </html>
