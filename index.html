@@ -1,1001 +1,408 @@
 <!DOCTYPE html>
-<html lang="el">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Connect Four - Galactic Edition</title>
+    <meta name="theme-color" content="#0a0e27">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="theme-color" content="#0a0e27">
-    <title>Mariza Games - Board</title>
-    <script src="//libtl.com/sdk.js" data-zone="11108267" data-sdk="show_11108267"></script>
+
+    <script src="https://sdk.playgama.com/js/playgama.js?bridge_version=1.24"></script>
+
     <style>
-        :root {
-            --tile-size: 75px;
-            --gap: 14px;
-            --step: calc(var(--tile-size) + var(--gap));
-        }
-
-        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-
-        body {
-            background: #0a0a14;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            width: 100vw;
-            height: 100vh;
-            height: 100dvh;
-            overflow: hidden;
-            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-            -webkit-user-select: none;
-            user-select: none;
-            -webkit-touch-callout: none;
-        }
-
-        .game-wrapper {
-            width: 100%;
-            height: 100%;
-            display: flex;
-            flex-direction: column;
-            position: relative;
-        }
-
-        /* ========== ΕΝΤΥΠΩΣΙΑΚΟ BACKGROUND ΜΕ ΕΦΕ ========== */
-        .bg-layer {
-            position: absolute;
-            inset: 0;
-            pointer-events: none;
-            z-index: 0;
-            overflow: hidden;
-        }
-
-        .bg-orb {
-            position: absolute;
-            border-radius: 50%;
-            filter: blur(80px);
-            opacity: 0.25;
-            animation: orbFloat 12s ease-in-out infinite;
-        }
-
-        .bg-orb.orb1 {
-            width: 250px; height: 250px;
-            background: radial-gradient(circle, #6366f1, transparent);
-            top: -5%; left: -10%;
-            animation-delay: 0s;
-        }
-
-        .bg-orb.orb2 {
-            width: 200px; height: 200px;
-            background: radial-gradient(circle, #d946ef, transparent);
-            bottom: 10%; right: -5%;
-            animation-delay: -4s;
-        }
-
-        .bg-orb.orb3 {
-            width: 180px; height: 180px;
-            background: radial-gradient(circle, #06b6d4, transparent);
-            top: 50%; left: 40%;
-            animation-delay: -8s;
-        }
-
-        @keyframes orbFloat {
-            0%, 100% { transform: translate(0, 0) scale(1); }
-            25% { transform: translate(30px, -20px) scale(1.1); }
-            50% { transform: translate(-20px, 30px) scale(0.9); }
-            75% { transform: translate(-40px, -10px) scale(1.05); }
-        }
-
-        /* Σωματίδια φόντου */
-        .bg-particle {
-            position: absolute;
-            width: 4px;
-            height: 4px;
-            background: #84cc16;
-            border-radius: 50%;
-            opacity: 0.6;
-            animation: particleFloat 8s linear infinite;
-            box-shadow: 0 0 8px #84cc16, 0 0 20px rgba(132,204,22,0.4);
-        }
-
-        @keyframes particleFloat {
-            0% { transform: translateY(110vh) rotate(0deg); opacity: 0; }
-            10% { opacity: 0.8; }
-            90% { opacity: 0.6; }
-            100% { transform: translateY(-10vh) rotate(720deg); opacity: 0; }
-        }
-
-        /* ========== ΚΥΡΙΟ CONTAINER ========== */
-        .game-container {
-            width: 100%;
-            height: 100%;
-            position: relative;
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: flex-end;
-            z-index: 1;
-        }
-
-        .board-area {
-            flex: 1;
-            width: 100%;
-            position: relative;
-            overflow: visible;
-            z-index: 20;
-            margin-bottom: 90px;
-        }
-
-        .world {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            transition: transform 0.35s cubic-bezier(0.22, 0.61, 0.36, 1);
-            will-change: transform;
-        }
-
-        /* ========== 3D ΚΟΥΤΑΚΙΑ ========== */
-        .tile {
-            position: absolute;
-            width: var(--tile-size);
-            height: var(--tile-size);
-            z-index: 5;
-            perspective: 800px;
-            transition: transform 0.3s ease;
-        }
-
-        .tile-inner {
-            width: 100%;
-            height: 100%;
-            position: relative;
-            transform-style: preserve-3d;
-            transform: rotateX(25deg) rotateZ(45deg);
-            transition: all 0.35s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-            will-change: transform;
-        }
-
-        /* ΑΝΑΔΥΣΗ ΟΤΑΝ ΕΙΝΑΙ ΤΟ ΤΡΕΧΟΝ */
-        .tile.active .tile-inner {
-            transform: rotateX(25deg) rotateZ(45deg) translateZ(25px) scale(1.08);
-            filter: brightness(1.3) drop-shadow(0 15px 25px rgba(255,215,0,0.7));
-        }
-
-        .tile-top {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            border-radius: 12px;
-            border: 3px solid rgba(255,255,255,0.3);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            font-size: 12px;
-            font-weight: 900;
-            color: #fff;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.4);
-            box-shadow: 
-                -8px 8px 16px rgba(0,0,0,0.4),
-                inset 0 2px 4px rgba(255,255,255,0.15);
-            gap: 2px;
-            backface-visibility: hidden;
-        }
-
-        .tile-side {
-            position: absolute;
-            width: 100%;
-            height: 40%;
-            border: 2px solid rgba(255,255,255,0.15);
-            box-shadow: inset 0 1px 1px rgba(255,255,255,0.05);
-        }
-
-        .tile-side.left {
-            top: 60%;
-            left: -40%;
-            transform: rotateY(90deg);
-            border-radius: 0 0 6px 0;
-        }
-
-        .tile-side.right {
-            top: 60%;
-            right: -40%;
-            transform: rotateY(-90deg);
-            border-radius: 0 0 0 6px;
-        }
-
-        /* ========== ΛΕΥΚΟ 3D DESIGN ΓΙΑ ΑΔΕΙΑ ΚΟΥΤΑΚΙΑ ========== */
-        .tile.empty .tile-top {
-            background: linear-gradient(135deg, #e8e8ec 0%, #d4d4dc 30%, #c8c8d0 70%, #b0b0b8 100%);
-            border-color: rgba(255,255,255,0.5);
-            color: #555;
-            text-shadow: 0 1px 2px rgba(255,255,255,0.5);
-            box-shadow: 
-                -8px 8px 16px rgba(0,0,0,0.3),
-                inset 0 2px 4px rgba(255,255,255,0.6),
-                0 0 15px rgba(255,255,255,0.2);
-        }
-
-        .tile.empty .tile-side {
-            background: linear-gradient(90deg, #c0c0c8, #a0a0a8);
-            border-color: #b0b0b8;
-        }
-
-        /* ========== ΤΥΠΟΙ ΚΟΥΤΙΩΝ ΜΕ ΔΩΡΑ ========== */
-        .tile.points .tile-top {
-            background: linear-gradient(135deg, #42a5f5, #1565c0);
-            border-color: #64b5f6;
-        }
-        .tile.points .tile-side {
-            background: linear-gradient(90deg, #1565c0, #0d47a1);
-            border-color: #1565c0;
-        }
-
-        .tile.stars .tile-top {
-            background: linear-gradient(135deg, #f06292, #c2185b);
-            border-color: #f48fb1;
-        }
-        .tile.stars .tile-side {
-            background: linear-gradient(90deg, #c2185b, #880e4f);
-            border-color: #c2185b;
-        }
-
-        .tile.rolls .tile-top {
-            background: linear-gradient(135deg, #66bb6a, #2e7d32);
-            border-color: #81c784;
-        }
-        .tile.rolls .tile-side {
-            background: linear-gradient(90deg, #2e7d32, #1b5e20);
-            border-color: #2e7d32;
-        }
-
-        .tile.trap .tile-top {
-            background: linear-gradient(135deg, #ef5350, #b71c1c);
-            border-color: #e57373;
-        }
-        .tile.trap .tile-side {
-            background: linear-gradient(90deg, #b71c1c, #7f0000);
-            border-color: #b71c1c;
-        }
-
-        .tile.mystery .tile-top {
-            background: linear-gradient(135deg, #ab47bc, #6a1b9a);
-            border-color: #ce93d8;
-        }
-        .tile.mystery .tile-side {
-            background: linear-gradient(90deg, #6a1b9a, #4a148c);
-            border-color: #6a1b9a;
-        }
-
-        .tile.bonus .tile-top {
-            background: linear-gradient(135deg, #ffa726, #e65100);
-            border-color: #ffb74d;
-        }
-        .tile.bonus .tile-side {
-            background: linear-gradient(90deg, #e65100, #bf360c);
-            border-color: #e65100;
-        }
-
-        /* ========== BADGE ΔΙΑΦΗΜΙΣΗΣ ========== */
-        .ad-badge {
-            position: absolute;
-            top: -12px;
-            right: -12px;
-            background: linear-gradient(135deg, #ffd700, #ff8c00);
-            color: #000;
-            border-radius: 50%;
-            width: 30px;
-            height: 30px;
-            font-size: 15px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            box-shadow: 0 3px 10px rgba(0,0,0,0.5), 0 0 20px rgba(255,215,0,0.6);
-            z-index: 70;
-            cursor: pointer;
-            pointer-events: auto;
-            animation: badgePulse 2s ease-in-out infinite;
-        }
-
-        @keyframes badgePulse {
-            0%, 100% { box-shadow: 0 3px 10px rgba(0,0,0,0.5), 0 0 20px rgba(255,215,0,0.6); }
-            50% { box-shadow: 0 3px 15px rgba(0,0,0,0.6), 0 0 35px rgba(255,215,0,0.9); }
-        }
-
-        .ad-badge:active {
-            transform: scale(1.3);
-        }
-
-        /* ========== ΠΙΟΝΙ ΒΑΣΙΛΙΑΣ – ΣΤΕΚΕΤΑΙ ΣΤΟ ΚΟΥΤΑΚΙ ========== */
-        .player {
-            position: absolute;
-            width: 60px;
-            height: 90px;
-            z-index: 60;
-            pointer-events: none;
-            transition: left 0.35s ease, top 0.35s ease;
-            filter: drop-shadow(0 12px 20px rgba(0,0,0,0.7));
-            will-change: left, top;
-        }
-
-        .king {
-            width: 100%;
-            height: 100%;
-            position: relative;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: flex-end;
-        }
-
-        .king-base {
-            width: 44px;
-            height: 12px;
-            background: linear-gradient(135deg, #5d4037, #3e2723);
-            border-radius: 10px 10px 5px 5px;
-            box-shadow: 0 3px 6px rgba(0,0,0,0.5);
-            position: relative;
-            z-index: 1;
-        }
-
-        .king-body {
-            width: 28px;
-            height: 32px;
-            background: linear-gradient(135deg, #795548, #4e342e);
-            border-radius: 6px 6px 2px 2px;
-            box-shadow: inset 0 2px 4px rgba(255,255,255,0.1);
-            position: relative;
-        }
-
-        .king-collar {
-            width: 34px;
-            height: 8px;
-            background: linear-gradient(135deg, #8d6e63, #5d4037);
-            border-radius: 5px;
-            margin-bottom: -2px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.3);
-        }
-
-        .king-head {
-            width: 32px;
-            height: 26px;
-            background: radial-gradient(circle at 40% 35%, #8d6e63, #4e342e);
-            border-radius: 50% 50% 15% 15%;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.3);
-            position: relative;
-        }
-
-        .king-crown {
-            position: absolute;
-            top: -22px;
-            left: 50%;
-            transform: translateX(-50%);
-            font-size: 28px;
-            line-height: 1;
-            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));
-            z-index: 2;
-        }
-
-        /* Χρώματα – αλλάζουν το σώμα και το κεφάλι */
-        .player.color-blue .king-body,
-        .player.color-blue .king-head {
-            background: linear-gradient(135deg, #2196F3, #1565c0);
-        }
-
-        .player.color-gold .king-body,
-        .player.color-gold .king-head {
-            background: linear-gradient(135deg, #FFD700, #FFA500);
-        }
-
-        .player.color-purple .king-body,
-        .player.color-purple .king-head {
-            background: linear-gradient(135deg, #9C27B0, #6A1B9A);
-        }
-
-        .player.color-red .king-body,
-        .player.color-red .king-head {
-            background: linear-gradient(135deg, #EF5350, #C62828);
-        }
-
-        .player.color-green .king-body,
-        .player.color-green .king-head {
-            background: linear-gradient(135deg, #66BB6A, #2E7D32);
-        }
-
-        /* Hop animation */
-        .player.hop {
-            animation: kingHop 0.4s ease-in-out !important;
-        }
-
-        @keyframes kingHop {
-            0% { transform: translateY(0) scale(1); }
-            35% { transform: translateY(-22px) scale(1.1); }
-            100% { transform: translateY(0) scale(1); }
-        }
-
-        /* ========== DICE POPUP ========== */
-        .dice-popup {
-            position: absolute;
-            top: 40%;
-            left: 50%;
-            transform: translate(-50%, -50%) scale(0.7);
-            background: rgba(0,0,0,0.9);
-            border: 4px solid #ffd54f;
-            border-radius: 20px;
-            padding: 16px 22px;
-            z-index: 200;
-            opacity: 0;
-            pointer-events: none;
-            transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-            box-shadow: 0 0 50px rgba(255,215,0,0.9);
-        }
-
-        .dice-popup.show {
-            opacity: 1;
-            transform: translate(-50%, -50%) scale(1);
-        }
-
-        .dice-display {
-            font-size: 64px;
-            font-weight: 900;
-            animation: diceRoll 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-        }
-
-        @keyframes diceRoll {
-            0% { transform: rotateY(0) scale(0.4); }
-            50% { transform: rotateY(180deg) scale(1.1); }
-            100% { transform: rotateY(360deg) scale(1); }
-        }
-
-        /* ========== REWARD BANNER ========== */
-        .reward-banner {
-            position: absolute;
-            top: 8%;
-            left: 50%;
-            transform: translate(-50%, -30px);
-            background: rgba(0,0,0,0.9);
-            color: #ffeb3b;
-            padding: 12px 28px;
-            border-radius: 30px;
-            font-weight: 900;
-            font-size: 19px;
-            z-index: 150;
-            pointer-events: none;
-            animation: bannerIn 0.4s ease-out, bannerOut 0.4s 1.8s ease-in forwards;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            box-shadow: 0 0 30px rgba(255,235,59,0.8);
-            border: 2px solid #ffd700;
-        }
-
-        @keyframes bannerIn {
-            from { opacity: 0; transform: translate(-50%, -40px); }
-            to { opacity: 1; transform: translate(-50%, -30px); }
-        }
-
-        @keyframes bannerOut {
-            from { opacity: 1; transform: translate(-50%, -30px); }
-            to { opacity: 0; transform: translate(-50%, -50px); }
-        }
-
-        /* ========== TOAST ========== */
-        .toast {
-            position: fixed;
-            top: 20px;
-            left: 50%;
-            transform: translateX(-50%) translateY(-120px);
-            background: #ffd700;
-            color: #000;
-            padding: 12px 26px;
-            border-radius: 30px;
-            font-weight: 900;
-            font-size: 16px;
-            z-index: 500;
-            transition: transform 0.3s ease;
-            box-shadow: 0 8px 24px rgba(0,0,0,0.4);
-        }
-
-        .toast.show {
-            transform: translateX(-50%) translateY(0);
-        }
-
-        /* ========== BOTTOM BAR ========== */
-        .bottom-bar {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 14px 12px;
-            padding-bottom: max(14px, env(safe-area-inset-bottom));
-            z-index: 100;
-            background: linear-gradient(180deg, rgba(0,0,0,0.2), rgba(0,0,0,0.95));
-            backdrop-filter: blur(12px);
-            border-top: 2px solid rgba(255,255,255,0.1);
-        }
-
-        .roll-btn {
-            background: linear-gradient(135deg, #ff4081, #c51162);
-            border: 2px solid #ff69b4;
-            border-radius: 40px;
-            padding: 14px 44px;
-            color: #fff;
-            font-size: 20px;
-            font-weight: 900;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            box-shadow: 0 8px 0 #880e4f, 0 12px 28px rgba(0,0,0,0.5);
-            cursor: pointer;
-            transition: all 0.1s;
-            letter-spacing: 2px;
-            -webkit-appearance: none;
-        }
-
-        .roll-btn:active {
-            transform: translateY(4px);
-            box-shadow: 0 3px 0 #880e4f, 0 6px 14px rgba(0,0,0,0.4);
-        }
-
-        .roll-btn:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
-
-        /* ========== MODAL ========== */
-        .modal-overlay {
-            position: fixed;
-            inset: 0;
-            background: rgba(0,0,0,0.8);
-            z-index: 1000;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .modal-box {
-            background: linear-gradient(135deg, #1a1a2e, #16213e);
-            border: 3px solid #ffd700;
-            border-radius: 24px;
-            padding: 24px 20px;
-            text-align: center;
-            color: #fff;
-            max-width: 340px;
-            width: 90%;
-            box-shadow: 0 0 60px rgba(255,215,0,0.5);
-            animation: popIn 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-        }
-
-        @keyframes popIn {
-            from { transform: scale(0.3); opacity: 0; }
-            to { transform: scale(1); opacity: 1; }
-        }
-
-        .modal-title {
-            font-size: 22px;
-            font-weight: 900;
-            margin-bottom: 10px;
-            color: #ffeb3b;
-        }
-
-        .modal-emoji {
-            font-size: 50px;
-            display: block;
-            margin: 8px 0;
-        }
-
-        .modal-btn {
-            display: block;
-            width: 100%;
-            margin: 8px 0;
-            padding: 14px;
-            border: none;
-            border-radius: 30px;
-            font-weight: 900;
-            font-size: 15px;
-            cursor: pointer;
-            transition: 0.2s;
-            letter-spacing: 0.5px;
-        }
-
-        .modal-btn.claim {
-            background: linear-gradient(135deg, #66bb6a, #2e7d32);
-            color: #fff;
-        }
-
-        .modal-btn.double {
-            background: linear-gradient(135deg, #ffa726, #e65100);
-            color: #fff;
-        }
-
-        .modal-btn.cancel {
-            background: transparent;
-            border: 1px solid #888;
-            color: #ccc;
-        }
-
-        /* ========== RESPONSIVE ========== */
-        @media (max-width: 480px) {
-            :root {
-                --tile-size: 62px;
-                --gap: 10px;
-            }
-            .board-area { margin-bottom: 100px; }
-            .player { width: 50px; height: 75px; }
-            .roll-btn { font-size: 17px; padding: 12px 34px; }
-        }
+        * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; min-height: 100vh; display: flex; justify-content: center; align-items: center; background: #000010; overflow: hidden; position: relative; touch-action: manipulation; }
+        #starCanvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; }
+        .shooting-star { position: fixed; width: 3px; height: 80px; background: linear-gradient(to bottom, rgba(255,255,255,0.9), rgba(255,255,255,0)); border-radius: 50%; z-index: 1; pointer-events: none; animation: shoot linear forwards; transform-origin: top center; }
+        @keyframes shoot { 0% { opacity: 1; transform: translate(0,0) rotate(-35deg); } 70% { opacity: 1; } 100% { opacity: 0; transform: translate(-400px,600px) rotate(-35deg); } }
+        .nebula-particle { position: fixed; border-radius: 50%; z-index: 0; pointer-events: none; animation: nebulaFloat linear infinite; filter: blur(2px); }
+        @keyframes nebulaFloat { 0% { transform: translate(0,0) scale(1); opacity: 0.6; } 50% { transform: translate(30px,-40px) scale(1.5); opacity: 0.2; } 100% { transform: translate(-20px,20px) scale(1); opacity: 0.6; } }
+        .splash-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.55); z-index: 100; display: flex; justify-content: center; align-items: center; animation: fadeInOverlay 0.8s ease forwards; transition: opacity 0.6s ease; }
+        @keyframes fadeInOverlay { from { opacity: 0; } to { opacity: 1; } }
+        .popup-dialog { background: linear-gradient(160deg, rgba(20,20,50,0.95), rgba(10,10,30,0.98)); border-radius: 30px; padding: 40px 30px 35px; box-shadow: 0 0 60px rgba(132,204,22,0.3), 0 0 120px rgba(30,60,114,0.4), 0 20px 50px rgba(0,0,0,0.7); width: 90%; max-width: 460px; text-align: center; z-index: 101; border: 2px solid rgba(132,204,22,0.5); position: relative; animation: popIn 0.7s cubic-bezier(0.175,0.885,0.32,1.275) forwards; backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); transition: transform 0.5s ease, opacity 0.5s ease; }
+        @keyframes popIn { 0% { transform: scale(0) rotate(-15deg); opacity: 0; } 60% { transform: scale(1.05) rotate(2deg); opacity: 1; } 80% { transform: scale(0.97) rotate(-0.5deg); } 100% { transform: scale(1) rotate(0deg); opacity: 1; } }
+        .popup-dialog::before { content: ''; position: absolute; top: -4px; left: -4px; right: -4px; bottom: -4px; border-radius: 34px; background: linear-gradient(135deg, #84cc16, #1976d2, #ff4081, #84cc16); background-size: 300% 300%; z-index: -1; animation: glowRotate 4s ease infinite; filter: blur(8px); opacity: 0.7; }
+        @keyframes glowRotate { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+        .popup-icon { font-size: 4rem; margin-bottom: 10px; animation: bounceIcon 0.8s ease-in-out infinite alternate; display: block; }
+        @keyframes bounceIcon { from { transform: translateY(0) scale(1); } to { transform: translateY(-18px) scale(1.08); } }
+        .popup-title { font-size: 2.4rem; font-weight: 900; letter-spacing: 4px; color: #fff; margin-bottom: 6px; text-shadow: 0 0 20px rgba(132,204,22,0.8), 0 0 40px rgba(132,204,22,0.4), 0 4px 8px rgba(0,0,0,0.5); background: linear-gradient(180deg, #fff 30%, #84cc16 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+        .popup-subtitle { font-size: 1rem; color: #b0b8d0; margin-bottom: 24px; letter-spacing: 1px; font-weight: 400; }
+        .play-btn { display: inline-block; background: linear-gradient(145deg, #84cc16, #4d7c0f); color: white; border: none; padding: 18px 48px; font-size: 1.3rem; border-radius: 50px; cursor: pointer; font-weight: 800; letter-spacing: 2px; text-transform: uppercase; transition: all 0.3s ease; box-shadow: 0 6px 0 #3a5e0a, 0 10px 30px rgba(132,204,22,0.5), inset 0 2px 4px rgba(255,255,255,0.3); position: relative; overflow: hidden; outline: none; -webkit-tap-highlight-color: transparent; z-index: 102; }
+        .play-btn:hover { transform: translateY(-3px); box-shadow: 0 9px 0 #3a5e0a, 0 14px 40px rgba(132,204,22,0.7), inset 0 2px 4px rgba(255,255,255,0.3); background: linear-gradient(145deg, #a3e635, #65a30d); }
+        .play-btn:active { transform: translateY(3px); box-shadow: 0 2px 0 #3a5e0a, 0 4px 12px rgba(132,204,22,0.5), inset 0 2px 4px rgba(255,255,255,0.3); transition: all 0.1s ease; }
+        .play-btn::after { content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%; background: radial-gradient(circle, rgba(255,255,255,0.3) 0%, transparent 60%); opacity: 0; transition: opacity 0.3s ease; }
+        .play-btn:hover::after { opacity: 1; }
+        .play-btn.loading { pointer-events: none; opacity: 0.7; }
+        .game-wrapper { display: none; width: 100%; min-height: 100vh; justify-content: center; align-items: center; padding: 10px; position: relative; z-index: 50; }
+        .game-container { text-align: center; background: rgba(20,20,35,0.9); border-radius: 20px; padding: 20px 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.4); width: 100%; max-width: 500px; margin: 10px; border: 2px solid rgba(132,204,22,0.3); backdrop-filter: blur(8px); }
+        h1 { color: #84cc16; margin-bottom: 15px; font-size: 2rem; font-weight: bold; letter-spacing: 2px; text-shadow: 0 0 20px rgba(132,204,22,0.5); }
+        .players-info { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; padding: 0 5px; gap: 5px; }
+        .player { display: flex; flex-direction: column; align-items: center; gap: 6px; flex: 1; min-width: 80px; }
+        .player-disc { width: 35px; height: 35px; border-radius: 50%; border: 2px solid #fff; box-shadow: 0 3px 6px rgba(0,0,0,0.3); }
+        .player-disc.red { background: radial-gradient(circle at 30% 30%, #ff6b6b, #c0392b); }
+        .player-disc.yellow { background: radial-gradient(circle at 30% 30%, #ffd93d, #f39c12); }
+        .player span { font-size: 0.9rem; font-weight: bold; color: #e8e8ed; }
+        .player.active span { color: #84cc16; font-weight: 800; }
+        .scores { flex: 1; display: flex; justify-content: center; align-items: center; }
+        .scores .score { font-size: 1.6rem; font-weight: bold; color: #e8e8ed; background: rgba(255,255,255,0.05); padding: 8px 16px; border-radius: 20px; min-width: 80px; border: 1px solid rgba(132,204,22,0.2); box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .board-container { background: linear-gradient(145deg, #1976d2, #1565c0); padding: 15px; border-radius: 15px; box-shadow: inset 0 0 20px rgba(0,0,0,0.3), 0 6px 15px rgba(0,0,0,0.4); margin: 15px 0; position: relative; width: 100%; aspect-ratio: 7/6; border: 3px solid #0d47a1; overflow: hidden; display: flex; justify-content: center; align-items: center; }
+        .board { display: grid; grid-template-columns: repeat(7, 1fr); grid-template-rows: repeat(6, 1fr); gap: 6px; position: relative; z-index: 1; height: 95%; width: 95%; padding: 4px; background: transparent; }
+        .slot { background: linear-gradient(145deg, #1976d2, #0d47a1); border-radius: 50%; cursor: pointer; position: relative; transition: all 0.2s ease; box-shadow: inset 0 -3px 6px rgba(0,0,0,0.6), inset 0 3px 6px rgba(255,255,255,0.1), 0 2px 4px rgba(0,0,0,0.3); display: flex; align-items: center; justify-content: center; border: 1px solid #0d47a1; }
+        .slot:hover, .slot:active { background: linear-gradient(145deg, #1565c0, #0a3d91); transform: scale(1.05); }
+        .disc { width: 85%; height: 85%; border-radius: 50%; transition: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55); box-shadow: inset 0 -4px 8px rgba(0,0,0,0.5), inset 0 2px 4px rgba(255,255,255,0.3), 0 3px 6px rgba(0,0,0,0.4); border: 2px solid rgba(255,255,255,0.4); position: relative; z-index: 2; opacity: 0; transform: translateY(-500px); }
+        .disc::before { content: ''; position: absolute; top: 15%; left: 15%; right: 15%; bottom: 15%; background: rgba(255,255,255,0.25); border-radius: 50%; filter: blur(1px); z-index: 3; }
+        .disc.red { background: radial-gradient(circle at 35% 35%, #ff5252, #c62828); }
+        .disc.yellow { background: radial-gradient(circle at 35% 35%, #ffeb3b, #f9a825); }
+        .disc.red, .disc.yellow { opacity: 1; }
+        .disc.winner { animation: discPulse 1s infinite; }
+        @keyframes discDrop { 0% { transform: translateY(-500px); opacity: 0; } 60% { transform: translateY(20px); opacity: 1; } 80% { transform: translateY(-8px); opacity: 1; } 100% { transform: translateY(0); opacity: 1; } }
+        @keyframes discPulse { 0% { transform: scale(1); } 50% { transform: scale(1.08); } 100% { transform: scale(1); } }
+        .status { margin: 15px 0; font-size: 1.1rem; font-weight: 700; color: #e8e8ed; min-height: 25px; padding: 12px; background: rgba(255,255,255,0.05); border-radius: 10px; border: 1px solid rgba(132,204,22,0.2); box-shadow: 0 2px 4px rgba(0,0,0,0.1); text-align: center; }
+        .game-buttons { display: flex; justify-content: center; align-items: center; gap: 10px; margin-top: 15px; padding: 0 5px; flex-wrap: wrap; }
+        .game-btn { background: linear-gradient(135deg, #ff4081, #c51162); border: 2px solid #ff69b4; color: white; padding: 12px 20px; font-size: 0.9rem; border-radius: 40px; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 4px 0 #880e4f, 0 6px 12px rgba(0,0,0,0.4); font-family: inherit; font-weight: 700; flex: 1; min-width: 120px; max-width: 160px; -webkit-appearance: none; }
+        .game-btn:active { transform: translateY(3px); box-shadow: 0 1px 0 #880e4f, 0 3px 6px rgba(0,0,0,0.3); }
+        .game-btn:disabled { opacity: 0.5; pointer-events: none; transform: none; box-shadow: 0 4px 0 #880e4f, 0 6px 12px rgba(0,0,0,0.4); }
+        .game-btn.new-game { background: linear-gradient(135deg, #84cc16, #65a30d); border: 2px solid #a3e635; box-shadow: 0 4px 0 #4d7c0f, 0 6px 12px rgba(0,0,0,0.4); }
+        .game-btn.small-btn { background: linear-gradient(135deg, #f39c12, #d35400); border: 2px solid #f1c40f; box-shadow: 0 4px 0 #b9770e, 0 6px 12px rgba(0,0,0,0.4); font-size: 0.75rem; padding: 8px 12px; min-width: 80px; max-width: 120px; }
+        @keyframes confettiFall { 0% { transform: translateY(-10px) rotate(0deg); opacity: 1; } 100% { transform: translateY(100vh) rotate(720deg); opacity: 0; } }
+        .confetti { position: fixed; width: 6px; height: 6px; background: #e74c3c; top: -10px; animation: confettiFall 3s linear forwards; z-index: 200; border-radius: 50%; }
+        .confetti:nth-child(2n) { background: #f1c40f; } .confetti:nth-child(3n) { background: #2ecc71; } .confetti:nth-child(4n) { background: #3498db; } .confetti:nth-child(5n) { background: #9b59b6; }
+        .player.active .player-disc { transform: scale(1.15); box-shadow: 0 4px 12px rgba(0,0,0,0.4); border: 2px solid #fff; }
+        .ai-thinking { color: #fbbf24; font-weight: bold; }
+        @media (max-width: 768px) { .popup-dialog { padding: 30px 20px 28px; border-radius: 24px; } .popup-title { font-size: 1.8rem; letter-spacing: 3px; } .popup-icon { font-size: 3rem; } .play-btn { padding: 16px 40px; font-size: 1.1rem; } .popup-subtitle { font-size: 0.9rem; margin-bottom: 20px; } .game-container { padding: 15px 10px; margin: 5px; max-width: 95vw; border-radius: 15px; } h1 { font-size: 1.6rem; margin-bottom: 10px; } .board-container { padding: 12px; margin: 12px 0; border-radius: 12px; } .board { gap: 5px; height: 92%; width: 92%; } .player-disc { width: 30px; height: 30px; } .player span { font-size: 0.8rem; } .scores .score { font-size: 1.3rem; padding: 6px 12px; min-width: 70px; } .game-btn { padding: 10px 15px; font-size: 0.85rem; min-width: 110px; max-width: 140px; } .status { font-size: 1rem; padding: 10px; } }
+        @media (max-width: 480px) { .popup-title { font-size: 1.5rem; letter-spacing: 2px; } .play-btn { padding: 14px 32px; font-size: 1rem; } .game-buttons { gap: 8px; } .game-btn { min-width: 100px; max-width: 130px; padding: 10px 12px; font-size: 0.8rem; } }
     </style>
 </head>
 <body>
+    <canvas id="starCanvas"></canvas>
 
-    <!-- ΕΦΕ ΦΟΝΤΟΥ -->
-    <div class="bg-layer">
-        <div class="bg-orb orb1"></div>
-        <div class="bg-orb orb2"></div>
-        <div class="bg-orb orb3"></div>
-        <div id="bgParticles"></div>
+    <div class="splash-overlay" id="splashOverlay">
+        <div class="popup-dialog" id="popupDialog">
+            <span class="popup-icon">🪐</span>
+            <h1 class="popup-title">CONNECT FOUR</h1>
+            <p class="popup-subtitle">Galactic Edition</p>
+            <button class="play-btn" id="playBtn">▶ PLAY</button>
+        </div>
     </div>
 
-    <div class="game-wrapper">
+    <div class="game-wrapper" id="gameWrapper">
         <div class="game-container">
-            <div class="board-area" id="boardArea">
-                <div class="world" id="world"></div>
-                <div class="player" id="player">
-                    <div class="king">
-                        <div class="king-head"></div>
-                        <div class="king-crown">👑</div>
-                        <div class="king-collar"></div>
-                        <div class="king-body"></div>
-                        <div class="king-base"></div>
+            <h1>CONNECT FOUR</h1>
+            <div class="players-info">
+                <div class="player" id="player1">
+                    <div class="player-indicator">
+                        <div class="player-disc red"></div>
+                        <span>You</span>
                     </div>
                 </div>
-                <div class="dice-popup" id="dicePopup">
-                    <div class="dice-display" id="diceDisplay">🎲</div>
+                <div class="scores"><div class="score" id="scoreDisplay">0 - 0</div></div>
+                <div class="player" id="player2">
+                    <div class="player-indicator">
+                        <div class="player-disc yellow"></div>
+                        <span>AI (Hard)</span>
+                    </div>
                 </div>
             </div>
-
-            <div class="bottom-bar">
-                <button class="roll-btn" id="rollBtn" onclick="rollDice()">🎲 ROLL</button>
+            <div class="board-container"><div class="board" id="board"></div></div>
+            <div class="status" id="status">Your turn</div>
+            <div class="game-buttons">
+                <button class="game-btn" id="restartBtn">Restart</button>
+                <button class="game-btn new-game" id="newGameBtn">New Game</button>
+                <button class="game-btn small-btn" id="toggleFirstBtn">🤖 AI First</button>
+                <button class="game-btn small-btn" id="toggleDifficultyBtn">🧠 Hard</button>
             </div>
         </div>
     </div>
 
-<script>
-'use strict';
+    <script>
+        (function() {
+            let bridge = null;
 
-// ===== MONETAG AD HELPER =====
-function showMonetagAd() {
-    return new Promise((resolve, reject) => {
-        if (typeof show_11108267 === 'function') {
-            show_11108267()
-                .then(() => resolve(true))
-                .catch(() => reject('Ad failed'));
-        } else {
-            // fallback αν δεν έχει φορτώσει το SDK
-            setTimeout(() => {
-                if (typeof show_11108267 === 'function') {
-                    show_11108267().then(resolve).catch(reject);
-                } else {
-                    resolve(true); // περνάμε χωρίς διαφήμιση
-                }
-            }, 800);
-        }
-    });
-}
-
-// ===== DOM ELEMENTS =====
-const world = document.getElementById('world');
-const player = document.getElementById('player');
-const boardArea = document.getElementById('boardArea');
-const dicePopup = document.getElementById('dicePopup');
-const diceDisplay = document.getElementById('diceDisplay');
-const rollBtn = document.getElementById('rollBtn');
-
-// ===== GAME STATE =====
-let gameState = {
-    spins: 50,
-    points: 0,
-    stars: 0,
-    totalScore: 0
-};
-let isRolling = false;
-let pendingReward = null;
-let currentIdx = 0;
-
-const tileSize = 75;
-const gap = 14;
-const step = tileSize + gap;
-
-let directions = [];
-let pathPoints = [];
-
-// ===== BUILD PATH =====
-function generateDirections() {
-    while (directions.length < pathPoints.length + 50) {
-        const l = directions.length;
-        const s = Math.floor(l / 3) % 4;
-        if (s === 0 || s === 2) directions.push('up');
-        else if (s === 1) directions.push('right');
-        else directions.push('left');
-    }
-}
-
-function buildPath() {
-    if (pathPoints.length === 0) pathPoints.push({ x: 0, y: 0 });
-    generateDirections();
-    while (pathPoints.length < currentIdx + 25) {
-        const last = pathPoints[pathPoints.length - 1];
-        const dir = directions[pathPoints.length - 1];
-        const np = { ...last };
-        if (dir === 'up') np.y--;
-        else if (dir === 'down') np.y++;
-        else if (dir === 'left') np.x--;
-        else np.x++;
-        pathPoints.push(np);
-    }
-}
-
-// ===== REWARDS =====
-function getRewardType(idx) {
-    if (idx <= 0) return { type: 'empty', icon: '', label: '', value: 0 };
-    if (idx % 15 === 0) return { type: 'stars', icon: '🌟', label: 'Stars', value: 3 };
-    if (idx % 10 === 0) return { type: 'rolls', icon: '🎰', label: 'Rolls', value: 5 };
-    if (idx % 5 === 0)  return { type: 'points', icon: '⭐', label: 'Points', value: 10 };
-    if (idx % 7 === 0)  return { type: 'mystery', icon: '❓', label: 'Mystery', value: 0 };
-    if (idx % 12 === 0) return { type: 'trap', icon: '🕳️', label: 'Trap', value: -2 };
-    if (idx % 20 === 0) return { type: 'bonus', icon: '🎁', label: 'Bonus Roll', value: 1 };
-    return { type: 'empty', icon: '', label: '', value: 0 };
-}
-
-// ===== PLAYER SCREEN POSITION =====
-function getPlayerScreenPos() {
-    const r = boardArea.getBoundingClientRect();
-    return { x: r.width / 2, y: r.height * 0.65 };
-}
-
-// ===== RENDER =====
-function renderAllTiles() {
-    world.innerHTML = '';
-    const sp = getPlayerScreenPos();
-    const pp = pathPoints[currentIdx];
-    const start = Math.max(0, currentIdx - 8);
-    const end = Math.min(pathPoints.length - 1, currentIdx + 18);
-
-    for (let i = start; i <= end; i++) {
-        const pt = pathPoints[i];
-        const rew = getRewardType(i);
-        const tile = document.createElement('div');
-        tile.className = `tile ${rew.type}`;
-        if (i === currentIdx) tile.classList.add('active');
-
-        tile.innerHTML = `
-            <div class="tile-inner">
-                <div class="tile-top">${rew.icon ? rew.icon + ' ' + rew.label : (rew.type === 'empty' ? '' : '')}</div>
-                <div class="tile-side left"></div>
-                <div class="tile-side right"></div>
-            </div>`;
-
-        const rx = (pt.x - pp.x) * step;
-        const ry = (pt.y - pp.y) * step;
-        tile.style.left = (sp.x + rx - tileSize / 2) + 'px';
-        tile.style.top = (sp.y + ry - tileSize / 2) + 'px';
-
-        // Badge διαφήμισης
-        if ((rew.type === 'points' || rew.type === 'stars' || rew.type === 'rolls') && rew.value > 0) {
-            const badge = document.createElement('div');
-            badge.className = 'ad-badge';
-            badge.textContent = '📢';
-            badge.addEventListener('click', (e) => {
-                e.stopPropagation();
-                pendingReward = rew;
-                handleAdDouble(rew);
-            });
-            tile.appendChild(badge);
-        }
-
-        world.appendChild(tile);
-    }
-
-    // Τοποθέτηση πιονιού ΑΚΡΙΒΩΣ ΣΤΟ ΚΕΝΤΡΟ ΤΟΥ ΤΡΕΧΟΝΤΟΣ ΚΟΥΤΙΟΥ
-    player.style.left = sp.x + 'px';
-    player.style.top = sp.y + 'px';
-    player.style.transform = 'translate(-50%, -100%)'; // η βάση ακουμπάει στο κουτάκι
-}
-
-// ===== MOVE =====
-function movePlayer(steps) {
-    return new Promise(resolve => {
-        let remaining = steps;
-        const delay = 420;
-
-        function step() {
-            if (remaining <= 0) {
-                resolve();
-                return;
+            // ---------- AUDIO ----------
+            const AudioCtx = window.AudioContext || window.webkitAudioContext;
+            let splashAudioCtx = null;
+            function initSplashAudio() {
+                if (!splashAudioCtx) splashAudioCtx = new AudioCtx();
+                if (splashAudioCtx.state === 'suspended') splashAudioCtx.resume();
             }
-            currentIdx++;
-            buildPath();
-            renderAllTiles();
-            player.classList.remove('hop');
-            void player.offsetWidth;
-            player.classList.add('hop');
-            remaining--;
-            setTimeout(step, delay);
-        }
-        step();
-    });
-}
+            function playSplashButtonSound() {
+                if (!splashAudioCtx) return;
+                try {
+                    const now = splashAudioCtx.currentTime;
+                    const osc = splashAudioCtx.createOscillator(); const gain = splashAudioCtx.createGain();
+                    osc.connect(gain); gain.connect(splashAudioCtx.destination);
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(200, now); osc.frequency.exponentialRampToValueAtTime(800, now + 0.25); osc.frequency.exponentialRampToValueAtTime(1200, now + 0.35);
+                    gain.gain.setValueAtTime(0.25, now); gain.gain.linearRampToValueAtTime(0.35, now + 0.15); gain.gain.exponentialRampToValueAtTime(0.01, now + 0.5);
+                    osc.start(now); osc.stop(now + 0.5);
+                    const osc2 = splashAudioCtx.createOscillator(); const gain2 = splashAudioCtx.createGain();
+                    osc2.connect(gain2); gain2.connect(splashAudioCtx.destination); osc2.type = 'triangle';
+                    osc2.frequency.setValueAtTime(1200, now + 0.05); osc2.frequency.setValueAtTime(1800, now + 0.1); osc2.frequency.setValueAtTime(2400, now + 0.15);
+                    gain2.gain.setValueAtTime(0.15, now + 0.05); gain2.gain.exponentialRampToValueAtTime(0.01, now + 0.3);
+                    osc2.start(now + 0.05); osc2.stop(now + 0.3);
+                    const osc3 = splashAudioCtx.createOscillator(); const gain3 = splashAudioCtx.createGain();
+                    osc3.connect(gain3); gain3.connect(splashAudioCtx.destination); osc3.type = 'sine';
+                    osc3.frequency.setValueAtTime(80, now); osc3.frequency.exponentialRampToValueAtTime(40, now + 0.2);
+                    gain3.gain.setValueAtTime(0.4, now); gain3.gain.exponentialRampToValueAtTime(0.01, now + 0.25);
+                    osc3.start(now); osc3.stop(now + 0.25);
+                } catch (e) {}
+            }
 
-// ===== DICE =====
-function showDice(n) {
-    const icons = ['🎲', '1️⃣', '2️⃣', '3️⃣'];
-    diceDisplay.textContent = icons[n] || '🎲';
-    dicePopup.classList.add('show');
-    setTimeout(() => dicePopup.classList.remove('show'), 550);
-}
+            // ---------- STARFIELD ----------
+            const canvas = document.getElementById('starCanvas');
+            const ctx = canvas.getContext('2d');
+            let stars = [];
+            function resizeCanvas() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+            function createStars(count) {
+                stars = [];
+                for (let i = 0; i < count; i++) stars.push({ x: Math.random()*canvas.width, y: Math.random()*canvas.height, radius: Math.random()*2.5+0.5, baseBrightness: Math.random()*0.7+0.3, twinkleSpeed: Math.random()*0.02+0.005, twinkleOffset: Math.random()*Math.PI*2, driftX: (Math.random()-0.5)*0.3, driftY: (Math.random()-0.5)*0.3 });
+            }
+            function drawStars(timestamp) {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                stars.forEach(star => {
+                    const twinkle = Math.sin(timestamp * star.twinkleSpeed + star.twinkleOffset) * 0.3 + 0.7;
+                    const alpha = star.baseBrightness * twinkle;
+                    ctx.beginPath(); ctx.arc(star.x, star.y, star.radius, 0, Math.PI*2); ctx.fillStyle = `rgba(255,255,255,${alpha})`; ctx.fill();
+                    if (star.radius > 1.5) { ctx.beginPath(); ctx.arc(star.x, star.y, star.radius*2.5, 0, Math.PI*2); ctx.fillStyle = `rgba(180,200,255,${alpha*0.3})`; ctx.fill(); }
+                    star.x += star.driftX; star.y += star.driftY;
+                    if (star.x < 0) star.x = canvas.width; if (star.x > canvas.width) star.x = 0;
+                    if (star.y < 0) star.y = canvas.height; if (star.y > canvas.height) star.y = 0;
+                });
+                requestAnimationFrame(drawStars);
+            }
+            function createShootingStar() {
+                const star = document.createElement('div'); star.classList.add('shooting-star');
+                star.style.left = Math.random()*80+'%'; star.style.top = Math.random()*40+'%';
+                star.style.animationDuration = (Math.random()*1.5+1.5)+'s';
+                document.body.appendChild(star); star.addEventListener('animationend', () => star.remove());
+            }
+            function scheduleShootingStar() { setTimeout(() => { createShootingStar(); scheduleShootingStar(); }, Math.random()*5000+3000); }
+            function createNebulaParticles(count) {
+                const colors = ['rgba(132,204,22,0.15)','rgba(25,118,210,0.15)','rgba(255,64,129,0.1)','rgba(156,39,176,0.12)','rgba(255,235,59,0.1)'];
+                for (let i = 0; i < count; i++) {
+                    const p = document.createElement('div'); p.classList.add('nebula-particle');
+                    const size = Math.random()*120+60; p.style.width = size+'px'; p.style.height = size+'px';
+                    p.style.left = Math.random()*100+'%'; p.style.top = Math.random()*100+'%';
+                    p.style.background = colors[Math.floor(Math.random()*colors.length)];
+                    p.style.animationDuration = (Math.random()*12+8)+'s'; p.style.animationDelay = Math.random()*5+'s';
+                    document.body.appendChild(p);
+                }
+            }
+            function initBackgroundEffects() {
+                resizeCanvas(); createStars(200); requestAnimationFrame(drawStars);
+                createNebulaParticles(15); scheduleShootingStar(); setTimeout(createShootingStar, 600);
+            }
+            window.addEventListener('resize', () => { resizeCanvas(); createStars(200); });
 
-// ===== REWARD BANNER =====
-function showRewardBanner(icon, label, value) {
-    const banner = document.createElement('div');
-    banner.className = 'reward-banner';
-    banner.innerHTML = `<span>${icon}</span> <span>+${value} ${label}</span>`;
-    boardArea.appendChild(banner);
-    setTimeout(() => banner.remove(), 2200);
-}
+            // ---------- SPLASH ----------
+            const splashOverlay = document.getElementById('splashOverlay');
+            const popupDialog = document.getElementById('popupDialog');
+            const playBtn = document.getElementById('playBtn');
+            const gameWrapper = document.getElementById('gameWrapper');
+            gameWrapper.style.display = 'none';
 
-// ===== TOAST =====
-function showToast(msg) {
-    const toast = document.createElement('div');
-    toast.className = 'toast';
-    toast.textContent = msg;
-    document.body.appendChild(toast);
-    requestAnimationFrame(() => toast.classList.add('show'));
-    setTimeout(() => {
-        toast.classList.remove('show');
-        setTimeout(() => toast.remove(), 300);
-    }, 2000);
-}
+            // ---------- GAME AUDIO ----------
+            class GameAudio {
+                constructor() { this.audioCtx = null; this.initialized = false; }
+                init() { if (this.initialized) return; try { this.audioCtx = new (window.AudioContext||window.webkitAudioContext)(); this.initialized = true; } catch(e) {} }
+                playDropSound() {
+                    if (!this.initialized) this.init(); if (!this.audioCtx) return;
+                    try {
+                        const now = this.audioCtx.currentTime;
+                        const o = this.audioCtx.createOscillator(); const g = this.audioCtx.createGain();
+                        o.connect(g); g.connect(this.audioCtx.destination); o.type = 'sine';
+                        o.frequency.setValueAtTime(180,now); o.frequency.exponentialRampToValueAtTime(60,now+0.12);
+                        g.gain.setValueAtTime(0.35,now); g.gain.exponentialRampToValueAtTime(0.01,now+0.18);
+                        o.start(now); o.stop(now+0.18);
+                        const o2 = this.audioCtx.createOscillator(); const g2 = this.audioCtx.createGain();
+                        o2.connect(g2); g2.connect(this.audioCtx.destination); o2.type = 'triangle';
+                        o2.frequency.setValueAtTime(800,now); o2.frequency.exponentialRampToValueAtTime(200,now+0.05);
+                        g2.gain.setValueAtTime(0.15,now); g2.gain.exponentialRampToValueAtValue(0.01,now+0.06);
+                        o2.start(now); o2.stop(now+0.06);
+                    } catch(e) {}
+                }
+                playVictorySound() {
+                    if (!this.initialized) this.init(); if (!this.audioCtx) return;
+                    try {
+                        const now = this.audioCtx.currentTime;
+                        [{freq:523.25,time:0,dur:0.2},{freq:659.25,time:0.15,dur:0.2},{freq:783.99,time:0.3,dur:0.2},{freq:1046.50,time:0.45,dur:0.4}].forEach(note => {
+                            const o = this.audioCtx.createOscillator(); const g = this.audioCtx.createGain();
+                            o.connect(g); g.connect(this.audioCtx.destination); o.type = 'sine';
+                            o.frequency.setValueAtTime(note.freq,now+note.time);
+                            g.gain.setValueAtTime(0.2,now+note.time); g.gain.exponentialRampToValueAtTime(0.01,now+note.time+note.dur);
+                            o.start(now+note.time); o.stop(now+note.time+note.dur);
+                        });
+                    } catch(e) {}
+                }
+            }
 
-// ===== HANDLE AD DOUBLE =====
-async function handleAdDouble(rew) {
-    showMonetagAd()
-        .then(() => {
-            const doubled = rew.value * 2;
-            applyReward(rew.type, doubled);
-            showRewardBanner(rew.icon, rew.label, doubled);
-        })
-        .catch(() => {
-            applyReward(rew.type, rew.value);
-            showRewardBanner(rew.icon, rew.label, rew.value);
-        });
-    pendingReward = null;
-}
+            // ---------- CONNECT FOUR ----------
+            class ConnectFour {
+                constructor() {
+                    this.ROWS=6; this.COLS=7; this.board=[]; this.currentPlayer=1; this.gameInProgress=false;
+                    this.isAiTurn=false; this.scores={1:0,2:0}; this.audio=new GameAudio(); this.aiFirst=false; this.difficulty='hard';
+                    this.domBoard=document.getElementById('board'); this.domStatus=document.getElementById('status');
+                    this.domScore=document.getElementById('scoreDisplay');
+                    this.restartBtn=document.getElementById('restartBtn'); this.newGameBtn=document.getElementById('newGameBtn');
+                    this.toggleFirstBtn=document.getElementById('toggleFirstBtn'); this.toggleDifficultyBtn=document.getElementById('toggleDifficultyBtn');
+                    this.initDOMEvents(); this.audio.init(); this.updateDifficultyButton(); this.newGame();
+                }
+                initDOMEvents() {
+                    this.restartBtn.addEventListener('click', () => this.restartGame());
+                    this.newGameBtn.addEventListener('click', () => this.newGame());
+                    this.toggleFirstBtn.addEventListener('click', () => this.toggleFirstPlayer());
+                    this.toggleDifficultyBtn.addEventListener('click', () => this.toggleDifficulty());
+                }
+                setButtonsEnabled(enabled) { [this.restartBtn,this.newGameBtn,this.toggleFirstBtn,this.toggleDifficultyBtn].forEach(b => { if(b) b.disabled = !enabled; }); }
+                toggleFirstPlayer() { this.aiFirst=!this.aiFirst; this.toggleFirstBtn.textContent=this.aiFirst?'👤 You First':'🤖 AI First'; this.newGame(); }
+                toggleDifficulty() { this.difficulty=this.difficulty==='hard'?'medium':'hard'; this.updateDifficultyButton(); this.newGame(); }
+                updateDifficultyButton() { this.toggleDifficultyBtn.textContent=this.difficulty==='hard'?'🧠 Hard':'🧠 Medium'; }
+                initializeBoard() {
+                    this.board=Array(this.ROWS).fill(null).map(()=>Array(this.COLS).fill(0));
+                    this.domBoard.innerHTML='';
+                    for (let r=0;r<this.ROWS;r++) for (let c=0;c<this.COLS;c++) {
+                        const slot=document.createElement('div'); slot.classList.add('slot'); slot.dataset.col=c;
+                        const disc=document.createElement('div'); disc.classList.add('disc');
+                        slot.appendChild(disc); slot.addEventListener('click',()=>this.handleSlotClick(c)); this.domBoard.appendChild(slot);
+                    }
+                    this.gameInProgress=true; this.currentPlayer=1;
+                    if (this.aiFirst) { this.currentPlayer=2; this.updateStatus(); this.updatePlayerIndicators(); this.triggerAiTurn(); }
+                    else { this.updateStatus(); this.updatePlayerIndicators(); }
+                }
+                handleSlotClick(col) { if (!this.gameInProgress||this.isAiTurn) return; if (this.aiFirst&&this.currentPlayer===2) return; this.makeMove(col); }
+                makeMove(col) {
+                    const row=this.getAvailableRow(col); if (row===-1) return;
+                    this.board[row][col]=this.currentPlayer; this.animateDiscDrop(row,col,this.currentPlayer); this.audio.playDropSound();
+                    if (this.checkWinCondition(row,col)) { this.handleWinState(); return; }
+                    if (this.checkDrawCondition()) { this.handleDrawState(); return; }
+                    this.currentPlayer=this.currentPlayer===1?2:1; this.updateStatus(); this.updatePlayerIndicators();
+                    if (this.currentPlayer===2&&this.gameInProgress) this.triggerAiTurn();
+                }
+                getAvailableRow(col) { for (let r=this.ROWS-1;r>=0;r--) if (this.board[r][col]===0) return r; return -1; }
+                animateDiscDrop(row,col,player) {
+                    const slot=this.domBoard.children[row*this.COLS+col]; const disc=slot.querySelector('.disc');
+                    disc.className=`disc ${player===1?'red':'yellow'}`; disc.style.animation='discDrop 0.4s cubic-bezier(0.25,0.46,0.45,0.94) forwards';
+                }
+                updatePlayerIndicators() {
+                    document.getElementById('player1').classList.toggle('active',this.currentPlayer===1);
+                    document.getElementById('player2').classList.toggle('active',this.currentPlayer===2);
+                }
+                updateStatus() { if (!this.gameInProgress) return; this.domStatus.innerHTML=this.currentPlayer===2?'<span class="ai-thinking">AI is thinking...</span>':'Your turn'; }
+                checkWinCondition(row,col) {
+                    const p=this.board[row][col]; const dirs=[[0,1],[1,0],[1,1],[1,-1]];
+                    for (let [dr,dc] of dirs) {
+                        let count=1,cells=[[row,col]];
+                        for (let step of [1,-1]) {
+                            let r=row+dr*step,c=col+dc*step;
+                            while (r>=0&&r<this.ROWS&&c>=0&&c<this.COLS&&this.board[r][c]===p) { count++; cells.push([r,c]); if(count>=4){this.highlightWinningSequence(cells);return true;} r+=dr*step;c+=dc*step; }
+                        }
+                    }
+                    return false;
+                }
+                highlightWinningSequence(cells) { cells.forEach(([r,c])=>{ const d=this.domBoard.children[r*this.COLS+c].querySelector('.disc'); if(d) d.classList.add('winner'); }); }
+                checkDrawCondition() { return this.board[0].every(c=>c!==0); }
+                handleWinState() {
+                    this.gameInProgress=false; this.scores[this.currentPlayer]++; this.updateScores();
+                    this.audio.playVictorySound(); this.triggerConfettiEffect();
+                    this.domStatus.textContent=this.currentPlayer===1?'You Win! 🎉':'AI Wins! 😞';
+                    this.postGameAdFlow();
+                }
+                handleDrawState() { this.gameInProgress=false; this.domStatus.textContent="It's a Draw! 🤝"; this.postGameAdFlow(); }
+                postGameAdFlow() {
+                    this.setButtonsEnabled(false);
+                    if (bridge && bridge.advertisement) {
+                        bridge.advertisement.showInterstitial()
+                            .then(() => { this.setButtonsEnabled(true); })
+                            .catch(() => { this.setButtonsEnabled(true); });
+                    } else { this.setButtonsEnabled(true); }
+                }
+                updateScores() { this.domScore.textContent=`${this.scores[1]} - ${this.scores[2]}`; }
+                triggerAiTurn() {
+                    this.isAiTurn=true; this.updateStatus();
+                    setTimeout(() => { if (!this.gameInProgress) { this.isAiTurn=false; return; } const col=this.computeAiMove(); this.isAiTurn=false; this.makeMove(col); }, Math.random()*400+400);
+                }
+                computeAiMove() {
+                    const valid=[]; for(let c=0;c<this.COLS;c++) if(this.getAvailableRow(c)!==-1) valid.push(c);
+                    for(let c of valid){let r=this.getAvailableRow(c);this.board[r][c]=2;if(this.checkWinSimulation(r,c,2)){this.board[r][c]=0;return c;}this.board[r][c]=0;}
+                    for(let c of valid){let r=this.getAvailableRow(c);this.board[r][c]=1;if(this.checkWinSimulation(r,c,1)){this.board[r][c]=0;return c;}this.board[r][c]=0;}
+                    let best=-Infinity,cols=[valid[0]]; const depth=this.difficulty==='hard'?5:3;
+                    for(let c of valid){let r=this.getAvailableRow(c);this.board[r][c]=2;let s=this.minimax(depth,false,-Infinity,Infinity);this.board[r][c]=0;if(s>best){best=s;cols=[c];}else if(s===best)cols.push(c);}
+                    return cols[Math.floor(Math.random()*cols.length)];
+                }
+                checkWinSimulation(row,col,p) {
+                    const dirs=[[0,1],[1,0],[1,1],[1,-1]];
+                    for(let[dr,dc]of dirs){let count=1;for(let step of[1,-1]){let r=row+dr*step,c=col+dc*step;while(r>=0&&r<this.ROWS&&c>=0&&c<this.COLS&&this.board[r][c]===p){count++;if(count>=4)return true;r+=dr*step;c+=dc*step;}}}
+                    return false;
+                }
+                minimax(depth,isMax,alpha,beta) {
+                    let score=this.evaluateBoardState(); if(depth===0||this.checkDrawCondition())return score; if(Math.abs(score)>5000)return score;
+                    const valid=[]; for(let c=0;c<this.COLS;c++) if(this.getAvailableRow(c)!==-1) valid.push(c);
+                    if(isMax){let m=-Infinity;for(let c of valid){let r=this.getAvailableRow(c);this.board[r][c]=2;let e=this.minimax(depth-1,false,alpha,beta);this.board[r][c]=0;m=Math.max(m,e);alpha=Math.max(alpha,e);if(beta<=alpha)break;}return m;}
+                    else{let m=Infinity;for(let c of valid){let r=this.getAvailableRow(c);this.board[r][c]=1;let e=this.minimax(depth-1,true,alpha,beta);this.board[r][c]=0;m=Math.min(m,e);beta=Math.min(beta,e);if(beta<=alpha)break;}return m;}
+                }
+                evaluateBoardState() {
+                    let score=0; const mid=Math.floor(this.COLS/2); let mc=0;
+                    for(let r=0;r<this.ROWS;r++){if(this.board[r][mid]===2)mc++;else if(this.board[r][mid]===1)mc--;}
+                    score+=mc*4;
+                    for(let r=0;r<this.ROWS;r++) for(let c=0;c<this.COLS-3;c++) score+=this.evaluateWindow([this.board[r][c],this.board[r][c+1],this.board[r][c+2],this.board[r][c+3]]);
+                    for(let c=0;c<this.COLS;c++) for(let r=0;r<this.ROWS-3;r++) score+=this.evaluateWindow([this.board[r][c],this.board[r+1][c],this.board[r+2][c],this.board[r+3][c]]);
+                    for(let r=0;r<this.ROWS-3;r++) for(let c=0;c<this.COLS-3;c++){score+=this.evaluateWindow([this.board[r][c],this.board[r+1][c+1],this.board[r+2][c+2],this.board[r+3][c+3]]);score+=this.evaluateWindow([this.board[r+3][c],this.board[r+2][c+1],this.board[r+1][c+2],this.board[r][c+3]]);}
+                    return score;
+                }
+                evaluateWindow(w) {
+                    let score=0; const ai=w.filter(c=>c===2).length,pl=w.filter(c=>c===1).length,em=w.filter(c=>c===0).length;
+                    if(ai===4)return 10000; if(pl===4)return -10000;
+                    if(ai===3&&em===1)score+=50; else if(ai===2&&em===2)score+=10;
+                    if(pl===3&&em===1)score-=80; else if(pl===2&&em===2)score-=15;
+                    return score;
+                }
+                triggerConfettiEffect() {
+                    for(let i=0;i<60;i++){const c=document.createElement('div');c.classList.add('confetti');c.style.left=Math.random()*100+'vw';c.style.animationDelay=Math.random()*0.5+'s';c.style.animationDuration=(Math.random()*2+2)+'s';document.body.appendChild(c);setTimeout(()=>c.remove(),3500);}
+                }
+                restartGame() { this.currentPlayer=1;this.isAiTurn=false;this.initializeBoard();this.updateStatus();this.updatePlayerIndicators();document.querySelectorAll('.confetti').forEach(c=>c.remove());this.setButtonsEnabled(true); }
+                newGame() { this.scores={1:0,2:0};this.updateScores();this.restartGame(); }
+            }
 
-function applyReward(type, value) {
-    if (type === 'points') gameState.points += value;
-    else if (type === 'stars') gameState.stars += value;
-    else if (type === 'rolls') gameState.spins += value;
-}
+            // ---------- PLAYGAMA BRIDGE ----------
+            function initBridge() {
+                if (typeof playgamaBridge === 'undefined') {
+                    console.warn('playgamaBridge SDK not found – running standalone.');
+                    initBackgroundEffects();
+                    return;
+                }
+                playgamaBridge.initialize()
+                    .then(function(b) {
+                        bridge = b;
+                        console.log('✅ Playgama Bridge initialized!');
+                        // ✅ game_ready αμέσως — το QA tool το ακούει εδώ
+                        bridge.platform.sendMessage('game_ready');
+                        console.log('✅ game_ready sent!');
+                    })
+                    .catch(function(err) {
+                        console.error('❌ Bridge init failed:', err);
+                    })
+                    .finally(function() {
+                        initBackgroundEffects();
+                    });
+            }
 
-// ===== HANDLE REWARD =====
-function handleReward(reward) {
-    if (reward.type === 'empty') return;
+            initBridge();
 
-    if (reward.type === 'trap') {
-        gameState.spins = Math.max(0, gameState.spins + reward.value);
-        showToast(`Trap! ${reward.value} rolls 😢`);
-        return;
-    }
+            // ---------- PLAY BUTTON ----------
+            playBtn.addEventListener('click', function() {
+                initSplashAudio(); playSplashButtonSound();
+                playBtn.classList.add('loading'); playBtn.textContent = 'LOADING...';
+                popupDialog.style.transition = 'transform 0.5s ease, opacity 0.5s ease';
+                popupDialog.style.transform = 'scale(1.1)'; popupDialog.style.opacity = '0.6';
+                setTimeout(() => { popupDialog.style.transform = 'scale(0.3)'; popupDialog.style.opacity = '0'; }, 200);
+                setTimeout(() => { splashOverlay.style.transition = 'opacity 0.6s ease'; splashOverlay.style.opacity = '0'; }, 400);
+                setTimeout(() => { splashOverlay.style.display = 'none'; gameWrapper.style.display = 'flex'; new ConnectFour(); }, 800);
+            });
 
-    if (reward.type === 'mystery') {
-        const outcomes = [
-            { type: 'points', icon: '⭐', label: 'Points', value: 8 },
-            { type: 'stars', icon: '🌟', label: 'Stars', value: 2 },
-            { type: 'rolls', icon: '🎰', label: 'Rolls', value: 3 },
-            { type: 'none', icon: '💨', label: 'Nothing', value: 0 }
-        ];
-        const chosen = outcomes[Math.floor(Math.random() * outcomes.length)];
-        if (chosen.value > 0) applyReward(chosen.type, chosen.value);
-        showRewardBanner(chosen.icon, chosen.label, chosen.value);
-        return;
-    }
-
-    if (reward.type === 'bonus') {
-        gameState.spins += 1;
-        showRewardBanner('🎁', 'Bonus Roll', 1);
-        return;
-    }
-
-    // Κανονική ανταμοιβή – άμεση απονομή
-    applyReward(reward.type, reward.value);
-    showRewardBanner(reward.icon, reward.label, reward.value);
-}
-
-// ===== ROLL DICE =====
-function rollDice() {
-    if (isRolling) return;
-    if (gameState.spins <= 0) {
-        showToast('No Rolls! Watch an ad 📢');
-        showMonetagAd().then(() => {
-            gameState.spins += 3;
-            showToast('+3 Rolls!');
-        });
-        return;
-    }
-
-    isRolling = true;
-    rollBtn.disabled = true;
-    gameState.spins--;
-
-    const dice = Math.floor(Math.random() * 3) + 1;
-    showDice(dice);
-
-    setTimeout(async () => {
-        await movePlayer(dice);
-        const rew = getRewardType(currentIdx);
-        handleReward(rew);
-        isRolling = false;
-        rollBtn.disabled = false;
-    }, 600);
-}
-
-// ===== BACKGROUND PARTICLES =====
-function createBgParticles() {
-    const container = document.getElementById('bgParticles');
-    for (let i = 0; i < 25; i++) {
-        const particle = document.createElement('div');
-        particle.className = 'bg-particle';
-        particle.style.left = Math.random() * 100 + '%';
-        particle.style.animationDuration = (6 + Math.random() * 12) + 's';
-        particle.style.animationDelay = Math.random() * 8 + 's';
-        container.appendChild(particle);
-    }
-}
-
-// ===== COLOR =====
-function randomizeColor() {
-    const colors = ['blue', 'gold', 'purple', 'red', 'green'];
-    const color = colors[Math.floor(Math.random() * colors.length)];
-    player.className = `player color-${color}`;
-}
-
-// ===== INIT =====
-function init() {
-    // 50 δωρεάν spins για νέο παίκτη
-    if (!localStorage.getItem('mariza_board_50spins')) {
-        gameState.spins = 50;
-        localStorage.setItem('mariza_board_50spins', '1');
-        showToast('🎉 50 Free Rolls!');
-    }
-
-    randomizeColor();
-    buildPath();
-    renderAllTiles();
-    createBgParticles();
-
-    // Επικοινωνία με parent (αν υπάρχει)
-    window.addEventListener('message', (event) => {
-        const data = event.data;
-        if (!data || !data.type) return;
-        if (data.type === 'setState') {
-            gameState.points = data.points || 0;
-            gameState.stars = data.stars || 0;
-            gameState.spins = data.spins || gameState.spins;
-        }
-    });
-
-    // Στείλε τα αρχικά spins στο parent
-    if (window.parent !== window) {
-        window.parent.postMessage({ type: 'initRolls', spins: 50 }, '*');
-    }
-}
-
-init();
-</script>
+            document.addEventListener('click', initSplashAudio, { once: true });
+            document.addEventListener('touchstart', initSplashAudio, { once: true });
+        })();
+    </script>
 </body>
 </html>
