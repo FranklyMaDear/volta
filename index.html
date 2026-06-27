@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="el">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
@@ -16,7 +16,7 @@
             --piece-size: calc(var(--square-size) * 0.88);
             --dot-size: calc(var(--square-size) * 0.2);
             --eval-width: 14px;
-            --sidebar-width: 135px;
+            --sidebar-width: 140px;
         }
         * {
             box-sizing: border-box;
@@ -63,6 +63,7 @@
             border-radius: 12px;
             backdrop-filter: blur(8px);
             border: 1px solid rgba(132, 204, 22, 0.2);
+            flex-wrap: wrap;
         }
         .hud-level {
             font-size: 0.72rem;
@@ -83,6 +84,7 @@
             flex: 1;
             text-align: center;
             letter-spacing: 0.5px;
+            min-width: 80px;
         }
         .hud-match {
             font-size: 0.7rem;
@@ -120,6 +122,7 @@
             border-radius: 10px;
             backdrop-filter: blur(8px);
             border: 1px solid rgba(255, 255, 255, 0.07);
+            flex-wrap: wrap;
         }
         .level-badge {
             display: flex;
@@ -145,100 +148,43 @@
             border-radius: 20px;
             border: 1px solid rgba(255, 107, 107, 0.3);
         }
-        .daily-missions-container {
-            width: 100%;
-            max-width: var(--board-size);
-            background: rgba(0, 0, 0, 0.38);
-            border-radius: 12px;
-            padding: 8px 12px;
-            backdrop-filter: blur(8px);
-            border: 1px solid rgba(132, 204, 22, 0.15);
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-        }
-        .daily-missions-title {
-            color: #84cc16;
-            font-size: 0.68rem;
-            font-weight: 800;
-            letter-spacing: 1px;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-        .daily-mission-row {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 0.62rem;
-            color: #ccc;
-            padding: 4px 0;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
-        }
-        .daily-mission-row:last-child {
-            border-bottom: none;
-        }
-        .daily-mission-icon {
-            font-size: 1rem;
-            min-width: 22px;
-            text-align: center;
-        }
-        .daily-mission-info {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            gap: 2px;
-        }
-        .daily-mission-name {
-            font-weight: 600;
-            color: #e0e0e0;
-            font-size: 0.62rem;
-        }
-        .daily-mission-track-mini {
-            height: 5px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 10px;
-            overflow: hidden;
-            width: 100%;
-        }
-        .daily-mission-fill-mini {
-            height: 100%;
-            border-radius: 10px;
-            background: linear-gradient(90deg, #4CAF50, #8BC34A);
-            transition: width 0.5s;
-        }
-        .daily-mission-progress-text {
-            font-size: 0.55rem;
-            color: rgba(255, 255, 255, 0.45);
-        }
-        .daily-mission-claim {
+        .missions-btn {
             background: linear-gradient(135deg, #ffcb2e, #ff9f00);
             color: #000;
-            padding: 4px 8px;
-            border-radius: 14px;
-            font-weight: 700;
-            font-size: 0.55rem;
+            padding: 8px 14px;
+            border-radius: 20px;
+            font-weight: 800;
+            font-size: 12px;
             cursor: pointer;
             border: none;
-            box-shadow: 0 2px 0 #b37400;
+            box-shadow: 0 3px 0 #b37400, 0 5px 12px rgba(0, 0, 0, 0.35);
             transition: all 0.2s;
             white-space: nowrap;
+            letter-spacing: 0.5px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
         }
-        .daily-mission-claim:active {
+        .missions-btn:active {
             transform: translateY(2px);
-            box-shadow: 0 0px 0 #b37400;
+            box-shadow: 0 1px 0 #b37400;
         }
-        .daily-mission-claim:disabled {
-            opacity: 0.4;
-            cursor: not-allowed;
-            transform: none;
-            box-shadow: 0 2px 0 #b37400;
+        .missions-btn .badge-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #ff4444;
+            display: inline-block;
+            animation: blinkDot 1s infinite;
         }
-        .daily-mission-claim.claimed {
-            background: #555;
-            color: #aaa;
-            box-shadow: none;
-            cursor: default;
+        @keyframes blinkDot {
+            0%,
+            100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.3;
+            }
         }
         .board-row {
             display: flex;
@@ -493,12 +439,21 @@
             padding: 22px 18px;
             border-radius: 16px;
             max-width: 92%;
-            width: 400px;
+            width: 440px;
             text-align: center;
             box-shadow: 0 25px 60px rgba(0, 0, 0, 0.6), 0 0 0 3px #d19a4c, 0 0 40px rgba(209, 154, 76, 0.3);
             animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             transform-style: preserve-3d;
             border: 1px solid rgba(255, 255, 255, 0.1);
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        .missions-modal-content {
+            width: 480px;
+            max-width: 95%;
+            max-height: 88vh;
+            overflow-y: auto;
+            padding: 16px 14px;
         }
         .modal-content h2 {
             color: #ffcb2e;
@@ -543,6 +498,13 @@
             box-shadow: 0 4px 0 #2e7d32, 0 6px 15px rgba(76, 175, 80, 0.4);
             font-size: 17px;
             margin-top: 6px;
+        }
+        .close-btn {
+            background: #555;
+            box-shadow: 0 4px 0 #333;
+            font-size: 13px;
+            margin-top: 8px;
+            padding: 10px;
         }
         .end-modal-title {
             font-size: 1.2rem;
@@ -746,6 +708,121 @@
             width: 80%;
             height: 80%;
         }
+        .missions-list {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            max-height: 55vh;
+            overflow-y: auto;
+            padding-right: 4px;
+        }
+        .mission-item {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 10px 12px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-align: left;
+            transition: all 0.2s;
+        }
+        .mission-item.completed {
+            border-color: rgba(132, 204, 22, 0.5);
+            background: rgba(132, 204, 22, 0.06);
+        }
+        .mission-item.claimed {
+            opacity: 0.55;
+            border-color: rgba(255, 255, 255, 0.04);
+        }
+        .mission-icon-big {
+            font-size: 1.6rem;
+            min-width: 38px;
+            text-align: center;
+        }
+        .mission-info {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+        }
+        .mission-name {
+            font-weight: 700;
+            color: #e8e8ed;
+            font-size: 0.72rem;
+        }
+        .mission-desc {
+            font-size: 0.6rem;
+            color: rgba(255, 255, 255, 0.45);
+        }
+        .mission-track {
+            height: 6px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            overflow: hidden;
+            width: 100%;
+            margin-top: 2px;
+        }
+        .mission-fill {
+            height: 100%;
+            border-radius: 10px;
+            background: linear-gradient(90deg, #4CAF50, #8BC34A);
+            transition: width 0.5s;
+        }
+        .mission-progress-text {
+            font-size: 0.55rem;
+            color: rgba(255, 255, 255, 0.5);
+        }
+        .mission-claim-btn {
+            background: linear-gradient(135deg, #ffcb2e, #ff9f00);
+            color: #000;
+            padding: 6px 10px;
+            border-radius: 14px;
+            font-weight: 700;
+            font-size: 0.6rem;
+            cursor: pointer;
+            border: none;
+            box-shadow: 0 2px 0 #b37400;
+            transition: all 0.2s;
+            white-space: nowrap;
+            min-width: 55px;
+            text-align: center;
+        }
+        .mission-claim-btn:active {
+            transform: translateY(2px);
+            box-shadow: 0 0px 0 #b37400;
+        }
+        .mission-claim-btn:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: 0 2px 0 #b37400;
+        }
+        .mission-claim-btn.claimed {
+            background: #555;
+            color: #aaa;
+            box-shadow: none;
+            cursor: default;
+        }
+        .missions-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+        .missions-points {
+            color: #ffcb2e;
+            font-weight: 800;
+            font-size: 0.8rem;
+        }
+        .missions-reset-info {
+            font-size: 0.55rem;
+            color: rgba(255, 255, 255, 0.4);
+            text-align: center;
+            margin-top: 8px;
+        }
         @media (max-width: 700px) {
             .side-panel {
                 width: 100%;
@@ -773,6 +850,10 @@
             .hud-zone {
                 display: none;
             }
+            .missions-modal-content {
+                width: 95%;
+                padding: 12px 10px;
+            }
         }
     </style>
 </head>
@@ -782,16 +863,13 @@
             <div class="hud-top">
                 <div class="hud-level" id="hudLevel">LEVEL 1</div>
                 <div class="hud-zone" id="hudZone">🚀 Rookie Astronaut</div>
-                <div class="hud-match" id="hudMatch">Νίκες 0 – 0 Ήττες</div>
+                <div class="hud-match" id="hudMatch">Wins 0 – 0 Losses</div>
+                <button class="missions-btn" id="missionsBtn" onclick="openMissionsModal()">📋 Missions <span class="badge-dot" id="missionsBadgeDot" style="display:none;"></span></button>
             </div>
             <div class="hud-progress"><div class="hud-progress-fill" id="hudProgressFill" style="width:0%;"></div></div>
             <div class="stats-bar">
                 <div class="level-badge" id="levelBadge">🏅 Rookie</div>
                 <div class="streak-badge" id="streakBadge" style="display:none;">🔥 0</div>
-            </div>
-            <div class="daily-missions-container" id="dailyMissionsContainer">
-                <div class="daily-missions-title">📋 Ημερήσιες Αποστολές</div>
-                <div id="dailyMissionsList"></div>
             </div>
             <div class="board-row">
                 <div class="eval-bar-container" id="evalBarContainer">
@@ -800,7 +878,7 @@
                 </div>
                 <div class="board-container">
                     <div class="game-info">
-                        <span id="gameStatus">Σειρά των Λευκών</span>
+                        <span id="gameStatus">White's turn</span>
                         <span class="timer" id="whiteTime">5:00</span>
                         <span style="color:#aaa;">vs</span>
                         <span class="timer" id="blackTime">5:00</span>
@@ -811,13 +889,13 @@
         </div>
         <div class="side-panel">
             <div class="panel-box">
-                <div class="panel-title">📝 Κινήσεις</div>
+                <div class="panel-title">📝 Moves</div>
                 <div class="notation-list" id="notationList"></div>
             </div>
-            <button class="undo-btn" id="undoBtn" disabled>↩️ Αναίρεση (1 διαθέσιμη)</button>
+            <button class="undo-btn" id="undoBtn" disabled>↩️ Undo (1 left)</button>
         </div>
     </div>
-    <div class="cpu-thinking-footer" id="cpuThinkingFooter">🤔 Ο CPU σκέφτεται...</div>
+    <div class="cpu-thinking-footer" id="cpuThinkingFooter">🤔 CPU is thinking...</div>
     <div class="promotion-overlay" id="promotionOverlay">
         <div class="promotion-dialog" id="promotionDialog"></div>
     </div>
@@ -825,36 +903,47 @@
         <div class="modal-content">
             <h2>♕ Chess Four Galactic ♛</h2>
             <p style="color:#84cc16;font-size:0.78rem;margin:4px 0 10px;" id="setupLevelInfo">LEVEL 1 — 🚀 Rookie Astronaut</p>
-            <p style="color:#e0e0e0;font-size:0.9rem;">Παίξε εναντίον του Αυτόματου Παίκτη (CPU)</p>
+            <p style="color:#e0e0e0;font-size:0.9rem;">Play against the Computer (CPU)</p>
             <div class="modal-options">
-                <h3>Διάλεξε το Χρώμα σου</h3>
-                <button class="modal-btn color-btn active" data-color="white">⚪ Λευκά</button>
-                <button class="modal-btn color-btn" data-color="black">⚫ Μαύρα</button>
+                <h3>Choose Your Color</h3>
+                <button class="modal-btn color-btn active" data-color="white">⚪ White</button>
+                <button class="modal-btn color-btn" data-color="black">⚫ Black</button>
             </div>
-            <button class="modal-btn start-btn" id="startGameBtn">🚀 Έναρξη Αποστολής</button>
+            <button class="modal-btn start-btn" id="startGameBtn">🚀 Start Mission</button>
         </div>
     </div>
     <div class="modal-overlay" id="postGameModal">
         <div class="modal-content">
-            <div class="end-modal-title win" id="endTitle">🎉 Αποστολή Επιτυχής!</div>
+            <div class="end-modal-title win" id="endTitle">🎉 Mission Complete!</div>
             <div class="prog-wrap">
-                <div class="prog-label"><span id="progLabelL">Πρόοδος Επιπέδου</span><span id="progLabelR"></span></div>
+                <div class="prog-label"><span id="progLabelL">Level Progress</span><span id="progLabelR"></span></div>
                 <div class="prog-track"><div class="prog-bar" id="progBar"></div></div>
                 <div class="prog-next" id="progNext"></div>
             </div>
             <div class="battle-stats">
-                <div class="battle-stats-title">⚔️ Στατιστικά Μάχης</div>
-                <div class="stat-row"><span class="stat-label">Αποτέλεσμα</span><span class="stat-value" id="statResult">—</span></div>
-                <div class="stat-row"><span class="stat-label">Σερί Νικών</span><span class="stat-value" id="statStreak">0</span></div>
-                <div class="stat-row"><span class="stat-label">Επίπεδο</span><span class="stat-value" id="statLevel">—</span></div>
+                <div class="battle-stats-title">⚔️ Battle Stats</div>
+                <div class="stat-row"><span class="stat-label">Result</span><span class="stat-value" id="statResult">—</span></div>
+                <div class="stat-row"><span class="stat-label">Win Streak</span><span class="stat-value" id="statStreak">0</span></div>
+                <div class="stat-row"><span class="stat-label">Level</span><span class="stat-value" id="statLevel">—</span></div>
             </div>
             <p id="levelUpInfo" style="color:#84cc16;font-weight:800;display:none;margin:6px 0;"></p>
-            <button class="end-action-btn win-btn" id="endActionBtn">🚀 Επόμενη Αποστολή</button>
-            <button class="modal-btn" id="menuBtn" style="margin-top:8px;font-size:13px;padding:10px;">☰ Μενού</button>
+            <button class="end-action-btn win-btn" id="endActionBtn">🚀 Next Mission</button>
+            <button class="modal-btn" id="menuBtn" style="margin-top:8px;font-size:13px;padding:10px;">☰ Menu</button>
+        </div>
+    </div>
+    <div class="modal-overlay" id="missionsModal">
+        <div class="modal-content missions-modal-content">
+            <div class="missions-header">
+                <h2 style="margin:0;">📋 Daily Missions</h2>
+                <span class="missions-points" id="missionsPointsDisplay">⭐ 0 Points</span>
+            </div>
+            <div class="missions-list" id="missionsList"></div>
+            <p class="missions-reset-info" id="missionsResetInfo">🕐 Missions reset in: --</p>
+            <button class="modal-btn close-btn" onclick="closeMissionsModal()">✕ Close</button>
         </div>
     </div>
     <script>
-        // ===================== ΡΥΘΜΙΣΕΙΣ =====================
+        // ===================== CONFIGURATION =====================
         const TIME_CONTROL = 300;
         let gameActive = false;
         let board = [];
@@ -894,11 +983,10 @@
         ];
 
         function getZoneForLevel(lvl) {
-            return CHESS_ZONE_DEFS.find(z => lvl >= z.min && lvl <= z.max) || CHESS_ZONE_DEFS[CHESS_ZONE_DEFS
-                .length - 1];
+            return CHESS_ZONE_DEFS.find(z => lvl >= z.min && lvl <= z.max) || CHESS_ZONE_DEFS[CHESS_ZONE_DEFS.length - 1];
         }
 
-        // ===================== DOM ΣΤΟΙΧΕΊΑ =====================
+        // ===================== DOM ELEMENTS =====================
         const boardEl = document.getElementById('board');
         const gameStatusEl = document.getElementById('gameStatus');
         const whiteTimeEl = document.getElementById('whiteTime');
@@ -910,24 +998,41 @@
         const postGameModal = document.getElementById('postGameModal');
         const promotionOverlay = document.getElementById('promotionOverlay');
         const promotionDialog = document.getElementById('promotionDialog');
-        const dailyMissionsList = document.getElementById('dailyMissionsList');
+        const missionsModal = document.getElementById('missionsModal');
+        const missionsList = document.getElementById('missionsList');
+        const missionsBadgeDot = document.getElementById('missionsBadgeDot');
 
-        // ===================== ΗΜΕΡΉΣΙΕΣ ΑΠΟΣΤΟΛΈΣ =====================
+        // ===================== DAILY MISSIONS (10 per day) =====================
         const ALL_MISSION_TEMPLATES = [
-            { id: 'win_games', name: 'Κατάκτησε Νίκες', icon: '🏆', target: 3, reward: 50,
-                desc: 'Κέρδισε παιχνίδια εναντίον του CPU' },
-            { id: 'capture_pieces', name: 'Αιχμαλώτισε Πιόνια', icon: '⚔️', target: 8, reward: 30,
-                desc: 'Κάνε capture κομμάτια του αντιπάλου' },
-            { id: 'promote_pawns', name: 'Προαγωγή Πιονιών', icon: '👑', target: 2, reward: 60,
-                desc: 'Προήγαγε πιόνια σε βασίλισσα' },
-            { id: 'play_moves', name: 'Παίξε Κινήσεις', icon: '🎯', target: 30, reward: 20,
-            desc: 'Κάνε συνολικά κινήσεις στα παιχνίδια' },
-            { id: 'check_opponent', name: 'Κάνε Check', icon: '⚠️', target: 5, reward: 35, desc: 'Βάλε τον αντίπαλο σε check' },
-            { id: 'play_games', name: 'Ολοκλήρωσε Παιχνίδια', icon: '🎮', target: 4, reward: 40,
-                desc: 'Ολοκλήρωσε παιχνίδια (νίκη ή ήττα)' },
-            { id: 'castle', name: 'Εκτέλεσε Ροκέ', icon: '🏰', target: 2, reward: 45, desc: 'Κάνε castling στα παιχνίδια σου' },
-            { id: 'double_attack', name: 'Διπλή Επίθεση', icon: '💥', target: 3, reward: 55,
-                desc: 'Κάνε κινήσεις που απειλούν 2+ κομμάτια ταυτόχρονα' },
+            { id: 'win_games', name: 'Win Games', icon: '🏆', target: 5, reward: 60, desc: 'Win games against the CPU' },
+            { id: 'capture_pieces', name: 'Capture Pieces', icon: '⚔️', target: 12, reward: 35,
+                desc: 'Capture opponent pieces' },
+            { id: 'promote_pawns', name: 'Promote Pawns', icon: '👑', target: 3, reward: 70,
+            desc: 'Promote pawns to a queen' },
+            { id: 'play_moves', name: 'Play Moves', icon: '🎯', target: 50, reward: 25, desc: 'Make total moves in games' },
+            { id: 'check_opponent', name: 'Check Opponent', icon: '⚠️', target: 8, reward: 40,
+                desc: 'Put the opponent in check' },
+            { id: 'play_games', name: 'Complete Games', icon: '🎮', target: 6, reward: 50,
+                desc: 'Finish games (win or lose)' },
+            { id: 'castle', name: 'Perform Castling', icon: '🏰', target: 3, reward: 55, desc: 'Castle in your games' },
+            { id: 'double_attack', name: 'Double Attack', icon: '💥', target: 5, reward: 60,
+                desc: 'Moves that threaten 2+ pieces' },
+            { id: 'capture_queen', name: 'Capture Queen', icon: '👸', target: 2, reward: 80,
+                desc: 'Capture the opponent queen' },
+            { id: 'save_king', name: 'Escape Check', icon: '🛡️', target: 6, reward: 45,
+            desc: 'Move your king out of check' },
+            { id: 'pawn_storm', name: 'Pawn Storm', icon: '🌊', target: 20, reward: 30,
+                desc: 'Advance pawns forward (moves)' },
+            { id: 'knight_forks', name: 'Knight Forks', icon: '🍴', target: 4, reward: 65,
+                desc: 'Fork 2+ pieces with a knight' },
+            { id: 'bishop_snipes', name: 'Bishop Snipes', icon: '🎯', target: 6, reward: 40,
+                desc: 'Capture pieces with bishops' },
+            { id: 'rook_rampage', name: 'Rook Rampage', icon: '🏰', target: 5, reward: 45,
+                desc: 'Capture pieces with rooks' },
+            { id: 'queen_dominance', name: 'Queen Dominance', icon: '👑', target: 8, reward: 50,
+                desc: 'Capture pieces with your queen' },
+            { id: 'three_in_row', name: 'Win Streak', icon: '🔥', target: 3, reward: 90,
+            desc: 'Win 3 games in a row (cumulative)' },
         ];
 
         function getTodayKey() {
@@ -937,29 +1042,29 @@
 
         function loadDailyMissions() {
             const today = getTodayKey();
-            const saved = localStorage.getItem('chess4gal_daily');
+            const saved = localStorage.getItem('chess4gal_daily10');
             if (saved) {
                 try {
                     const data = JSON.parse(saved);
-                    if (data.date === today && data.missions && data.missions.length === 3) {
+                    if (data.date === today && data.missions && data.missions.length === 10) {
                         return data;
                     }
                 } catch (e) {}
             }
             const shuffled = [...ALL_MISSION_TEMPLATES].sort(() => Math.random() - 0.5);
-            const missions = shuffled.slice(0, 3).map(m => ({
+            const missions = shuffled.slice(0, 10).map(m => ({
                 ...m,
                 progress: 0,
                 completed: false,
                 claimed: false,
             }));
             const newData = { date: today, missions };
-            localStorage.setItem('chess4gal_daily', JSON.stringify(newData));
+            localStorage.setItem('chess4gal_daily10', JSON.stringify(newData));
             return newData;
         }
 
         function saveDailyMissions(data) {
-            localStorage.setItem('chess4gal_daily', JSON.stringify(data));
+            localStorage.setItem('chess4gal_daily10', JSON.stringify(data));
         }
 
         function updateDailyMissionProgress(missionId, amount = 1) {
@@ -975,7 +1080,7 @@
                 }
             }
             if (changed) saveDailyMissions(data);
-            renderDailyMissions();
+            updateMissionsBadge();
         }
 
         function claimDailyMission(index) {
@@ -986,36 +1091,78 @@
             galacticPoints += m.reward;
             saveGalacticPoints();
             saveDailyMissions(data);
-            renderDailyMissions();
+            renderMissionsModal();
             updateHUD();
+            updateMissionsBadge();
             playTone(880, 0.15, 'sine', 0.2);
             setTimeout(() => playTone(1100, 0.2, 'sine', 0.2), 150);
         }
 
-        function renderDailyMissions() {
+        function getCompletedUnclaimedCount() {
             const data = loadDailyMissions();
-            dailyMissionsList.innerHTML = data.missions.map((m, i) => {
+            return data.missions.filter(m => m.completed && !m.claimed).length;
+        }
+
+        function updateMissionsBadge() {
+            const count = getCompletedUnclaimedCount();
+            if (count > 0) {
+                missionsBadgeDot.style.display = 'inline-block';
+            } else {
+                missionsBadgeDot.style.display = 'none';
+            }
+        }
+
+        function renderMissionsModal() {
+            const data = loadDailyMissions();
+            missionsList.innerHTML = data.missions.map((m, i) => {
                 const pct = Math.min(100, Math.round((m.progress / m.target) * 100));
                 const claimDisabled = !m.completed || m.claimed;
-                let claimText = '🎁 Λήψη';
-                if (m.claimed) claimText = '✅ Ελήφθη';
-                else if (!m.completed) claimText = '🔒 Κλείδωτο';
+                let claimText = '🎁 Claim';
+                if (m.claimed) claimText = '✅ Done';
+                else if (!m.completed) claimText = '🔒 Locked';
+                let itemClass = '';
+                if (m.claimed) itemClass = 'claimed';
+                else if (m.completed) itemClass = 'completed';
                 return `
-                    <div class="daily-mission-row">
-                        <span class="daily-mission-icon">${m.icon}</span>
-                        <div class="daily-mission-info">
-                            <span class="daily-mission-name">${m.name} (+${m.reward} πόντοι)</span>
-                            <div class="daily-mission-track-mini">
-                                <div class="daily-mission-fill-mini" style="width:${pct}%;"></div>
-                            </div>
-                            <span class="daily-mission-progress-text">${m.progress}/${m.target} — ${m.desc}</span>
+                    <div class="mission-item ${itemClass}">
+                        <span class="mission-icon-big">${m.icon}</span>
+                        <div class="mission-info">
+                            <span class="mission-name">${m.name} <span style="color:#ffcb2e;">(+${m.reward})</span></span>
+                            <span class="mission-desc">${m.desc}</span>
+                            <div class="mission-track"><div class="mission-fill" style="width:${pct}%;"></div></div>
+                            <span class="mission-progress-text">${m.progress}/${m.target}</span>
                         </div>
-                        <button class="daily-mission-claim ${m.claimed ? 'claimed' : ''}"
+                        <button class="mission-claim-btn ${m.claimed ? 'claimed' : ''}"
                                 ${claimDisabled ? 'disabled' : ''}
                                 onclick="claimDailyMission(${i})">${claimText}</button>
                     </div>
                 `;
             }).join('');
+            document.getElementById('missionsPointsDisplay').textContent = `⭐ ${galacticPoints} Points`;
+            updateMissionsResetTimer();
+        }
+
+        function updateMissionsResetTimer() {
+            const now = new Date();
+            const tomorrow = new Date(now);
+            tomorrow.setDate(tomorrow.getDate() + 1);
+            tomorrow.setHours(0, 0, 0, 0);
+            const diffMs = tomorrow - now;
+            const hrs = Math.floor(diffMs / (1000 * 60 * 60));
+            const mins = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60));
+            document.getElementById('missionsResetInfo').textContent =
+                `🕐 Missions reset in: ${hrs}h ${mins}m`;
+        }
+
+        function openMissionsModal() {
+            renderMissionsModal();
+            missionsModal.style.display = 'flex';
+        }
+
+        function closeMissionsModal() {
+            missionsModal.style.display = 'none';
+            updateMissionsBadge();
+            updateHUD();
         }
 
         function saveGalacticPoints() {
@@ -1061,7 +1208,7 @@
         function sfxMate() { [523, 659, 784, 1047].forEach((f, i) => setTimeout(() => playTone(f, 0.22, 'sine', 0.13), i *
                 90)); }
 
-        // ===================== ΛΟΓΙΚΉ ΣΚΑΚΙΟΎ =====================
+        // ===================== CHESS LOGIC =====================
         const PIECE_VALUES = { p: 100, n: 320, b: 330, r: 500, q: 900, k: 20000 };
 
         function getPieceImg(type, color) {
@@ -1219,6 +1366,12 @@
             return count;
         }
 
+        function isKnightFork(b, r, c) {
+            const piece = b[r][c];
+            if (!piece || piece.type !== 'n') return false;
+            return countAttacksFromSquare(b, r, c) >= 2;
+        }
+
         // ===================== CPU WORKER =====================
         let cpuWorker = null;
 
@@ -1301,7 +1454,7 @@
             return { depth: zone.depth, randomChance: zone.randomChance };
         }
 
-        // ===================== ΡΟΉ ΠΑΙΧΝΙΔΙΟΎ =====================
+        // ===================== GAME FLOW =====================
         function startNewGame(colorChoice) {
             initAudio();
             initWorker();
@@ -1330,10 +1483,10 @@
             updateTimerDisplay();
             updateEvalBar();
             updateHUD();
+            updateMissionsBadge();
             document.querySelector('.board').classList.toggle('flipped', isFlipped);
             render();
             updateUndoButton();
-            renderDailyMissions();
             if (cpuColor === 'w') setTimeout(requestCpuMove, 500);
         }
 
@@ -1385,16 +1538,34 @@
             if (captured) { sfxCapture(); } else { sfxMove(); }
             addNotation({ from: { r: sr, c: sc }, to: { r: tr, c: tc } }, captured);
             const movingPiece = board[tr][tc];
+            const wasInCheckBefore = kingInCheck;
             if (movingPiece && movingPiece.color === playerColor) {
                 updateDailyMissionProgress('play_moves', 1);
-                if (captured) updateDailyMissionProgress('capture_pieces', 1);
-                if (movingPiece.type === 'p' && (tr === 0 || tr === 7)) updateDailyMissionProgress('promote_pawns', 1);
+                if (captured) {
+                    updateDailyMissionProgress('capture_pieces', 1);
+                    if (captured.type === 'q') updateDailyMissionProgress('capture_queen', 1);
+                    if (movingPiece.type === 'b') updateDailyMissionProgress('bishop_snipes', 1);
+                    if (movingPiece.type === 'r') updateDailyMissionProgress('rook_rampage', 1);
+                    if (movingPiece.type === 'q') updateDailyMissionProgress('queen_dominance', 1);
+                }
+                if (movingPiece.type === 'p') {
+                    updateDailyMissionProgress('pawn_storm', 1);
+                    if (tr === 0 || tr === 7) updateDailyMissionProgress('promote_pawns', 1);
+                }
                 if (movingPiece.type === 'k' && Math.abs(tc - sc) === 2) updateDailyMissionProgress('castle', 1);
                 const attackCount = countAttacksFromSquare(board, tr, tc);
                 if (attackCount >= 2) updateDailyMissionProgress('double_attack', 1);
+                if (isKnightFork(board, tr, tc)) updateDailyMissionProgress('knight_forks', 1);
             }
             checkGameState();
-            if (kingInCheck && whiteToMove !== (playerColor === 'w')) updateDailyMissionProgress('check_opponent', 1);
+            const currentColor = whiteToMove ? 'w' : 'b';
+            const nowInCheck = isKingInCheck(board, currentColor);
+            if (nowInCheck && currentColor === playerColor && wasInCheckBefore) {
+                updateDailyMissionProgress('save_king', 1);
+            }
+            if (nowInCheck && currentColor === cpuColor) {
+                updateDailyMissionProgress('check_opponent', 1);
+            }
         }
 
         function updateCastlingRights(sr, sc, piece, tr, tc, captured) {
@@ -1440,14 +1611,14 @@
                     if (color === playerColor) updateDailyMissionProgress('promote_pawns', 1);
                     checkGameState();
                     if (gameActive && !postGamePending && whiteToMove === cpuColor) setTimeout(requestCpuMove,
-                    300);
+                        300);
                 });
                 promotionDialog.appendChild(opt);
             });
             promotionOverlay.style.display = 'flex';
         }
 
-        // ===================== ΣΗΜΕΙΩΣΕΙΣ & ΑΝΑΙΡΕΣΗ =====================
+        // ===================== NOTATION & UNDO =====================
         function addNotation(move, captured) {
             const piece = board[move.to.r][move.to.c];
             const sym = { p: '', n: 'N', b: 'B', r: 'R', q: 'Q', k: 'K' } [piece.type];
@@ -1482,10 +1653,10 @@
 
         function updateUndoButton() {
             undoBtn.disabled = undoUsed || moveHistory.length < 2 || !gameActive;
-            undoBtn.textContent = undoUsed ? '↩️ Αναίρεση (χρησιμοπ.)' : '↩️ Αναίρεση (1 διαθέσιμη)';
+            undoBtn.textContent = undoUsed ? '↩️ Undo (used)' : '↩️ Undo (1 left)';
         }
 
-        // ===================== ΚΑΤΑΣΤΑΣΗ ΠΑΙΧΝΙΔΙΟΎ =====================
+        // ===================== GAME STATE =====================
         function checkGameState() {
             const currentColor = whiteToMove ? 'w' : 'b';
             kingInCheck = isKingInCheck(board, currentColor);
@@ -1500,21 +1671,21 @@
                 setTimeout(() => {
                     if (kingInCheck) {
                         gameStatusEl.innerHTML =
-                            `<span class="status-mate">Ματ! Νικητής: ${winner === 'White' ? 'Λευκά' : 'Μαύρα'}!</span>`;
+                            `<span class="status-mate">Checkmate! ${winner} wins!</span>`;
                         sfxMate();
-                    } else { gameStatusEl.textContent = "Ισοπαλία (Πατ)!"; }
+                    } else { gameStatusEl.textContent = "Stalemate! Draw"; }
                     showPostGame(winner, kingInCheck ? 'checkmate' : 'stalemate');
                     postGamePending = false;
                 }, 500);
             } else if (kingInCheck) {
                 gameStatusEl.innerHTML =
-                    `<span class="status-check">Ο ${currentColor === 'w' ? 'Λευκός' : 'Μαύρος'} είναι σε check!</span>`;
+                    `<span class="status-check">${currentColor === 'w' ? 'White' : 'Black'} is in check!</span>`;
             } else {
-                gameStatusEl.textContent = `Σειρά του ${whiteToMove ? 'Λευκού' : 'Μαύρου'}`;
+                gameStatusEl.textContent = `${whiteToMove ? 'White' : 'Black'}'s turn`;
             }
         }
 
-        // ===================== ΧΡΟΝΟΜΕΤΡΟ =====================
+        // ===================== TIMER =====================
         function startTimer() {
             if (timerInterval) clearInterval(timerInterval);
             lastTimerTick = Date.now();
@@ -1556,7 +1727,7 @@
             blackTimeEl.classList.toggle('low', blackTimeLeft < 30);
         }
 
-        // ===================== ΑΠΕΙΚΟΝΙΣΗ =====================
+        // ===================== RENDER =====================
         function render() {
             boardEl.innerHTML = '';
             let checkKingPos = null;
@@ -1633,7 +1804,7 @@
             document.getElementById('evalBarBlack').style.flex = (100 - wp);
         }
 
-        // ===================== ΚΙΝΗΣΗ CPU =====================
+        // ===================== CPU MOVE =====================
         function requestCpuMove() {
             if (!gameActive || postGamePending || cpuThinking || promotionPending) return;
             if (whiteToMove !== cpuColor) return;
@@ -1662,7 +1833,7 @@
             });
         }
 
-        // ===================== ΤΕΛΟΣ ΠΑΙΧΝΙΔΙΟΎ =====================
+        // ===================== POST GAME =====================
         function showPostGame(winner, resultType) {
             gameActive = false;
             cpuThinking = false;
@@ -1690,6 +1861,7 @@
                 endlessStreak++;
                 saveLevel(currentLevel);
                 updateDailyMissionProgress('win_games', 1);
+                if (endlessStreak >= 3) updateDailyMissionProgress('three_in_row', 1);
             } else if (resultType !== 'stalemate') {
                 matchLosses++;
                 endlessStreak = 0;
@@ -1697,45 +1869,46 @@
                 endlessStreak = 0;
             }
             updateHUD();
+            updateMissionsBadge();
 
             if (isPlayerWin) {
-                titleEl.textContent = '🎉 Ματ! Κέρδισες!';
+                titleEl.textContent = '🎉 Checkmate! You Win!';
                 titleEl.className = 'end-modal-title win';
             } else if (resultType === 'stalemate') {
-                titleEl.textContent = '🤝 Πατ — Ισοπαλία!';
+                titleEl.textContent = '🤝 Stalemate — Draw!';
                 titleEl.className = 'end-modal-title draw';
             } else {
-                titleEl.textContent = resultType === 'timeout' ? '⏰ Τέλος Χρόνου!' : '😞 Έχασες';
+                titleEl.textContent = resultType === 'timeout' ? '⏰ Time\'s Up!' : '😞 You Lose';
                 titleEl.className = 'end-modal-title lose';
             }
 
             if (isPlayerWin) {
-                lblL.textContent = `Επίπεδο ${currentLevel-1} → ${currentLevel}`;
+                lblL.textContent = `Level ${currentLevel-1} → ${currentLevel}`;
                 lblR.textContent = '100%';
                 barEl.style.width = '0%';
                 setTimeout(() => barEl.style.width = '100%', 100);
-                nextEl.textContent = `Επόμενη Αποστολή: Επίπεδο ${currentLevel}`;
+                nextEl.textContent = `Next Mission: Level ${currentLevel}`;
                 luEl.style.display = 'block';
-                luEl.textContent = `⬆️ Το Επίπεδο ${currentLevel} Ξεκλειδώθηκε!`;
+                luEl.textContent = `⬆️ Level ${currentLevel} Unlocked!`;
             } else {
-                lblL.textContent = 'Πρόοδος';
+                lblL.textContent = 'Progress';
                 lblR.textContent = '';
                 barEl.style.width = '0%';
                 nextEl.textContent = '';
                 luEl.style.display = 'none';
             }
 
-            document.getElementById('statResult').textContent = isPlayerWin ? '✅ Νίκη' : (resultType === 'stalemate' ?
-                '🤝 Ισοπαλία' : '❌ Ήττα');
+            document.getElementById('statResult').textContent = isPlayerWin ? '✅ Victory' : (resultType === 'stalemate' ?
+                '🤝 Draw' : '❌ Defeat');
             document.getElementById('statStreak').textContent = endlessStreak;
-            document.getElementById('statLevel').textContent = `Επίπεδο ${currentLevel} (${getZoneForLevel(currentLevel).name})`;
+            document.getElementById('statLevel').textContent =
+                `Level ${currentLevel} (${getZoneForLevel(currentLevel).name})`;
 
-            btnEl.textContent = isPlayerWin ? `🚀 Επίπεδο ${currentLevel}` : '🔄 Προσπάθησε Ξανά';
+            btnEl.textContent = isPlayerWin ? `🚀 Level ${currentLevel}` : '🔄 Try Again';
             btnEl.className = isPlayerWin ? 'end-action-btn win-btn' : (resultType === 'stalemate' ?
                 'end-action-btn draw-btn' : 'end-action-btn lose-btn');
 
             postGameModal.style.display = 'flex';
-            renderDailyMissions();
         }
 
         // ===================== HUD =====================
@@ -1744,12 +1917,12 @@
             document.getElementById('hudLevel').textContent = `LEVEL ${currentLevel}`;
             document.getElementById('hudZone').textContent = zone.name;
             document.getElementById('hudMatch').textContent =
-                `Νίκες ${matchWins} – Ήττες ${matchLosses} | ⭐ ${galacticPoints}`;
+                `Wins ${matchWins} – ${matchLosses} Losses | ⭐ ${galacticPoints}`;
             document.getElementById('levelBadge').textContent = `🏅 ${zone.name}`;
             document.getElementById('streakBadge').style.display = endlessStreak >= 3 ? 'flex' : 'none';
-            document.getElementById('streakBadge').textContent = `🔥 Σερί ${endlessStreak}`;
+            document.getElementById('streakBadge').textContent = `🔥 Streak ${endlessStreak}`;
             document.getElementById('setupLevelInfo').textContent =
-                `LEVEL ${currentLevel} — ${zone.name} (Βάθος CPU: ${zone.depth})`;
+                `LEVEL ${currentLevel} — ${zone.name} (CPU Depth: ${zone.depth})`;
             const progressPct = Math.min(100, ((currentLevel - zone.min) / (zone.max - zone.min + 1)) * 100);
             document.getElementById('hudProgressFill').style.width = progressPct + '%';
         }
@@ -1778,7 +1951,7 @@
             postGameModal.style.display = 'none';
             setupModal.style.display = 'flex';
             updateHUD();
-            renderDailyMissions();
+            updateMissionsBadge();
         });
         undoBtn.addEventListener('click', undoLastMove);
         promotionOverlay.addEventListener('click', (e) => {
@@ -1801,12 +1974,16 @@
                 if (gameActive && whiteToMove === cpuColor) setTimeout(requestCpuMove, 300);
             }
         });
+        missionsModal.addEventListener('click', (e) => {
+            if (e.target === missionsModal) closeMissionsModal();
+        });
         window.addEventListener('DOMContentLoaded', () => {
             currentLevel = loadLevel();
             galacticPoints = loadGalacticPoints();
             updateHUD();
-            renderDailyMissions();
+            updateMissionsBadge();
             setupModal.style.display = 'flex';
+            setInterval(updateMissionsResetTimer, 60000);
         });
     </script>
 </body>
