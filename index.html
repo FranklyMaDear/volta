@@ -8,7 +8,6 @@
     <meta name="theme-color" content="#1e3c72">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-
     <style>
         :root {
             --board-size: min(88vw, 88vh, 680px);
@@ -156,7 +155,7 @@
             flex-wrap: wrap;
         }
         .missions-btn,
-        .spin-btn,
+        .daily-btn,
         .shop-btn {
             background: linear-gradient(135deg, #ffcb2e, #ff9f00);
             color: #000;
@@ -174,22 +173,21 @@
             align-items: center;
             gap: 5px;
         }
-        .spin-btn {
-            background: linear-gradient(135deg, #e040fb, #7c4dff);
-            box-shadow: 0 3px 0 #4a148c, 0 5px 12px rgba(0, 0, 0, 0.35);
-        }
-        .shop-btn {
+        .daily-btn {
             background: linear-gradient(135deg, #00e5ff, #00b0ff);
             box-shadow: 0 3px 0 #01579b, 0 5px 12px rgba(0, 0, 0, 0.35);
         }
+        .shop-btn {
+            background: linear-gradient(135deg, #e040fb, #7c4dff);
+            box-shadow: 0 3px 0 #4a148c, 0 5px 12px rgba(0, 0, 0, 0.35);
+        }
         .missions-btn:active,
-        .spin-btn:active,
+        .daily-btn:active,
         .shop-btn:active {
             transform: translateY(2px);
-            box-shadow: 0 1px 0 #b37400;
         }
         .missions-btn .badge-dot,
-        .spin-btn .badge-dot {
+        .daily-btn .badge-dot {
             width: 8px;
             height: 8px;
             border-radius: 50%;
@@ -456,7 +454,7 @@
             }
         }
         .modal-content {
-            background: linear-gradient(160deg, #3a2e16, #2a1f0e);
+            background: linear-gradient(160deg, #2a1f0e, #1a0f00);
             padding: 22px 18px;
             border-radius: 16px;
             max-width: 92%;
@@ -477,18 +475,18 @@
             padding: 16px 14px;
         }
         .shop-modal-content {
-            width: 520px;
+            width: 540px;
             max-width: 95%;
             max-height: 88vh;
             overflow-y: auto;
             padding: 16px 14px;
         }
-        .spin-modal-content {
-            width: 450px;
+        .daily-modal-content {
+            width: 400px;
             max-width: 95%;
             padding: 20px 18px;
-            background: linear-gradient(160deg, #1a0a2e, #2a1040);
-            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.7), 0 0 0 3px #e040fb, 0 0 40px rgba(224, 64, 251, 0.4);
+            background: linear-gradient(160deg, #0a1a2e, #102a40);
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.7), 0 0 0 3px #00e5ff, 0 0 40px rgba(0, 229, 255, 0.4);
         }
         .modal-content h2 {
             color: #ffcb2e;
@@ -518,10 +516,9 @@
             font-size: 14px;
             transition: all 0.2s;
             box-shadow: 0 4px 0 #3e2723, 0 6px 12px rgba(0, 0, 0, 0.3);
-            transform: translateZ(3px);
         }
         .modal-btn:active {
-            transform: translateY(3px) translateZ(1px);
+            transform: translateY(3px);
             box-shadow: 0 1px 0 #3e2723;
         }
         .modal-btn.active {
@@ -772,139 +769,169 @@
             width: 80%;
             height: 80%;
         }
-        /* Spin Wheel - Fixed */
-        .spin-container {
-            position: relative;
-            width: 280px;
-            height: 280px;
-            margin: 0 auto 16px;
-        }
-        .spin-wheel {
-            width: 100%;
-            height: 100%;
-            border-radius: 50%;
-            position: relative;
-            transition: transform 4s cubic-bezier(0.17, 0.67, 0.12, 0.99);
-            box-shadow: 0 0 0 6px #ffcb2e, 0 0 30px rgba(255, 203, 46, 0.4);
-            background: conic-gradient( #4CAF50 0deg 45deg, #2196F3 45deg 90deg, #4CAF50 90deg 135deg, #FF5722 135deg 180deg, #FF9800 180deg 225deg, #9C27B0 225deg 270deg, #E91E63 270deg 315deg, #f44336 315deg 360deg );
-        }
-        .spin-label {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform-origin: 0 0;
-            font-weight: 800;
-            font-size: 0.68rem;
-            color: #fff;
-            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.7);
-            white-space: nowrap;
-            pointer-events: none;
-            z-index: 5;
-        }
-        .spin-pointer {
-            position: absolute;
-            top: -20px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 0;
-            height: 0;
-            border-left: 18px solid transparent;
-            border-right: 18px solid transparent;
-            border-top: 30px solid #ffcb2e;
-            z-index: 10;
-            filter: drop-shadow(0 3px 6px rgba(0, 0, 0, 0.6));
-        }
-        .spin-center-btn {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 64px;
-            height: 64px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, #ffcb2e, #ff9f00);
-            color: #000;
-            font-weight: 900;
-            font-size: 0.8rem;
-            cursor: pointer;
-            border: 3px solid #fff;
-            box-shadow: 0 4px 0 #b37400, 0 6px 15px rgba(0, 0, 0, 0.4);
-            z-index: 20;
-            transition: all 0.1s;
-        }
-        .spin-center-btn:active {
-            transform: translate(-50%, -50%) scale(0.9);
-            box-shadow: 0 2px 0 #b37400;
-        }
-        .spin-center-btn:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
-        .spin-countdown {
-            text-align: center;
-            color: #ffcb2e;
-            font-weight: 700;
-            font-size: 0.75rem;
+        .shop-items {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px;
             margin-top: 8px;
         }
-        .spin-result {
+        .shop-item {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 12px;
+            padding: 12px 10px;
+            cursor: pointer;
+            transition: all 0.2s;
             text-align: center;
-            color: #84cc16;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+        }
+        .shop-item:hover {
+            border-color: #d19a4c;
+            background: rgba(209, 154, 76, 0.12);
+            transform: translateY(-2px);
+        }
+        .shop-item.owned {
+            border-color: rgba(132, 204, 22, 0.4);
+            background: rgba(132, 204, 22, 0.06);
+        }
+        .shop-item.equipped {
+            border-color: #ffcb2e;
+            box-shadow: 0 0 15px rgba(255, 203, 46, 0.3);
+        }
+        .shop-item-icon {
+            font-size: 2.2rem;
+            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.5));
+        }
+        .shop-item-name {
+            font-weight: 700;
+            color: #e8e8ed;
+            font-size: 0.7rem;
+            line-height: 1.2;
+        }
+        .shop-item-desc {
+            font-size: 0.6rem;
+            color: rgba(255, 255, 255, 0.5);
+            min-height: 28px;
+        }
+        .shop-item-price {
+            font-weight: 800;
+            color: #ffcb2e;
+            font-size: 0.7rem;
+        }
+        .shop-item-btn {
+            width: 100%;
+            padding: 7px 10px;
+            border-radius: 14px;
+            border: none;
+            cursor: pointer;
+            font-weight: 700;
+            font-size: 0.65rem;
+            transition: all 0.2s;
+            margin-top: 2px;
+        }
+        .shop-item-btn.buy {
+            background: #4CAF50;
+            color: #fff;
+            box-shadow: 0 2px 0 #2e7d32;
+        }
+        .shop-item-btn.equip {
+            background: #ffcb2e;
+            color: #000;
+            box-shadow: 0 2px 0 #b37400;
+        }
+        .shop-item-btn.unequip {
+            background: #f44336;
+            color: #fff;
+            box-shadow: 0 2px 0 #b71c1c;
+        }
+        .shop-item-btn:active {
+            transform: translateY(2px);
+            box-shadow: 0 0px 0;
+        }
+        .shop-points {
+            text-align: center;
+            color: #ffcb2e;
+            font-weight: 800;
+            font-size: 0.9rem;
+            margin-bottom: 6px;
+            background: rgba(255, 203, 46, 0.1);
+            padding: 6px 16px;
+            border-radius: 20px;
+            display: inline-block;
+        }
+        .daily-bonus-card {
+            background: linear-gradient(135deg, rgba(0, 229, 255, 0.15), rgba(0, 176, 255, 0.05));
+            border: 1px solid rgba(0, 229, 255, 0.3);
+            border-radius: 16px;
+            padding: 20px 16px;
+            margin: 12px 0;
+            text-align: center;
+        }
+        .daily-bonus-amount {
+            font-size: 3rem;
+            font-weight: 900;
+            color: #00e5ff;
+            text-shadow: 0 0 20px rgba(0, 229, 255, 0.5);
+            margin: 8px 0;
+        }
+        .daily-bonus-streak {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin: 12px 0;
+        }
+        .daily-bonus-day {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.08);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.7rem;
+            color: #aaa;
+            transition: all 0.3s;
+        }
+        .daily-bonus-day.collected {
+            background: #4CAF50;
+            border-color: #4CAF50;
+            color: #fff;
+        }
+        .daily-bonus-day.current {
+            background: rgba(0, 229, 255, 0.3);
+            border-color: #00e5ff;
+            color: #00e5ff;
+            box-shadow: 0 0 12px rgba(0, 229, 255, 0.4);
+            animation: glowPulse 1.5s infinite;
+        }
+        .daily-bonus-btn {
+            width: 100%;
+            padding: 14px;
+            border-radius: 30px;
+            border: none;
+            cursor: pointer;
             font-weight: 800;
             font-size: 1rem;
-            margin-top: 6px;
-            animation: popIn 0.4s;
+            letter-spacing: 1px;
+            transition: all 0.2s;
+            background: linear-gradient(135deg, #00e5ff, #00b0ff);
+            color: #000;
+            box-shadow: 0 4px 0 #01579b, 0 6px 15px rgba(0, 0, 0, 0.4);
         }
-        /* Capture Explosion */
-        .capture-explosion {
-            position: fixed;
-            pointer-events: none;
-            z-index: 300;
-            animation: explodeOut 0.6s ease-out forwards;
+        .daily-bonus-btn:active {
+            transform: translateY(3px);
+            box-shadow: 0 1px 0 #01579b;
         }
-        @keyframes explodeOut {
-            0% {
-                transform: scale(0.3);
-                opacity: 1;
-            }
-            100% {
-                transform: scale(2.5);
-                opacity: 0;
-            }
-        }
-        .explosion-particle {
-            position: absolute;
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            animation: particleFly 0.5s ease-out forwards;
-        }
-        @keyframes particleFly {
-            0% {
-                transform: translate(0, 0) scale(1);
-                opacity: 1;
-            }
-            100% {
-                transform: translate(var(--dx), var(--dy)) scale(0);
-                opacity: 0;
-            }
-        }
-        /* Move Trail */
-        .move-trail {
-            position: fixed;
-            pointer-events: none;
-            z-index: 299;
-            animation: trailFade 0.4s ease-out forwards;
-        }
-        @keyframes trailFade {
-            0% {
-                opacity: 0.9;
-                transform: scale(1);
-            }
-            100% {
-                opacity: 0;
-                transform: scale(0.2);
-            }
+        .daily-bonus-btn:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: 0 4px 0 #01579b;
         }
         .missions-list {
             display: flex;
@@ -1057,19 +1084,15 @@
             }
             .missions-modal-content,
             .shop-modal-content,
-            .spin-modal-content {
+            .daily-modal-content {
                 width: 95%;
                 padding: 12px 10px;
             }
             .shop-items {
                 grid-template-columns: repeat(2, 1fr);
             }
-            .spin-container {
-                width: 220px;
-                height: 220px;
-            }
-            .spin-label {
-                font-size: 0.55rem;
+            .daily-bonus-amount {
+                font-size: 2rem;
             }
         }
     </style>
@@ -1082,7 +1105,7 @@
                 <div class="hud-zone" id="hudZone">🚀 Rookie Astronaut</div>
                 <div class="hud-match" id="hudMatch">Wins 0 – 0 Losses</div>
                 <div class="hud-buttons">
-                    <button class="spin-btn" id="spinTopBtn" onclick="openSpinModal()">🎰 Spin <span class="badge-dot" id="spinBadgeDot" style="display:none;"></span></button>
+                    <button class="daily-btn" id="dailyTopBtn" onclick="openDailyBonusModal()">🎁 Daily <span class="badge-dot" id="dailyBadgeDot" style="display:none;"></span></button>
                     <button class="missions-btn" id="missionsBtn" onclick="openMissionsModal()">📋 Missions <span class="badge-dot" id="missionsBadgeDot" style="display:none;"></span></button>
                     <button class="shop-btn" id="shopBtn" onclick="openShopModal()">🛒 Shop</button>
                 </div>
@@ -1177,27 +1200,26 @@
             <button class="modal-btn close-btn" onclick="closeMissionsModal()">✕ Close</button>
         </div>
     </div>
-    <div class="modal-overlay" id="spinModal">
-        <div class="modal-content spin-modal-content">
-            <h2 style="color:#e040fb;">🎰 Wheel of Fortune</h2>
-            <p style="color:#ccc;font-size:0.7rem;">Spin once every 24 hours!</p>
-            <div class="spin-container" id="spinContainer">
-                <div class="spin-pointer"></div>
-                <div class="spin-wheel" id="spinWheel">
-                    <div class="spin-label" style="transform:rotate(22.5deg) translate(0,-85px);">⭐ 75</div>
-                    <div class="spin-label" style="transform:rotate(67.5deg) translate(0,-85px);">⭐ 150</div>
-                    <div class="spin-label" style="transform:rotate(112.5deg) translate(0,-85px);">⭐ 75</div>
-                    <div class="spin-label" style="transform:rotate(157.5deg) translate(0,-85px);">💣 Bomb</div>
-                    <div class="spin-label" style="transform:rotate(202.5deg) translate(0,-85px);">⭐ 300</div>
-                    <div class="spin-label" style="transform:rotate(247.5deg) translate(0,-85px);">✨ Trail</div>
-                    <div class="spin-label" style="transform:rotate(292.5deg) translate(0,-85px);">💎 500</div>
-                    <div class="spin-label" style="transform:rotate(337.5deg) translate(0,-85px);">🔥 Theme</div>
+    <div class="modal-overlay" id="dailyBonusModal">
+        <div class="modal-content daily-modal-content">
+            <h2 style="color:#00e5ff;">🎁 Daily Bonus</h2>
+            <p style="color:#ccc;font-size:0.7rem;">Come back every day for free points!</p>
+            <div class="daily-bonus-card">
+                <div class="daily-bonus-streak" id="dailyStreakIcons">
+                    <div class="daily-bonus-day">D1</div>
+                    <div class="daily-bonus-day">D2</div>
+                    <div class="daily-bonus-day">D3</div>
+                    <div class="daily-bonus-day">D4</div>
+                    <div class="daily-bonus-day">D5</div>
+                    <div class="daily-bonus-day">D6</div>
+                    <div class="daily-bonus-day">D7</div>
                 </div>
-                <button class="spin-center-btn" id="spinCenterBtn" onclick="spinWheelNow()">SPIN</button>
+                <div class="daily-bonus-amount" id="dailyBonusAmount">+100 ⭐</div>
+                <p style="color:#aaa;font-size:0.65rem;" id="dailyBonusDesc">Day 1 bonus</p>
+                <button class="daily-bonus-btn" id="dailyBonusClaimBtn" onclick="claimDailyBonus()">🎁 Claim Bonus</button>
             </div>
-            <div class="spin-countdown" id="spinCountdown"></div>
-            <div class="spin-result" id="spinResult"></div>
-            <button class="modal-btn close-btn" onclick="closeSpinModal()">✕ Close</button>
+            <p class="missions-reset-info" id="dailyBonusResetInfo">🕐 Resets in: --</p>
+            <button class="modal-btn close-btn" onclick="closeDailyBonusModal()">✕ Close</button>
         </div>
     </div>
     <div class="modal-overlay" id="shopModal">
@@ -1216,7 +1238,7 @@
     </div>
     <script>
         // ===================== CONFIGURATION =====================
-        let selectedTimeControl = 300; // default 5 minutes
+        let selectedTimeControl = 300;
         let gameActive = false;
         let board = [];
         let whiteToMove = true;
@@ -1313,6 +1335,9 @@
                 lava: { light: '#3a0d0d', dark: '#1a0000' },
                 galaxy: { light: '#2a1a4a', dark: '#0d0a1a' },
                 golden: { light: '#f5e6c8', dark: '#3a2e16' },
+                ocean: { light: '#c8e6f5', dark: '#1a5276' },
+                forest: { light: '#d5f5d5', dark: '#2d5a1e' },
+                sunset: { light: '#ffe0c8', dark: '#8b4513' },
             };
             const t = themes[equippedTheme] || themes.classic;
             root.style.setProperty('--theme-light', t.light);
@@ -1327,8 +1352,13 @@
                 { id: 'frozen', name: 'Frozen World', icon: '❄️', desc: 'Ice & blue crystals', price: 600,
                     category: 'theme' },
                 { id: 'lava', name: 'Hell Lava', icon: '🌋', desc: 'Fire & brimstone', price: 600, category: 'theme' },
+                { id: 'ocean', name: 'Deep Ocean', icon: '🌊', desc: 'Underwater depths', price: 700, category: 'theme' },
+                { id: 'forest', name: 'Enchanted Forest', icon: '🌲', desc: 'Mystical woodland', price: 700,
+                    category: 'theme' },
                 { id: 'galaxy', name: 'Galactic Purple', icon: '🌌', desc: 'Space nebula board', price: 900,
                     category: 'theme' },
+                { id: 'sunset', name: 'Sunset Glow', icon: '🌅', desc: 'Warm desert tones', price: 900,
+                category: 'theme' },
                 { id: 'golden', name: 'Golden Dawn', icon: '👑', desc: 'Royal gold luxury', price: 1500,
                     category: 'theme' },
             ],
@@ -1341,6 +1371,10 @@
                     category: 'sound' },
                 { id: 'epic', name: 'Epic Check', icon: '🎵', desc: 'Dramatic check chord', price: 300,
                     category: 'sound' },
+                { id: 'thunder', name: 'Thunder Strike', icon: '⚡', desc: 'Thunder on capture', price: 350,
+                    category: 'sound' },
+                { id: 'magic', name: 'Magic Chime', icon: '🔮', desc: 'Magical move sounds', price: 280,
+                category: 'sound' },
             ],
             effects: [
                 { id: 'none', name: 'No Effect', icon: '➖', desc: 'Clean board', price: 0, category: 'effect' },
@@ -1352,6 +1386,8 @@
                     category: 'effect' },
                 { id: 'fireworks', name: 'Victory Fireworks', icon: '🎆', desc: 'Fireworks on win', price: 500,
                     category: 'effect' },
+                { id: 'shockwave', name: 'Shockwave', icon: '〰️', desc: 'Ripples on capture', price: 380,
+                    category: 'effect' },
             ],
             powerups: [
                 { id: 'hint', name: 'Move Hint', icon: '💡', desc: 'Shows a good move', price: 80, category: 'powerup',
@@ -1361,6 +1397,8 @@
                 { id: 'freeze', name: 'Freeze Time', icon: '❄️', desc: 'Pause opponent clock 10s', price: 150,
                     category: 'powerup', consumable: true },
                 { id: 'shield', name: 'Shield', icon: '🛡️', desc: 'Second chance on loss', price: 200,
+                    category: 'powerup', consumable: true },
+                { id: 'double_points', name: 'Double Points', icon: '💰', desc: '2x points next game', price: 120,
                     category: 'powerup', consumable: true },
             ],
         };
@@ -1388,8 +1426,8 @@
         const missionsModal = document.getElementById('missionsModal');
         const missionsList = document.getElementById('missionsList');
         const missionsBadgeDot = document.getElementById('missionsBadgeDot');
-        const spinModal = document.getElementById('spinModal');
-        const spinBadgeDot = document.getElementById('spinBadgeDot');
+        const dailyBonusModal = document.getElementById('dailyBonusModal');
+        const dailyBadgeDot = document.getElementById('dailyBadgeDot');
         const shopModal = document.getElementById('shopModal');
 
         // ===================== DAILY & WEEKLY MISSIONS =====================
@@ -1563,64 +1601,79 @@
                 sd.lastDate = today; }
             saveStreakData(sd);
             updateHUD();
+            updateDailyBadge();
         }
 
-        // ===================== SPIN WHEEL (FIXED) =====================
-        const SPIN_REWARDS = [
-            { label: '⭐ 75', icon: '⭐', points: 75, color: '#4CAF50' },
-            { label: '⭐ 150', icon: '⭐', points: 150, color: '#2196F3' },
-            { label: '⭐ 75', icon: '⭐', points: 75, color: '#4CAF50' },
-            { label: '💣 Bomb', icon: '💣', item: 'explosion', itemCat: 'sound', color: '#FF5722' },
-            { label: '⭐ 300', icon: '⭐', points: 300, color: '#FF9800' },
-            { label: '✨ Trail', icon: '✨', item: 'trail', itemCat: 'effect', color: '#9C27B0' },
-            { label: '💎 500', icon: '💎', points: 500, color: '#E91E63' },
-            { label: '🔥 Theme', icon: '🔥', item: 'lava', itemCat: 'theme', color: '#f44336' },
-        ];
+        // ===================== DAILY BONUS (replaces spin wheel) =====================
+        function getDailyBonusData() { try { return JSON.parse(localStorage.getItem('chess4gal_dailybonus') ||
+                    '{"lastClaimed":"","daysCollected":[]}'); } catch (e) { return { lastClaimed: '',
+                    daysCollected: [] }; } }
 
-        const SPIN_LABELS = ['⭐ 75', '⭐ 150', '⭐ 75', '💣 Bomb', '⭐ 300', '✨ Trail', '💎 500', '🔥 Theme'];
-        const SPIN_COLORS = ['#4CAF50', '#2196F3', '#4CAF50', '#FF5722', '#FF9800', '#9C27B0', '#E91E63', '#f44336'];
+        function saveDailyBonusData(d) { localStorage.setItem('chess4gal_dailybonus', JSON.stringify(d)); }
 
-        function getSpinData() { try { return JSON.parse(localStorage.getItem('chess4gal_spin') || '{"lastSpin":"","spinsToday":0}'); } catch (
-                e) { return { lastSpin: '', spinsToday: 0 }; } }
-
-        function saveSpinData(d) { localStorage.setItem('chess4gal_spin', JSON.stringify(d)); }
-
-        function canSpin() {
-            const sd = getSpinData();
+        function canClaimDailyBonus() {
+            const db = getDailyBonusData();
             const today = getTodayKey();
-            return sd.lastSpin !== today;
+            return db.lastClaimed !== today;
         }
 
-        function updateSpinBadge() { spinBadgeDot.style.display = canSpin() ? 'inline-block' : 'none'; }
+        function updateDailyBadge() { dailyBadgeDot.style.display = canClaimDailyBonus() ? 'inline-block' : 'none'; }
 
-        function buildSpinWheel() {
-            const wheel = document.getElementById('spinWheel');
-            // Update conic-gradient dynamically
-            const n = SPIN_COLORS.length;
-            const segAngle = 360 / n;
-            let gradParts = [];
-            for (let i = 0; i < n; i++) {
-                const start = i * segAngle;
-                const end = (i + 1) * segAngle;
-                gradParts.push(`${SPIN_COLORS[i]} ${start}deg ${end}deg`);
+        function getDailyBonusAmount() {
+            const sd = getStreakData();
+            const days = Math.min(sd.days || 1, 7);
+            const bonuses = [0, 100, 150, 200, 250, 300, 400, 600];
+            return bonuses[days] || 100;
+        }
+
+        function openDailyBonusModal() { renderDailyBonus();
+            dailyBonusModal.style.display = 'flex'; }
+
+        function closeDailyBonusModal() { dailyBonusModal.style.display = 'none';
+            updateDailyBadge(); }
+
+        function renderDailyBonus() {
+            const sd = getStreakData();
+            const days = Math.min(sd.days || 1, 7);
+            const amount = getDailyBonusAmount();
+            const canClaim = canClaimDailyBonus();
+            const db = getDailyBonusData();
+            document.getElementById('dailyBonusAmount').textContent = `+${amount} ⭐`;
+            document.getElementById('dailyBonusDesc').textContent = `Day ${days} bonus`;
+            const btn = document.getElementById('dailyBonusClaimBtn');
+            btn.disabled = !canClaim;
+            btn.textContent = canClaim ? '🎁 Claim Bonus' : '✅ Claimed Today';
+            const icons = document.getElementById('dailyStreakIcons').children;
+            for (let i = 0; i < 7; i++) {
+                icons[i].className = 'daily-bonus-day';
+                if (db.daysCollected.includes(i + 1)) icons[i].classList.add('collected');
+                if (i + 1 === days && canClaim) icons[i].classList.add('current');
+                icons[i].textContent = ['', 'D1', 'D2', 'D3', 'D4', 'D5', 'D6', 'D7'][i + 1];
             }
-            wheel.style.background = `conic-gradient(${gradParts.join(',')})`;
-            wheel.style.transform = 'rotate(0deg)';
-            document.getElementById('spinResult').textContent = '';
-            document.getElementById('spinCountdown').textContent = canSpin() ? '🎉 Ready to spin!' :
-                '⏰ Come back tomorrow!';
-            document.getElementById('spinCenterBtn').disabled = !canSpin();
+            updateDailyBonusResetInfo();
         }
 
-        function openSpinModal() { buildSpinWheel();
-            updateSpinCountdown();
-            spinModal.style.display = 'flex'; }
+        function claimDailyBonus() {
+            if (!canClaimDailyBonus()) return;
+            const db = getDailyBonusData();
+            const today = getTodayKey();
+            const amount = getDailyBonusAmount();
+            const sd = getStreakData();
+            const days = Math.min(sd.days || 1, 7);
+            db.lastClaimed = today;
+            if (!db.daysCollected.includes(days)) db.daysCollected.push(days);
+            saveDailyBonusData(db);
+            galacticPoints += amount;
+            pointsEarnedThisGame += amount;
+            saveGalacticPoints();
+            updateHUD();
+            updateDailyBadge();
+            renderDailyBonus();
+            playTone(1000, 0.15, 'sine', 0.2);
+            setTimeout(() => playTone(1200, 0.2, 'sine', 0.2), 150);
+        }
 
-        function closeSpinModal() { spinModal.style.display = 'none';
-            updateSpinBadge(); }
-
-        function updateSpinCountdown() {
-            if (canSpin()) { document.getElementById('spinCountdown').textContent = '🎉 Ready to spin!'; return; }
+        function updateDailyBonusResetInfo() {
             const now = new Date();
             const tomorrow = new Date(now);
             tomorrow.setDate(tomorrow.getDate() + 1);
@@ -1628,48 +1681,7 @@
             const diff = tomorrow - now;
             const h = Math.floor(diff / (1000 * 60 * 60));
             const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-            const s = Math.floor((diff % (1000 * 60)) / 1000);
-            document.getElementById('spinCountdown').textContent = `⏰ Next spin in: ${h}h ${m}m ${s}s`;
-        }
-
-        function spinWheelNow() {
-            if (!canSpin()) return;
-            const sd = getSpinData();
-            sd.lastSpin = getTodayKey();
-            sd.spinsToday = (sd.spinsToday || 0) + 1;
-            saveSpinData(sd);
-            document.getElementById('spinCenterBtn').disabled = true;
-            const wheel = document.getElementById('spinWheel');
-            const n = SPIN_REWARDS.length;
-            const segAngle = 360 / n;
-            // The pointer is at top (12 o'clock). Segment 0 starts at 0deg (3 o'clock) with conic-gradient.
-            // So top is at 270deg in the conic gradient. We need to rotate so the target segment lands at top.
-            const targetIndex = Math.floor(Math.random() * n);
-            // Angle to center of target segment: targetIndex * segAngle + segAngle/2
-            // To bring that segment to top (270deg), we need: finalRotation = 270 - targetAngle + multiple of 360
-            const targetAngle = targetIndex * segAngle + segAngle / 2;
-            const baseRotation = 270 - targetAngle;
-            const fullRotation = baseRotation + 360 * 5; // 5 full spins
-            const extraJitter = (Math.random() - 0.5) * segAngle * 0.4;
-            wheel.style.transform = `rotate(${fullRotation + extraJitter}deg)`;
-            setTimeout(() => {
-                const reward = SPIN_REWARDS[targetIndex];
-                let msg = '';
-                if (reward.points) { galacticPoints += reward.points;
-                    pointsEarnedThisGame += reward.points;
-                    saveGalacticPoints();
-                    msg = `🎉 You won ${reward.points} Points!`; } else if (reward.item) {
-                    if (reward.itemCat === 'sound' || reward.itemCat === 'effect' || reward.itemCat === 'theme') { ownedItems[
-                            reward.item] = true;
-                        saveOwnedItems();
-                        msg = `🎉 You won: ${reward.label}!`; } else { addPowerup(reward.item);
-                        msg = `🎉 You won: ${reward.label}!`; }
-                }
-                document.getElementById('spinResult').textContent = msg;
-                updateHUD();
-                updateSpinBadge();
-                buildSpinWheel();
-            }, 4200);
+            document.getElementById('dailyBonusResetInfo').textContent = `🕐 Resets in: ${h}h ${m}m`;
         }
 
         // ===================== SHOP =====================
@@ -1707,7 +1719,7 @@
                     <div class="shop-item-icon">${item.icon}</div>
                     <div class="shop-item-name">${item.name}</div>
                     <div class="shop-item-desc">${item.desc}</div>
-                    ${currentShopTab!=='powerups' || !owned ? `<div class="shop-item-price">${currentShopTab==='powerups' && owned ? 'Owned: '+getPowerupCount(item.id) : ''}</div>` : `<div class="shop-item-price">Owned: ${getPowerupCount(item.id)}</div>`}
+                    ${currentShopTab==='powerups' && owned ? `<div class="shop-item-price">Owned: ${getPowerupCount(item.id)}</div>` : (!owned ? `<div class="shop-item-price">${item.price} ⭐</div>` : `<div class="shop-item-price">Owned</div>`)}
                     ${btnHtml}
                 </div>`;
             }).join('')}</div>`;
@@ -1752,14 +1764,19 @@
             o.stop(audioCtx.currentTime + d); }
 
         function sfxMove() { if (equippedSound === 'laser') { playTone(1200, 0.08, 'sawtooth', 0.06);
-                playTone(800, 0.05, 'sawtooth', 0.04); } else { playTone(600, 0.07); } }
+                playTone(800, 0.05, 'sawtooth', 0.04); } else if (equippedSound === 'magic') { playTone(1000, 0.1, 'sine',
+                    0.06);
+                playTone(1400, 0.08, 'sine', 0.05); } else { playTone(600, 0.07); } }
 
         function sfxCapture() {
             if (equippedSound === 'explosion') { playTone(60, 0.3, 'sawtooth', 0.2);
                 playTone(40, 0.4, 'square', 0.3);
-                setTimeout(() => playTone(30, 0.5, 'square', 0.25), 100); } else if (equippedSound === 'laser') { playTone(
-                    1400, 0.1, 'sawtooth', 0.1);
-                playTone(200, 0.15, 'square', 0.12); } else { playTone(800, 0.1, 'triangle'); }
+                setTimeout(() => playTone(30, 0.5, 'square', 0.25), 100); } else if (equippedSound === 'thunder') { playTone(80,
+                    0.4, 'sawtooth', 0.25);
+                playTone(50, 0.5, 'square', 0.3); } else if (equippedSound === 'laser') { playTone(1400, 0.1, 'sawtooth', 0.1);
+                playTone(200, 0.15, 'square', 0.12); } else if (equippedSound === 'magic') { playTone(1600, 0.12, 'sine',
+                    0.08);
+                playTone(2000, 0.1, 'sine', 0.06); } else { playTone(800, 0.1, 'triangle'); }
         }
 
         function sfxCheck() { if (equippedSound === 'epic') { [523, 659, 784].forEach((f, i) => setTimeout(() => playTone(f,
@@ -1770,29 +1787,43 @@
 
         // ===================== VISUAL EFFECTS =====================
         function spawnCaptureExplosion(r, c) {
-            if (equippedEffect !== 'capture_explosion') return;
+            if (equippedEffect !== 'capture_explosion' && equippedEffect !== 'shockwave') return;
             const sq = document.querySelector(`.square[data-r="${r}"][data-c="${c}"]`);
             if (!sq) return;
             const rect = sq.getBoundingClientRect();
             const cx = rect.left + rect.width / 2;
             const cy = rect.top + rect.height / 2;
-            const container = document.createElement('div');
-            container.className = 'capture-explosion';
-            container.style.left = cx + 'px';
-            container.style.top = cy + 'px';
-            const colors = ['#ff4444', '#ff8800', '#ffcc00', '#ffffff', '#ff6600'];
-            for (let i = 0; i < 16; i++) {
-                const p = document.createElement('div');
-                p.className = 'explosion-particle';
-                p.style.background = colors[Math.floor(Math.random() * colors.length)];
-                p.style.setProperty('--dx', (Math.random() - 0.5) * 80 + 'px');
-                p.style.setProperty('--dy', (Math.random() - 0.5) * 80 + 'px');
-                p.style.width = (4 + Math.random() * 8) + 'px';
-                p.style.height = p.style.width;
-                container.appendChild(p);
+            if (equippedEffect === 'shockwave') {
+                const ring = document.createElement('div');
+                ring.style.cssText =
+                    `position:fixed;left:${cx}px;top:${cy}px;width:20px;height:20px;border-radius:50%;border:3px solid #fff;z-index:300;pointer-events:none;transform:translate(-50%,-50%);animation:shockwaveOut 0.5s ease-out forwards;`;
+                document.body.appendChild(ring);
+                setTimeout(() => ring.remove(), 500);
+                const style = document.createElement('style');
+                style.textContent =
+                    '@keyframes shockwaveOut{0%{width:20px;height:20px;opacity:1;border-width:3px;}100%{width:120px;height:120px;opacity:0;border-width:1px;}}';
+                document.head.appendChild(style);
+                setTimeout(() => style.remove(), 600);
             }
-            document.body.appendChild(container);
-            setTimeout(() => container.remove(), 600);
+            if (equippedEffect === 'capture_explosion') {
+                const container = document.createElement('div');
+                container.className = 'capture-explosion';
+                container.style.left = cx + 'px';
+                container.style.top = cy + 'px';
+                const colors = ['#ff4444', '#ff8800', '#ffcc00', '#ffffff', '#ff6600'];
+                for (let i = 0; i < 16; i++) {
+                    const p = document.createElement('div');
+                    p.className = 'explosion-particle';
+                    p.style.background = colors[Math.floor(Math.random() * colors.length)];
+                    p.style.setProperty('--dx', (Math.random() - 0.5) * 80 + 'px');
+                    p.style.setProperty('--dy', (Math.random() - 0.5) * 80 + 'px');
+                    p.style.width = (4 + Math.random() * 8) + 'px';
+                    p.style.height = p.style.width;
+                    container.appendChild(p);
+                }
+                document.body.appendChild(container);
+                setTimeout(() => container.remove(), 600);
+            }
         }
 
         function spawnMoveTrail(sr, sc, tr, tc) {
@@ -1993,7 +2024,7 @@
             updateEvalBar();
             updateHUD();
             updateMissionsBadge();
-            updateSpinBadge();
+            updateDailyBadge();
             document.querySelector('.board').classList.toggle('flipped', isFlipped);
             render();
             updateUndoButton();
@@ -2279,7 +2310,7 @@
                 'end-action-btn lose-btn');
             updateHUD();
             updateMissionsBadge();
-            updateSpinBadge();
+            updateDailyBadge();
             postGameModal.style.display = 'flex';
         }
 
@@ -2328,7 +2359,7 @@
             setupModal.style.display = 'flex';
             updateHUD();
             updateMissionsBadge();
-            updateSpinBadge(); });
+            updateDailyBadge(); });
         undoBtn.addEventListener('click', undoLastMove);
         promotionOverlay.addEventListener('click', (e) => { if (e.target === promotionOverlay && promotionPending) { const pr =
                     promotionPending.r,
@@ -2345,7 +2376,7 @@
                     'promote_pawns', 1);
                 checkGameState(); if (gameActive && isOpponentTurn()) setTimeout(requestOpponentMove, 300); } });
         missionsModal.addEventListener('click', (e) => { if (e.target === missionsModal) closeMissionsModal(); });
-        spinModal.addEventListener('click', (e) => { if (e.target === spinModal) closeSpinModal(); });
+        dailyBonusModal.addEventListener('click', (e) => { if (e.target === dailyBonusModal) closeDailyBonusModal(); });
         shopModal.addEventListener('click', (e) => { if (e.target === shopModal) closeShopModal(); });
         document.getElementById('missionsTabs').addEventListener('click', (e) => { if (e.target.classList.contains('tab-btn')) {
                 currentMissionsTab = e.target.dataset.tab;
@@ -2365,11 +2396,11 @@
             applyTheme();
             updateHUD();
             updateMissionsBadge();
-            updateSpinBadge();
+            updateDailyBadge();
             updateLoginStreak();
             setupModal.style.display = 'flex';
             setInterval(() => { updateMissionsResetInfo();
-                updateSpinCountdown(); }, 60000);
+                updateDailyBonusResetInfo(); }, 60000);
         });
     </script>
 </body>
