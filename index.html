@@ -98,14 +98,16 @@ body{background:linear-gradient(160deg,#0d1b2a,#1b2838,#1e3c72);min-height:100vh
 /* FOOTER */
 .thinkfoot{position:fixed;bottom:0;left:0;width:100%;background:rgba(0,0,0,.93);color:var(--gold);
   text-align:center;padding:11px;font-weight:700;font-size:13px;z-index:50;display:none;
-  border-top:2px solid rgba(255,203,46,.25);}
+  border-top:2px solid rgba(255,203,46,.25);pointer-events:none;}
+.thinkfoot.vis{display:block;pointer-events:auto;}
 .toast{position:fixed;bottom:60px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,.92);
   color:#fff;padding:9px 18px;border-radius:18px;font-weight:700;font-size:.78rem;z-index:999;
-  display:none;white-space:nowrap;border:1px solid rgba(255,255,255,.12);}
+  display:none;white-space:nowrap;border:1px solid rgba(255,255,255,.12);pointer-events:none;}
 
 /* PROMO */
 .promoov{position:fixed;inset:0;background:rgba(0,0,0,.75);display:none;
-  justify-content:center;align-items:center;z-index:800;}
+  justify-content:center;align-items:center;z-index:800;pointer-events:none;}
+.promoov.vis{display:flex;pointer-events:auto;}
 .promodlg{background:#3a2e16;padding:13px;border-radius:14px;display:flex;gap:9px;
   border:2px solid #d19a4c;box-shadow:0 0 25px rgba(0,0,0,.6);}
 .promoopt{width:55px;height:55px;background:#5d4037;border-radius:10px;display:flex;
@@ -114,8 +116,10 @@ body{background:linear-gradient(160deg,#0d1b2a,#1b2838,#1e3c72);min-height:100vh
 
 /* ═══ MODALS ═══ */
 .ov{position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:500;
-  display:none;justify-content:center;align-items:flex-start;padding:12px;overflow-y:auto;}
-.ov.show{display:flex;}
+  display:none;justify-content:center;align-items:flex-start;padding:12px;overflow-y:auto;
+  pointer-events:none;}
+.ov.show{display:flex;pointer-events:auto;}
+.ov.show .modal{pointer-events:auto;}
 .modal{background:linear-gradient(160deg,#3a2e16,#2a1f0e);padding:18px 15px;
   border-radius:14px;width:100%;max-width:440px;text-align:center;margin:auto;
   border:2px solid #d19a4c;box-shadow:0 20px 50px rgba(0,0,0,.6);}
@@ -681,8 +685,8 @@ function initWrk(){
   self.onmessage=function(e){const{board:b,co,depth,rnd,ep:e2,cs:cs2}=e.data;const mvs=am(b,co,e2,cs2);if(!mvs.length){self.postMessage(null);return;}if(rnd>0&&Math.random()<rnd){self.postMessage(mvs[Math.floor(Math.random()*mvs.length)]);return;}mvs.sort((x,y)=>(b[y.to.r][y.to.c]?V[b[y.to.r][y.to.c].tp]:0)-(b[x.to.r][x.to.c]?V[b[x.to.r][x.to.c].tp]:0));let best=-Infinity,bm=[];for(const m of mvs){const o=b[m.to.r][m.to.c],p=b[m.fr.r][m.fr.c];b[m.to.r][m.to.c]=p;b[m.fr.r][m.fr.c]=null;if(m.pr)b[m.to.r][m.to.c]={...p,tp:m.pr};const s=mm(b,depth-1,-Infinity,Infinity,false,co,e2,cs2);b[m.fr.r][m.fr.c]=p;b[m.to.r][m.to.c]=o;if(s>best){best=s;bm=[m];}else if(s===best)bm.push(m);}self.postMessage(bm[Math.floor(Math.random()*bm.length)]);};`;
   const blob=new Blob([code],{type:'application/javascript'});
   wrk=new Worker(URL.createObjectURL(blob));
-  wrk.onmessage=e=>{if(otout){clearTimeout(otout);otout=null;}document.getElementById('tfoot').style.display='none';othink=false;if(!gactive||ppend)return;if(e.data&&isOT())execMv(e.data.fr.r,e.data.fr.c,e.data.to.r,e.data.to.c,e.data.pr||'q');};
-  wrk.onerror=()=>{document.getElementById('tfoot').style.display='none';othink=false;if(otout){clearTimeout(otout);otout=null;}if(gactive&&!ppend&&isOT()){const mv=allLeg(board,oc,ep,cs);if(mv.length){const m=mv[Math.floor(Math.random()*mv.length)];execMv(m.fr.r,m.fr.c,m.to.r,m.to.c,'q');}}};
+  wrk.onmessage=e=>{if(otout){clearTimeout(otout);otout=null;}document.getElementById('tfoot').classList.remove('vis');othink=false;if(!gactive||ppend)return;if(e.data&&isOT())execMv(e.data.fr.r,e.data.fr.c,e.data.to.r,e.data.to.c,e.data.pr||'q');};
+  wrk.onerror=()=>{document.getElementById('tfoot').classList.remove('vis');othink=false;if(otout){clearTimeout(otout);otout=null;}if(gactive&&!ppend&&isOT()){const mv=allLeg(board,oc,ep,cs);if(mv.length){const m=mv[Math.floor(Math.random()*mv.length)];execMv(m.fr.r,m.fr.c,m.to.r,m.to.c,'q');}}};
 }
 function isOT(){return(wtm?'w':'b')===oc;}
 function isPT(){return(wtm?'w':'b')===pc;}
@@ -747,7 +751,7 @@ function showPrUI(cl){
     const o=document.createElement('div');o.className='promoopt';
     o.innerHTML=`<img src="${pimg(tp,cl)}">`;
     o.onclick=()=>{
-      document.getElementById('promoov').style.display='none';
+      document.getElementById('promoov').classList.remove('vis');
       board[pr][pc2].tp=tp;promo=null;
       if(tp!=='q')mprog('under',1);
       wtm=!wtm;render();playsfx('move');
@@ -756,7 +760,7 @@ function showPrUI(cl){
     };
     dlg.appendChild(o);
   });
-  document.getElementById('promoov').style.display='flex';
+  document.getElementById('promoov').classList.add('vis');
 }
 
 function addNot(mv,cap){
@@ -842,9 +846,9 @@ function applyTheme(){
 // ══ OPPONENT ══
 function reqOpp(){
   if(!gactive||ppend||othink||promo||!isOT())return;
-  othink=true;document.getElementById('tfoot').style.display='block';
+  othink=true;document.getElementById('tfoot').classList.add('vis');
   if(otout)clearTimeout(otout);
-  otout=setTimeout(()=>{document.getElementById('tfoot').style.display='none';othink=false;if(!gactive)return;try{wrk.terminate();}catch(e){}wrk=null;initWrk();const mv=allLeg(board,oc,ep,cs);if(mv.length){const m=mv[Math.floor(Math.random()*mv.length)];execMv(m.fr.r,m.fr.c,m.to.r,m.to.c,'q');}},10000);
+  otout=setTimeout(()=>{document.getElementById('tfoot').classList.remove('vis');othink=false;if(!gactive)return;try{wrk.terminate();}catch(e){}wrk=null;initWrk();const mv=allLeg(board,oc,ep,cs);if(mv.length){const m=mv[Math.floor(Math.random()*mv.length)];execMv(m.fr.r,m.fr.c,m.to.r,m.to.c,'q');}},10000);
   const z=zone(lvl);wrk.postMessage({board:board.map(r=>r.map(c=>c?{...c}:null)),co:oc,depth:z.depth,rnd:z.rnd,ep,cs});
 }
 
@@ -857,7 +861,7 @@ function updPU(){document.getElementById('puH').disabled=inv.hints<1||!gactive;d
 // ══ POST GAME ══
 function showPost(win,rt){
   gactive=false;othink=false;promo=null;clearInterval(tint);tint=null;
-  document.getElementById('tfoot').style.display='none';document.getElementById('promoov').style.display='none';
+  document.getElementById('tfoot').classList.remove('vis');document.getElementById('promoov').classList.remove('vis');
   if(otout){clearTimeout(otout);otout=null;}
   const isW=win&&((pc==='w'&&win==='White')||(pc==='b'&&win==='Black'));
   const isDr=rt==='st';let pe=0;
