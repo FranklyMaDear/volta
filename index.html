@@ -1005,34 +1005,21 @@
         // ===================== DAILY MISSIONS (10 per day) =====================
         const ALL_MISSION_TEMPLATES = [
             { id: 'win_games', name: 'Win Games', icon: '🏆', target: 5, reward: 60, desc: 'Win games against your opponent' },
-            { id: 'capture_pieces', name: 'Capture Pieces', icon: '⚔️', target: 12, reward: 35,
-                desc: 'Capture opponent pieces' },
-            { id: 'promote_pawns', name: 'Promote Pawns', icon: '👑', target: 3, reward: 70,
-                desc: 'Promote pawns to a queen' },
+            { id: 'capture_pieces', name: 'Capture Pieces', icon: '⚔️', target: 12, reward: 35, desc: 'Capture opponent pieces' },
+            { id: 'promote_pawns', name: 'Promote Pawns', icon: '👑', target: 3, reward: 70, desc: 'Promote pawns to a queen' },
             { id: 'play_moves', name: 'Play Moves', icon: '🎯', target: 50, reward: 25, desc: 'Make total moves in games' },
-            { id: 'check_opponent', name: 'Check Opponent', icon: '⚠️', target: 8, reward: 40,
-                desc: 'Put the opponent in check' },
-            { id: 'play_games', name: 'Complete Games', icon: '🎮', target: 6, reward: 50,
-                desc: 'Finish games (win or lose)' },
+            { id: 'check_opponent', name: 'Check Opponent', icon: '⚠️', target: 8, reward: 40, desc: 'Put the opponent in check' },
+            { id: 'play_games', name: 'Complete Games', icon: '🎮', target: 6, reward: 50, desc: 'Finish games (win or lose)' },
             { id: 'castle', name: 'Perform Castling', icon: '🏰', target: 3, reward: 55, desc: 'Castle in your games' },
-            { id: 'double_attack', name: 'Double Attack', icon: '💥', target: 5, reward: 60,
-                desc: 'Moves that threaten 2+ pieces' },
-            { id: 'capture_queen', name: 'Capture Queen', icon: '👸', target: 2, reward: 80,
-                desc: 'Capture the opponent queen' },
-            { id: 'save_king', name: 'Escape Check', icon: '🛡️', target: 6, reward: 45,
-                desc: 'Move your king out of check' },
-            { id: 'pawn_storm', name: 'Pawn Storm', icon: '🌊', target: 20, reward: 30,
-                desc: 'Advance pawns forward (moves)' },
-            { id: 'knight_forks', name: 'Knight Forks', icon: '🍴', target: 4, reward: 65,
-                desc: 'Fork 2+ pieces with a knight' },
-            { id: 'bishop_snipes', name: 'Bishop Snipes', icon: '🎯', target: 6, reward: 40,
-                desc: 'Capture pieces with bishops' },
-            { id: 'rook_rampage', name: 'Rook Rampage', icon: '🏰', target: 5, reward: 45,
-                desc: 'Capture pieces with rooks' },
-            { id: 'queen_dominance', name: 'Queen Dominance', icon: '👑', target: 8, reward: 50,
-                desc: 'Capture pieces with your queen' },
-            { id: 'three_in_row', name: 'Win Streak', icon: '🔥', target: 3, reward: 90,
-                desc: 'Win 3 games in a row (cumulative)' },
+            { id: 'double_attack', name: 'Double Attack', icon: '💥', target: 5, reward: 60, desc: 'Moves that threaten 2+ pieces' },
+            { id: 'capture_queen', name: 'Capture Queen', icon: '👸', target: 2, reward: 80, desc: 'Capture the opponent queen' },
+            { id: 'save_king', name: 'Escape Check', icon: '🛡️', target: 6, reward: 45, desc: 'Move your king out of check' },
+            { id: 'pawn_storm', name: 'Pawn Storm', icon: '🌊', target: 20, reward: 30, desc: 'Advance pawns forward (moves)' },
+            { id: 'knight_forks', name: 'Knight Forks', icon: '🍴', target: 4, reward: 65, desc: 'Fork 2+ pieces with a knight' },
+            { id: 'bishop_snipes', name: 'Bishop Snipes', icon: '🎯', target: 6, reward: 40, desc: 'Capture pieces with bishops' },
+            { id: 'rook_rampage', name: 'Rook Rampage', icon: '🏰', target: 5, reward: 45, desc: 'Capture pieces with rooks' },
+            { id: 'queen_dominance', name: 'Queen Dominance', icon: '👑', target: 8, reward: 50, desc: 'Capture pieces with your queen' },
+            { id: 'three_in_row', name: 'Win Streak', icon: '🔥', target: 3, reward: 90, desc: 'Win 3 games in a row (cumulative)' },
         ];
 
         function getTodayKey() {
@@ -1150,8 +1137,7 @@
             const diffMs = tomorrow - now;
             const hrs = Math.floor(diffMs / (1000 * 60 * 60));
             const mins = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60));
-            document.getElementById('missionsResetInfo').textContent =
-                `🕐 Missions reset in: ${hrs}h ${mins}m`;
+            document.getElementById('missionsResetInfo').textContent = `🕐 Missions reset in: ${hrs}h ${mins}m`;
         }
 
         function openMissionsModal() {
@@ -1202,11 +1188,9 @@
 
         function sfxCapture() { playTone(800, 0.1, 'triangle'); }
 
-        function sfxCheck() { playTone(1200, 0.1);
-            setTimeout(() => playTone(900, 0.1), 70); }
+        function sfxCheck() { playTone(1200, 0.1); setTimeout(() => playTone(900, 0.1), 70); }
 
-        function sfxMate() { [523, 659, 784, 1047].forEach((f, i) => setTimeout(() => playTone(f, 0.22, 'sine', 0.13), i *
-                90)); }
+        function sfxMate() { [523, 659, 784, 1047].forEach((f, i) => setTimeout(() => playTone(f, 0.22, 'sine', 0.13), i * 90)); }
 
         // ===================== CHESS LOGIC =====================
         const PIECE_VALUES = { p: 100, n: 320, b: 330, r: 500, q: 900, k: 20000 };
@@ -1239,8 +1223,7 @@
                 [null, null, null, null, null, null, null, null],
                 ['P', 'P', 'P', 'P', 'P', 'P', 'P', 'P'],
                 ['R', 'N', 'B', 'Q', 'K', 'B', 'N', 'R']
-            ].map(row => row.map(ch => ch ? { type: ch.toLowerCase(), color: ch === ch.toUpperCase() ? 'w' : 'b' } :
-                null));
+            ].map(row => row.map(ch => ch ? { type: ch.toLowerCase(), color: ch === ch.toUpperCase() ? 'w' : 'b' } : null));
         }
 
         function isInside(r, c) { return r >= 0 && r < 8 && c >= 0 && c < 8; }
@@ -1255,28 +1238,15 @@
 
             if (piece.type === 'p') {
                 if (isInside(r + dir, c) && !b[r + dir][c]) moves.push({ r: r + dir, c });
-                if ((col === 'w' && r === 6 || col === 'b' && r === 1) && isInside(r + dir, c) && !b[r + dir][c] && !b[
-                        r + 2 * dir][c]) moves.push({ r: r + 2 * dir, c });
+                if ((col === 'w' && r === 6 || col === 'b' && r === 1) && isInside(r + dir, c) && !b[r + dir][c] && !b[r + 2 * dir][c]) moves.push({ r: r + 2 * dir, c });
                 for (const dc of [-1, 1]) {
-                    if (isInside(r + dir, c + dc) && b[r + dir][c + dc] && b[r + dir][c + dc].color === opponent) moves
-                        .push({ r: r + dir, c: c + dc });
-                    if (enPassant && enPassant.r === r + dir && enPassant.c === c + dc) moves.push({ r: r + dir, c: c +
-                            dc });
+                    if (isInside(r + dir, c + dc) && b[r + dir][c + dc] && b[r + dir][c + dc].color === opponent) moves.push({ r: r + dir, c: c + dc });
+                    if (enPassant && enPassant.r === r + dir && enPassant.c === c + dc) moves.push({ r: r + dir, c: c + dc });
                 }
             }
             if (piece.type === 'n') {
-                [
-                    [-2, -1],
-                    [-2, 1],
-                    [-1, -2],
-                    [-1, 2],
-                    [1, -2],
-                    [1, 2],
-                    [2, -1],
-                    [2, 1]
-                ].forEach(([dr, dc]) => {
-                    if (isInside(r + dr, c + dc) && (!b[r + dr][c + dc] || b[r + dr][c + dc].color ===
-                            opponent)) moves.push({ r: r + dr, c: c + dc });
+                [[-2, -1], [-2, 1], [-1, -2], [-1, 2], [1, -2], [1, 2], [2, -1], [2, 1]].forEach(([dr, dc]) => {
+                    if (isInside(r + dr, c + dc) && (!b[r + dr][c + dc] || b[r + dr][c + dc].color === opponent)) moves.push({ r: r + dr, c: c + dc });
                 });
             }
             if (['b', 'r', 'q'].includes(piece.type)) {
@@ -1301,13 +1271,10 @@
             if (piece.type === 'k') {
                 for (let dr = -1; dr <= 1; dr++)
                     for (let dc = -1; dc <= 1; dc++)
-                        if ((dr || dc) && isInside(r + dr, c + dc) && (!b[r + dr][c + dc] || b[r + dr][c + dc].color ===
-                                opponent)) moves.push({ r: r + dr, c: c + dc });
+                        if ((dr || dc) && isInside(r + dr, c + dc) && (!b[r + dr][c + dc] || b[r + dr][c + dc].color === opponent)) moves.push({ r: r + dr, c: c + dc });
                 const row = col === 'w' ? 7 : 0;
-                if (r === row && c === 4 && castling[col + 'K'] && !b[row][5] && !b[row][6] && b[row][7]?.type === 'r' && b[
-                        row][7].color === col) moves.push({ r: row, c: 6 });
-                if (r === row && c === 4 && castling[col + 'Q'] && !b[row][3] && !b[row][2] && !b[row][1] && b[row][0]
-                    ?.type === 'r' && b[row][0].color === col) moves.push({ r: row, c: 2 });
+                if (r === row && c === 4 && castling[col + 'K'] && !b[row][5] && !b[row][6] && b[row][7]?.type === 'r' && b[row][7].color === col) moves.push({ r: row, c: 6 });
+                if (r === row && c === 4 && castling[col + 'Q'] && !b[row][3] && !b[row][2] && !b[row][1] && b[row][0]?.type === 'r' && b[row][0].color === col) moves.push({ r: row, c: 2 });
             }
             return moves;
         }
@@ -1409,8 +1376,8 @@
             function isCheck(b,col){let kp=null;for(let r=0;r<8;r++)for(let c=0;c<8;c++){if(b[r][c]&&b[r][c].type=='k'&&b[r][c].color==col){kp={r,c};break}}if(!kp)return false;for(let r=0;r<8;r++)for(let c=0;c<8;c++){if(b[r][c]&&b[r][c].color!=col&&getMoves(b,r,c,null,{}).some(m=>m.r==kp.r&&m.c==kp.c))return true}return false}
             function legalMovesW(b,r,c,ep,cs){return getMoves(b,r,c,ep,cs).filter(m=>{const o=b[m.r][m.c],p=b[r][c];b[m.r][m.c]=p;b[r][c]=null;const ck=isCheck(b,p.color);b[r][c]=p;b[m.r][m.c]=o;return !ck})}
             function allMoves(b,col,ep,cs){const m=[];for(let r=0;r<8;r++)for(let c=0;c<8;c++){if(b[r][c]&&b[r][c].color==col){legalMovesW(b,r,c,ep,cs).forEach(t=>{if(b[r][c].type=='p'&&(t.r==0||t.r==7))m.push({from:{r,c},to:t,promotion:'q'});else m.push({from:{r,c},to:t})})}}return m}
-            function evalBoard(b,ai){let s=0;for(let r=0;r<8;r++)for(let c=0;c<8;c++){const p=b[r][c];if(!p)continue;s+=p.color==ai?V[p.type]:-V[p.type]}return s+Math.random()*8-4}
-            function minimax(b,depth,a,beta,isMax,ai,ep,cs){const col=isMax?ai:(ai=='w'?'b':'w');if(depth==0)return evalBoard(b,ai);const moves=allMoves(b,col,ep,cs);if(!moves.length)return isCheck(b,col)?(isMax?-99999:99999):0;moves.sort((x,y)=>{const ca=b[x.to.r][x.to.c]?V[b[x.to.r][x.to.c].type]:0,cb=b[y.to.r][y.to.c]?V[b[y.to.r][y.to.c].type]:0;return cb-ca});if(isMax){let best=-Infinity;for(const m of moves){const o=b[m.to.r][m.to.c],p=b[m.from.r][m.from.c];b[m.to.r][m.to.c]=p;b[m.from.r][m.from.c]=null;if(m.promotion)b[m.to.r][m.to.c].type=m.promotion;const v=minimax(b,depth-1,a,beta,false,ai,ep,cs);b[m.from.r][m.from.c]=p;b[m.to.r][m.to.c]=o;best=Math.max(best,v);a=Math.max(a,v);if(beta<=a)break}return best}else{let best=Infinity;for(const m of moves){const o=b[m.to.r][m.to.c],p=b[m.from.r][m.from.c];b[m.to.r][m.to.c]=p;b[m.from.r][m.from.c]=null;if(m.promotion)b[m.to.r][m.to.c].type=m.promotion;const v=minimax(b,depth-1,a,beta,true,ai,ep,cs);b[m.from.r][m.from.c]=p;b[m.to.r][m.to.c]=o;best=Math.min(best,v);beta=Math.min(beta,v);if(beta<=a)break}return best}}
+            function evalBoard(b,side){let s=0;for(let r=0;r<8;r++)for(let c=0;c<8;c++){const p=b[r][c];if(!p)continue;s+=p.color==side?V[p.type]:-V[p.type]}return s+Math.random()*8-4}
+            function minimax(b,depth,a,beta,isMax,side,ep,cs){const col=isMax?side:(side=='w'?'b':'w');if(depth==0)return evalBoard(b,side);const moves=allMoves(b,col,ep,cs);if(!moves.length)return isCheck(b,col)?(isMax?-99999:99999):0;moves.sort((x,y)=>{const ca=b[x.to.r][x.to.c]?V[b[x.to.r][x.to.c].type]:0,cb=b[y.to.r][y.to.c]?V[b[y.to.r][y.to.c].type]:0;return cb-ca});if(isMax){let best=-Infinity;for(const m of moves){const o=b[m.to.r][m.to.c],p=b[m.from.r][m.from.c];b[m.to.r][m.to.c]=p;b[m.from.r][m.from.c]=null;if(m.promotion)b[m.to.r][m.to.c].type=m.promotion;const v=minimax(b,depth-1,a,beta,false,side,ep,cs);b[m.from.r][m.from.c]=p;b[m.to.r][m.to.c]=o;best=Math.max(best,v);a=Math.max(a,v);if(beta<=a)break}return best}else{let best=Infinity;for(const m of moves){const o=b[m.to.r][m.to.c],p=b[m.from.r][m.from.c];b[m.to.r][m.to.c]=p;b[m.from.r][m.from.c]=null;if(m.promotion)b[m.to.r][m.to.c].type=m.promotion;const v=minimax(b,depth-1,a,beta,true,side,ep,cs);b[m.from.r][m.from.c]=p;b[m.to.r][m.to.c]=o;best=Math.min(best,v);beta=Math.min(beta,v);if(beta<=a)break}return best}}
             self.onmessage=function(e){
                 const{board,opponentColor,depth,randomChance,enPassant,castling}=e.data;
                 const moves=allMoves(board,opponentColor,enPassant,castling);
@@ -1425,8 +1392,7 @@
             const blob = new Blob([workerCode], { type: 'application/javascript' });
             opponentWorker = new Worker(URL.createObjectURL(blob));
             opponentWorker.onmessage = function(e) {
-                if (opponentTimeoutId) { clearTimeout(opponentTimeoutId);
-                    opponentTimeoutId = null; }
+                if (opponentTimeoutId) { clearTimeout(opponentTimeoutId); opponentTimeoutId = null; }
                 opponentFooter.style.display = 'none';
                 opponentThinking = false;
                 if (!gameActive || postGamePending) return;
@@ -1437,8 +1403,7 @@
             opponentWorker.onerror = function() {
                 opponentFooter.style.display = 'none';
                 opponentThinking = false;
-                if (opponentTimeoutId) { clearTimeout(opponentTimeoutId);
-                    opponentTimeoutId = null; }
+                if (opponentTimeoutId) { clearTimeout(opponentTimeoutId); opponentTimeoutId = null; }
                 if (gameActive && !postGamePending && whiteToMove === (opponentColor === 'w')) {
                     const moves = getAllLegalMoves(board, opponentColor, enPassantTarget, castlingRights);
                     if (moves.length > 0) {
@@ -1461,10 +1426,13 @@
             if (colorChoice === 'random') colorChoice = Math.random() < 0.5 ? 'white' : 'black';
             playerColor = colorChoice === 'white' ? 'w' : 'b';
             opponentColor = playerColor === 'w' ? 'b' : 'w';
-            // FLIP THE BOARD so player's pieces are always at the bottom
-            isFlipped = playerColor === 'b';
+            // CRITICAL FIX: Player ALWAYS moves first, regardless of color.
+            // If player is white, whiteToMove = true (white starts).
+            // If player is black, whiteToMove = false (black starts, so player moves first).
+            whiteToMove = (playerColor === 'w');
+            // FLIP BOARD so player's pieces are always at the bottom
+            isFlipped = (playerColor === 'b');
             board = initialBoard();
-            whiteToMove = true;
             selected = null;
             legalMoves = [];
             gameActive = true;
@@ -1488,7 +1456,10 @@
             document.querySelector('.board').classList.toggle('flipped', isFlipped);
             render();
             updateUndoButton();
-            if (opponentColor === 'w') setTimeout(requestOpponentMove, 500);
+            // If player chose black, player moves first (whiteToMove = false), so no opponent move now.
+            // If player chose white, opponent (black) moves after player.
+            // Opponent only moves when it's their turn (whiteToMove === opponentColor).
+            // Since player moves first, opponent never moves on game start.
         }
 
         function resetFlags() {
@@ -1507,9 +1478,7 @@
             }
             if (piece.type === 'k' && Math.abs(tc - sc) === 2) {
                 const row = sr;
-                if (tc === 6) { board[row][5] = board[row][7];
-                    board[row][7] = null; } else if (tc === 2) { board[row][3] = board[row][0];
-                    board[row][0] = null; }
+                if (tc === 6) { board[row][5] = board[row][7]; board[row][7] = null; } else if (tc === 2) { board[row][3] = board[row][0]; board[row][0] = null; }
             }
             enPassantTarget = null;
             if (piece.type === 'p' && Math.abs(tr - sr) === 2) {
@@ -1567,13 +1536,15 @@
             if (nowInCheck && currentColor === opponentColor) {
                 updateDailyMissionProgress('check_opponent', 1);
             }
+            // After player moves, it's opponent's turn if game still active
+            if (gameActive && !postGamePending && whiteToMove === opponentColor) {
+                setTimeout(requestOpponentMove, 300);
+            }
         }
 
         function updateCastlingRights(sr, sc, piece, tr, tc, captured) {
             if (piece.type === 'k') {
-                if (piece.color === 'w') { castlingRights.wK = false;
-                    castlingRights.wQ = false; } else { castlingRights.bK = false;
-                    castlingRights.bQ = false; }
+                if (piece.color === 'w') { castlingRights.wK = false; castlingRights.wQ = false; } else { castlingRights.bK = false; castlingRights.bQ = false; }
             }
             if (piece.type === 'r') {
                 if (sr === 7 && sc === 0) castlingRights.wQ = false;
@@ -1611,9 +1582,7 @@
                     addNotation({ from, to: { r: promoR, c: promoC } }, !!captured);
                     if (color === playerColor) updateDailyMissionProgress('promote_pawns', 1);
                     checkGameState();
-                    if (gameActive && !postGamePending && whiteToMove === opponentColor) setTimeout(
-                        requestOpponentMove,
-                        300);
+                    if (gameActive && !postGamePending && whiteToMove === opponentColor) setTimeout(requestOpponentMove, 300);
                 });
                 promotionDialog.appendChild(opt);
             });
@@ -1672,16 +1641,14 @@
                 updateDailyMissionProgress('play_games', 1);
                 setTimeout(() => {
                     if (kingInCheck) {
-                        gameStatusEl.innerHTML =
-                            `<span class="status-mate">Checkmate! ${winner} wins!</span>`;
+                        gameStatusEl.innerHTML = `<span class="status-mate">Checkmate! ${winner} wins!</span>`;
                         sfxMate();
                     } else { gameStatusEl.textContent = "Stalemate! Draw"; }
                     showPostGame(winner, kingInCheck ? 'checkmate' : 'stalemate');
                     postGamePending = false;
                 }, 500);
             } else if (kingInCheck) {
-                gameStatusEl.innerHTML =
-                    `<span class="status-check">${currentColor === 'w' ? 'White' : 'Black'} is in check!</span>`;
+                gameStatusEl.innerHTML = `<span class="status-check">${currentColor === 'w' ? 'White' : 'Black'} is in check!</span>`;
             } else {
                 gameStatusEl.textContent = `${whiteToMove ? 'White' : 'Black'}'s turn`;
             }
@@ -1701,18 +1668,10 @@
                 if (elapsed >= 1) {
                     if (whiteToMove) {
                         whiteTimeLeft = Math.max(0, whiteTimeLeft - elapsed);
-                        if (whiteTimeLeft <= 0) { gameActive = false;
-                            clearInterval(timerInterval);
-                            timerInterval = null;
-                            updateDailyMissionProgress('play_games', 1);
-                            showPostGame('Black', 'timeout'); return; }
+                        if (whiteTimeLeft <= 0) { gameActive = false; clearInterval(timerInterval); timerInterval = null; updateDailyMissionProgress('play_games', 1); showPostGame('Black', 'timeout'); return; }
                     } else {
                         blackTimeLeft = Math.max(0, blackTimeLeft - elapsed);
-                        if (blackTimeLeft <= 0) { gameActive = false;
-                            clearInterval(timerInterval);
-                            timerInterval = null;
-                            updateDailyMissionProgress('play_games', 1);
-                            showPostGame('White', 'timeout'); return; }
+                        if (blackTimeLeft <= 0) { gameActive = false; clearInterval(timerInterval); timerInterval = null; updateDailyMissionProgress('play_games', 1); showPostGame('White', 'timeout'); return; }
                     }
                     lastTimerTick = now;
                 }
@@ -1756,8 +1715,7 @@
                         img.className = 'piece';
                         img.draggable = true;
                         if (gameActive && !opponentThinking && !promotionPending && whiteToMove !== opponentColor) {
-                            img.addEventListener('click', e => { e.stopPropagation();
-                                handleClick(r, c); });
+                            img.addEventListener('click', e => { e.stopPropagation(); handleClick(r, c); });
                         }
                         sq.appendChild(img);
                     }
@@ -1775,8 +1733,6 @@
             if (whiteToMove === opponentColor) return;
             if (selected && legalMoves.some(m => m.r === r && m.c === c)) {
                 executeMove(selected.r, selected.c, r, c);
-                if (gameActive && !postGamePending && !promotionPending && whiteToMove === opponentColor) setTimeout(
-                    requestOpponentMove, 300);
                 return;
             }
             const p = board[r][c];
@@ -1821,8 +1777,7 @@
                 opponentWorker = null;
                 initWorker();
                 const moves = getAllLegalMoves(board, opponentColor, enPassantTarget, castlingRights);
-                if (moves.length > 0) { const m = moves[Math.floor(Math.random() * moves.length)];
-                    executeMove(m.from.r, m.from.c, m.to.r, m.to.c, 'q'); }
+                if (moves.length > 0) { const m = moves[Math.floor(Math.random() * moves.length)]; executeMove(m.from.r, m.from.c, m.to.r, m.to.c, 'q'); }
             }, 10000);
             const params = getOpponentParams(currentLevel);
             opponentWorker.postMessage({
@@ -1844,11 +1799,9 @@
             timerInterval = null;
             opponentFooter.style.display = 'none';
             promotionOverlay.style.display = 'none';
-            if (opponentTimeoutId) { clearTimeout(opponentTimeoutId);
-                opponentTimeoutId = null; }
+            if (opponentTimeoutId) { clearTimeout(opponentTimeoutId); opponentTimeoutId = null; }
 
-            const isPlayerWin = winner && ((playerColor === 'w' && winner === 'White') || (playerColor === 'b' &&
-                winner === 'Black'));
+            const isPlayerWin = winner && ((playerColor === 'w' && winner === 'White') || (playerColor === 'b' && winner === 'Black'));
             const titleEl = document.getElementById('endTitle');
             const btnEl = document.getElementById('endActionBtn');
             const barEl = document.getElementById('progBar');
@@ -1900,15 +1853,12 @@
                 luEl.style.display = 'none';
             }
 
-            document.getElementById('statResult').textContent = isPlayerWin ? '✅ Victory' : (resultType === 'stalemate' ?
-                '🤝 Draw' : '❌ Defeat');
+            document.getElementById('statResult').textContent = isPlayerWin ? '✅ Victory' : (resultType === 'stalemate' ? '🤝 Draw' : '❌ Defeat');
             document.getElementById('statStreak').textContent = endlessStreak;
-            document.getElementById('statLevel').textContent =
-                `Level ${currentLevel} (${getZoneForLevel(currentLevel).name})`;
+            document.getElementById('statLevel').textContent = `Level ${currentLevel} (${getZoneForLevel(currentLevel).name})`;
 
             btnEl.textContent = isPlayerWin ? `🚀 Level ${currentLevel}` : '🔄 Try Again';
-            btnEl.className = isPlayerWin ? 'end-action-btn win-btn' : (resultType === 'stalemate' ?
-                'end-action-btn draw-btn' : 'end-action-btn lose-btn');
+            btnEl.className = isPlayerWin ? 'end-action-btn win-btn' : (resultType === 'stalemate' ? 'end-action-btn draw-btn' : 'end-action-btn lose-btn');
 
             postGameModal.style.display = 'flex';
         }
@@ -1918,13 +1868,11 @@
             const zone = getZoneForLevel(currentLevel);
             document.getElementById('hudLevel').textContent = `LEVEL ${currentLevel}`;
             document.getElementById('hudZone').textContent = zone.name;
-            document.getElementById('hudMatch').textContent =
-                `Wins ${matchWins} – ${matchLosses} Losses | ⭐ ${galacticPoints}`;
+            document.getElementById('hudMatch').textContent = `Wins ${matchWins} – ${matchLosses} Losses | ⭐ ${galacticPoints}`;
             document.getElementById('levelBadge').textContent = `🏅 ${zone.name}`;
             document.getElementById('streakBadge').style.display = endlessStreak >= 3 ? 'flex' : 'none';
             document.getElementById('streakBadge').textContent = `🔥 Streak ${endlessStreak}`;
-            document.getElementById('setupLevelInfo').textContent =
-                `LEVEL ${currentLevel} — ${zone.name} (Difficulty: ${zone.depth})`;
+            document.getElementById('setupLevelInfo').textContent = `LEVEL ${currentLevel} — ${zone.name} (Difficulty: ${zone.depth})`;
             const progressPct = Math.min(100, ((currentLevel - zone.min) / (zone.max - zone.min + 1)) * 100);
             document.getElementById('hudProgressFill').style.width = progressPct + '%';
         }
