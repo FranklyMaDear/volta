@@ -484,7 +484,7 @@
             padding: 16px 14px;
         }
         .spin-modal-content {
-            width: 420px;
+            width: 450px;
             max-width: 95%;
             padding: 20px 18px;
             background: linear-gradient(160deg, #1a0a2e, #2a1040);
@@ -540,6 +540,30 @@
             font-size: 13px;
             margin-top: 8px;
             padding: 10px;
+        }
+        .time-select-row {
+            display: flex;
+            gap: 6px;
+            justify-content: center;
+            margin: 8px 0;
+        }
+        .time-select-btn {
+            padding: 8px 16px;
+            border-radius: 10px;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            background: rgba(255, 255, 255, 0.05);
+            color: #ccc;
+            cursor: pointer;
+            font-weight: 700;
+            font-size: 0.85rem;
+            transition: all 0.2s;
+            flex: 1;
+        }
+        .time-select-btn.active {
+            background: #d19a4c;
+            color: #000;
+            border-color: #d19a4c;
+            box-shadow: 0 0 12px rgba(209, 154, 76, 0.5);
         }
         .tab-row {
             display: flex;
@@ -748,59 +772,55 @@
             width: 80%;
             height: 80%;
         }
-        /* Spin Wheel */
+        /* Spin Wheel - Fixed */
         .spin-container {
             position: relative;
-            width: 260px;
-            height: 260px;
-            margin: 0 auto 12px;
+            width: 280px;
+            height: 280px;
+            margin: 0 auto 16px;
         }
         .spin-wheel {
             width: 100%;
             height: 100%;
             border-radius: 50%;
             position: relative;
-            overflow: hidden;
             transition: transform 4s cubic-bezier(0.17, 0.67, 0.12, 0.99);
             box-shadow: 0 0 0 6px #ffcb2e, 0 0 30px rgba(255, 203, 46, 0.4);
+            background: conic-gradient( #4CAF50 0deg 45deg, #2196F3 45deg 90deg, #4CAF50 90deg 135deg, #FF5722 135deg 180deg, #FF9800 180deg 225deg, #9C27B0 225deg 270deg, #E91E63 270deg 315deg, #f44336 315deg 360deg );
         }
-        .spin-segment {
+        .spin-label {
             position: absolute;
-            width: 50%;
-            height: 50%;
-            top: 0;
+            top: 50%;
             left: 50%;
-            transform-origin: 0% 100%;
-            display: flex;
-            align-items: flex-start;
-            justify-content: center;
-            padding-top: 12px;
-            font-size: 0.7rem;
-            font-weight: 700;
+            transform-origin: 0 0;
+            font-weight: 800;
+            font-size: 0.68rem;
             color: #fff;
-            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
-            clip-path: polygon(0% 0%, 100% 0%, 0% 100%);
+            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.7);
+            white-space: nowrap;
+            pointer-events: none;
+            z-index: 5;
         }
         .spin-pointer {
             position: absolute;
-            top: -18px;
+            top: -20px;
             left: 50%;
             transform: translateX(-50%);
             width: 0;
             height: 0;
-            border-left: 16px solid transparent;
-            border-right: 16px solid transparent;
-            border-top: 28px solid #ffcb2e;
+            border-left: 18px solid transparent;
+            border-right: 18px solid transparent;
+            border-top: 30px solid #ffcb2e;
             z-index: 10;
-            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.5));
+            filter: drop-shadow(0 3px 6px rgba(0, 0, 0, 0.6));
         }
         .spin-center-btn {
             position: absolute;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            width: 60px;
-            height: 60px;
+            width: 64px;
+            height: 64px;
             border-radius: 50%;
             background: linear-gradient(135deg, #ffcb2e, #ff9f00);
             color: #000;
@@ -834,102 +854,6 @@
             font-size: 1rem;
             margin-top: 6px;
             animation: popIn 0.4s;
-        }
-        /* Shop */
-        .shop-section {
-            margin-bottom: 10px;
-        }
-        .shop-section-title {
-            color: #ffcb2e;
-            font-size: 0.7rem;
-            font-weight: 800;
-            letter-spacing: 1px;
-            text-transform: uppercase;
-            margin-bottom: 6px;
-            text-align: left;
-        }
-        .shop-items {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 6px;
-        }
-        .shop-item {
-            background: rgba(255, 255, 255, 0.04);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 10px;
-            padding: 10px;
-            cursor: pointer;
-            transition: all 0.2s;
-            text-align: center;
-        }
-        .shop-item:hover {
-            border-color: #d19a4c;
-            background: rgba(209, 154, 76, 0.1);
-        }
-        .shop-item.owned {
-            border-color: rgba(132, 204, 22, 0.5);
-            background: rgba(132, 204, 22, 0.08);
-            cursor: default;
-        }
-        .shop-item.equipped {
-            border-color: #ffcb2e;
-            box-shadow: 0 0 12px rgba(255, 203, 46, 0.3);
-        }
-        .shop-item-icon {
-            font-size: 2rem;
-            margin-bottom: 4px;
-        }
-        .shop-item-name {
-            font-weight: 700;
-            color: #e8e8ed;
-            font-size: 0.65rem;
-        }
-        .shop-item-desc {
-            font-size: 0.55rem;
-            color: rgba(255, 255, 255, 0.45);
-            margin: 3px 0;
-        }
-        .shop-item-price {
-            font-weight: 800;
-            color: #ffcb2e;
-            font-size: 0.65rem;
-        }
-        .shop-item-btn {
-            width: 100%;
-            padding: 6px;
-            border-radius: 12px;
-            border: none;
-            cursor: pointer;
-            font-weight: 700;
-            font-size: 0.6rem;
-            margin-top: 4px;
-            transition: all 0.2s;
-        }
-        .shop-item-btn.buy {
-            background: #4CAF50;
-            color: #fff;
-            box-shadow: 0 2px 0 #2e7d32;
-        }
-        .shop-item-btn.equip {
-            background: #ffcb2e;
-            color: #000;
-            box-shadow: 0 2px 0 #b37400;
-        }
-        .shop-item-btn.unequip {
-            background: #f44336;
-            color: #fff;
-            box-shadow: 0 2px 0 #b71c1c;
-        }
-        .shop-item-btn:active {
-            transform: translateY(2px);
-            box-shadow: 0 0px 0;
-        }
-        .shop-points {
-            text-align: center;
-            color: #ffcb2e;
-            font-weight: 800;
-            font-size: 0.85rem;
-            margin-bottom: 10px;
         }
         /* Capture Explosion */
         .capture-explosion {
@@ -1141,8 +1065,11 @@
                 grid-template-columns: repeat(2, 1fr);
             }
             .spin-container {
-                width: 200px;
-                height: 200px;
+                width: 220px;
+                height: 220px;
+            }
+            .spin-label {
+                font-size: 0.55rem;
             }
         }
     </style>
@@ -1204,6 +1131,12 @@
                 <button class="modal-btn color-btn active" data-color="white">⚪ White</button>
                 <button class="modal-btn color-btn" data-color="black">⚫ Black</button>
             </div>
+            <h3 style="margin-top:12px;">Time Control</h3>
+            <div class="time-select-row">
+                <button class="time-select-btn" data-time="180">⚡ 3 min</button>
+                <button class="time-select-btn active" data-time="300">⏱️ 5 min</button>
+                <button class="time-select-btn" data-time="600">🕐 10 min</button>
+            </div>
             <div class="streak-info" id="streakInfoMenu"></div>
             <button class="modal-btn start-btn" id="startGameBtn">🚀 Start Mission</button>
         </div>
@@ -1248,9 +1181,18 @@
         <div class="modal-content spin-modal-content">
             <h2 style="color:#e040fb;">🎰 Wheel of Fortune</h2>
             <p style="color:#ccc;font-size:0.7rem;">Spin once every 24 hours!</p>
-            <div class="spin-container">
+            <div class="spin-container" id="spinContainer">
                 <div class="spin-pointer"></div>
-                <div class="spin-wheel" id="spinWheel"></div>
+                <div class="spin-wheel" id="spinWheel">
+                    <div class="spin-label" style="transform:rotate(22.5deg) translate(0,-85px);">⭐ 75</div>
+                    <div class="spin-label" style="transform:rotate(67.5deg) translate(0,-85px);">⭐ 150</div>
+                    <div class="spin-label" style="transform:rotate(112.5deg) translate(0,-85px);">⭐ 75</div>
+                    <div class="spin-label" style="transform:rotate(157.5deg) translate(0,-85px);">💣 Bomb</div>
+                    <div class="spin-label" style="transform:rotate(202.5deg) translate(0,-85px);">⭐ 300</div>
+                    <div class="spin-label" style="transform:rotate(247.5deg) translate(0,-85px);">✨ Trail</div>
+                    <div class="spin-label" style="transform:rotate(292.5deg) translate(0,-85px);">💎 500</div>
+                    <div class="spin-label" style="transform:rotate(337.5deg) translate(0,-85px);">🔥 Theme</div>
+                </div>
                 <button class="spin-center-btn" id="spinCenterBtn" onclick="spinWheelNow()">SPIN</button>
             </div>
             <div class="spin-countdown" id="spinCountdown"></div>
@@ -1274,7 +1216,7 @@
     </div>
     <script>
         // ===================== CONFIGURATION =====================
-        const TIME_CONTROL = 300;
+        let selectedTimeControl = 300; // default 5 minutes
         let gameActive = false;
         let board = [];
         let whiteToMove = true;
@@ -1285,8 +1227,8 @@
         let castlingRights = { wK: true, wQ: true, bK: true, bQ: true };
         let playerColor = 'w';
         let opponentColor = 'b';
-        let whiteTimeLeft = TIME_CONTROL;
-        let blackTimeLeft = TIME_CONTROL;
+        let whiteTimeLeft = selectedTimeControl;
+        let blackTimeLeft = selectedTimeControl;
         let timerInterval = null;
         let lastTimerTick = 0;
         let isFlipped = false;
@@ -1623,7 +1565,7 @@
             updateHUD();
         }
 
-        // ===================== SPIN WHEEL =====================
+        // ===================== SPIN WHEEL (FIXED) =====================
         const SPIN_REWARDS = [
             { label: '⭐ 75', icon: '⭐', points: 75, color: '#4CAF50' },
             { label: '⭐ 150', icon: '⭐', points: 150, color: '#2196F3' },
@@ -1631,9 +1573,12 @@
             { label: '💣 Bomb', icon: '💣', item: 'explosion', itemCat: 'sound', color: '#FF5722' },
             { label: '⭐ 300', icon: '⭐', points: 300, color: '#FF9800' },
             { label: '✨ Trail', icon: '✨', item: 'trail', itemCat: 'effect', color: '#9C27B0' },
-            { label: '⭐ 500', icon: '💎', points: 500, color: '#E91E63' },
+            { label: '💎 500', icon: '💎', points: 500, color: '#E91E63' },
             { label: '🔥 Theme', icon: '🔥', item: 'lava', itemCat: 'theme', color: '#f44336' },
         ];
+
+        const SPIN_LABELS = ['⭐ 75', '⭐ 150', '⭐ 75', '💣 Bomb', '⭐ 300', '✨ Trail', '💎 500', '🔥 Theme'];
+        const SPIN_COLORS = ['#4CAF50', '#2196F3', '#4CAF50', '#FF5722', '#FF9800', '#9C27B0', '#E91E63', '#f44336'];
 
         function getSpinData() { try { return JSON.parse(localStorage.getItem('chess4gal_spin') || '{"lastSpin":"","spinsToday":0}'); } catch (
                 e) { return { lastSpin: '', spinsToday: 0 }; } }
@@ -1650,17 +1595,16 @@
 
         function buildSpinWheel() {
             const wheel = document.getElementById('spinWheel');
-            wheel.innerHTML = '';
-            const n = SPIN_REWARDS.length;
-            const angle = 360 / n;
-            SPIN_REWARDS.forEach((r, i) => {
-                const seg = document.createElement('div');
-                seg.className = 'spin-segment';
-                seg.style.transform = `rotate(${i*angle}deg)`;
-                seg.style.background = r.color;
-                seg.textContent = r.label;
-                wheel.appendChild(seg);
-            });
+            // Update conic-gradient dynamically
+            const n = SPIN_COLORS.length;
+            const segAngle = 360 / n;
+            let gradParts = [];
+            for (let i = 0; i < n; i++) {
+                const start = i * segAngle;
+                const end = (i + 1) * segAngle;
+                gradParts.push(`${SPIN_COLORS[i]} ${start}deg ${end}deg`);
+            }
+            wheel.style.background = `conic-gradient(${gradParts.join(',')})`;
             wheel.style.transform = 'rotate(0deg)';
             document.getElementById('spinResult').textContent = '';
             document.getElementById('spinCountdown').textContent = canSpin() ? '🎉 Ready to spin!' :
@@ -1697,10 +1641,17 @@
             document.getElementById('spinCenterBtn').disabled = true;
             const wheel = document.getElementById('spinWheel');
             const n = SPIN_REWARDS.length;
-            const targetIndex = Math.floor(Math.random() * n);
             const segAngle = 360 / n;
-            const targetAngle = 360 * 5 + (360 - targetIndex * segAngle - segAngle / 2) + Math.random() * segAngle * 0.6;
-            wheel.style.transform = `rotate(${targetAngle}deg)`;
+            // The pointer is at top (12 o'clock). Segment 0 starts at 0deg (3 o'clock) with conic-gradient.
+            // So top is at 270deg in the conic gradient. We need to rotate so the target segment lands at top.
+            const targetIndex = Math.floor(Math.random() * n);
+            // Angle to center of target segment: targetIndex * segAngle + segAngle/2
+            // To bring that segment to top (270deg), we need: finalRotation = 270 - targetAngle + multiple of 360
+            const targetAngle = targetIndex * segAngle + segAngle / 2;
+            const baseRotation = 270 - targetAngle;
+            const fullRotation = baseRotation + 360 * 5; // 5 full spins
+            const extraJitter = (Math.random() - 0.5) * segAngle * 0.4;
+            wheel.style.transform = `rotate(${fullRotation + extraJitter}deg)`;
             setTimeout(() => {
                 const reward = SPIN_REWARDS[targetIndex];
                 let msg = '';
@@ -1988,15 +1939,7 @@
 
         function initWorker() { if (opponentWorker) { try { opponentWorker.terminate(); } catch (e) {} opponentWorker =
             null; } const wc =
-                `
-            const V={p:100,n:320,b:330,r:500,q:900,k:20000};
-            function getMoves(b,r,c,ep,cs){const p=b[r][c];if(!p)return[];const m=[],col=p.color,d=col=='w'?-1:1,op=col=='w'?'b':'w';const ib=(rr,cc)=>rr>=0&&rr<8&&cc>=0&&cc<8;const em=(rr,cc)=>ib(rr,cc)&&!b[rr][cc];const en=(rr,cc)=>ib(rr,cc)&&b[rr][cc]&&b[rr][cc].color==op;if(p.type=='p'){if(em(r+d,c))m.push({r:r+d,c});if((col=='w'&&r==6||col=='b'&&r==1)&&em(r+d,c)&&em(r+2*d,c))m.push({r:r+2*d,c});[-1,1].forEach(dc=>{if(en(r+d,c+dc))m.push({r:r+d,c:c+dc})});if(ep&&ep.r==r+d&&ep.c==c+1)m.push({r:r+d,c:c+1});if(ep&&ep.r==r+d&&ep.c==c-1)m.push({r:r+d,c:c-1})}if(p.type=='n'){[[-2,-1],[-2,1],[-1,-2],[-1,2],[1,-2],[1,2],[2,-1],[2,1]].forEach(([dr,dc])=>{if(ib(r+dr,c+dc)&&(!b[r+dr][c+dc]||en(r+dr,c+dc)))m.push({r:r+dr,c:c+dc})})}if(['b','r','q'].includes(p.type)){const dirs=[];if(['b','q'].includes(p.type))dirs.push([-1,-1],[-1,1],[1,-1],[1,1]);if(['r','q'].includes(p.type))dirs.push([-1,0],[1,0],[0,-1],[0,1]);dirs.forEach(([dr,dc])=>{let rr=r+dr,cc=c+dc;while(ib(rr,cc)){if(!b[rr][cc])m.push({r:rr,c:cc});else{if(en(rr,cc))m.push({r:rr,c:cc});break;}rr+=dr;cc+=dc}})}if(p.type=='k'){for(let dr=-1;dr<=1;dr++)for(let dc=-1;dc<=1;dc++){if((dr||dc)&&ib(r+dr,c+dc)&&(!b[r+dr][c+dc]||en(r+dr,c+dc)))m.push({r:r+dr,c:c+dc})}const row=col=='w'?7:0;if(r==row&&c==4&&cs[col+'K']&&!b[row][5]&&!b[row][6]&&b[row][7]&&b[row][7].type=='r'&&b[row][7].color==col)m.push({r:row,c:6});if(r==row&&c==4&&cs[col+'Q']&&!b[row][3]&&!b[row][2]&&!b[row][1]&&b[row][0]&&b[row][0].type=='r'&&b[row][0].color==col)m.push({r:row,c:2})}return m}
-            function isCheck(b,col){let kp=null;for(let r=0;r<8;r++)for(let c=0;c<8;c++){if(b[r][c]&&b[r][c].type=='k'&&b[r][c].color==col){kp={r,c};break}}if(!kp)return false;const op=col=='w'?'b':'w';for(let r=0;r<8;r++)for(let c=0;c<8;c++){if(b[r][c]&&b[r][c].color==op&&getMoves(b,r,c,null,{}).some(m=>m.r==kp.r&&m.c==kp.c))return true}return false}
-            function lMoves(b,r,c,ep,cs){return getMoves(b,r,c,ep,cs).filter(m=>{const o=b[m.r][m.c],p=b[r][c];b[m.r][m.c]=p;b[r][c]=null;const ck=isCheck(b,p.color);b[r][c]=p;b[m.r][m.c]=o;return !ck})}
-            function allMoves(b,col,ep,cs){const m=[];for(let r=0;r<8;r++)for(let c=0;c<8;c++){if(b[r][c]&&b[r][c].color==col){lMoves(b,r,c,ep,cs).forEach(t=>{if(b[r][c].type=='p'&&(t.r==0||t.r==7))m.push({from:{r,c},to:t,promotion:'q'});else m.push({from:{r,c},to:t})})}}return m}
-            function evalBoard(b,sd){let s=0;for(let r=0;r<8;r++)for(let c=0;c<8;c++){const p=b[r][c];if(!p)continue;s+=p.color==sd?V[p.type]:-V[p.type]}return s+Math.random()*8-4}
-            function minimax(b,depth,a,beta,isMax,sd,ep,cs){const col=isMax?sd:(sd=='w'?'b':'w');if(depth==0)return evalBoard(b,sd);const moves=allMoves(b,col,ep,cs);if(!moves.length)return isCheck(b,col)?(isMax?-99999:99999):0;moves.sort((x,y)=>{const ca=b[x.to.r][x.to.c]?V[b[x.to.r][x.to.c].type]:0,cb=b[y.to.r][y.to.c]?V[b[y.to.r][y.to.c].type]:0;return cb-ca});if(isMax){let best=-Infinity;for(const m of moves){const o=b[m.to.r][m.to.c],p=b[m.from.r][m.from.c];b[m.to.r][m.to.c]=p;b[m.from.r][m.from.c]=null;if(m.promotion)b[m.to.r][m.to.c].type=m.promotion;const v=minimax(b,depth-1,a,beta,false,sd,ep,cs);b[m.from.r][m.from.c]=p;b[m.to.r][m.to.c]=o;best=Math.max(best,v);a=Math.max(a,v);if(beta<=a)break}return best}else{let best=Infinity;for(const m of moves){const o=b[m.to.r][m.to.c],p=b[m.from.r][m.from.c];b[m.to.r][m.to.c]=p;b[m.from.r][m.from.c]=null;if(m.promotion)b[m.to.r][m.to.c].type=m.promotion;const v=minimax(b,depth-1,a,beta,true,sd,ep,cs);b[m.from.r][m.from.c]=p;b[m.to.r][m.to.c]=o;best=Math.min(best,v);beta=Math.min(beta,v);if(beta<=a)break}return best}}
-            self.onmessage=function(e){const{board,opponentColor,depth,randomChance,enPassant,castling}=e.data;const moves=allMoves(board,opponentColor,enPassant,castling);if(!moves.length){self.postMessage(null);return;}if(randomChance>0&&Math.random()<randomChance){self.postMessage(moves[Math.floor(Math.random()*moves.length)]);return;}moves.sort((x,y)=>{const ca=board[x.to.r][x.to.c]?V[board[x.to.r][x.to.c].type]:0,cb=board[y.to.r][y.to.c]?V[board[y.to.r][y.to.c].type]:0;return cb-ca});let best=-Infinity,bestMoves=[];for(const m of moves){const o=board[m.to.r][m.to.c],p=board[m.from.r][m.from.c];board[m.to.r][m.to.c]=p;board[m.from.r][m.from.c]=null;if(m.promotion)board[m.to.r][m.to.c].type=m.promotion;const s=minimax(board,depth-1,-Infinity,Infinity,false,opponentColor,enPassant,castling);board[m.from.r][m.from.c]=p;board[m.to.r][m.to.c]=o;if(s>best){best=s;bestMoves=[m]}else if(s==best)bestMoves.push(m)}self.postMessage(bestMoves[Math.floor(Math.random()*bestMoves.length)])};`;
+                `const V={p:100,n:320,b:330,r:500,q:900,k:20000};function getMoves(b,r,c,ep,cs){const p=b[r][c];if(!p)return[];const m=[],col=p.color,d=col=='w'?-1:1,op=col=='w'?'b':'w';const ib=(rr,cc)=>rr>=0&&rr<8&&cc>=0&&cc<8;const em=(rr,cc)=>ib(rr,cc)&&!b[rr][cc];const en=(rr,cc)=>ib(rr,cc)&&b[rr][cc]&&b[rr][cc].color==op;if(p.type=='p'){if(em(r+d,c))m.push({r:r+d,c});if((col=='w'&&r==6||col=='b'&&r==1)&&em(r+d,c)&&em(r+2*d,c))m.push({r:r+2*d,c});[-1,1].forEach(dc=>{if(en(r+d,c+dc))m.push({r:r+d,c:c+dc})});if(ep&&ep.r==r+d&&ep.c==c+1)m.push({r:r+d,c:c+1});if(ep&&ep.r==r+d&&ep.c==c-1)m.push({r:r+d,c:c-1})}if(p.type=='n'){[[-2,-1],[-2,1],[-1,-2],[-1,2],[1,-2],[1,2],[2,-1],[2,1]].forEach(([dr,dc])=>{if(ib(r+dr,c+dc)&&(!b[r+dr][c+dc]||en(r+dr,c+dc)))m.push({r:r+dr,c:c+dc})})}if(['b','r','q'].includes(p.type)){const dirs=[];if(['b','q'].includes(p.type))dirs.push([-1,-1],[-1,1],[1,-1],[1,1]);if(['r','q'].includes(p.type))dirs.push([-1,0],[1,0],[0,-1],[0,1]);dirs.forEach(([dr,dc])=>{let rr=r+dr,cc=c+dc;while(ib(rr,cc)){if(!b[rr][cc])m.push({r:rr,c:cc});else{if(en(rr,cc))m.push({r:rr,c:cc});break;}rr+=dr;cc+=dc}})}if(p.type=='k'){for(let dr=-1;dr<=1;dr++)for(let dc=-1;dc<=1;dc++){if((dr||dc)&&ib(r+dr,c+dc)&&(!b[r+dr][c+dc]||en(r+dr,c+dc)))m.push({r:r+dr,c:c+dc})}const row=col=='w'?7:0;if(r==row&&c==4&&cs[col+'K']&&!b[row][5]&&!b[row][6]&&b[row][7]&&b[row][7].type=='r'&&b[row][7].color==col)m.push({r:row,c:6});if(r==row&&c==4&&cs[col+'Q']&&!b[row][3]&&!b[row][2]&&!b[row][1]&&b[row][0]&&b[row][0].type=='r'&&b[row][0].color==col)m.push({r:row,c:2})}return m}function isCheck(b,col){let kp=null;for(let r=0;r<8;r++)for(let c=0;c<8;c++){if(b[r][c]&&b[r][c].type=='k'&&b[r][c].color==col){kp={r,c};break}}if(!kp)return false;const op=col=='w'?'b':'w';for(let r=0;r<8;r++)for(let c=0;c<8;c++){if(b[r][c]&&b[r][c].color==op&&getMoves(b,r,c,null,{}).some(m=>m.r==kp.r&&m.c==kp.c))return true}return false}function lMoves(b,r,c,ep,cs){return getMoves(b,r,c,ep,cs).filter(m=>{const o=b[m.r][m.c],p=b[r][c];b[m.r][m.c]=p;b[r][c]=null;const ck=isCheck(b,p.color);b[r][c]=p;b[m.r][m.c]=o;return !ck})}function allMoves(b,col,ep,cs){const m=[];for(let r=0;r<8;r++)for(let c=0;c<8;c++){if(b[r][c]&&b[r][c].color==col){lMoves(b,r,c,ep,cs).forEach(t=>{if(b[r][c].type=='p'&&(t.r==0||t.r==7))m.push({from:{r,c},to:t,promotion:'q'});else m.push({from:{r,c},to:t})})}}return m}function evalBoard(b,sd){let s=0;for(let r=0;r<8;r++)for(let c=0;c<8;c++){const p=b[r][c];if(!p)continue;s+=p.color==sd?V[p.type]:-V[p.type]}return s+Math.random()*8-4}function minimax(b,depth,a,beta,isMax,sd,ep,cs){const col=isMax?sd:(sd=='w'?'b':'w');if(depth==0)return evalBoard(b,sd);const moves=allMoves(b,col,ep,cs);if(!moves.length)return isCheck(b,col)?(isMax?-99999:99999):0;moves.sort((x,y)=>{const ca=b[x.to.r][x.to.c]?V[b[x.to.r][x.to.c].type]:0,cb=b[y.to.r][y.to.c]?V[b[y.to.r][y.to.c].type]:0;return cb-ca});if(isMax){let best=-Infinity;for(const m of moves){const o=b[m.to.r][m.to.c],p=b[m.from.r][m.from.c];b[m.to.r][m.to.c]=p;b[m.from.r][m.from.c]=null;if(m.promotion)b[m.to.r][m.to.c].type=m.promotion;const v=minimax(b,depth-1,a,beta,false,sd,ep,cs);b[m.from.r][m.from.c]=p;b[m.to.r][m.to.c]=o;best=Math.max(best,v);a=Math.max(a,v);if(beta<=a)break}return best}else{let best=Infinity;for(const m of moves){const o=b[m.to.r][m.to.c],p=b[m.from.r][m.from.c];b[m.to.r][m.to.c]=p;b[m.from.r][m.from.c]=null;if(m.promotion)b[m.to.r][m.to.c].type=m.promotion;const v=minimax(b,depth-1,a,beta,true,sd,ep,cs);b[m.from.r][m.from.c]=p;b[m.to.r][m.to.c]=o;best=Math.min(best,v);beta=Math.min(beta,v);if(beta<=a)break}return best}}self.onmessage=function(e){const{board,opponentColor,depth,randomChance,enPassant,castling}=e.data;const moves=allMoves(board,opponentColor,enPassant,castling);if(!moves.length){self.postMessage(null);return;}if(randomChance>0&&Math.random()<randomChance){self.postMessage(moves[Math.floor(Math.random()*moves.length)]);return;}moves.sort((x,y)=>{const ca=board[x.to.r][x.to.c]?V[board[x.to.r][x.to.c].type]:0,cb=board[y.to.r][y.to.c]?V[board[y.to.r][y.to.c].type]:0;return cb-ca});let best=-Infinity,bestMoves=[];for(const m of moves){const o=board[m.to.r][m.to.c],p=board[m.from.r][m.from.c];board[m.to.r][m.to.c]=p;board[m.from.r][m.from.c]=null;if(m.promotion)board[m.to.r][m.to.c].type=m.promotion;const s=minimax(board,depth-1,-Infinity,Infinity,false,opponentColor,enPassant,castling);board[m.from.r][m.from.c]=p;board[m.to.r][m.to.c]=o;if(s>best){best=s;bestMoves=[m]}else if(s==best)bestMoves.push(m)}self.postMessage(bestMoves[Math.floor(Math.random()*bestMoves.length)])};`;
             const blob = new Blob([wc], { type: 'application/javascript' });
             opponentWorker = new Worker(URL.createObjectURL(blob));
             opponentWorker.onmessage = function(e) { if (opponentTimeoutId) { clearTimeout(opponentTimeoutId);
@@ -2040,8 +1983,8 @@
             moveHistory = [];
             notationList.innerHTML = '';
             resetFlags();
-            whiteTimeLeft = TIME_CONTROL;
-            blackTimeLeft = TIME_CONTROL;
+            whiteTimeLeft = selectedTimeControl;
+            blackTimeLeft = selectedTimeControl;
             lastTimerTick = Date.now();
             clearInterval(timerInterval);
             timerInterval = null;
@@ -2370,6 +2313,11 @@
         document.querySelectorAll('.color-btn').forEach(btn => btn.addEventListener('click', () => { document.querySelectorAll(
                 '.color-btn').forEach(b => b.classList.remove('active'));
             btn.classList.add('active'); }));
+        document.querySelectorAll('.time-select-btn').forEach(btn => btn.addEventListener('click', () => { document
+                .querySelectorAll('.time-select-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            selectedTimeControl = parseInt(btn.dataset.time);
+        }));
         document.getElementById('startGameBtn').addEventListener('click', () => { setupModal.style.display = 'none'; const c =
                 document.querySelector('.color-btn.active').dataset.color;
             startNewGame(c); });
