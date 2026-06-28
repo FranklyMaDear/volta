@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -1277,6 +1278,10 @@
         let hintUsedThisGame = false;
         let pointsEarnedThisGame = 0;
 
+        // YouTube Playables Flags
+        let _gamePaused = false;
+        let ytSaveAllowed = false; // Prevents saveData before loadData
+
         const CHESS_ZONE_DEFS = [
             { min: 1, max: 10, name: '🚀 Rookie Astronaut', depth: 1, randomChance: 0.80 },
             { min: 11, max: 20, name: '🛸 Starship Commander', depth: 2, randomChance: 0.25 },
@@ -1754,7 +1759,7 @@
 
         // ===================== AUDIO =====================
         let audioCtx = null;
-        window._chessAudioCtx = audioCtx; // Για την πλατφόρμα
+        window._chessAudioCtx = audioCtx; // For YouTube SDK Audio Handling
 
         function initAudio() { if (!audioCtx) { audioCtx = new(window.AudioContext || window.webkitAudioContext)();
                 window._chessAudioCtx = audioCtx; } if (audioCtx.state === 'suspended') audioCtx.resume(); }
@@ -2120,6 +2125,9 @@
                 wasInCheckBefore) updateMissionProgress('save_king', 1); if (nowInCheck && curCol ===
                 opponentColor) updateMissionProgress('check_opponent', 1); if (gameActive && !postGamePending &&
                 isOpponentTurn()) { setTimeout(requestOpponentMove, 300); }
+            
+            // Save local and cloud progress after move
+            saveGame();
         }
 
         function updateCastlingRights(sr, sc, piece, tr, tc, captured) { if (piece.type === 'k') { if (piece.color ===
@@ -2184,6 +2192,8 @@
                     
                     checkGameState();
                     if (gameActive && isOpponentTurn()) setTimeout(requestOpponentMove, 300);
+                    
+                    saveGame();
                 });
                 promotionDialog.appendChild(opt);
             });
@@ -2244,7 +2254,7 @@
         // ===================== TIMER =====================
         function startTimer() { if (timerInterval) clearInterval(timerInterval);
             lastTimerTick = Date.now();
-            timerInterval = setInterval(() => { if (!gameActive || postGamePending || promotionPending) { lastTimerTick = Date.now(); return; } const now = Date.now(),
+            timerInterval = setInterval(() => { if (!gameActive || postGamePending || promotionPending || _gamePaused) { lastTimerTick = Date.now(); return; } const now = Date.now(),
                     elapsed = Math.floor((now - lastTimerTick) / 1000); if (elapsed >= 1) { if (whiteToMove) {
                         whiteTimeLeft = Math.max(0, whiteTimeLeft - elapsed); if (whiteTimeLeft <= 0) { gameActive =
                             false;
@@ -2381,6 +2391,8 @@
             updateMissionsBadge();
             updateDailyBadge();
             postGameModal.style.display = 'flex';
+            
+            saveGame();
         }
 
         // ===================== HUD =====================
@@ -2408,6 +2420,29 @@
         function saveLevel(l) { try { localStorage.setItem('chess4gal_level', l); } catch (e) {} }
 
         function loadLevel() { return Math.max(1, parseInt(localStorage.getItem('chess4gal_level') || '1', 10)); }
+
+        // ===================== SAVE & CLOUD SYNC (Fix for YouTube Cloud Save) =====================
+        function saveGame() {
+            if (!gameActive && !postGamePending) return; // Only save if meaningful progress
+            
+            const data = {
+                level: currentLevel,
+                wins: matchWins,
+                losses: matchLosses,
+                streak: endlessStreak,
+                points: galacticPoints
+            };
+            
+            // Save local backup
+            localStorage.setItem('chess4gal_cloud_backup', JSON.stringify(data));
+
+            // Save to YouTube Cloud (Only if loadData was allowed)
+            if (ytSaveAllowed && window.ytgame && window.ytgame.game && typeof window.ytgame.game.saveData === 'function') {
+                try {
+                    window.ytgame.game.saveData(JSON.stringify(data)).catch(function(e){});
+                } catch(e) {}
+            }
+        }
 
         // ===================== EVENT LISTENERS =====================
         document.querySelectorAll('.color-btn').forEach(btn => btn.addEventListener('click', () => { document.querySelectorAll(
@@ -2459,7 +2494,37 @@
                 document.querySelectorAll('#shopTabs .tab-btn').forEach(b => b.classList.toggle('active', b.dataset
                     .shoptab === currentShopTab));
                 renderShop(); } });
-        window.addEventListener('DOMContentLoaded', () => {
+
+        // ============================================================
+        //  YOUTUBE PLAYABLES BOOT SEQUENCE (Fixing all 4 Errors)
+        // ============================================================
+        window.addEventListener('DOMContentLoaded', async () => {
+            // 1. firstFrameReady BEFORE everything else
+            if (window.ytgame && window.ytgame.game && typeof window.ytgame.game.firstFrameReady === 'function') {
+                try { window.ytgame.game.firstFrameReady(); } catch(e) {}
+            }
+
+            // 2. Await loadData before gameReady (Cloud Fix)
+            if (window.ytgame && window.ytgame.game && typeof window.ytgame.game.loadData === 'function') {
+                try {
+                    const cloudData = await window.ytgame.game.loadData();
+                    if (cloudData) {
+                        const parsed = JSON.parse(cloudData);
+                        if (parsed.level) currentLevel = parsed.level;
+                        if (parsed.wins) matchWins = parsed.wins;
+                        if (parsed.losses) matchLosses = parsed.losses;
+                        if (parsed.streak) endlessStreak = parsed.streak;
+                        if (parsed.points) galacticPoints = parsed.points;
+                        saveLevel(currentLevel);
+                        saveGalacticPoints();
+                    }
+                } catch(e) {}
+                ytSaveAllowed = true; // Save is now allowed
+            } else {
+                ytSaveAllowed = true;
+            }
+
+            // Load local and restore UI
             currentLevel = loadLevel();
             galacticPoints = loadGalacticPoints();
             loadOwnedItems();
@@ -2469,9 +2534,51 @@
             updateMissionsBadge();
             updateDailyBadge();
             updateLoginStreak();
+
+            // 3. Register onPause / onResume (Pause/Resume Fix)
+            if (window.ytgame && window.ytgame.system && typeof window.ytgame.system.onPause === 'function') {
+                try {
+                    window.ytgame.system.onPause(function() {
+                        _gamePaused = true;
+                        opponentFooter.style.display = 'none';
+                        if (timerInterval) { clearInterval(timerInterval); timerInterval = null; }
+                        try { if (audioCtx && audioCtx.state === 'running') audioCtx.suspend(); } catch(e) {}
+                    });
+                } catch(e) {}
+            }
+            if (window.ytgame && window.ytgame.system && typeof window.ytgame.system.onResume === 'function') {
+                try {
+                    window.ytgame.system.onResume(function() {
+                        _gamePaused = false;
+                        if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
+                        if (gameActive && !postGamePending) {
+                            startTimer();
+                            if (whiteToMove === (opponentColor === 'w') && !opponentThinking) setTimeout(requestOpponentMove, 400);
+                        }
+                    });
+                } catch(e) {}
+            }
+
+            // 4. Register onAudioEnabledChange (Audio Fix)
+            if (window.ytgame && window.ytgame.system && typeof window.ytgame.system.onAudioEnabledChange === 'function') {
+                try {
+                    window.ytgame.system.onAudioEnabledChange(function(enabled) {
+                        if (!enabled && audioCtx && audioCtx.state === 'running') audioCtx.suspend();
+                        if (enabled && audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
+                    });
+                } catch(e) {}
+            }
+
+            // 5. gameReady AFTER all data and listeners are set (Startup Fix)
+            if (window.ytgame && window.ytgame.game && typeof window.ytgame.game.gameReady === 'function') {
+                try { window.ytgame.game.gameReady(); } catch(e) {}
+            }
+
+            // Show UI
             setupModal.style.display = 'flex';
-            setInterval(() => { updateMissionsResetInfo();
-                updateDailyBonusResetInfo(); }, 60000);
+            const hasSaved = !!localStorage.getItem('chess4gal_cloud_backup');
+            document.getElementById('savedGameInfo').style.display = hasSaved ? 'block' : 'none';
+            document.getElementById('resumeGameBtn').style.display = hasSaved ? 'block' : 'none';
         });
     </script>
 </body>
