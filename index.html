@@ -8,6 +8,12 @@
     <meta name="theme-color" content="#1e3c72">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+    <!-- ============================================================
+         YouTube Playables SDK — ΠΡΕΠΕΙ ΝΑ ΕΙΝΑΙ ΤΟ ΠΡΩΤΟ SCRIPT
+    ============================================================ -->
+    <script src="https://www.youtube.com/game_api/v1"></script>
+
     <style>
         :root {
             --board-size: min(88vw, 88vh, 680px);
@@ -1748,6 +1754,7 @@
 
         // ===================== AUDIO =====================
         let audioCtx = null;
+        window._chessAudioCtx = audioCtx; // Για την πλατφόρμα
 
         function initAudio() { if (!audioCtx) { audioCtx = new(window.AudioContext || window.webkitAudioContext)();
                 window._chessAudioCtx = audioCtx; } if (audioCtx.state === 'suspended') audioCtx.resume(); }
@@ -2237,9 +2244,7 @@
         // ===================== TIMER =====================
         function startTimer() { if (timerInterval) clearInterval(timerInterval);
             lastTimerTick = Date.now();
-            timerInterval = setInterval(() => { if (!gameActive || postGamePending || promotionPending || (window
-                        ._sdkAdPlaying)) { lastTimerTick = Date.now(); return; } if (freezeTimeUsed &&
-                    isOpponentTurn()) { lastTimerTick = Date.now(); return; } const now = Date.now(),
+            timerInterval = setInterval(() => { if (!gameActive || postGamePending || promotionPending) { lastTimerTick = Date.now(); return; } const now = Date.now(),
                     elapsed = Math.floor((now - lastTimerTick) / 1000); if (elapsed >= 1) { if (whiteToMove) {
                         whiteTimeLeft = Math.max(0, whiteTimeLeft - elapsed); if (whiteTimeLeft <= 0) { gameActive =
                             false;
