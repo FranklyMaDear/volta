@@ -1365,7 +1365,7 @@
             sounds: [
                 { id: 'classic', name: 'Classic Sound', icon: '🔊', desc: 'Wooden click sounds', price: 0,
                     category: 'sound' },
-                { id: 'explosion', name: 'Bomb Capture', icon: '💣', desc: 'BOOM on capture!', price: 250,
+                { id: 'explosion', name: 'Bomb Capture', icon: '💣', desc: 'Clean cinematic boom!', price: 250,
                     category: 'sound' },
                 { id: 'laser', name: 'Laser Blast', icon: '🔫', desc: 'Pew-pew laser moves', price: 200,
                     category: 'sound' },
@@ -1768,15 +1768,25 @@
                     0.06);
                 playTone(1400, 0.08, 'sine', 0.05); } else { playTone(600, 0.07); } }
 
+        // ===================== ΝΕΟΣ ΚΑΘΑΡΟΣ ΗΧΟΣ ΕΚΡΗΞΗΣ =====================
         function sfxCapture() {
-            if (equippedSound === 'explosion') { playTone(60, 0.3, 'sawtooth', 0.2);
-                playTone(40, 0.4, 'square', 0.3);
-                setTimeout(() => playTone(30, 0.5, 'square', 0.25), 100); } else if (equippedSound === 'thunder') { playTone(80,
-                    0.4, 'sawtooth', 0.25);
-                playTone(50, 0.5, 'square', 0.3); } else if (equippedSound === 'laser') { playTone(1400, 0.1, 'sawtooth', 0.1);
-                playTone(200, 0.15, 'square', 0.12); } else if (equippedSound === 'magic') { playTone(1600, 0.12, 'sine',
-                    0.08);
-                playTone(2000, 0.1, 'sine', 0.06); } else { playTone(800, 0.1, 'triangle'); }
+            if (equippedSound === 'explosion') {
+                // Καθαρή, δυνατή έκρηξη (μπουμ) χωρίς τραχύ θόρυβο
+                playTone(300, 0.12, 'square', 0.25);   // Το δυνατό χτύπημα
+                setTimeout(() => playTone(100, 0.4, 'square', 0.18), 30);  // Το βαρύ μπουμ
+                setTimeout(() => playTone(40, 0.6, 'triangle', 0.15), 100); // Το ροχαλητό της έκρηξης
+            } else if (equippedSound === 'thunder') {
+                playTone(80, 0.4, 'sawtooth', 0.25);
+                playTone(50, 0.5, 'square', 0.3);
+            } else if (equippedSound === 'laser') {
+                playTone(1400, 0.1, 'sawtooth', 0.1);
+                playTone(200, 0.15, 'square', 0.12);
+            } else if (equippedSound === 'magic') {
+                playTone(1600, 0.12, 'sine', 0.08);
+                playTone(2000, 0.1, 'sine', 0.06);
+            } else {
+                playTone(800, 0.1, 'triangle');
+            }
         }
 
         function sfxCheck() { if (equippedSound === 'epic') { [523, 659, 784].forEach((f, i) => setTimeout(() => playTone(f,
@@ -2056,7 +2066,6 @@
                     updateCastlingRights(sr, sc, piece, tr, tc, captured);
                     finalizeMove(sr, sc, tr, tc, captured);
                 } else {
-                    // Διορθωμένο: Αποθηκεύουμε όλα τα δεδομένα για μετά
                     promotionPending = { 
                         r: tr, c: tc, 
                         color: piece.color, 
@@ -2116,7 +2125,7 @@
             false; if (tr === 0 && tc === 0) castlingRights.bQ = false; if (tr === 0 && tc === 7) castlingRights.bK =
             false; } }
 
-        // ===================== ΔΙΟΡΘΩΜΕΝΗ ΠΡΟΑΓΩΓΗ (PROMOTION) =====================
+        // ===================== ΠΡΟΑΓΩΓΗ (PROMOTION) =====================
         function showPromotionUI(color) {
             promotionDialog.innerHTML = '';
             const pending = promotionPending;
@@ -2128,32 +2137,25 @@
                 opt.addEventListener('click', () => {
                     promotionOverlay.style.display = 'none';
                     
-                    // 1. Παίρνουμε τα δεδομένα
                     const fromR = pending.fromR, fromC = pending.fromC;
                     const toR = pending.r, toC = pending.c;
                     const captured = pending.captured;
                     
-                    // 2. Μετακινούμε το πιόνι
                     const pawn = board[fromR][fromC];
                     board[toR][toC] = pawn;
                     board[fromR][fromC] = null;
-                    
-                    // 3. Το προάγουμε
                     pawn.type = type;
                     
-                    // 4. Ενημερώνουμε τα δικαιώματα του ροκέ (Castling) για ασφάλεια
                     updateCastlingRights(fromR, fromC, pawn, toR, toC, captured);
                     
                     promotionPending = null;
                     whiteToMove = !whiteToMove;
                     render();
                     
-                    // 5. Ήχοι και εφέ
                     if (captured) { sfxCapture(); spawnCaptureExplosion(toR, toC); }
                     else { sfxMove(); }
                     spawnMoveTrail(fromR, fromC, toR, toC);
                     
-                    // 6. Καταγραφή κίνησης (Notation)
                     const sym = { p: '', n: 'N', b: 'B', r: 'R', q: 'Q', k: 'K' }[type];
                     const f = 'abcdefgh'[fromC] + (8 - fromR);
                     const t = 'abcdefgh'[toC] + (8 - toR);
@@ -2164,7 +2166,6 @@
                     notationList.appendChild(notationDiv);
                     notationList.scrollTop = notationList.scrollHeight;
                     
-                    // 7. Αποστολές (Missions)
                     if (pawn.color === playerColor) {
                         updateMissionProgress('promote_pawns', 1);
                         updateMissionProgress('weekly_promotions', 1);
@@ -2174,7 +2175,6 @@
                         updateMissionProgress('weekly_captures', 1);
                     }
                     
-                    // 8. Έλεγχος κατάστασης παρτίδας
                     checkGameState();
                     if (gameActive && isOpponentTurn()) setTimeout(requestOpponentMove, 300);
                 });
@@ -2426,7 +2426,6 @@
             updateDailyBadge(); });
         undoBtn.addEventListener('click', undoLastMove);
         promotionOverlay.addEventListener('click', (e) => { if (e.target === promotionOverlay && promotionPending) { 
-            // Εναλλακτική ασφαλείας: αν κάνει κλικ έξω από το μενού, προαγωγή σε Queen
             const pending = promotionPending;
             const fromR = pending.fromR, fromC = pending.fromC;
             const toR = pending.r, toC = pending.c;
@@ -2441,7 +2440,6 @@
             whiteToMove = !whiteToMove;
             render();
             sfxMove(); 
-            // (Συνέχεια λογικής... παραλείπονται γιατί το πάνω κλικ είναι η κύρια ροή)
             } });
         missionsModal.addEventListener('click', (e) => { if (e.target === missionsModal) closeMissionsModal(); });
         dailyBonusModal.addEventListener('click', (e) => { if (e.target === dailyBonusModal) closeDailyBonusModal(); });
