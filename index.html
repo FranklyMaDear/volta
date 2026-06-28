@@ -986,6 +986,11 @@
             return CHESS_ZONE_DEFS.find(z => lvl >= z.min && lvl <= z.max) || CHESS_ZONE_DEFS[CHESS_ZONE_DEFS.length - 1];
         }
 
+        // Helper: returns true if it's the opponent's turn
+        function isOpponentTurn() {
+            return whiteToMove === (opponentColor === 'w');
+        }
+
         // ===================== DOM ELEMENTS =====================
         const boardEl = document.getElementById('board');
         const gameStatusEl = document.getElementById('gameStatus');
@@ -1033,26 +1038,17 @@
             if (saved) {
                 try {
                     const data = JSON.parse(saved);
-                    if (data.date === today && data.missions && data.missions.length === 10) {
-                        return data;
-                    }
+                    if (data.date === today && data.missions && data.missions.length === 10) return data;
                 } catch (e) {}
             }
             const shuffled = [...ALL_MISSION_TEMPLATES].sort(() => Math.random() - 0.5);
-            const missions = shuffled.slice(0, 10).map(m => ({
-                ...m,
-                progress: 0,
-                completed: false,
-                claimed: false,
-            }));
+            const missions = shuffled.slice(0, 10).map(m => ({ ...m, progress: 0, completed: false, claimed: false }));
             const newData = { date: today, missions };
             localStorage.setItem('chess4gal_daily10', JSON.stringify(newData));
             return newData;
         }
 
-        function saveDailyMissions(data) {
-            localStorage.setItem('chess4gal_daily10', JSON.stringify(data));
-        }
+        function saveDailyMissions(data) { localStorage.setItem('chess4gal_daily10', JSON.stringify(data)); }
 
         function updateDailyMissionProgress(missionId, amount = 1) {
             const data = loadDailyMissions();
@@ -1060,9 +1056,7 @@
             for (const m of data.missions) {
                 if (m.id === missionId && !m.completed && !m.claimed) {
                     m.progress = Math.min(m.target, m.progress + amount);
-                    if (m.progress >= m.target) {
-                        m.completed = true;
-                    }
+                    if (m.progress >= m.target) m.completed = true;
                     changed = true;
                 }
             }
@@ -1092,11 +1086,7 @@
 
         function updateMissionsBadge() {
             const count = getCompletedUnclaimedCount();
-            if (count > 0) {
-                missionsBadgeDot.style.display = 'inline-block';
-            } else {
-                missionsBadgeDot.style.display = 'none';
-            }
+            missionsBadgeDot.style.display = count > 0 ? 'inline-block' : 'none';
         }
 
         function renderMissionsModal() {
@@ -1104,26 +1094,18 @@
             missionsList.innerHTML = data.missions.map((m, i) => {
                 const pct = Math.min(100, Math.round((m.progress / m.target) * 100));
                 const claimDisabled = !m.completed || m.claimed;
-                let claimText = '🎁 Claim';
-                if (m.claimed) claimText = '✅ Done';
-                else if (!m.completed) claimText = '🔒 Locked';
-                let itemClass = '';
-                if (m.claimed) itemClass = 'claimed';
-                else if (m.completed) itemClass = 'completed';
-                return `
-                    <div class="mission-item ${itemClass}">
-                        <span class="mission-icon-big">${m.icon}</span>
-                        <div class="mission-info">
-                            <span class="mission-name">${m.name} <span style="color:#ffcb2e;">(+${m.reward})</span></span>
-                            <span class="mission-desc">${m.desc}</span>
-                            <div class="mission-track"><div class="mission-fill" style="width:${pct}%;"></div></div>
-                            <span class="mission-progress-text">${m.progress}/${m.target}</span>
-                        </div>
-                        <button class="mission-claim-btn ${m.claimed ? 'claimed' : ''}"
-                                ${claimDisabled ? 'disabled' : ''}
-                                onclick="claimDailyMission(${i})">${claimText}</button>
+                let claimText = m.claimed ? '✅ Done' : (!m.completed ? '🔒 Locked' : '🎁 Claim');
+                let itemClass = m.claimed ? 'claimed' : (m.completed ? 'completed' : '');
+                return `<div class="mission-item ${itemClass}">
+                    <span class="mission-icon-big">${m.icon}</span>
+                    <div class="mission-info">
+                        <span class="mission-name">${m.name} <span style="color:#ffcb2e;">(+${m.reward})</span></span>
+                        <span class="mission-desc">${m.desc}</span>
+                        <div class="mission-track"><div class="mission-fill" style="width:${pct}%;"></div></div>
+                        <span class="mission-progress-text">${m.progress}/${m.target}</span>
                     </div>
-                `;
+                    <button class="mission-claim-btn ${m.claimed ? 'claimed' : ''}" ${claimDisabled ? 'disabled' : ''} onclick="claimDailyMission(${i})">${claimText}</button>
+                </div>`;
             }).join('');
             document.getElementById('missionsPointsDisplay').textContent = `⭐ ${galacticPoints} Points`;
             updateMissionsResetTimer();
@@ -1140,24 +1122,16 @@
             document.getElementById('missionsResetInfo').textContent = `🕐 Missions reset in: ${hrs}h ${mins}m`;
         }
 
-        function openMissionsModal() {
-            renderMissionsModal();
-            missionsModal.style.display = 'flex';
-        }
+        function openMissionsModal() { renderMissionsModal();
+            missionsModal.style.display = 'flex'; }
 
-        function closeMissionsModal() {
-            missionsModal.style.display = 'none';
+        function closeMissionsModal() { missionsModal.style.display = 'none';
             updateMissionsBadge();
-            updateHUD();
-        }
+            updateHUD(); }
 
-        function saveGalacticPoints() {
-            try { localStorage.setItem('chess4gal_points', galacticPoints); } catch (e) {}
-        }
+        function saveGalacticPoints() { try { localStorage.setItem('chess4gal_points', galacticPoints); } catch (e) {} }
 
-        function loadGalacticPoints() {
-            return parseInt(localStorage.getItem('chess4gal_points') || '0', 10);
-        }
+        function loadGalacticPoints() { return parseInt(localStorage.getItem('chess4gal_points') || '0', 10); }
 
         // ===================== AUDIO =====================
         let audioCtx = null;
@@ -1188,7 +1162,8 @@
 
         function sfxCapture() { playTone(800, 0.1, 'triangle'); }
 
-        function sfxCheck() { playTone(1200, 0.1); setTimeout(() => playTone(900, 0.1), 70); }
+        function sfxCheck() { playTone(1200, 0.1);
+            setTimeout(() => playTone(900, 0.1), 70); }
 
         function sfxMate() { [523, 659, 784, 1047].forEach((f, i) => setTimeout(() => playTone(f, 0.22, 'sine', 0.13), i * 90)); }
 
@@ -1196,20 +1171,7 @@
         const PIECE_VALUES = { p: 100, n: 320, b: 330, r: 500, q: 900, k: 20000 };
 
         function getPieceImg(type, color) {
-            const map = {
-                pw: '4/45/Chess_plt45.svg',
-                pb: 'c/c7/Chess_pdt45.svg',
-                rw: '7/72/Chess_rlt45.svg',
-                rb: 'f/ff/Chess_rdt45.svg',
-                nw: '7/70/Chess_nlt45.svg',
-                nb: 'e/ef/Chess_ndt45.svg',
-                bw: 'b/b1/Chess_blt45.svg',
-                bb: '9/98/Chess_bdt45.svg',
-                qw: '1/15/Chess_qlt45.svg',
-                qb: '4/47/Chess_qdt45.svg',
-                kw: '4/42/Chess_klt45.svg',
-                kb: 'f/f0/Chess_kdt45.svg'
-            };
+            const map = { pw: '4/45/Chess_plt45.svg', pb: 'c/c7/Chess_pdt45.svg', rw: '7/72/Chess_rlt45.svg', rb: 'f/ff/Chess_rdt45.svg', nw: '7/70/Chess_nlt45.svg', nb: 'e/ef/Chess_ndt45.svg', bw: 'b/b1/Chess_blt45.svg', bb: '9/98/Chess_bdt45.svg', qw: '1/15/Chess_qlt45.svg', qb: '4/47/Chess_qdt45.svg', kw: '4/42/Chess_klt45.svg', kb: 'f/f0/Chess_kdt45.svg' };
             return `https://upload.wikimedia.org/wikipedia/commons/${map[type+color]}`;
         }
 
@@ -1234,44 +1196,39 @@
             const moves = [];
             const col = piece.color;
             const dir = col === 'w' ? -1 : 1;
-            const opponent = col === 'w' ? 'b' : 'w';
-
+            const opp = col === 'w' ? 'b' : 'w';
             if (piece.type === 'p') {
                 if (isInside(r + dir, c) && !b[r + dir][c]) moves.push({ r: r + dir, c });
                 if ((col === 'w' && r === 6 || col === 'b' && r === 1) && isInside(r + dir, c) && !b[r + dir][c] && !b[r + 2 * dir][c]) moves.push({ r: r + 2 * dir, c });
                 for (const dc of [-1, 1]) {
-                    if (isInside(r + dir, c + dc) && b[r + dir][c + dc] && b[r + dir][c + dc].color === opponent) moves.push({ r: r + dir, c: c + dc });
+                    if (isInside(r + dir, c + dc) && b[r + dir][c + dc] && b[r + dir][c + dc].color === opp) moves.push({ r: r + dir, c: c + dc });
                     if (enPassant && enPassant.r === r + dir && enPassant.c === c + dc) moves.push({ r: r + dir, c: c + dc });
                 }
             }
-            if (piece.type === 'n') {
-                [[-2, -1], [-2, 1], [-1, -2], [-1, 2], [1, -2], [1, 2], [2, -1], [2, 1]].forEach(([dr, dc]) => {
-                    if (isInside(r + dr, c + dc) && (!b[r + dr][c + dc] || b[r + dr][c + dc].color === opponent)) moves.push({ r: r + dr, c: c + dc });
-                });
-            }
+            if (piece.type === 'n') { [
+                    [-2, -1],
+                    [-2, 1],
+                    [-1, -2],
+                    [-1, 2],
+                    [1, -2],
+                    [1, 2],
+                    [2, -1],
+                    [2, 1]
+                ].forEach(([dr, dc]) => { if (isInside(r + dr, c + dc) && (!b[r + dr][c + dc] || b[r + dr][c + dc].color === opp)) moves.push({ r: r + dr, c: c + dc }); }); }
             if (['b', 'r', 'q'].includes(piece.type)) {
-                const directions = [];
-                if (['b', 'q'].includes(piece.type)) directions.push([-1, -1], [-1, 1], [1, -1], [1, 1]);
-                if (['r', 'q'].includes(piece.type)) directions.push([-1, 0], [1, 0], [0, -1], [0, 1]);
-                for (const [dr, dc] of directions) {
-                    let rr = r + dr,
-                        cc = c + dc;
-                    while (isInside(rr, cc)) {
-                        if (!b[rr][cc]) {
-                            moves.push({ r: rr, c: cc });
-                        } else {
-                            if (b[rr][cc].color === opponent) moves.push({ r: rr, c: cc });
-                            break;
-                        }
-                        rr += dr;
-                        cc += dc;
-                    }
-                }
+                const dirs = [];
+                if (['b', 'q'].includes(piece.type)) dirs.push([-1, -1], [-1, 1], [1, -1], [1, 1]);
+                if (['r', 'q'].includes(piece.type)) dirs.push([-1, 0], [1, 0], [0, -1], [0, 1]);
+                for (const [dr, dc] of dirs) { let rr = r + dr,
+                        cc = c + dc; while (isInside(rr, cc)) { if (!b[rr][cc]) moves.push({ r: rr, c: cc }); else { if (b[rr][
+                                cc
+                            ].color === opp) moves.push({ r: rr, c: cc }); break; } rr += dr;
+                        cc += dc; } }
             }
             if (piece.type === 'k') {
                 for (let dr = -1; dr <= 1; dr++)
                     for (let dc = -1; dc <= 1; dc++)
-                        if ((dr || dc) && isInside(r + dr, c + dc) && (!b[r + dr][c + dc] || b[r + dr][c + dc].color === opponent)) moves.push({ r: r + dr, c: c + dc });
+                        if ((dr || dc) && isInside(r + dr, c + dc) && (!b[r + dr][c + dc] || b[r + dr][c + dc].color === opp)) moves.push({ r: r + dr, c: c + dc });
                 const row = col === 'w' ? 7 : 0;
                 if (r === row && c === 4 && castling[col + 'K'] && !b[row][5] && !b[row][6] && b[row][7]?.type === 'r' && b[row][7].color === col) moves.push({ r: row, c: 6 });
                 if (r === row && c === 4 && castling[col + 'Q'] && !b[row][3] && !b[row][2] && !b[row][1] && b[row][0]?.type === 'r' && b[row][0].color === col) moves.push({ r: row, c: 2 });
@@ -1280,77 +1237,59 @@
         }
 
         function isKingInCheck(b, col) {
-            let kingPos = null;
+            let kp = null;
             for (let r = 0; r < 8; r++)
-                for (let c = 0; c < 8; c++) {
-                    if (b[r][c]?.type === 'k' && b[r][c].color === col) { kingPos = { r, c }; break; }
-                }
-            if (!kingPos) return false;
-            const opponent = col === 'w' ? 'b' : 'w';
+                for (let c = 0; c < 8; c++) { if (b[r][c]?.type === 'k' && b[r][c].color === col) { kp = { r, c }; break; } }
+            if (!kp) return false;
+            const opp = col === 'w' ? 'b' : 'w';
             for (let r = 0; r < 8; r++)
-                for (let c = 0; c < 8; c++) {
-                    if (b[r][c]?.color === opponent) {
-                        if (getMoves(b, r, c, null, {}).some(m => m.r === kingPos.r && m.c === kingPos.c)) return true;
-                    }
-                }
+                for (let c = 0; c < 8; c++) { if (b[r][c]?.color === opp && getMoves(b, r, c, null, {}).some(m => m.r === kp.r && m.c === kp.c)) return true; }
             return false;
         }
 
-        function getLegalMovesFrom(b, r, c, enPassant, castling) {
-            return getMoves(b, r, c, enPassant, castling).filter(m => {
-                const targetPiece = b[m.r][m.c];
-                const movingPiece = b[r][c];
-                b[m.r][m.c] = movingPiece;
+        function getLegalMovesFrom(b, r, c, ep, cs) {
+            return getMoves(b, r, c, ep, cs).filter(m => {
+                const tgt = b[m.r][m.c],
+                    mv = b[r][c];
+                b[m.r][m.c] = mv;
                 b[r][c] = null;
-                const inCheck = isKingInCheck(b, movingPiece.color);
-                b[r][c] = movingPiece;
-                b[m.r][m.c] = targetPiece;
-                return !inCheck;
+                const inCh = isKingInCheck(b, mv.color);
+                b[r][c] = mv;
+                b[m.r][m.c] = tgt;
+                return !inCh;
             });
         }
 
-        function getAllLegalMoves(b, col, enPassant, castling) {
+        function getAllLegalMoves(b, col, ep, cs) {
             const moves = [];
             for (let r = 0; r < 8; r++)
-                for (let c = 0; c < 8; c++) {
-                    if (b[r][c]?.color === col) {
-                        const legal = getLegalMovesFrom(b, r, c, enPassant, castling);
-                        for (const m of legal) moves.push({ from: { r, c }, to: m });
-                    }
-                }
+                for (let c = 0; c < 8; c++) { if (b[r][c]?.color === col) { const leg = getLegalMovesFrom(b, r, c, ep, cs); for (const m of leg) moves.push({ from: { r, c }, to: m }); } }
             return moves;
         }
 
         function countAttacksFromSquare(b, r, c) {
-            const piece = b[r][c];
-            if (!piece) return 0;
-            const opponent = piece.color === 'w' ? 'b' : 'w';
-            let count = 0;
-            const rawMoves = getMoves(b, r, c, enPassantTarget, castlingRights);
-            for (const m of rawMoves) {
-                if (b[m.r][m.c] && b[m.r][m.c].color === opponent) count++;
-            }
-            return count;
+            const p = b[r][c];
+            if (!p) return 0;
+            const opp = p.color === 'w' ? 'b' : 'w';
+            let cnt = 0;
+            for (const m of getMoves(b, r, c, enPassantTarget, castlingRights)) { if (b[m.r][m.c] && b[m.r][m.c].color === opp) cnt++; }
+            return cnt;
         }
 
-        function isKnightFork(b, r, c) {
-            const piece = b[r][c];
-            if (!piece || piece.type !== 'n') return false;
-            return countAttacksFromSquare(b, r, c) >= 2;
-        }
+        function isKnightFork(b, r, c) { return b[r][c]?.type === 'n' && countAttacksFromSquare(b, r, c) >= 2; }
 
         // ===================== OPPONENT ENGINE (Web Worker) =====================
         let opponentWorker = null;
 
         function initWorker() {
             if (opponentWorker) { try { opponentWorker.terminate(); } catch (e) {} opponentWorker = null; }
-            const workerCode = `
+            const wc = `
             const V={p:100,n:320,b:330,r:500,q:900,k:20000};
             function getMoves(b,r,c,ep,cs){
-                const p=b[r][c];if(!p)return[];const m=[],col=p.color,d=col=='w'?-1:1;
+                const p=b[r][c];if(!p)return[];const m=[],col=p.color,d=col=='w'?-1:1,op=col=='w'?'b':'w';
                 const ib=(rr,cc)=>rr>=0&&rr<8&&cc>=0&&cc<8;
                 const em=(rr,cc)=>ib(rr,cc)&&!b[rr][cc];
-                const en=(rr,cc)=>ib(rr,cc)&&b[rr][cc]&&b[rr][cc].color!=col;
+                const en=(rr,cc)=>ib(rr,cc)&&b[rr][cc]&&b[rr][cc].color==op;
                 if(p.type=='p'){
                     if(em(r+d,c))m.push({r:r+d,c});
                     if((col=='w'&&r==6||col=='b'&&r==1)&&em(r+d,c)&&em(r+2*d,c))m.push({r:r+2*d,c});
@@ -1373,11 +1312,11 @@
                 }
                 return m;
             }
-            function isCheck(b,col){let kp=null;for(let r=0;r<8;r++)for(let c=0;c<8;c++){if(b[r][c]&&b[r][c].type=='k'&&b[r][c].color==col){kp={r,c};break}}if(!kp)return false;for(let r=0;r<8;r++)for(let c=0;c<8;c++){if(b[r][c]&&b[r][c].color!=col&&getMoves(b,r,c,null,{}).some(m=>m.r==kp.r&&m.c==kp.c))return true}return false}
+            function isCheck(b,col){let kp=null;for(let r=0;r<8;r++)for(let c=0;c<8;c++){if(b[r][c]&&b[r][c].type=='k'&&b[r][c].color==col){kp={r,c};break}}if(!kp)return false;const op=col=='w'?'b':'w';for(let r=0;r<8;r++)for(let c=0;c<8;c++){if(b[r][c]&&b[r][c].color==op&&getMoves(b,r,c,null,{}).some(m=>m.r==kp.r&&m.c==kp.c))return true}return false}
             function legalMovesW(b,r,c,ep,cs){return getMoves(b,r,c,ep,cs).filter(m=>{const o=b[m.r][m.c],p=b[r][c];b[m.r][m.c]=p;b[r][c]=null;const ck=isCheck(b,p.color);b[r][c]=p;b[m.r][m.c]=o;return !ck})}
             function allMoves(b,col,ep,cs){const m=[];for(let r=0;r<8;r++)for(let c=0;c<8;c++){if(b[r][c]&&b[r][c].color==col){legalMovesW(b,r,c,ep,cs).forEach(t=>{if(b[r][c].type=='p'&&(t.r==0||t.r==7))m.push({from:{r,c},to:t,promotion:'q'});else m.push({from:{r,c},to:t})})}}return m}
-            function evalBoard(b,side){let s=0;for(let r=0;r<8;r++)for(let c=0;c<8;c++){const p=b[r][c];if(!p)continue;s+=p.color==side?V[p.type]:-V[p.type]}return s+Math.random()*8-4}
-            function minimax(b,depth,a,beta,isMax,side,ep,cs){const col=isMax?side:(side=='w'?'b':'w');if(depth==0)return evalBoard(b,side);const moves=allMoves(b,col,ep,cs);if(!moves.length)return isCheck(b,col)?(isMax?-99999:99999):0;moves.sort((x,y)=>{const ca=b[x.to.r][x.to.c]?V[b[x.to.r][x.to.c].type]:0,cb=b[y.to.r][y.to.c]?V[b[y.to.r][y.to.c].type]:0;return cb-ca});if(isMax){let best=-Infinity;for(const m of moves){const o=b[m.to.r][m.to.c],p=b[m.from.r][m.from.c];b[m.to.r][m.to.c]=p;b[m.from.r][m.from.c]=null;if(m.promotion)b[m.to.r][m.to.c].type=m.promotion;const v=minimax(b,depth-1,a,beta,false,side,ep,cs);b[m.from.r][m.from.c]=p;b[m.to.r][m.to.c]=o;best=Math.max(best,v);a=Math.max(a,v);if(beta<=a)break}return best}else{let best=Infinity;for(const m of moves){const o=b[m.to.r][m.to.c],p=b[m.from.r][m.from.c];b[m.to.r][m.to.c]=p;b[m.from.r][m.from.c]=null;if(m.promotion)b[m.to.r][m.to.c].type=m.promotion;const v=minimax(b,depth-1,a,beta,true,side,ep,cs);b[m.from.r][m.from.c]=p;b[m.to.r][m.to.c]=o;best=Math.min(best,v);beta=Math.min(beta,v);if(beta<=a)break}return best}}
+            function evalBoard(b,sd){let s=0;for(let r=0;r<8;r++)for(let c=0;c<8;c++){const p=b[r][c];if(!p)continue;s+=p.color==sd?V[p.type]:-V[p.type]}return s+Math.random()*8-4}
+            function minimax(b,depth,a,beta,isMax,sd,ep,cs){const col=isMax?sd:(sd=='w'?'b':'w');if(depth==0)return evalBoard(b,sd);const moves=allMoves(b,col,ep,cs);if(!moves.length)return isCheck(b,col)?(isMax?-99999:99999):0;moves.sort((x,y)=>{const ca=b[x.to.r][x.to.c]?V[b[x.to.r][x.to.c].type]:0,cb=b[y.to.r][y.to.c]?V[b[y.to.r][y.to.c].type]:0;return cb-ca});if(isMax){let best=-Infinity;for(const m of moves){const o=b[m.to.r][m.to.c],p=b[m.from.r][m.from.c];b[m.to.r][m.to.c]=p;b[m.from.r][m.from.c]=null;if(m.promotion)b[m.to.r][m.to.c].type=m.promotion;const v=minimax(b,depth-1,a,beta,false,sd,ep,cs);b[m.from.r][m.from.c]=p;b[m.to.r][m.to.c]=o;best=Math.max(best,v);a=Math.max(a,v);if(beta<=a)break}return best}else{let best=Infinity;for(const m of moves){const o=b[m.to.r][m.to.c],p=b[m.from.r][m.from.c];b[m.to.r][m.to.c]=p;b[m.from.r][m.from.c]=null;if(m.promotion)b[m.to.r][m.to.c].type=m.promotion;const v=minimax(b,depth-1,a,beta,true,sd,ep,cs);b[m.from.r][m.from.c]=p;b[m.to.r][m.to.c]=o;best=Math.min(best,v);beta=Math.min(beta,v);if(beta<=a)break}return best}}
             self.onmessage=function(e){
                 const{board,opponentColor,depth,randomChance,enPassant,castling}=e.data;
                 const moves=allMoves(board,opponentColor,enPassant,castling);
@@ -1387,29 +1326,28 @@
                 let best=-Infinity,bestMoves=[];
                 for(const m of moves){const o=board[m.to.r][m.to.c],p=board[m.from.r][m.from.c];board[m.to.r][m.to.c]=p;board[m.from.r][m.from.c]=null;if(m.promotion)board[m.to.r][m.to.c].type=m.promotion;const s=minimax(board,depth-1,-Infinity,Infinity,false,opponentColor,enPassant,castling);board[m.from.r][m.from.c]=p;board[m.to.r][m.to.c]=o;if(s>best){best=s;bestMoves=[m]}else if(s==best)bestMoves.push(m)}
                 self.postMessage(bestMoves[Math.floor(Math.random()*bestMoves.length)]);
-            };
-        `;
-            const blob = new Blob([workerCode], { type: 'application/javascript' });
+            };`;
+            const blob = new Blob([wc], { type: 'application/javascript' });
             opponentWorker = new Worker(URL.createObjectURL(blob));
             opponentWorker.onmessage = function(e) {
-                if (opponentTimeoutId) { clearTimeout(opponentTimeoutId); opponentTimeoutId = null; }
+                if (opponentTimeoutId) { clearTimeout(opponentTimeoutId);
+                    opponentTimeoutId = null; }
                 opponentFooter.style.display = 'none';
                 opponentThinking = false;
                 if (!gameActive || postGamePending) return;
-                if (e.data && whiteToMove === (opponentColor === 'w')) {
+                if (e.data && isOpponentTurn()) {
                     executeMove(e.data.from.r, e.data.from.c, e.data.to.r, e.data.to.c, e.data.promotion || 'q');
                 }
             };
             opponentWorker.onerror = function() {
                 opponentFooter.style.display = 'none';
                 opponentThinking = false;
-                if (opponentTimeoutId) { clearTimeout(opponentTimeoutId); opponentTimeoutId = null; }
-                if (gameActive && !postGamePending && whiteToMove === (opponentColor === 'w')) {
+                if (opponentTimeoutId) { clearTimeout(opponentTimeoutId);
+                    opponentTimeoutId = null; }
+                if (gameActive && !postGamePending && isOpponentTurn()) {
                     const moves = getAllLegalMoves(board, opponentColor, enPassantTarget, castlingRights);
-                    if (moves.length > 0) {
-                        const m = moves[Math.floor(Math.random() * moves.length)];
-                        executeMove(m.from.r, m.from.c, m.to.r, m.to.c, 'q');
-                    }
+                    if (moves.length > 0) { const m = moves[Math.floor(Math.random() * moves.length)];
+                        executeMove(m.from.r, m.from.c, m.to.r, m.to.c, 'q'); }
                 }
             };
         }
@@ -1426,11 +1364,8 @@
             if (colorChoice === 'random') colorChoice = Math.random() < 0.5 ? 'white' : 'black';
             playerColor = colorChoice === 'white' ? 'w' : 'b';
             opponentColor = playerColor === 'w' ? 'b' : 'w';
-            // CRITICAL FIX: Player ALWAYS moves first, regardless of color.
-            // If player is white, whiteToMove = true (white starts).
-            // If player is black, whiteToMove = false (black starts, so player moves first).
+            // Player ALWAYS moves first
             whiteToMove = (playerColor === 'w');
-            // FLIP BOARD so player's pieces are always at the bottom
             isFlipped = (playerColor === 'b');
             board = initialBoard();
             selected = null;
@@ -1456,50 +1391,32 @@
             document.querySelector('.board').classList.toggle('flipped', isFlipped);
             render();
             updateUndoButton();
-            // If player chose black, player moves first (whiteToMove = false), so no opponent move now.
-            // If player chose white, opponent (black) moves after player.
-            // Opponent only moves when it's their turn (whiteToMove === opponentColor).
-            // Since player moves first, opponent never moves on game start.
         }
 
-        function resetFlags() {
-            enPassantTarget = null;
-            castlingRights = { wK: true, wQ: true, bK: true, bQ: true };
-        }
+        function resetFlags() { enPassantTarget = null;
+            castlingRights = { wK: true, wQ: true, bK: true, bQ: true }; }
 
         function executeMove(sr, sc, tr, tc, promotionType) {
             selected = null;
             legalMoves = [];
             const piece = board[sr][sc];
             let captured = board[tr][tc];
-            if (piece.type === 'p' && enPassantTarget && tr === enPassantTarget.r && tc === enPassantTarget.c) {
-                captured = board[sr][tc];
-                board[sr][tc] = null;
-            }
-            if (piece.type === 'k' && Math.abs(tc - sc) === 2) {
-                const row = sr;
-                if (tc === 6) { board[row][5] = board[row][7]; board[row][7] = null; } else if (tc === 2) { board[row][3] = board[row][0]; board[row][0] = null; }
-            }
+            if (piece.type === 'p' && enPassantTarget && tr === enPassantTarget.r && tc === enPassantTarget.c) { captured = board[sr][tc];
+                board[sr][tc] = null; }
+            if (piece.type === 'k' && Math.abs(tc - sc) === 2) { const row = sr; if (tc === 6) { board[row][5] = board[row][7];
+                    board[row][7] = null; } else if (tc === 2) { board[row][3] = board[row][0];
+                    board[row][0] = null; } }
             enPassantTarget = null;
-            if (piece.type === 'p' && Math.abs(tr - sr) === 2) {
-                enPassantTarget = { r: (sr + tr) / 2, c: sc };
-            }
+            if (piece.type === 'p' && Math.abs(tr - sr) === 2) { enPassantTarget = { r: (sr + tr) / 2, c: sc }; }
             if (piece.type === 'p' && (tr === 0 || tr === 7)) {
-                if (promotionType) {
-                    piece.type = promotionType;
-                    finalizeMove(sr, sc, tr, tc, captured);
-                } else {
-                    promotionPending = { r: tr, c: tc, color: piece.color };
+                if (promotionType) { piece.type = promotionType;
+                    finalizeMove(sr, sc, tr, tc, captured); } else { promotionPending = { r: tr, c: tc, color: piece.color };
                     render();
-                    showPromotionUI(piece.color);
-                    return;
-                }
-            } else {
-                board[tr][tc] = piece;
+                    showPromotionUI(piece.color); return; }
+            } else { board[tr][tc] = piece;
                 board[sr][sc] = null;
                 updateCastlingRights(sr, sc, piece, tr, tc, captured);
-                finalizeMove(sr, sc, tr, tc, captured);
-            }
+                finalizeMove(sr, sc, tr, tc, captured); }
         }
 
         function finalizeMove(sr, sc, tr, tc, captured) {
@@ -1518,46 +1435,28 @@
                     if (movingPiece.type === 'r') updateDailyMissionProgress('rook_rampage', 1);
                     if (movingPiece.type === 'q') updateDailyMissionProgress('queen_dominance', 1);
                 }
-                if (movingPiece.type === 'p') {
-                    updateDailyMissionProgress('pawn_storm', 1);
-                    if (tr === 0 || tr === 7) updateDailyMissionProgress('promote_pawns', 1);
-                }
+                if (movingPiece.type === 'p') { updateDailyMissionProgress('pawn_storm', 1); if (tr === 0 || tr === 7) updateDailyMissionProgress('promote_pawns', 1); }
                 if (movingPiece.type === 'k' && Math.abs(tc - sc) === 2) updateDailyMissionProgress('castle', 1);
-                const attackCount = countAttacksFromSquare(board, tr, tc);
-                if (attackCount >= 2) updateDailyMissionProgress('double_attack', 1);
+                const ac = countAttacksFromSquare(board, tr, tc); if (ac >= 2) updateDailyMissionProgress('double_attack', 1);
                 if (isKnightFork(board, tr, tc)) updateDailyMissionProgress('knight_forks', 1);
             }
             checkGameState();
             const currentColor = whiteToMove ? 'w' : 'b';
             const nowInCheck = isKingInCheck(board, currentColor);
-            if (nowInCheck && currentColor === playerColor && wasInCheckBefore) {
-                updateDailyMissionProgress('save_king', 1);
-            }
-            if (nowInCheck && currentColor === opponentColor) {
-                updateDailyMissionProgress('check_opponent', 1);
-            }
-            // After player moves, it's opponent's turn if game still active
-            if (gameActive && !postGamePending && whiteToMove === opponentColor) {
+            if (nowInCheck && currentColor === playerColor && wasInCheckBefore) updateDailyMissionProgress('save_king', 1);
+            if (nowInCheck && currentColor === opponentColor) updateDailyMissionProgress('check_opponent', 1);
+            // FIXED: Correctly check if it's opponent's turn
+            if (gameActive && !postGamePending && isOpponentTurn()) {
                 setTimeout(requestOpponentMove, 300);
             }
         }
 
         function updateCastlingRights(sr, sc, piece, tr, tc, captured) {
-            if (piece.type === 'k') {
-                if (piece.color === 'w') { castlingRights.wK = false; castlingRights.wQ = false; } else { castlingRights.bK = false; castlingRights.bQ = false; }
-            }
-            if (piece.type === 'r') {
-                if (sr === 7 && sc === 0) castlingRights.wQ = false;
-                if (sr === 7 && sc === 7) castlingRights.wK = false;
-                if (sr === 0 && sc === 0) castlingRights.bQ = false;
-                if (sr === 0 && sc === 7) castlingRights.bK = false;
-            }
-            if (captured && captured.type === 'r') {
-                if (tr === 7 && tc === 0) castlingRights.wQ = false;
-                if (tr === 7 && tc === 7) castlingRights.wK = false;
-                if (tr === 0 && tc === 0) castlingRights.bQ = false;
-                if (tr === 0 && tc === 7) castlingRights.bK = false;
-            }
+            if (piece.type === 'k') { if (piece.color === 'w') { castlingRights.wK = false;
+                    castlingRights.wQ = false; } else { castlingRights.bK = false;
+                    castlingRights.bQ = false; } }
+            if (piece.type === 'r') { if (sr === 7 && sc === 0) castlingRights.wQ = false; if (sr === 7 && sc === 7) castlingRights.wK = false; if (sr === 0 && sc === 0) castlingRights.bQ = false; if (sr === 0 && sc === 7) castlingRights.bK = false; }
+            if (captured && captured.type === 'r') { if (tr === 7 && tc === 0) castlingRights.wQ = false; if (tr === 7 && tc === 7) castlingRights.wK = false; if (tr === 0 && tc === 0) castlingRights.bQ = false; if (tr === 0 && tc === 7) castlingRights.bK = false; }
         }
 
         function showPromotionUI(color) {
@@ -1582,7 +1481,7 @@
                     addNotation({ from, to: { r: promoR, c: promoC } }, !!captured);
                     if (color === playerColor) updateDailyMissionProgress('promote_pawns', 1);
                     checkGameState();
-                    if (gameActive && !postGamePending && whiteToMove === opponentColor) setTimeout(requestOpponentMove, 300);
+                    if (gameActive && !postGamePending && isOpponentTurn()) setTimeout(requestOpponentMove, 300);
                 });
                 promotionDialog.appendChild(opt);
             });
@@ -1605,13 +1504,11 @@
         function undoLastMove() {
             if (undoUsed || moveHistory.length < 2) return;
             undoUsed = true;
-            for (let i = 0; i < 2 && moveHistory.length > 0; i++) {
-                const last = moveHistory.pop();
+            for (let i = 0; i < 2 && moveHistory.length > 0; i++) { const last = moveHistory.pop();
                 board[last.move.from.r][last.move.from.c] = board[last.move.to.r][last.move.to.c];
                 board[last.move.to.r][last.move.to.c] = last.captured;
                 whiteToMove = !whiteToMove;
-                notationList.removeChild(notationList.lastChild);
-            }
+                notationList.removeChild(notationList.lastChild); }
             selected = null;
             legalMoves = [];
             gameActive = true;
@@ -1619,7 +1516,7 @@
             checkGameState();
             render();
             updateUndoButton();
-            if (gameActive && whiteToMove === opponentColor) setTimeout(requestOpponentMove, 300);
+            if (gameActive && isOpponentTurn()) setTimeout(requestOpponentMove, 300);
         }
 
         function updateUndoButton() {
@@ -1640,18 +1537,12 @@
                 timerInterval = null;
                 updateDailyMissionProgress('play_games', 1);
                 setTimeout(() => {
-                    if (kingInCheck) {
-                        gameStatusEl.innerHTML = `<span class="status-mate">Checkmate! ${winner} wins!</span>`;
-                        sfxMate();
-                    } else { gameStatusEl.textContent = "Stalemate! Draw"; }
+                    if (kingInCheck) { gameStatusEl.innerHTML = `<span class="status-mate">Checkmate! ${winner} wins!</span>`;
+                        sfxMate(); } else { gameStatusEl.textContent = "Stalemate! Draw"; }
                     showPostGame(winner, kingInCheck ? 'checkmate' : 'stalemate');
                     postGamePending = false;
                 }, 500);
-            } else if (kingInCheck) {
-                gameStatusEl.innerHTML = `<span class="status-check">${currentColor === 'w' ? 'White' : 'Black'} is in check!</span>`;
-            } else {
-                gameStatusEl.textContent = `${whiteToMove ? 'White' : 'Black'}'s turn`;
-            }
+            } else if (kingInCheck) { gameStatusEl.innerHTML = `<span class="status-check">${currentColor === 'w' ? 'White' : 'Black'} is in check!</span>`; } else { gameStatusEl.textContent = `${whiteToMove ? 'White' : 'Black'}'s turn`; }
         }
 
         // ===================== TIMER =====================
@@ -1659,20 +1550,19 @@
             if (timerInterval) clearInterval(timerInterval);
             lastTimerTick = Date.now();
             timerInterval = setInterval(() => {
-                if (!gameActive || postGamePending || promotionPending || (window._sdkAdPlaying)) {
-                    lastTimerTick = Date.now();
-                    return;
-                }
+                if (!gameActive || postGamePending || promotionPending || (window._sdkAdPlaying)) { lastTimerTick = Date.now(); return; }
                 const now = Date.now(),
                     elapsed = Math.floor((now - lastTimerTick) / 1000);
                 if (elapsed >= 1) {
-                    if (whiteToMove) {
-                        whiteTimeLeft = Math.max(0, whiteTimeLeft - elapsed);
-                        if (whiteTimeLeft <= 0) { gameActive = false; clearInterval(timerInterval); timerInterval = null; updateDailyMissionProgress('play_games', 1); showPostGame('Black', 'timeout'); return; }
-                    } else {
-                        blackTimeLeft = Math.max(0, blackTimeLeft - elapsed);
-                        if (blackTimeLeft <= 0) { gameActive = false; clearInterval(timerInterval); timerInterval = null; updateDailyMissionProgress('play_games', 1); showPostGame('White', 'timeout'); return; }
-                    }
+                    if (whiteToMove) { whiteTimeLeft = Math.max(0, whiteTimeLeft - elapsed); if (whiteTimeLeft <= 0) { gameActive = false;
+                            clearInterval(timerInterval);
+                            timerInterval = null;
+                            updateDailyMissionProgress('play_games', 1);
+                            showPostGame('Black', 'timeout'); return; } } else { blackTimeLeft = Math.max(0, blackTimeLeft - elapsed); if (blackTimeLeft <= 0) { gameActive = false;
+                            clearInterval(timerInterval);
+                            timerInterval = null;
+                            updateDailyMissionProgress('play_games', 1);
+                            showPostGame('White', 'timeout'); return; } }
                     lastTimerTick = now;
                 }
                 updateTimerDisplay();
@@ -1692,13 +1582,8 @@
         function render() {
             boardEl.innerHTML = '';
             let checkKingPos = null;
-            if (kingInCheck) {
-                const col = whiteToMove ? 'w' : 'b';
-                for (let r = 0; r < 8; r++)
-                    for (let c = 0; c < 8; c++) {
-                        if (board[r][c]?.type === 'k' && board[r][c].color === col) { checkKingPos = { r, c }; break; }
-                    }
-            }
+            if (kingInCheck) { const col = whiteToMove ? 'w' : 'b'; for (let r = 0; r < 8; r++)
+                    for (let c = 0; c < 8; c++) { if (board[r][c]?.type === 'k' && board[r][c].color === col) { checkKingPos = { r, c }; break; } } }
             for (let r = 0; r < 8; r++)
                 for (let c = 0; c < 8; c++) {
                     const sq = document.createElement('div');
@@ -1714,14 +1599,11 @@
                         img.src = getPieceImg(p.type, p.color);
                         img.className = 'piece';
                         img.draggable = true;
-                        if (gameActive && !opponentThinking && !promotionPending && whiteToMove !== opponentColor) {
-                            img.addEventListener('click', e => { e.stopPropagation(); handleClick(r, c); });
-                        }
+                        if (gameActive && !opponentThinking && !promotionPending && !isOpponentTurn()) { img.addEventListener('click', e => { e.stopPropagation();
+                                handleClick(r, c); }); }
                         sq.appendChild(img);
                     }
-                    if (gameActive && !opponentThinking && !promotionPending && whiteToMove !== opponentColor) {
-                        sq.addEventListener('click', () => handleClick(r, c));
-                    }
+                    if (gameActive && !opponentThinking && !promotionPending && !isOpponentTurn()) { sq.addEventListener('click', () => handleClick(r, c)); }
                     boardEl.appendChild(sq);
                 }
             updateEvalBar();
@@ -1730,19 +1612,12 @@
 
         function handleClick(r, c) {
             if (!gameActive || postGamePending || opponentThinking || promotionPending) return;
-            if (whiteToMove === opponentColor) return;
-            if (selected && legalMoves.some(m => m.r === r && m.c === c)) {
-                executeMove(selected.r, selected.c, r, c);
-                return;
-            }
+            if (isOpponentTurn()) return;
+            if (selected && legalMoves.some(m => m.r === r && m.c === c)) { executeMove(selected.r, selected.c, r, c); return; }
             const p = board[r][c];
-            if (p && p.color === (whiteToMove ? 'w' : 'b')) {
-                selected = { r, c };
-                legalMoves = getLegalMovesFrom(board, r, c, enPassantTarget, castlingRights);
-            } else {
-                selected = null;
-                legalMoves = [];
-            }
+            if (p && p.color === (whiteToMove ? 'w' : 'b')) { selected = { r, c };
+                legalMoves = getLegalMovesFrom(board, r, c, enPassantTarget, castlingRights); } else { selected = null;
+                legalMoves = []; }
             render();
         }
 
@@ -1750,12 +1625,8 @@
             let ws = 0,
                 bs = 0;
             for (let r = 0; r < 8; r++)
-                for (let c = 0; c < 8; c++) {
-                    const p = board[r][c];
-                    if (!p) continue;
-                    const val = PIECE_VALUES[p.type];
-                    p.color === 'w' ? ws += val : bs += val;
-                }
+                for (let c = 0; c < 8; c++) { const p = board[r][c]; if (!p) continue;
+                    p.color === 'w' ? ws += PIECE_VALUES[p.type] : bs += PIECE_VALUES[p.type]; }
             const total = ws + bs || 1;
             const wp = Math.max(5, Math.min(95, (ws / total) * 100));
             document.getElementById('evalBarWhite').style.flex = wp;
@@ -1765,7 +1636,7 @@
         // ===================== OPPONENT MOVE =====================
         function requestOpponentMove() {
             if (!gameActive || postGamePending || opponentThinking || promotionPending) return;
-            if (whiteToMove !== opponentColor) return;
+            if (!isOpponentTurn()) return;
             opponentThinking = true;
             opponentFooter.style.display = 'block';
             if (opponentTimeoutId) clearTimeout(opponentTimeoutId);
@@ -1777,7 +1648,8 @@
                 opponentWorker = null;
                 initWorker();
                 const moves = getAllLegalMoves(board, opponentColor, enPassantTarget, castlingRights);
-                if (moves.length > 0) { const m = moves[Math.floor(Math.random() * moves.length)]; executeMove(m.from.r, m.from.c, m.to.r, m.to.c, 'q'); }
+                if (moves.length > 0) { const m = moves[Math.floor(Math.random() * moves.length)];
+                    executeMove(m.from.r, m.from.c, m.to.r, m.to.c, 'q'); }
             }, 10000);
             const params = getOpponentParams(currentLevel);
             opponentWorker.postMessage({
@@ -1799,8 +1671,8 @@
             timerInterval = null;
             opponentFooter.style.display = 'none';
             promotionOverlay.style.display = 'none';
-            if (opponentTimeoutId) { clearTimeout(opponentTimeoutId); opponentTimeoutId = null; }
-
+            if (opponentTimeoutId) { clearTimeout(opponentTimeoutId);
+                opponentTimeoutId = null; }
             const isPlayerWin = winner && ((playerColor === 'w' && winner === 'White') || (playerColor === 'b' && winner === 'Black'));
             const titleEl = document.getElementById('endTitle');
             const btnEl = document.getElementById('endActionBtn');
@@ -1809,57 +1681,34 @@
             const lblR = document.getElementById('progLabelR');
             const nextEl = document.getElementById('progNext');
             const luEl = document.getElementById('levelUpInfo');
-
-            if (isPlayerWin) {
-                matchWins++;
+            if (isPlayerWin) { matchWins++;
                 currentLevel++;
                 endlessStreak++;
                 saveLevel(currentLevel);
-                updateDailyMissionProgress('win_games', 1);
-                if (endlessStreak >= 3) updateDailyMissionProgress('three_in_row', 1);
-            } else if (resultType !== 'stalemate') {
-                matchLosses++;
-                endlessStreak = 0;
-            } else {
-                endlessStreak = 0;
-            }
+                updateDailyMissionProgress('win_games', 1); if (endlessStreak >= 3) updateDailyMissionProgress('three_in_row', 1); } else if (resultType !== 'stalemate') { matchLosses++;
+                endlessStreak = 0; } else { endlessStreak = 0; }
             updateHUD();
             updateMissionsBadge();
-
-            if (isPlayerWin) {
-                titleEl.textContent = '🎉 Checkmate! You Win!';
-                titleEl.className = 'end-modal-title win';
-            } else if (resultType === 'stalemate') {
-                titleEl.textContent = '🤝 Stalemate — Draw!';
-                titleEl.className = 'end-modal-title draw';
-            } else {
-                titleEl.textContent = resultType === 'timeout' ? '⏰ Time\'s Up!' : '😞 You Lose';
-                titleEl.className = 'end-modal-title lose';
-            }
-
-            if (isPlayerWin) {
-                lblL.textContent = `Level ${currentLevel-1} → ${currentLevel}`;
+            if (isPlayerWin) { titleEl.textContent = '🎉 Checkmate! You Win!';
+                titleEl.className = 'end-modal-title win'; } else if (resultType === 'stalemate') { titleEl.textContent = '🤝 Stalemate — Draw!';
+                titleEl.className = 'end-modal-title draw'; } else { titleEl.textContent = resultType === 'timeout' ? '⏰ Time\'s Up!' : '😞 You Lose';
+                titleEl.className = 'end-modal-title lose'; }
+            if (isPlayerWin) { lblL.textContent = `Level ${currentLevel-1} → ${currentLevel}`;
                 lblR.textContent = '100%';
                 barEl.style.width = '0%';
                 setTimeout(() => barEl.style.width = '100%', 100);
                 nextEl.textContent = `Next Mission: Level ${currentLevel}`;
                 luEl.style.display = 'block';
-                luEl.textContent = `⬆️ Level ${currentLevel} Unlocked!`;
-            } else {
-                lblL.textContent = 'Progress';
+                luEl.textContent = `⬆️ Level ${currentLevel} Unlocked!`; } else { lblL.textContent = 'Progress';
                 lblR.textContent = '';
                 barEl.style.width = '0%';
                 nextEl.textContent = '';
-                luEl.style.display = 'none';
-            }
-
+                luEl.style.display = 'none'; }
             document.getElementById('statResult').textContent = isPlayerWin ? '✅ Victory' : (resultType === 'stalemate' ? '🤝 Draw' : '❌ Defeat');
             document.getElementById('statStreak').textContent = endlessStreak;
             document.getElementById('statLevel').textContent = `Level ${currentLevel} (${getZoneForLevel(currentLevel).name})`;
-
             btnEl.textContent = isPlayerWin ? `🚀 Level ${currentLevel}` : '🔄 Try Again';
             btnEl.className = isPlayerWin ? 'end-action-btn win-btn' : (resultType === 'stalemate' ? 'end-action-btn draw-btn' : 'end-action-btn lose-btn');
-
             postGameModal.style.display = 'flex';
         }
 
@@ -1877,36 +1726,26 @@
             document.getElementById('hudProgressFill').style.width = progressPct + '%';
         }
 
-        // ===================== LOCAL STORAGE =====================
         function saveLevel(l) { try { localStorage.setItem('chess4gal_level', l); } catch (e) {} }
 
         function loadLevel() { return Math.max(1, parseInt(localStorage.getItem('chess4gal_level') || '1', 10)); }
 
         // ===================== EVENT LISTENERS =====================
-        document.querySelectorAll('.color-btn').forEach(btn => btn.addEventListener('click', () => {
-            document.querySelectorAll('.color-btn').forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-        }));
-        document.getElementById('startGameBtn').addEventListener('click', () => {
-            setupModal.style.display = 'none';
-            const selectedColor = document.querySelector('.color-btn.active').dataset.color;
-            startNewGame(selectedColor);
-        });
-        document.getElementById('endActionBtn').addEventListener('click', () => {
-            postGameModal.style.display = 'none';
-            const selectedColor = document.querySelector('.color-btn.active').dataset.color;
-            startNewGame(selectedColor);
-        });
-        document.getElementById('menuBtn').addEventListener('click', () => {
-            postGameModal.style.display = 'none';
+        document.querySelectorAll('.color-btn').forEach(btn => btn.addEventListener('click', () => { document.querySelectorAll('.color-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active'); }));
+        document.getElementById('startGameBtn').addEventListener('click', () => { setupModal.style.display = 'none';
+            const c = document.querySelector('.color-btn.active').dataset.color;
+            startNewGame(c); });
+        document.getElementById('endActionBtn').addEventListener('click', () => { postGameModal.style.display = 'none';
+            const c = document.querySelector('.color-btn.active').dataset.color;
+            startNewGame(c); });
+        document.getElementById('menuBtn').addEventListener('click', () => { postGameModal.style.display = 'none';
             setupModal.style.display = 'flex';
             updateHUD();
-            updateMissionsBadge();
-        });
+            updateMissionsBadge(); });
         undoBtn.addEventListener('click', undoLastMove);
         promotionOverlay.addEventListener('click', (e) => {
-            if (e.target === promotionOverlay && promotionPending) {
-                const promoR = promotionPending.r,
+            if (e.target === promotionOverlay && promotionPending) { const promoR = promotionPending.r,
                     promoC = promotionPending.c,
                     color = board[promoR][promoC].color;
                 board[promoR][promoC].type = 'q';
@@ -1918,23 +1757,16 @@
                 const last = moveHistory.length ? moveHistory[moveHistory.length - 1] : null;
                 const dir = color === 'w' ? 1 : -1;
                 const from = last ? last.move.to : { r: promoR + dir, c: promoC };
-                addNotation({ from, to: { r: promoR, c: promoC } }, false);
-                if (color === playerColor) updateDailyMissionProgress('promote_pawns', 1);
-                checkGameState();
-                if (gameActive && whiteToMove === opponentColor) setTimeout(requestOpponentMove, 300);
-            }
+                addNotation({ from, to: { r: promoR, c: promoC } }, false); if (color === playerColor) updateDailyMissionProgress('promote_pawns', 1);
+                checkGameState(); if (gameActive && isOpponentTurn()) setTimeout(requestOpponentMove, 300); }
         });
-        missionsModal.addEventListener('click', (e) => {
-            if (e.target === missionsModal) closeMissionsModal();
-        });
-        window.addEventListener('DOMContentLoaded', () => {
-            currentLevel = loadLevel();
+        missionsModal.addEventListener('click', (e) => { if (e.target === missionsModal) closeMissionsModal(); });
+        window.addEventListener('DOMContentLoaded', () => { currentLevel = loadLevel();
             galacticPoints = loadGalacticPoints();
             updateHUD();
             updateMissionsBadge();
             setupModal.style.display = 'flex';
-            setInterval(updateMissionsResetTimer, 60000);
-        });
+            setInterval(updateMissionsResetTimer, 60000); });
     </script>
 </body>
 </html>
