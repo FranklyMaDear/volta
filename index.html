@@ -651,7 +651,7 @@
             color: #ff8c00;
             font-weight: 700;
         }
-        .cpu-thinking-footer {
+        .opponent-thinking-footer {
             position: fixed;
             bottom: 0;
             left: 0;
@@ -895,7 +895,7 @@
             <button class="undo-btn" id="undoBtn" disabled>↩️ Undo (1 left)</button>
         </div>
     </div>
-    <div class="cpu-thinking-footer" id="cpuThinkingFooter">🤔 CPU is thinking...</div>
+    <div class="opponent-thinking-footer" id="opponentThinkingFooter">🤔 Opponent is thinking...</div>
     <div class="promotion-overlay" id="promotionOverlay">
         <div class="promotion-dialog" id="promotionDialog"></div>
     </div>
@@ -903,7 +903,7 @@
         <div class="modal-content">
             <h2>♕ Chess Four Galactic ♛</h2>
             <p style="color:#84cc16;font-size:0.78rem;margin:4px 0 10px;" id="setupLevelInfo">LEVEL 1 — 🚀 Rookie Astronaut</p>
-            <p style="color:#e0e0e0;font-size:0.9rem;">Play against the Computer (CPU)</p>
+            <p style="color:#e0e0e0;font-size:0.9rem;">Challenge an opponent</p>
             <div class="modal-options">
                 <h3>Choose Your Color</h3>
                 <button class="modal-btn color-btn active" data-color="white">⚪ White</button>
@@ -955,7 +955,7 @@
         let castlingRights = { wK: true, wQ: true, bK: true, bQ: true };
 
         let playerColor = 'w';
-        let cpuColor = 'b';
+        let opponentColor = 'b';
         let whiteTimeLeft = TIME_CONTROL;
         let blackTimeLeft = TIME_CONTROL;
         let timerInterval = null;
@@ -964,8 +964,8 @@
         let moveHistory = [];
         let undoUsed = false;
         let promotionPending = null;
-        let cpuThinking = false;
-        let cpuTimeoutId = null;
+        let opponentThinking = false;
+        let opponentTimeoutId = null;
         let postGamePending = false;
 
         let currentLevel = 1;
@@ -991,7 +991,7 @@
         const gameStatusEl = document.getElementById('gameStatus');
         const whiteTimeEl = document.getElementById('whiteTime');
         const blackTimeEl = document.getElementById('blackTime');
-        const cpuFooter = document.getElementById('cpuThinkingFooter');
+        const opponentFooter = document.getElementById('opponentThinkingFooter');
         const notationList = document.getElementById('notationList');
         const undoBtn = document.getElementById('undoBtn');
         const setupModal = document.getElementById('setupModal');
@@ -1004,11 +1004,11 @@
 
         // ===================== DAILY MISSIONS (10 per day) =====================
         const ALL_MISSION_TEMPLATES = [
-            { id: 'win_games', name: 'Win Games', icon: '🏆', target: 5, reward: 60, desc: 'Win games against the CPU' },
+            { id: 'win_games', name: 'Win Games', icon: '🏆', target: 5, reward: 60, desc: 'Win games against your opponent' },
             { id: 'capture_pieces', name: 'Capture Pieces', icon: '⚔️', target: 12, reward: 35,
                 desc: 'Capture opponent pieces' },
             { id: 'promote_pawns', name: 'Promote Pawns', icon: '👑', target: 3, reward: 70,
-            desc: 'Promote pawns to a queen' },
+                desc: 'Promote pawns to a queen' },
             { id: 'play_moves', name: 'Play Moves', icon: '🎯', target: 50, reward: 25, desc: 'Make total moves in games' },
             { id: 'check_opponent', name: 'Check Opponent', icon: '⚠️', target: 8, reward: 40,
                 desc: 'Put the opponent in check' },
@@ -1020,7 +1020,7 @@
             { id: 'capture_queen', name: 'Capture Queen', icon: '👸', target: 2, reward: 80,
                 desc: 'Capture the opponent queen' },
             { id: 'save_king', name: 'Escape Check', icon: '🛡️', target: 6, reward: 45,
-            desc: 'Move your king out of check' },
+                desc: 'Move your king out of check' },
             { id: 'pawn_storm', name: 'Pawn Storm', icon: '🌊', target: 20, reward: 30,
                 desc: 'Advance pawns forward (moves)' },
             { id: 'knight_forks', name: 'Knight Forks', icon: '🍴', target: 4, reward: 65,
@@ -1032,7 +1032,7 @@
             { id: 'queen_dominance', name: 'Queen Dominance', icon: '👑', target: 8, reward: 50,
                 desc: 'Capture pieces with your queen' },
             { id: 'three_in_row', name: 'Win Streak', icon: '🔥', target: 3, reward: 90,
-            desc: 'Win 3 games in a row (cumulative)' },
+                desc: 'Win 3 games in a row (cumulative)' },
         ];
 
         function getTodayKey() {
@@ -1372,11 +1372,11 @@
             return countAttacksFromSquare(b, r, c) >= 2;
         }
 
-        // ===================== CPU WORKER =====================
-        let cpuWorker = null;
+        // ===================== OPPONENT ENGINE (Web Worker) =====================
+        let opponentWorker = null;
 
         function initWorker() {
-            if (cpuWorker) { try { cpuWorker.terminate(); } catch (e) {} cpuWorker = null; }
+            if (opponentWorker) { try { opponentWorker.terminate(); } catch (e) {} opponentWorker = null; }
             const workerCode = `
             const V={p:100,n:320,b:330,r:500,q:900,k:20000};
             function getMoves(b,r,c,ep,cs){
@@ -1412,35 +1412,35 @@
             function evalBoard(b,ai){let s=0;for(let r=0;r<8;r++)for(let c=0;c<8;c++){const p=b[r][c];if(!p)continue;s+=p.color==ai?V[p.type]:-V[p.type]}return s+Math.random()*8-4}
             function minimax(b,depth,a,beta,isMax,ai,ep,cs){const col=isMax?ai:(ai=='w'?'b':'w');if(depth==0)return evalBoard(b,ai);const moves=allMoves(b,col,ep,cs);if(!moves.length)return isCheck(b,col)?(isMax?-99999:99999):0;moves.sort((x,y)=>{const ca=b[x.to.r][x.to.c]?V[b[x.to.r][x.to.c].type]:0,cb=b[y.to.r][y.to.c]?V[b[y.to.r][y.to.c].type]:0;return cb-ca});if(isMax){let best=-Infinity;for(const m of moves){const o=b[m.to.r][m.to.c],p=b[m.from.r][m.from.c];b[m.to.r][m.to.c]=p;b[m.from.r][m.from.c]=null;if(m.promotion)b[m.to.r][m.to.c].type=m.promotion;const v=minimax(b,depth-1,a,beta,false,ai,ep,cs);b[m.from.r][m.from.c]=p;b[m.to.r][m.to.c]=o;best=Math.max(best,v);a=Math.max(a,v);if(beta<=a)break}return best}else{let best=Infinity;for(const m of moves){const o=b[m.to.r][m.to.c],p=b[m.from.r][m.from.c];b[m.to.r][m.to.c]=p;b[m.from.r][m.from.c]=null;if(m.promotion)b[m.to.r][m.to.c].type=m.promotion;const v=minimax(b,depth-1,a,beta,true,ai,ep,cs);b[m.from.r][m.from.c]=p;b[m.to.r][m.to.c]=o;best=Math.min(best,v);beta=Math.min(beta,v);if(beta<=a)break}return best}}
             self.onmessage=function(e){
-                const{board,cpuColor,depth,randomChance,enPassant,castling}=e.data;
-                const moves=allMoves(board,cpuColor,enPassant,castling);
+                const{board,opponentColor,depth,randomChance,enPassant,castling}=e.data;
+                const moves=allMoves(board,opponentColor,enPassant,castling);
                 if(!moves.length){self.postMessage(null);return;}
                 if(randomChance>0&&Math.random()<randomChance){self.postMessage(moves[Math.floor(Math.random()*moves.length)]);return;}
                 moves.sort((x,y)=>{const ca=board[x.to.r][x.to.c]?V[board[x.to.r][x.to.c].type]:0,cb=board[y.to.r][y.to.c]?V[board[y.to.r][y.to.c].type]:0;return cb-ca});
                 let best=-Infinity,bestMoves=[];
-                for(const m of moves){const o=board[m.to.r][m.to.c],p=board[m.from.r][m.from.c];board[m.to.r][m.to.c]=p;board[m.from.r][m.from.c]=null;if(m.promotion)board[m.to.r][m.to.c].type=m.promotion;const s=minimax(board,depth-1,-Infinity,Infinity,false,cpuColor,enPassant,castling);board[m.from.r][m.from.c]=p;board[m.to.r][m.to.c]=o;if(s>best){best=s;bestMoves=[m]}else if(s==best)bestMoves.push(m)}
+                for(const m of moves){const o=board[m.to.r][m.to.c],p=board[m.from.r][m.from.c];board[m.to.r][m.to.c]=p;board[m.from.r][m.from.c]=null;if(m.promotion)board[m.to.r][m.to.c].type=m.promotion;const s=minimax(board,depth-1,-Infinity,Infinity,false,opponentColor,enPassant,castling);board[m.from.r][m.from.c]=p;board[m.to.r][m.to.c]=o;if(s>best){best=s;bestMoves=[m]}else if(s==best)bestMoves.push(m)}
                 self.postMessage(bestMoves[Math.floor(Math.random()*bestMoves.length)]);
             };
         `;
             const blob = new Blob([workerCode], { type: 'application/javascript' });
-            cpuWorker = new Worker(URL.createObjectURL(blob));
-            cpuWorker.onmessage = function(e) {
-                if (cpuTimeoutId) { clearTimeout(cpuTimeoutId);
-                    cpuTimeoutId = null; }
-                cpuFooter.style.display = 'none';
-                cpuThinking = false;
+            opponentWorker = new Worker(URL.createObjectURL(blob));
+            opponentWorker.onmessage = function(e) {
+                if (opponentTimeoutId) { clearTimeout(opponentTimeoutId);
+                    opponentTimeoutId = null; }
+                opponentFooter.style.display = 'none';
+                opponentThinking = false;
                 if (!gameActive || postGamePending) return;
-                if (e.data && whiteToMove === (cpuColor === 'w')) {
+                if (e.data && whiteToMove === (opponentColor === 'w')) {
                     executeMove(e.data.from.r, e.data.from.c, e.data.to.r, e.data.to.c, e.data.promotion || 'q');
                 }
             };
-            cpuWorker.onerror = function() {
-                cpuFooter.style.display = 'none';
-                cpuThinking = false;
-                if (cpuTimeoutId) { clearTimeout(cpuTimeoutId);
-                    cpuTimeoutId = null; }
-                if (gameActive && !postGamePending && whiteToMove === (cpuColor === 'w')) {
-                    const moves = getAllLegalMoves(board, cpuColor, enPassantTarget, castlingRights);
+            opponentWorker.onerror = function() {
+                opponentFooter.style.display = 'none';
+                opponentThinking = false;
+                if (opponentTimeoutId) { clearTimeout(opponentTimeoutId);
+                    opponentTimeoutId = null; }
+                if (gameActive && !postGamePending && whiteToMove === (opponentColor === 'w')) {
+                    const moves = getAllLegalMoves(board, opponentColor, enPassantTarget, castlingRights);
                     if (moves.length > 0) {
                         const m = moves[Math.floor(Math.random() * moves.length)];
                         executeMove(m.from.r, m.from.c, m.to.r, m.to.c, 'q');
@@ -1449,7 +1449,7 @@
             };
         }
 
-        function getCpuParams(level) {
+        function getOpponentParams(level) {
             const zone = getZoneForLevel(level);
             return { depth: zone.depth, randomChance: zone.randomChance };
         }
@@ -1460,7 +1460,8 @@
             initWorker();
             if (colorChoice === 'random') colorChoice = Math.random() < 0.5 ? 'white' : 'black';
             playerColor = colorChoice === 'white' ? 'w' : 'b';
-            cpuColor = playerColor === 'w' ? 'b' : 'w';
+            opponentColor = playerColor === 'w' ? 'b' : 'w';
+            // FLIP THE BOARD so player's pieces are always at the bottom
             isFlipped = playerColor === 'b';
             board = initialBoard();
             whiteToMove = true;
@@ -1468,7 +1469,7 @@
             legalMoves = [];
             gameActive = true;
             kingInCheck = false;
-            cpuThinking = false;
+            opponentThinking = false;
             promotionPending = null;
             undoUsed = false;
             moveHistory = [];
@@ -1487,7 +1488,7 @@
             document.querySelector('.board').classList.toggle('flipped', isFlipped);
             render();
             updateUndoButton();
-            if (cpuColor === 'w') setTimeout(requestCpuMove, 500);
+            if (opponentColor === 'w') setTimeout(requestOpponentMove, 500);
         }
 
         function resetFlags() {
@@ -1563,7 +1564,7 @@
             if (nowInCheck && currentColor === playerColor && wasInCheckBefore) {
                 updateDailyMissionProgress('save_king', 1);
             }
-            if (nowInCheck && currentColor === cpuColor) {
+            if (nowInCheck && currentColor === opponentColor) {
                 updateDailyMissionProgress('check_opponent', 1);
             }
         }
@@ -1610,7 +1611,8 @@
                     addNotation({ from, to: { r: promoR, c: promoC } }, !!captured);
                     if (color === playerColor) updateDailyMissionProgress('promote_pawns', 1);
                     checkGameState();
-                    if (gameActive && !postGamePending && whiteToMove === cpuColor) setTimeout(requestCpuMove,
+                    if (gameActive && !postGamePending && whiteToMove === opponentColor) setTimeout(
+                        requestOpponentMove,
                         300);
                 });
                 promotionDialog.appendChild(opt);
@@ -1648,7 +1650,7 @@
             checkGameState();
             render();
             updateUndoButton();
-            if (gameActive && whiteToMove === cpuColor) setTimeout(requestCpuMove, 300);
+            if (gameActive && whiteToMove === opponentColor) setTimeout(requestOpponentMove, 300);
         }
 
         function updateUndoButton() {
@@ -1753,13 +1755,13 @@
                         img.src = getPieceImg(p.type, p.color);
                         img.className = 'piece';
                         img.draggable = true;
-                        if (gameActive && !cpuThinking && !promotionPending && whiteToMove !== cpuColor) {
+                        if (gameActive && !opponentThinking && !promotionPending && whiteToMove !== opponentColor) {
                             img.addEventListener('click', e => { e.stopPropagation();
                                 handleClick(r, c); });
                         }
                         sq.appendChild(img);
                     }
-                    if (gameActive && !cpuThinking && !promotionPending && whiteToMove !== cpuColor) {
+                    if (gameActive && !opponentThinking && !promotionPending && whiteToMove !== opponentColor) {
                         sq.addEventListener('click', () => handleClick(r, c));
                     }
                     boardEl.appendChild(sq);
@@ -1769,12 +1771,12 @@
         }
 
         function handleClick(r, c) {
-            if (!gameActive || postGamePending || cpuThinking || promotionPending) return;
-            if (whiteToMove === cpuColor) return;
+            if (!gameActive || postGamePending || opponentThinking || promotionPending) return;
+            if (whiteToMove === opponentColor) return;
             if (selected && legalMoves.some(m => m.r === r && m.c === c)) {
                 executeMove(selected.r, selected.c, r, c);
-                if (gameActive && !postGamePending && !promotionPending && whiteToMove === cpuColor) setTimeout(
-                    requestCpuMove, 300);
+                if (gameActive && !postGamePending && !promotionPending && whiteToMove === opponentColor) setTimeout(
+                    requestOpponentMove, 300);
                 return;
             }
             const p = board[r][c];
@@ -1804,28 +1806,28 @@
             document.getElementById('evalBarBlack').style.flex = (100 - wp);
         }
 
-        // ===================== CPU MOVE =====================
-        function requestCpuMove() {
-            if (!gameActive || postGamePending || cpuThinking || promotionPending) return;
-            if (whiteToMove !== cpuColor) return;
-            cpuThinking = true;
-            cpuFooter.style.display = 'block';
-            if (cpuTimeoutId) clearTimeout(cpuTimeoutId);
-            cpuTimeoutId = setTimeout(() => {
-                cpuFooter.style.display = 'none';
-                cpuThinking = false;
+        // ===================== OPPONENT MOVE =====================
+        function requestOpponentMove() {
+            if (!gameActive || postGamePending || opponentThinking || promotionPending) return;
+            if (whiteToMove !== opponentColor) return;
+            opponentThinking = true;
+            opponentFooter.style.display = 'block';
+            if (opponentTimeoutId) clearTimeout(opponentTimeoutId);
+            opponentTimeoutId = setTimeout(() => {
+                opponentFooter.style.display = 'none';
+                opponentThinking = false;
                 if (!gameActive) return;
-                try { cpuWorker.terminate(); } catch (e) {}
-                cpuWorker = null;
+                try { opponentWorker.terminate(); } catch (e) {}
+                opponentWorker = null;
                 initWorker();
-                const moves = getAllLegalMoves(board, cpuColor, enPassantTarget, castlingRights);
+                const moves = getAllLegalMoves(board, opponentColor, enPassantTarget, castlingRights);
                 if (moves.length > 0) { const m = moves[Math.floor(Math.random() * moves.length)];
                     executeMove(m.from.r, m.from.c, m.to.r, m.to.c, 'q'); }
             }, 10000);
-            const params = getCpuParams(currentLevel);
-            cpuWorker.postMessage({
+            const params = getOpponentParams(currentLevel);
+            opponentWorker.postMessage({
                 board: board.map(r => r.map(c => c ? { ...c } : null)),
-                cpuColor,
+                opponentColor,
                 depth: params.depth,
                 randomChance: params.randomChance,
                 enPassant: enPassantTarget,
@@ -1836,14 +1838,14 @@
         // ===================== POST GAME =====================
         function showPostGame(winner, resultType) {
             gameActive = false;
-            cpuThinking = false;
+            opponentThinking = false;
             promotionPending = null;
             clearInterval(timerInterval);
             timerInterval = null;
-            cpuFooter.style.display = 'none';
+            opponentFooter.style.display = 'none';
             promotionOverlay.style.display = 'none';
-            if (cpuTimeoutId) { clearTimeout(cpuTimeoutId);
-                cpuTimeoutId = null; }
+            if (opponentTimeoutId) { clearTimeout(opponentTimeoutId);
+                opponentTimeoutId = null; }
 
             const isPlayerWin = winner && ((playerColor === 'w' && winner === 'White') || (playerColor === 'b' &&
                 winner === 'Black'));
@@ -1922,7 +1924,7 @@
             document.getElementById('streakBadge').style.display = endlessStreak >= 3 ? 'flex' : 'none';
             document.getElementById('streakBadge').textContent = `🔥 Streak ${endlessStreak}`;
             document.getElementById('setupLevelInfo').textContent =
-                `LEVEL ${currentLevel} — ${zone.name} (CPU Depth: ${zone.depth})`;
+                `LEVEL ${currentLevel} — ${zone.name} (Difficulty: ${zone.depth})`;
             const progressPct = Math.min(100, ((currentLevel - zone.min) / (zone.max - zone.min + 1)) * 100);
             document.getElementById('hudProgressFill').style.width = progressPct + '%';
         }
@@ -1971,7 +1973,7 @@
                 addNotation({ from, to: { r: promoR, c: promoC } }, false);
                 if (color === playerColor) updateDailyMissionProgress('promote_pawns', 1);
                 checkGameState();
-                if (gameActive && whiteToMove === cpuColor) setTimeout(requestCpuMove, 300);
+                if (gameActive && whiteToMove === opponentColor) setTimeout(requestOpponentMove, 300);
             }
         });
         missionsModal.addEventListener('click', (e) => {
