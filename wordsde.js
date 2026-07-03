@@ -1,4 +1,4 @@
-const SECRET_WORDS = [
+const WORDS_DE = [
     // ====== DEUTSCHE MÄRCHEN ======
     { word: "ROTKÄPPCHEN", hint: "Ein Mädchen mit einer roten Mütze, das der Großmutter Kuchen im Wald bringt." },
     { word: "ASCHENPUTTEL", hint: "Ein Mädchen verliert einen gläsernen Schuh auf dem Ball im Schloss." },
