@@ -1,4 +1,4 @@
-const SECRET_WORDS = [
+const WORDS_ES = [
     // ====== COLEGIO Y MATERIALES (Σχολείο - 30) ======
     { word: "MOCHILA", hint: "Una bolsa grande que los alumnos llevan en los hombros para cargar utilidades." },
     { word: "ESTUCHE", hint: "Un objeto pequeño con cremallera donde se guardan los lápices y las gomas." },
