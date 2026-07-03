@@ -36,6 +36,14 @@
     <!-- ========== MONETAG SDK ========== -->
     <script src='//libtl.com/sdk.js' data-zone='10979429' data-sdk='show_10979429'></script>
     
+    <!-- ========== ΛΕΞΙΚΑ (προσθήκη νέων γλωσσών) ========== -->
+    <script src="wordseng.js"></script>
+    <script src="wordsgr.js"></script>
+    <script src="wordsde.js"></script>
+    <script src="wordsesp.js"></script>
+    <script src="wordsfr.js"></script>
+    <script src="wordsit.js"></script>
+
     <style>
         :root {
             --bg-dark: #1a0533;
@@ -912,19 +920,21 @@
         /* ========== ΕΠΙΛΟΓΗ ΓΛΩΣΣΑΣ / LANGUAGE SELECT ========== */
         .lang-select {
             display: flex;
-            gap: 10px;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 6px;
             position: relative;
             z-index: 15;
             margin-bottom: 4px;
         }
 
         .lang-btn {
-            padding: 8px 18px;
+            padding: 6px 14px;
             border: 3px solid #FFF9C4;
             border-radius: 40px;
             font-family: inherit;
             font-weight: 800;
-            font-size: clamp(0.8rem, 3vw, 1rem);
+            font-size: clamp(0.7rem, 2.5vw, 0.95rem);
             letter-spacing: 1px;
             cursor: pointer;
             color: #4A148C;
@@ -1623,9 +1633,14 @@
         <div class="splash-title">Crack The Code<br>FOR KIDS</div>
         <div class="splash-subtitle" id="splashSubtitle">FIND THE WORD!</div>
 
+        <!-- ========== ΕΠΙΛΟΓΗ ΓΛΩΣΣΑΣ ΜΕ 6 ΓΛΩΣΣΕΣ ========== -->
         <div class="lang-select" id="langSelect">
             <button class="lang-btn active" id="langEnBtn" data-lang="en" type="button">🇬🇧 English</button>
             <button class="lang-btn" id="langGrBtn" data-lang="gr" type="button">🇬🇷 Ελληνικά</button>
+            <button class="lang-btn" id="langDeBtn" data-lang="de" type="button">🇩🇪 Deutsch</button>
+            <button class="lang-btn" id="langEsBtn" data-lang="es" type="button">🇪🇸 Español</button>
+            <button class="lang-btn" id="langFrBtn" data-lang="fr" type="button">🇫🇷 Français</button>
+            <button class="lang-btn" id="langItBtn" data-lang="it" type="button">🇮🇹 Italiano</button>
         </div>
 
         <button class="splash-btn" id="startGameBtn">▶ START</button>
@@ -1706,16 +1721,9 @@
 
     <div class="confetti-container" id="confettiContainer"></div>
 
-    <script src="wordseng.js"></script>
-    <script src="wordsgr.js"></script>
-
+    <!-- Το `script` των λέξεων έχει μεταφερθεί στο <head> για καθαρότητα, αλλά μπορεί να μείνει κι εδώ -->
     <script>
         (function() {
-            if (typeof WORDS_EN === 'undefined' || typeof WORDS_GR === 'undefined') {
-                alert('Error: word files (wordseng.js / wordsgr.js) failed to load!');
-                return;
-            }
-
             // ========== ΓΛΩΣΣΕΣ / LANGUAGES ==========
             const KEYBOARD_ROWS_GR = [
                 "ΑΒΓΔΕΖΗΘ".split(""),
@@ -1734,7 +1742,6 @@
                     words: WORDS_EN,
                     keyboard: KEYBOARD_ROWS_EN,
                     spinLetters: "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
-                    // Splash + static UI
                     splashSubtitle: 'FIND THE WORD!',
                     splashFooter: '🎮 FOR KIDS 🎮',
                     gameSubtitle: 'FIND THE WORD',
@@ -1747,7 +1754,6 @@
                     newGameBtn: '🔄 NEW GAME',
                     helpBtn: 'WIN AN ATTEMPT',
                     refreshTitle: 'Refresh',
-                    // Runtime messages
                     noActiveGame: '⚠️ No active game!',
                     gotExtraAttempt: (n) => `🎉 You earned +1 attempt! (${n} left)`,
                     alreadyAllAttempts: '⚠️ You already have all attempts!',
@@ -1770,7 +1776,6 @@
                     words: WORDS_GR,
                     keyboard: KEYBOARD_ROWS_GR,
                     spinLetters: "ΑΒΓΔΕΖΗΘΙΚΛΜΝΞΟΠΡΣΤΥΦΧΨΩ",
-                    // Splash + static UI
                     splashSubtitle: 'ΒΡΕΣ ΤΗΝ ΛΕΞΗ!',
                     splashFooter: '🎮 ΓΙΑ ΠΑΙΔΙΑ 🎮',
                     gameSubtitle: 'ΒΡΕΣ ΤΗΝ ΛΕΞΗ',
@@ -1783,7 +1788,6 @@
                     newGameBtn: '🔄 ΝΕΟ ΠΑΙΧΝΙΔΙ',
                     helpBtn: 'ΚΕΡΔΙΣΕ ΜΙΑ ΠΡΟΣΠΑΘΕΙΑ',
                     refreshTitle: 'Ανανέωση',
-                    // Runtime messages
                     noActiveGame: '⚠️ Δεν υπάρχει ενεργό παιχνίδι!',
                     gotExtraAttempt: (n) => `🎉 Κέρδισες +1 προσπάθεια! (${n} απομένουν)`,
                     alreadyAllAttempts: '⚠️ Έχεις ήδη όλες τις προσπάθειες!',
@@ -1800,6 +1804,142 @@
                     resultTime: 'ΤΕΛΟΣ ΧΡΟΝΟΥ',
                     msgWin: 'Συγχαρητήρια! Πάτα ΝΕΟ ΠΑΙΧΝΙΔΙ! 🎉',
                     msgLose: (w) => `Η λέξη ήταν: ${w}. Πάτα ΝΕΟ ΠΑΙΧΝΙΔΙ! 😊`
+                },
+                de: {
+                    htmlLang: 'de',
+                    words: (typeof WORDS_DE !== 'undefined' ? WORDS_DE : []),
+                    keyboard: KEYBOARD_ROWS_EN,
+                    spinLetters: "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+                    splashSubtitle: 'FINDE DAS WORT!',
+                    splashFooter: '🎮 FÜR KINDER 🎮',
+                    gameSubtitle: 'FINDE DAS WORT',
+                    labelTime: '⏳ ZEIT',
+                    labelScore: '⭐ PUNKTE',
+                    labelRecord: '🏆 REKORD',
+                    hintLoading: '💡 Lädt...',
+                    inputPlaceholder: 'Schreibe das ganze Wort...',
+                    submitBtn: '🔓 RATEN',
+                    newGameBtn: '🔄 NEUES SPIEL',
+                    helpBtn: 'EXTRA-VERSUCH',
+                    refreshTitle: 'Neu laden',
+                    noActiveGame: '⚠️ Kein aktives Spiel!',
+                    gotExtraAttempt: (n) => `🎉 Du hast +1 Versuch! (noch ${n})`,
+                    alreadyAllAttempts: '⚠️ Du hast schon alle Versuche!',
+                    levelLabel: (lvl) => '🌟 LEVEL ' + lvl,
+                    levelUpPop: (lvl) => '⬆ LEVEL ' + lvl + '!',
+                    levelUpMsg: (lvl) => `🎉 LEVEL ${lvl} ERREICHT! SUPER!`,
+                    typeAWord: 'Schreibe ein Wort! ✏️',
+                    wrongTryAgain: (a, m) => `Falsch! Versuch es nochmal! (${a}/${m}) 💪`,
+                    letterFound: (l, p) => `✅ "${l}" gefunden! +${p} Punkte! 🎉`,
+                    wordBonusPop: '+100 WORT! 🏆',
+                    letterNotFound: (l, a, m) => `❌ "${l}" ist nicht im Wort! (${a}/${m})`,
+                    resultWin: 'RICHTIG! SUPER GEMACHT!',
+                    resultAttempts: 'KEINE VERSUCHE MEHR',
+                    resultTime: 'ZEIT ABGELAUFEN',
+                    msgWin: 'Glückwunsch! Drücke NEUES SPIEL! 🎉',
+                    msgLose: (w) => `Das Wort war: ${w}. Drücke NEUES SPIEL! 😊`
+                },
+                es: {
+                    htmlLang: 'es',
+                    words: (typeof WORDS_ES !== 'undefined' ? WORDS_ES : []),
+                    keyboard: KEYBOARD_ROWS_EN,
+                    spinLetters: "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+                    splashSubtitle: '¡ENCUENTRA LA PALABRA!',
+                    splashFooter: '🎮 PARA NIÑOS 🎮',
+                    gameSubtitle: 'ENCUENTRA LA PALABRA',
+                    labelTime: '⏳ TIEMPO',
+                    labelScore: '⭐ PUNTOS',
+                    labelRecord: '🏆 RÉCORD',
+                    hintLoading: '💡 Cargando...',
+                    inputPlaceholder: 'Escribe la palabra completa...',
+                    submitBtn: '🔓 ENVIAR',
+                    newGameBtn: '🔄 NUEVO JUEGO',
+                    helpBtn: 'GANA UN INTENTO',
+                    refreshTitle: 'Actualizar',
+                    noActiveGame: '⚠️ ¡No hay juego activo!',
+                    gotExtraAttempt: (n) => `🎉 ¡Ganaste +1 intento! (quedan ${n})`,
+                    alreadyAllAttempts: '⚠️ ¡Ya tienes todos los intentos!',
+                    levelLabel: (lvl) => '🌟 NIVEL ' + lvl,
+                    levelUpPop: (lvl) => '⬆ NIVEL ' + lvl + '!',
+                    levelUpMsg: (lvl) => `🎉 ¡LLEGASTE AL NIVEL ${lvl}! ¡BIEN HECHO!`,
+                    typeAWord: '¡Escribe una palabra! ✏️',
+                    wrongTryAgain: (a, m) => `¡Incorrecto! ¡Inténtalo otra vez! (${a}/${m}) 💪`,
+                    letterFound: (l, p) => `✅ ¡"${l}" encontrada! +${p} puntos! 🎉`,
+                    wordBonusPop: '+100 ¡PALABRA! 🏆',
+                    letterNotFound: (l, a, m) => `❌ ¡"${l}" no está en la palabra! (${a}/${m})`,
+                    resultWin: '¡LO LOGRASTE! ¡MUY BIEN!',
+                    resultAttempts: 'NO QUEDAN INTENTOS',
+                    resultTime: 'SE ACABÓ EL TIEMPO',
+                    msgWin: '¡Felicidades! ¡Pulsa NUEVO JUEGO! 🎉',
+                    msgLose: (w) => `La palabra era: ${w}. ¡Pulsa NUEVO JUEGO! 😊`
+                },
+                fr: {
+                    htmlLang: 'fr',
+                    words: (typeof WORDS_FR !== 'undefined' ? WORDS_FR : []),
+                    keyboard: KEYBOARD_ROWS_EN,
+                    spinLetters: "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+                    splashSubtitle: 'TROUVE LE MOT !',
+                    splashFooter: '🎮 POUR LES ENFANTS 🎮',
+                    gameSubtitle: 'TROUVE LE MOT',
+                    labelTime: '⏳ TEMPS',
+                    labelScore: '⭐ SCORE',
+                    labelRecord: '🏆 RECORD',
+                    hintLoading: '💡 Chargement...',
+                    inputPlaceholder: 'Écris le mot entier...',
+                    submitBtn: '🔓 VALIDER',
+                    newGameBtn: '🔄 NOUVEAU JEU',
+                    helpBtn: 'GAGNE UN ESSAI',
+                    refreshTitle: 'Actualiser',
+                    noActiveGame: '⚠️ Aucun jeu en cours !',
+                    gotExtraAttempt: (n) => `🎉 Tu as gagné +1 essai ! (${n} restants)`,
+                    alreadyAllAttempts: '⚠️ Tu as déjà tous les essais !',
+                    levelLabel: (lvl) => '🌟 NIVEAU ' + lvl,
+                    levelUpPop: (lvl) => '⬆ NIVEAU ' + lvl + ' !',
+                    levelUpMsg: (lvl) => `🎉 NIVEAU ${lvl} ATTEINT ! BRAVO !`,
+                    typeAWord: 'Écris un mot ! ✏️',
+                    wrongTryAgain: (a, m) => `Faux ! Essaie encore ! (${a}/${m}) 💪`,
+                    letterFound: (l, p) => `✅ "${l}" trouvé ! +${p} points ! 🎉`,
+                    wordBonusPop: '+100 MOT ! 🏆',
+                    letterNotFound: (l, a, m) => `❌ "${l}" n'est pas dans le mot ! (${a}/${m})`,
+                    resultWin: 'TROUVÉ ! BRAVO !',
+                    resultAttempts: "PLUS D'ESSAIS",
+                    resultTime: 'TEMPS ÉCOULÉ',
+                    msgWin: 'Félicitations ! Appuie sur NOUVEAU JEU ! 🎉',
+                    msgLose: (w) => `Le mot était : ${w}. Appuie sur NOUVEAU JEU ! 😊`
+                },
+                it: {
+                    htmlLang: 'it',
+                    words: (typeof WORDS_IT !== 'undefined' ? WORDS_IT : []),
+                    keyboard: KEYBOARD_ROWS_EN,
+                    spinLetters: "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+                    splashSubtitle: 'TROVA LA PAROLA!',
+                    splashFooter: '🎮 PER BAMBINI 🎮',
+                    gameSubtitle: 'TROVA LA PAROLA',
+                    labelTime: '⏳ TEMPO',
+                    labelScore: '⭐ PUNTI',
+                    labelRecord: '🏆 RECORD',
+                    hintLoading: '💡 Caricamento...',
+                    inputPlaceholder: 'Scrivi la parola intera...',
+                    submitBtn: '🔓 INVIA',
+                    newGameBtn: '🔄 NUOVA PARTITA',
+                    helpBtn: 'VINCI UN TENTATIVO',
+                    refreshTitle: 'Aggiorna',
+                    noActiveGame: '⚠️ Nessuna partita attiva!',
+                    gotExtraAttempt: (n) => `🎉 Hai guadagnato +1 tentativo! (ne restano ${n})`,
+                    alreadyAllAttempts: '⚠️ Hai già tutti i tentativi!',
+                    levelLabel: (lvl) => '🌟 LIVELLO ' + lvl,
+                    levelUpPop: (lvl) => '⬆ LIVELLO ' + lvl + '!',
+                    levelUpMsg: (lvl) => `🎉 HAI RAGGIUNTO IL LIVELLO ${lvl}! BRAVO!`,
+                    typeAWord: 'Scrivi una parola! ✏️',
+                    wrongTryAgain: (a, m) => `Sbagliato! Riprova! (${a}/${m}) 💪`,
+                    letterFound: (l, p) => `✅ "${l}" trovata! +${p} punti! 🎉`,
+                    wordBonusPop: '+100 PAROLA! 🏆',
+                    letterNotFound: (l, a, m) => `❌ "${l}" non c'è nella parola! (${a}/${m})`,
+                    resultWin: 'TROVATA! BRAVO!',
+                    resultAttempts: 'TENTATIVI FINITI',
+                    resultTime: 'TEMPO SCADUTO',
+                    msgWin: 'Complimenti! Premi NUOVA PARTITA! 🎉',
+                    msgLose: (w) => `La parola era: ${w}. Premi NUOVA PARTITA! 😊`
                 }
             };
 
@@ -1807,19 +1947,20 @@
             let currentLang = 'en';
             try {
                 const savedLang = localStorage.getItem(STORAGE_KEY_LANG);
-                if (savedLang === 'en' || savedLang === 'gr') currentLang = savedLang;
+                const supportedLangs = ['en', 'gr', 'de', 'es', 'fr', 'it'];
+                if (supportedLangs.includes(savedLang)) currentLang = savedLang;
             } catch (e) {}
 
-            // Ενεργή γλώσσα / active-language helper
             function L() { return I18N[currentLang]; }
 
-            // Οι παρακάτω αλλάζουν ανά γλώσσα (τίθενται στο applyLanguage)
             let SECRET_WORDS = I18N[currentLang].words;
             let KEYBOARD_ROWS = I18N[currentLang].keyboard;
             let SPIN_LETTERS = I18N[currentLang].spinLetters;
 
+            // ========== ΕΦΑΡΜΟΓΗ ΓΛΩΣΣΑΣ ==========
             function applyLanguage(lang) {
-                if (lang !== 'en' && lang !== 'gr') lang = 'en';
+                const supportedLangs = ['en', 'gr', 'de', 'es', 'fr', 'it'];
+                if (!supportedLangs.includes(lang)) lang = 'en';
                 currentLang = lang;
                 const t = I18N[lang];
 
@@ -1847,16 +1988,12 @@
                 const rb = document.getElementById('refreshBtnCircle');
                 if (rb) rb.setAttribute('title', t.refreshTitle);
 
-                // Hint box δείχνει "Loading" μόνο όταν δεν παίζουμε
                 if (!gameActive) setText('hintText', t.hintLoading);
 
-                // Ενεργό κουμπί γλώσσας
-                const enBtn = document.getElementById('langEnBtn');
-                const grBtn = document.getElementById('langGrBtn');
-                if (enBtn) enBtn.classList.toggle('active', lang === 'en');
-                if (grBtn) grBtn.classList.toggle('active', lang === 'gr');
+                // Ενεργό κουμπί γλώσσας (data-lang)
+                const langBtns = document.querySelectorAll('.lang-btn');
+                langBtns.forEach(btn => btn.classList.toggle('active', btn.dataset.lang === lang));
 
-                // Ανανέωση ετικέτας επιπέδου
                 if (typeof updateLevelDisplay === 'function') updateLevelDisplay();
             }
 
@@ -1874,7 +2011,6 @@
             const MAX_LETTERS_PER_ROW = 10;
             const FONT_RATIO = 0.55;
 
-            // ========== MONETAG ==========
             const MONETAG_ZONE = '10979429';
 
             let currentWord = "";
@@ -1975,6 +2111,7 @@
                 correctLettersInCurrentWord = 0;
                 const nw = normalizeGreek(currentWord);
                 revealedLetters = new Array(nw.length).fill("");
+                { const __dc = displayCharsOf(currentWord); for (let __i=0;__i<nw.length;__i++){ if(!/[A-ZΑ-Ω]/.test(nw[__i])) revealedLetters[__i]=__dc[__i]; } }
                 
                 timerDisplay.textContent = formatTime(timeSeconds);
                 timerDisplay.style.color = "#ffffff";
@@ -2031,19 +2168,16 @@
                 });
             });
 
-            // ========== ΣΤΡΟΓΓΥΛΟ ΚΟΥΜΠΙ ΑΝΑΝΕΩΣΗΣ (με διαφήμιση) ==========
             refreshBtnCircle.addEventListener('click', function(e) {
                 e.preventDefault();
                 initAudio();
                 callMonetagAd().then(() => {
-                    // Μετά τη διαφήμιση, επιστρέφουμε στο splash screen
                     stopTimer();
                     gameActive = false;
                     splashScreen.classList.remove("hidden");
                     gameContainer.classList.add("hidden");
                     document.body.style.overflow = '';
                 }).catch(() => {
-                    // Αν αποτύχει η διαφήμιση, πάμε κατευθείαν στο splash
                     stopTimer();
                     gameActive = false;
                     splashScreen.classList.remove("hidden");
@@ -2074,6 +2208,11 @@
             // ========== ΕΠΙΛΟΓΗ ΓΛΩΣΣΑΣ / LANGUAGE BUTTONS ==========
             const langEnBtn = document.getElementById("langEnBtn");
             const langGrBtn = document.getElementById("langGrBtn");
+            const langDeBtn = document.getElementById("langDeBtn");
+            const langEsBtn = document.getElementById("langEsBtn");
+            const langFrBtn = document.getElementById("langFrBtn");
+            const langItBtn = document.getElementById("langItBtn");
+
             if (langEnBtn) langEnBtn.addEventListener("click", function(e) {
                 e.preventDefault();
                 initAudio();
@@ -2083,6 +2222,26 @@
                 e.preventDefault();
                 initAudio();
                 applyLanguage("gr");
+            });
+            if (langDeBtn) langDeBtn.addEventListener("click", function(e) {
+                e.preventDefault();
+                initAudio();
+                applyLanguage("de");
+            });
+            if (langEsBtn) langEsBtn.addEventListener("click", function(e) {
+                e.preventDefault();
+                initAudio();
+                applyLanguage("es");
+            });
+            if (langFrBtn) langFrBtn.addEventListener("click", function(e) {
+                e.preventDefault();
+                initAudio();
+                applyLanguage("fr");
+            });
+            if (langItBtn) langItBtn.addEventListener("click", function(e) {
+                e.preventDefault();
+                initAudio();
+                applyLanguage("it");
             });
 
             function loadSavedData() {
@@ -2179,8 +2338,22 @@
                 return SECRET_WORDS[randomIndex];
             }
 
+            function __fold(text) {
+                return text.toUpperCase()
+                    .replace(/Ά/g,"Α").replace(/Έ/g,"Ε").replace(/Ή/g,"Η").replace(/Ί/g,"Ι").replace(/Ό/g,"Ο").replace(/Ύ/g,"Υ").replace(/Ώ/g,"Ω").replace(/Ϊ/g,"Ι").replace(/Ϋ/g,"Υ")
+                    .replace(/[ÁÀÂÄÃÅĀ]/g,"A").replace(/[ÉÈÊËĒ]/g,"E").replace(/[ÍÌÎÏĪ]/g,"I").replace(/[ÓÒÔÖÕŌ]/g,"O").replace(/[ÚÙÛÜŪ]/g,"U").replace(/Ñ/g,"N").replace(/Ç/g,"C");
+            }
+
             function normalizeGreek(text) {
-                return text.toUpperCase().replace(/Ά/g,"Α").replace(/Έ/g,"Ε").replace(/Ή/g,"Η").replace(/Ί/g,"Ι").replace(/Ό/g,"Ο").replace(/Ύ/g,"Υ").replace(/Ώ/g,"Ω").replace(/Ϊ/g,"Ι").replace(/Ϋ/g,"Υ").replace(/\s+/g,"");
+                return __fold(text).replace(/\s+/g,"");
+            }
+
+            function displayCharsOf(text) {
+                return text.toUpperCase().replace(/\s+/g,"");
+            }
+
+            function compareKey(text) {
+                return __fold(text).replace(/[^0-9A-ZΑ-Ω]/g,"");
             }
 
             function formatTime(sec) { 
@@ -2316,7 +2489,8 @@
                         currentScore += pointsEarned; 
                         addXP(pointsEarned); 
                         correctLettersInCurrentWord += positions.length;
-                        positions.forEach(pos => { revealedLetters[pos] = letter; });
+                        const __dc = displayCharsOf(currentWord);
+                        positions.forEach(pos => { revealedLetters[pos] = __dc[pos]; });
                         updateWordDisplay(true, positions); 
                         updateAlphabetButtons(); 
                         updateScoreDisplay(); 
@@ -2328,8 +2502,8 @@
                         messageBox.textContent = L().letterFound(letter, pointsEarned); 
                         messageBox.style.color = "#2ed573";
                         
-                        const allRevealed = revealedLetters.map(l => l || '').join('');
-                        if (allRevealed === nw) {
+                        const wordComplete = revealedLetters.every(ch => ch !== "");
+                        if (wordComplete) {
                             setTimeout(() => { 
                                 currentScore += POINTS_FULL_WORD; 
                                 addXP(POINTS_FULL_WORD); 
@@ -2478,27 +2652,30 @@
             function checkFullGuess() {
                 if (!gameActive || isSpinning) return; 
                 initAudio();
-                const guess = normalizeGreek(guessInput.value.trim()); 
-                const nw = normalizeGreek(currentWord);
-                if (guess === "") { 
+                const guessRaw = guessInput.value.trim();
+                const guess = compareKey(guessRaw); 
+                const target = compareKey(currentWord);
+                if (guessRaw === "") { 
                     messageBox.textContent = L().typeAWord; 
                     messageBox.style.color = "#feca57"; 
                     return; 
                 }
                 
                 spinAllSlots(() => {
-                    if (guess === nw) {
-                        const remaining = nw.length - correctLettersInCurrentWord; 
+                    if (guess === target) {
+                        const remaining = revealedLetters.filter(x => x === "").length; 
                         const totalPoints = remaining * POINTS_PER_LETTER + POINTS_FULL_WORD;
                         currentScore += totalPoints; 
                         addXP(totalPoints); 
                         updateScoreDisplay(); 
                         saveAllData();
                         
+                        const nw = normalizeGreek(currentWord);
+                        const __dc = displayCharsOf(currentWord);
                         for (let i = 0; i < nw.length; i++) { 
                             if (!revealedLetters[i]) { 
-                                revealedLetters[i] = nw[i]; 
-                                if (!usedLetters.includes(nw[i])) usedLetters.push(nw[i]); 
+                                revealedLetters[i] = __dc[i]; 
+                                if (/[A-ZΑ-Ω]/.test(nw[i]) && !usedLetters.includes(nw[i])) usedLetters.push(nw[i]); 
                             } 
                         }
                         updateWordDisplay(true); 
@@ -2527,11 +2704,8 @@
                 if (!gameActive) return; 
                 gameActive = false; 
                 stopTimer();
-                if (!won) { 
-                    // Για παιδιά δεν αφαιρούμε πόντους
-                }
-                const nw = normalizeGreek(currentWord);
-                for (let i = 0; i < nw.length; i++) revealedLetters[i] = nw[i];
+                const __dc = displayCharsOf(currentWord);
+                for (let i = 0; i < __dc.length; i++) revealedLetters[i] = __dc[i];
                 updateWordDisplay(); 
                 updateAlphabetButtons();
                 guessInput.disabled = true; 
@@ -2559,6 +2733,7 @@
                 correctLettersInCurrentWord = 0;
                 const nw = normalizeGreek(currentWord); 
                 revealedLetters = new Array(nw.length).fill("");
+                { const __dc = displayCharsOf(currentWord); for (let __i=0;__i<nw.length;__i++){ if(!/[A-ZΑ-Ω]/.test(nw[__i])) revealedLetters[__i]=__dc[__i]; } }
                 
                 timerDisplay.textContent = formatTime(timeSeconds); 
                 timerDisplay.style.color = "#ffffff";
@@ -2607,7 +2782,7 @@
                 } 
             });
             guessInput.addEventListener("input", function(e) { 
-                e.target.value = e.target.value.toUpperCase().replace(/[^A-ZΑ-ΩΆΈΉΊΌΎΏΪΫ\s]/g, ""); 
+                e.target.value = e.target.value.toUpperCase().replace(/[^\p{L}\p{N}\s]/gu, ""); 
             });
             guessInput.addEventListener("focus", function() { 
                 window.scrollTo(0, 0); 
