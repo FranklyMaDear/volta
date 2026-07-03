@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!DOCTYPE html> 
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -7,9 +7,6 @@
     <meta name="theme-color" content="#0a0e27">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-
-    <!-- YouTube Playables SDK (το ΜΟΝΟ επιτρεπόμενο SDK) -->
-    <script src="https://www.youtube.com/game_api/v1"></script>
 
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
@@ -21,21 +18,26 @@
             position: relative; touch-action: manipulation;
             padding-bottom: 0; transition: background 0.4s ease;
         }
-        /* Pause state από το SDK */
-        body.paused, body.paused *, body.paused *::before, body.paused *::after { animation-play-state: paused !important; }
-        body.paused { pointer-events: none !important; user-select: none !important; }
-
         #starCanvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; }
         .shooting-star { position: fixed; width: 3px; height: 80px; background: linear-gradient(to bottom, rgba(255,255,255,0.9), rgba(255,255,255,0)); border-radius: 50%; z-index: 1; pointer-events: none; animation: shoot linear forwards; transform-origin: top center; }
         @keyframes shoot { 0% { opacity: 1; transform: translate(0,0) rotate(-35deg); } 70% { opacity: 1; } 100% { opacity: 0; transform: translate(-400px,600px) rotate(-35deg); } }
         .nebula-particle { position: fixed; border-radius: 50%; z-index: 0; pointer-events: none; animation: nebulaFloat linear infinite; filter: blur(2px); }
         @keyframes nebulaFloat { 0% { transform: translate(0,0) scale(1); opacity: 0.6; } 50% { transform: translate(30px,-40px) scale(1.5); opacity: 0.2; } 100% { transform: translate(-20px,20px) scale(1); opacity: 0.6; } }
 
-        .game-wrapper { display: flex; width: 100%; height: 100vh; height: 100dvh; justify-content: center; align-items: center; padding: 4px; position: relative; z-index: 50; overflow: hidden; }
-        .game-container { text-align: center; background: rgba(14,16,39,0.92); border-radius: 22px; padding: 8px 10px 12px; box-shadow: 0 10px 40px rgba(0,0,0,0.5); width: 100%; max-width: 440px; max-height: calc(100vh - 8px); max-height: calc(100dvh - 8px); overflow-y: auto; overflow-x: hidden; border: 2px solid rgba(132,204,22,0.3); backdrop-filter: blur(10px); }
-
-        #homeBtn { position: absolute; top: 12px; left: 12px; z-index: 100; background: rgba(14,16,39,0.85); border: 2px solid #84cc16; color: #84cc16; font-weight: 800; padding: 8px 16px; border-radius: 30px; cursor: pointer; font-family: inherit; backdrop-filter: blur(8px); box-shadow: 0 0 15px rgba(132,204,22,0.3); font-size: 0.8rem; transition: all 0.2s; }
-        #homeBtn:active { transform: scale(0.95); }
+        .game-wrapper {
+            display: flex; width: 100%; height: 100vh; height: 100dvh;
+            justify-content: center; align-items: center;
+            padding: 4px; position: relative; z-index: 50; overflow: hidden;
+        }
+        .game-container {
+            text-align: center; background: rgba(14,16,39,0.92);
+            border-radius: 22px; padding: 8px 10px 12px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+            width: 100%; max-width: 440px;
+            max-height: calc(100vh - 8px); max-height: calc(100dvh - 8px);
+            overflow-y: auto; overflow-x: hidden;
+            border: 2px solid rgba(132,204,22,0.3); backdrop-filter: blur(10px);
+        }
 
         .hud-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; gap: 4px; flex-wrap: wrap; }
         .hud-level { font-size: 0.65rem; font-weight: 800; color: #84cc16; text-shadow: 0 0 10px rgba(132,204,22,0.6); background: rgba(132,204,22,0.1); border: 1px solid rgba(132,204,22,0.3); padding: 2px 8px; border-radius: 20px; white-space: nowrap; }
@@ -148,9 +150,26 @@
         .modal-action-btn:active { transform: translateY(3px); }
         .modal-action-btn:disabled { opacity: 0.6; pointer-events: none; }
 
-        .score-modal-box { background: #0e1027; border: 2px solid rgba(132,204,22,0.4); border-radius: 20px; padding: 20px 16px; width: 92%; max-width: 400px; max-height: 80vh; overflow-y: auto; box-shadow: 0 0 40px rgba(132,204,22,0.15); }
+        /* ===== IMPROVED SCORE HISTORY MODAL STYLES (PROFESSIONAL LOOK) ===== */
+        .score-modal-box { background: #0e1027; border: 2px solid rgba(132,204,22,0.4); border-radius: 20px; padding: 20px 16px; width: 92%; max-width: 420px; max-height: 80vh; overflow-y: auto; box-shadow: 0 0 40px rgba(132,204,22,0.15); }
         .modal-title { color: #84cc16; font-size: 1.2rem; font-weight: 800; letter-spacing: 2px; text-align: center; margin-bottom: 14px; text-shadow: 0 0 12px rgba(132,204,22,0.5); }
+        
+        .score-table { width: 100%; border-collapse: separate; border-spacing: 0 4px; margin-top: 6px; font-family: 'Segoe UI', -apple-system, sans-serif; }
+        .score-table th { background: rgba(132,204,22,0.12); color: #a3e635; font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; padding: 8px 6px; border-radius: 8px 8px 0 0; text-align: center; }
+        .score-table td { background: rgba(255,255,255,0.04); color: #e8e8ed; padding: 8px 6px; font-size: 0.8rem; border-bottom: 1px solid rgba(255,255,255,0.05); text-align: center; transition: background 0.2s; }
+        .score-table tbody tr:hover td { background: rgba(255,255,255,0.07); }
+        .score-table .today-row td { background: rgba(132,204,22,0.12); border-left: 3px solid #84cc16; }
+        .score-table .win { color: #84cc16; font-weight: 700; }
+        .score-table .loss { color: #f87171; font-weight: 700; }
 
+        .endless-record { text-align: center; margin-top: 12px; padding: 10px; background: rgba(255,215,0,0.08); border-radius: 12px; border: 1px solid rgba(255,215,0,0.2); }
+        .endless-record-label { font-size: 0.65rem; color: rgba(255,255,255,0.6); text-transform: uppercase; letter-spacing: 1px; }
+        .endless-record-val { font-size: 1.4rem; font-weight: 800; color: #fbbf24; margin-top: 2px; }
+
+        .modal-back-btn { display: block; width: 100%; margin-top: 14px; padding: 12px; background: linear-gradient(135deg, #84cc16, #65a30d); border: none; border-radius: 30px; color: #fff; font-size: 0.9rem; font-weight: 800; font-family: inherit; cursor: pointer; box-shadow: 0 4px 0 #4d7c0f; transition: all 0.2s; letter-spacing: 1px; }
+        .modal-back-btn:active { transform: translateY(3px); box-shadow: 0 1px 0 #4d7c0f; }
+
+        /* ===== SHOP MODAL STYLES ===== */
         .shop-category-title { font-size: 0.9rem; font-weight: 700; color: #fbbf24; margin-top: 12px; margin-bottom: 6px; text-align: left; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 4px; }
         .shop-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(80px, 1fr)); gap: 8px; }
         .shop-item { background: rgba(255,255,255,0.04); border: 2px solid rgba(255,255,255,0.1); border-radius: 10px; padding: 8px 4px; text-align: center; cursor: pointer; transition: all 0.2s; }
@@ -162,9 +181,6 @@
         .shop-item .preview { width: 18px; height: 18px; border-radius: 50%; display: inline-block; margin: 4px 0; border: 1px solid rgba(255,255,255,0.3); }
         .shop-item .preview-board { width: 24px; height: 16px; border-radius: 4px; display: inline-block; margin: 4px 0; border: 1px solid rgba(255,255,255,0.3); }
         .shop-item .preview-bg { width: 24px; height: 16px; border-radius: 4px; display: inline-block; margin: 4px 0; border: 1px solid rgba(255,255,255,0.3); }
-
-        .modal-back-btn { display: block; width: 100%; margin-top: 12px; padding: 12px; background: linear-gradient(135deg, #84cc16, #65a30d); border: none; border-radius: 30px; color: #fff; font-size: 0.9rem; font-weight: 800; font-family: inherit; cursor: pointer; box-shadow: 0 4px 0 #4d7c0f; transition: all 0.2s; letter-spacing: 1px; }
-        .modal-back-btn:active { transform: translateY(3px); box-shadow: 0 1px 0 #4d7c0f; }
 
         @media (max-width: 600px) {
             .game-container { max-width: 100%; padding: 8px 6px; }
@@ -183,11 +199,11 @@
             .hud-resources { flex-wrap: wrap; justify-content: center; gap: 2px; }
         }
     </style>
+
+    <!-- Αφαιρέθηκε το script της Monetag -->
 </head>
 <body>
     <canvas id="starCanvas"></canvas>
-    
-    <button id="homeBtn" onclick="goHome()">🏠 Home</button>
 
     <div class="game-wrapper">
         <div class="game-container">
@@ -197,6 +213,7 @@
                 <div class="hud-btns">
                     <button class="res-btn daily-btn" id="dailyBtn">🎁 Daily</button>
                     <button class="res-btn shop-btn" id="shopBtn">🛒 Shop</button>
+                    <!-- Αφαιρέθηκε το κουμπί adPointsBtn -->
                 </div>
             </div>
 
@@ -232,7 +249,6 @@
         </div>
     </div>
 
-    <!-- END-GAME MODAL -->
     <div class="modal-overlay" id="endModal">
         <div class="modal-box">
             <div class="modal-galaxy-title win" id="endTitle">🎉 Galaxy Conquered!</div>
@@ -250,11 +266,10 @@
                 <div class="stat-row"><span class="stat-label">Duration</span><span class="stat-value" id="statTime">0s</span></div>
                 <div class="stat-row"><span class="stat-label">First to Move</span><span class="stat-value" id="statFirst">You</span></div>
             </div>
-            <button class="modal-action-btn win-btn" id="endActionBtn">Continue →</button>
+            <button class="modal-action-btn win-btn" id="endActionBtn">▶ Continue</button>
         </div>
     </div>
 
-    <!-- SCOREBOARD MODAL -->
     <div class="modal-overlay" id="scoreModal">
         <div class="score-modal-box">
             <div class="modal-title">🏆 Score History</div>
@@ -267,12 +282,12 @@
         </div>
     </div>
 
-    <!-- SHOP MODAL -->
     <div class="modal-overlay" id="shopModal">
         <div class="score-modal-box">
             <div class="modal-title">🛒 Galactic Shop</div>
             <div id="shopContent">
                 <p style="color:rgba(255,255,255,0.6);font-size:0.7rem;text-align:center;margin-bottom:10px;">🪙 You have <span id="shopCoins">0</span> coins</p>
+                <!-- Αφαιρέθηκε το κουμπί shopWatchAdBtn -->
                 <div id="shopContainer"></div>
             </div>
             <button class="modal-back-btn" id="closeShopBtn">← Close Shop</button>
@@ -282,15 +297,7 @@
     <script>
     (function() {
         // ============================================================
-        // HOME BUTTON - opens Telegram profile
-        // ============================================================
-        function goHome() {
-            window.location.href = 'https://t.me/Franklygames_bot?profile';
-        }
-        window.goHome = goHome;
-
-        // ============================================================
-        // STARFIELD (no changes)
+        // STARFIELD
         // ============================================================
         const canvas = document.getElementById('starCanvas');
         const ctx = canvas.getContext('2d');
@@ -362,7 +369,7 @@
         window.addEventListener('resize', () => { resizeCanvas(); createStars(200); });
 
         // ============================================================
-        // AUDIO (no changes, just barebone)
+        // AUDIO
         // ============================================================
         class GameAudio {
             constructor() { this.audioCtx = null; this.initialized = false; this._muted = false; this._paused = false; }
@@ -405,19 +412,36 @@
         }
 
         // ============================================================
-        // SAVE / LOAD & SHOP (kept from 4x4 version)
+        // SAVE / LOAD (DATA LAYER)
         // ============================================================
         const DEFAULT_SAVE = {
-            coins: 0, points: 0, level: 1, lastLogin: null, streak: 0,
-            xpBoostActive: false, xpBoostGames: 0,
+            coins: 0,
+            points: 0,
+            level: 1,
+            lastLogin: null,
+            streak: 0,
+            xpBoostActive: false,
+            xpBoostGames: 0,
             ownedSkins: ['default', 'default_disc', 'default_effect', 'default_bg'],
-            activeBoardSkin: 'default', activeDiscSkin: 'default_disc', activeEffectSkin: 'default_effect', activeBgSkin: 'default_bg'
+            activeBoardSkin: 'default',
+            activeDiscSkin: 'default_disc',
+            activeEffectSkin: 'default_effect',
+            activeBgSkin: 'default_bg'
         };
-        function loadSave() {
-            try { const d = JSON.parse(localStorage.getItem('cf_galactic_save_v3')); return d ? { ...DEFAULT_SAVE, ...d } : DEFAULT_SAVE; } catch { return DEFAULT_SAVE; }
-        }
-        function writeSave(s) { try { localStorage.setItem('cf_galactic_save_v3', JSON.stringify(s)); } catch(e) {} }
 
+        function loadSave() {
+            try {
+                const d = JSON.parse(localStorage.getItem('cf_galactic_save_v3'));
+                return d ? { ...DEFAULT_SAVE, ...d } : DEFAULT_SAVE;
+            } catch { return DEFAULT_SAVE; }
+        }
+        function writeSave(s) {
+            try { localStorage.setItem('cf_galactic_save_v3', JSON.stringify(s)); } catch(e) {}
+        }
+
+        // ============================================================
+        // SHOP ITEMS
+        // ============================================================
         const SHOP_ITEMS = [
             { id: 'default_disc', category: 'pions', name: 'Classic', price: 0, css: 'classic' },
             { id: 'cyber_disc', category: 'pions', name: 'Cyberpunk', price: 40, css: 'cyber' },
@@ -439,13 +463,20 @@
             { id: 'sunset_bg', category: 'bg', name: 'Cyber Sunset', price: 40, css: 'linear-gradient(135deg, #1a0b0b, #4a1a2e, #0d1a4a)' },
             { id: 'midnight_bg', category: 'bg', name: 'Midnight City', price: 50, css: 'linear-gradient(135deg, #000000, #1a1a2e, #16213e)' },
         ];
-        const CAT_NAMES = { 'pions': '🔵 Discs', 'effects': '🎆 Effects', 'board': '🖼️ Board', 'bg': '🌌 Background' };
+
+        const CAT_NAMES = {
+            'pions': '🔵 Discs',
+            'effects': '🎆 Effects',
+            'board': '🖼️ Board',
+            'bg': '🌌 Background'
+        };
 
         // ============================================================
         // LEVEL SYSTEM
         // ============================================================
         const POINTS_PER_LEVEL = 100;
         const OPENING_BOOK = [3, 2, 4, 1, 5, 0, 6];
+
         const ZONE_DEFS = [
             { min:1,  max:3,   name:'🚀 Rookie Astronaut',   diff:'easy',       tier:1 },
             { min:4,  max:6,   name:'🛸 Starship Commander', diff:'medium',     tier:2 },
@@ -454,63 +485,91 @@
             { min:13, max:15,  name:'💀 Cosmic Destroyer',   diff:'unbeatable', tier:5 },
         ];
         const ENDLESS_LEVEL = 16;
+
         function getZoneForLevel(lvl) {
             if (lvl >= ENDLESS_LEVEL) return { name:'🌌 Endless Deep Space', diff:'unbeatable', tier:5 };
             for (const z of ZONE_DEFS) if (lvl >= z.min && lvl <= z.max) return z;
             if (lvl > 15) return { name:'💀 Cosmic Destroyer', diff:'unbeatable', tier:5 };
             return ZONE_DEFS[0];
         }
+
         function getAiParams(level) {
             const zone = getZoneForLevel(level);
             const posInZone = zone.min ? (level - zone.min) : 0;
             const zoneSize = zone.min ? (zone.max - zone.min + 1) : 3;
             const progress = zoneSize > 1 ? posInZone / (zoneSize - 1) : 0;
+
             switch (zone.diff) {
-                case 'easy': return { randomChance: Math.max(0.05, 0.80 - progress * 0.35), depth: 0, blockWeight: 0.3 + progress * 0.1 };
-                case 'medium': return { randomChance: Math.max(0, 0.25 - progress * 0.2), depth: progress < 0.5 ? 2 : 3, blockWeight: 0.7 + progress * 0.1 };
-                case 'hard': return { randomChance: 0, depth: progress < 0.5 ? 3 : 4, blockWeight: 1 };
-                case 'expert': return { randomChance: 0, depth: progress < 0.5 ? 5 : 6, blockWeight: 1 };
-                case 'unbeatable': return { randomChance: 0, depth: 7, blockWeight: 1, openingBook: true };
-                default: return { randomChance: 0, depth: 5, blockWeight: 1 };
+                case 'easy':
+                    return {
+                        randomChance: Math.max(0.05, 0.80 - progress * 0.35),
+                        depth: 0,
+                        blockWeight: 0.3 + progress * 0.1
+                    };
+                case 'medium':
+                    return {
+                        randomChance: Math.max(0, 0.25 - progress * 0.2),
+                        depth: progress < 0.5 ? 2 : 3,
+                        blockWeight: 0.7 + progress * 0.1
+                    };
+                case 'hard':
+                    return {
+                        randomChance: 0,
+                        depth: progress < 0.5 ? 3 : 4,
+                        blockWeight: 1
+                    };
+                case 'expert':
+                    return {
+                        randomChance: 0,
+                        depth: progress < 0.5 ? 5 : 6,
+                        blockWeight: 1
+                    };
+                case 'unbeatable':
+                    return {
+                        randomChance: 0,
+                        depth: 7,
+                        blockWeight: 1,
+                        openingBook: true
+                    };
+                default:
+                    return { randomChance: 0, depth: 5, blockWeight: 1 };
             }
         }
 
-        function getTodayKey() { const d = new Date(); return `${d.getFullYear()}-${d.getMonth()+1}-${d.getDate()}`; }
-        function loadAll()   { try { return JSON.parse(localStorage.getItem('cf_allscores_v3') || '{}'); } catch(e) { return {}; } }
-        function saveAll(a)  { try { localStorage.setItem('cf_allscores_v3', JSON.stringify(a)); } catch(e) {} }
-        function loadToday() { try { return JSON.parse(localStorage.getItem('cf_todayscores_v3') || '{}'); } catch(e) { return {}; } }
-        function saveToday(t){ try { localStorage.setItem('cf_todayscores_v3', JSON.stringify(t)); } catch(e) {} }
-        function checkDayReset() {
-            const last  = (function(){ try { return localStorage.getItem('cf_lastday_v3'); } catch(e) { return ''; } })() || '';
-            const today = getTodayKey();
-            if (last && last !== today) {
-                const all = loadAll(), saved = loadToday();
-                if (Object.keys(saved).length > 0) {
-                    all[last] = saved;
-                    const keys = Object.keys(all).sort().slice(-14);
-                    const trimmed = {}; keys.forEach(k => { trimmed[k] = all[k]; }); saveAll(trimmed);
-                }
-                try { localStorage.removeItem('cf_todayscores_v3'); } catch(e) {}
-            }
-            try { localStorage.setItem('cf_lastday_v3', today); } catch(e) {}
+        function loadLevel() {
+            try { return parseInt(localStorage.getItem('gal_level_v3') || '1', 10) || 1; } catch(e) { return 1; }
         }
+        function saveLevel(l) { try { localStorage.setItem('gal_level_v3', String(l)); } catch(e) {} }
+        function loadEndlessRecord() { try { return parseInt(localStorage.getItem('gal_endless_v3') || '0', 10) || 0; } catch(e) { return 0; } }
+        function saveEndlessRecord(n) { try { localStorage.setItem('gal_endless_v3', String(n)); } catch(e) {} }
 
         // ============================================================
-        // CONNECT FOUR GAME CLASS (Enhanced for SDK)
+        // CONNECT FOUR GAME CLASS
         // ============================================================
         class ConnectFour {
             constructor() {
                 this.ROWS = 6; this.COLS = 7;
                 this.board = []; this.currentPlayer = 1;
                 this.gameInProgress = false; this.isAiTurn = false;
-                this._aiTimeoutId = null; // ID για ακύρωση timeout AI
                 this.scores = {1:0, 2:0};
                 this.matchScores = {1:0, 2:0};
                 this.audio = new GameAudio(); this.aiFirst = false;
+                this._pendingEndResult = null;
+
                 this.gameData = loadSave();
+                const extLevel = loadLevel();
+                if (this.gameData.level !== extLevel) {
+                    this.gameData.level = extLevel;
+                }
+
+                if (typeof this.gameData.xp !== 'undefined' && this.gameData.points === 0) {
+                    this.gameData.points = (this.gameData.level - 1) * POINTS_PER_LEVEL;
+                    delete this.gameData.xp;
+                }
                 if (typeof this.gameData.points === 'undefined') {
                     this.gameData.points = (this.gameData.level - 1) * POINTS_PER_LEVEL;
                 }
+
                 this.playerMoves = 0; this.gameStartTime = null;
                 this.domBoard  = document.getElementById('board');
                 this.domStatus = document.getElementById('status');
@@ -523,22 +582,21 @@
                 checkDayReset();
                 const t = loadToday();
                 this.scores = {1: t.wins||0, 2: t.losses||0};
+
                 this.applyTierToPlayerDiscs();
                 this.applySkins();
                 this.updateHUD();
                 this.newGame();
                 this.initScoreboardEvents();
                 this.renderScoreboard();
-
-                this._ytLoaded = false;
-                this._ytReady = false;
-                this._wasPaused = false;
-                this._savedProgress = false;
-                this._savedAiTurn = false;
             }
 
-            get level() { return Math.floor(this.gameData.points / POINTS_PER_LEVEL) + 1; }
-            get pointsInCurrentLevel() { return this.gameData.points % POINTS_PER_LEVEL; }
+            get level() {
+                return Math.floor(this.gameData.points / POINTS_PER_LEVEL) + 1;
+            }
+            get pointsInCurrentLevel() {
+                return this.gameData.points % POINTS_PER_LEVEL;
+            }
             get zone()    { return getZoneForLevel(this.level); }
             get isEndless(){ return this.level >= ENDLESS_LEVEL; }
             get tier()    { return this.zone.tier || 1; }
@@ -586,9 +644,11 @@
             }
 
             updateHUD() {
-                document.getElementById('hudLevel').textContent = this.isEndless ? '🌌 ENDLESS' : `LEVEL ${this.level}`;
+                document.getElementById('hudLevel').textContent =
+                    this.isEndless ? '🌌 ENDLESS' : `LEVEL ${this.level}`;
                 document.getElementById('hudZone').textContent = this.zone.name + ' (' + this.aiDiff.charAt(0).toUpperCase() + this.aiDiff.slice(1) + ')';
-                document.getElementById('hudMatchScore').textContent = `You ${this.matchScores[1]} – ${this.matchScores[2]} AI`;
+                document.getElementById('hudMatchScore').textContent =
+                    `You ${this.matchScores[1]} – ${this.matchScores[2]} AI`;
                 const labels = { easy:'AI (Easy)', medium:'AI (Medium)', hard:'AI (Hard)', expert:'AI (Expert)', unbeatable:'💀 Unbeatable' };
                 document.getElementById('aiLabel').textContent = labels[this.aiDiff] || 'AI';
                 this.updateCoinDisplay();
@@ -628,6 +688,7 @@
             }
 
             claimDailyReward() {
+                // Χωρίς διαφήμιση – δίνει το reward απευθείας
                 const streak = this.checkDailyReward();
                 if (streak === null) { alert('Already claimed today!'); return; }
                 const coins = 10 * streak;
@@ -637,16 +698,7 @@
                 alert(`🎁 Daily Reward claimed!\nStreak: ${streak}x\n+${coins} coins!`);
             }
 
-            activateXpBoost() {
-                if (this.gameData.xpBoostActive) { alert('Double points boost is already active!'); return; }
-                this.gameData.xpBoostActive = true;
-                this.gameData.xpBoostGames = 2;
-                writeSave(this.gameData);
-                this.updateHUD();
-                alert('⚡ Double points activated for the next 2 wins!');
-            }
-
-            // ---- Core Game ----
+            // ===== CORE GAME =====
             initializeBoard() {
                 this.board = Array(this.ROWS).fill(null).map(() => Array(this.COLS).fill(0));
                 this.domBoard.innerHTML = '';
@@ -690,6 +742,7 @@
                 const disc = slot.querySelector('.disc');
                 const t = this.tier;
                 const tierClass = t === 2 ? 'ring' : t === 3 ? 'glow' : t === 4 ? 'ring glow2' : t === 5 ? 'ring glow3' : '';
+
                 let colClass = 'red';
                 if (player === 1) {
                     if (this.gameData.activeDiscSkin === 'cyber_disc') colClass = 'cyber_red';
@@ -704,17 +757,23 @@
                     else if (this.gameData.activeDiscSkin === 'galaxy_disc') colClass = 'galaxy_yel';
                     else colClass = 'yellow';
                 }
+
                 const style = document.createElement('style');
                 if (this.gameData.activeDiscSkin === 'cyber_disc') {
-                    style.innerHTML = `.disc.cyber_red { background: radial-gradient(circle at 35% 35%, #00ffff, #0066cc); opacity: 1; } .disc.cyber_yel { background: radial-gradient(circle at 35% 35%, #ff00ff, #660099); opacity: 1; }`;
+                    style.innerHTML = `.disc.cyber_red { background: radial-gradient(circle at 35% 35%, #00ffff, #0066cc); opacity: 1; }
+                                      .disc.cyber_yel { background: radial-gradient(circle at 35% 35%, #ff00ff, #660099); opacity: 1; }`;
                 } else if (this.gameData.activeDiscSkin === 'gold_disc') {
-                    style.innerHTML = `.disc.gold_red { background: radial-gradient(circle at 35% 35%, #ffd700, #b8860b); opacity: 1; } .disc.gold_yel { background: radial-gradient(circle at 35% 35%, #c0c0c0, #808080); opacity: 1; }`;
+                    style.innerHTML = `.disc.gold_red { background: radial-gradient(circle at 35% 35%, #ffd700, #b8860b); opacity: 1; }
+                                      .disc.gold_yel { background: radial-gradient(circle at 35% 35%, #c0c0c0, #808080); opacity: 1; }`;
                 } else if (this.gameData.activeDiscSkin === 'lava_disc') {
-                    style.innerHTML = `.disc.lava_red { background: radial-gradient(circle at 35% 35%, #ff4500, #8b0000); opacity: 1; } .disc.lava_yel { background: radial-gradient(circle at 35% 35%, #ff8c00, #4a0000); opacity: 1; }`;
+                    style.innerHTML = `.disc.lava_red { background: radial-gradient(circle at 35% 35%, #ff4500, #8b0000); opacity: 1; }
+                                      .disc.lava_yel { background: radial-gradient(circle at 35% 35%, #ff8c00, #4a0000); opacity: 1; }`;
                 } else if (this.gameData.activeDiscSkin === 'galaxy_disc') {
-                    style.innerHTML = `.disc.galaxy_red { background: radial-gradient(circle at 35% 35%, #d500f9, #4a148c); opacity: 1; } .disc.galaxy_yel { background: radial-gradient(circle at 35% 35%, #00e5ff, #006064); opacity: 1; }`;
+                    style.innerHTML = `.disc.galaxy_red { background: radial-gradient(circle at 35% 35%, #d500f9, #4a148c); opacity: 1; }
+                                      .disc.galaxy_yel { background: radial-gradient(circle at 35% 35%, #00e5ff, #006064); opacity: 1; }`;
                 }
                 document.head.appendChild(style);
+
                 disc.className = `disc ${colClass} ${tierClass}`.trim();
                 disc.style.animation = 'discDrop 0.4s cubic-bezier(0.25,0.46,0.45,0.94) forwards';
             }
@@ -723,9 +782,12 @@
                 document.getElementById('player1').classList.toggle('active', this.currentPlayer === 1);
                 document.getElementById('player2').classList.toggle('active', this.currentPlayer === 2);
             }
+
             updateStatus() {
                 if (!this.gameInProgress) return;
-                this.domStatus.innerHTML = this.currentPlayer === 2 ? '<span class="ai-thinking">🤔 AI is thinking...</span>' : 'Your turn 👇';
+                this.domStatus.innerHTML = this.currentPlayer === 2
+                    ? '<span class="ai-thinking">🤔 AI is thinking...</span>'
+                    : 'Your turn 👇';
             }
 
             checkWinCondition(row, col) {
@@ -743,7 +805,9 @@
                 }
                 return false;
             }
-            highlightWinningSequence(cells) { cells.forEach(([r,c]) => { const d = this.domBoard.children[r*this.COLS+c].querySelector('.disc'); if(d) d.classList.add('winner'); }); }
+            highlightWinningSequence(cells) {
+                cells.forEach(([r,c]) => { const d = this.domBoard.children[r*this.COLS+c].querySelector('.disc'); if(d) d.classList.add('winner'); });
+            }
             checkDrawCondition() { return this.board[0].every(c => c !== 0); }
 
             handleWinState() {
@@ -752,6 +816,8 @@
                 this.matchScores[this.currentPlayer]++;
                 if (won) { this.scores[1]++; } else { this.scores[2]++; }
                 this.updateScores();
+
+                const oldLevel = this.level;
                 if (won) {
                     let pointsGain = 10;
                     if (this.gameData.xpBoostActive && this.gameData.xpBoostGames > 0) {
@@ -760,21 +826,30 @@
                         if (this.gameData.xpBoostGames <= 0) this.gameData.xpBoostActive = false;
                     }
                     this.gameData.points += pointsGain;
+                    this.gameData.coins += pointsGain;
+
                     if (this.isEndless) {
                         this.endlessStreak++;
                         if (this.endlessStreak > loadEndlessRecord()) saveEndlessRecord(this.endlessStreak);
                     }
-                    // Telegram mission logging
-                    try { localStorage.setItem('FRANKLY_C4_WINS', (parseInt(localStorage.getItem('FRANKLY_C4_WINS')||'0') + 1).toString()); } catch(e) {}
+
+                    try {
+                        let c4Wins = parseInt(localStorage.getItem('FRANKLY_C4_WINS') || '0');
+                        localStorage.setItem('FRANKLY_C4_WINS', (c4Wins + 1).toString());
+                    } catch(e) {}
                 } else {
-                    this.gameData.points = Math.max(0, this.gameData.points - 10);
+                    // Δεν αφαιρούνται πόντοι
                     if (this.isEndless) this.endlessStreak = 0;
                 }
+
+                saveLevel(this.level);
                 writeSave(this.gameData);
+
                 this.updateHUD();
                 this.audio.playVictorySound();
                 if (won) this.triggerConfettiEffect();
                 this.domStatus.textContent = won ? 'You Win! 🎉' : 'AI Wins! 😞';
+
                 this.handleGameEnd();
                 setTimeout(() => this.showEndModal(won ? 'win' : 'lose'), 600);
             }
@@ -794,9 +869,16 @@
                 const nextEl   = document.getElementById('progressNext');
                 const btnEl    = document.getElementById('endActionBtn');
 
-                if (result === 'win') { titleEl.textContent = '🎉 Galaxy Conquered!'; titleEl.className = 'modal-galaxy-title win'; }
-                else if (result === 'lose') { titleEl.textContent = '💀 Lost in Space...'; titleEl.className = 'modal-galaxy-title lose'; }
-                else { titleEl.textContent = '🤝 Stray Asteroid!'; titleEl.className = 'modal-galaxy-title draw'; }
+                if (result === 'win') {
+                    titleEl.textContent = '🎉 Galaxy Conquered!';
+                    titleEl.className = 'modal-galaxy-title win';
+                } else if (result === 'lose') {
+                    titleEl.textContent = '💀 Lost in Space...';
+                    titleEl.className = 'modal-galaxy-title lose';
+                } else {
+                    titleEl.textContent = '🤝 Stray Asteroid!';
+                    titleEl.className = 'modal-galaxy-title draw';
+                }
 
                 barEl.classList.remove('full');
                 const pct = (this.pointsInCurrentLevel / POINTS_PER_LEVEL) * 100;
@@ -811,7 +893,10 @@
                         labelL.textContent = `Level ${this.level} Progress`;
                         labelR.textContent = `${this.pointsInCurrentLevel}/${POINTS_PER_LEVEL} pts`;
                         barEl.style.width = '0%';
-                        setTimeout(() => { barEl.style.width = pct + '%'; if (pct >= 100) barEl.classList.add('full'); }, 100);
+                        setTimeout(() => {
+                            barEl.style.width = pct + '%';
+                            if (pct >= 100) barEl.classList.add('full');
+                        }, 100);
                     }
                     if (this.isEndless) nextEl.textContent = 'Continue in Endless Deep Space!';
                     else {
@@ -828,29 +913,39 @@
                     setTimeout(() => barEl.style.width = pct + '%', 100);
                     nextEl.textContent = '';
                 }
+
                 document.getElementById('statMoves').textContent = this.playerMoves;
                 const sec = Math.round((Date.now() - this.gameStartTime) / 1000);
                 document.getElementById('statTime').textContent  = sec < 60 ? `${sec}s` : `${Math.floor(sec/60)}m ${sec%60}s`;
                 document.getElementById('statFirst').textContent = this.aiFirst ? 'AI' : 'You';
-                btnEl.textContent = 'Continue →';
+
+                btnEl.textContent = '▶ Continue';
                 btnEl.disabled = false;
                 if (result === 'win') btnEl.className = 'modal-action-btn win-btn';
                 else if (result === 'lose') btnEl.className = 'modal-action-btn lose-btn';
                 else btnEl.className = 'modal-action-btn draw-btn';
+
+                this._pendingEndResult = result;
                 document.getElementById('endModal').classList.add('open');
             }
 
-            // ---- DOM events ----
+            // ===== INIT DOM EVENTS =====
             initDOMEvents() {
                 this.restartBtn.addEventListener('click',     () => this.restartGame());
                 this.newGameBtn.addEventListener('click',     () => this.newGame());
                 this.toggleFirstBtn.addEventListener('click', () => this.toggleFirstPlayer());
-                document.getElementById('endActionBtn').addEventListener('click', () => {
+
+                // END MODAL BUTTON – απλό κλείσιμο και νέο παιχνίδι (χωρίς διαφήμιση)
+                const modalBtn = document.getElementById('endActionBtn');
+                modalBtn.addEventListener('click', () => {
                     if (this.gameInProgress) return;
                     document.getElementById('endModal').classList.remove('open');
                     this.newGame();
                 });
+
                 document.getElementById('dailyBtn').addEventListener('click', () => this.claimDailyReward());
+
+                // SHOP BUTTONS
                 document.getElementById('shopBtn').addEventListener('click', () => {
                     this.renderShop();
                     document.getElementById('shopModal').classList.add('open');
@@ -861,7 +956,6 @@
                 document.getElementById('shopModal').addEventListener('click', (e) => {
                     if (e.target === e.currentTarget) document.getElementById('shopModal').classList.remove('open');
                 });
-                // Boost button will be added in renderShop
             }
 
             initScoreboardEvents() {
@@ -886,7 +980,8 @@
                 today.maxLevel = Math.max(today.maxLevel || 1, this.level);
                 saveToday(today);
             }
-            saveProgress() { this.saveTodayScore(); this.renderScoreboard(); this.cloudSave(); }
+
+            saveProgress() { this.saveTodayScore(); this.renderScoreboard(); }
             handleGameEnd() { this.saveProgress(); this.setButtonsEnabled(true); }
 
             renderScoreboard() {
@@ -898,7 +993,9 @@
                 const combined   = Object.assign({}, allScores);
                 if (Object.keys(todayData).length > 0) combined[todayKey] = todayData;
                 const rows = Object.keys(combined).sort().reverse();
-                if (!rows.length) { content.innerHTML = '<div class="no-history">No history yet.</div>'; } else {
+                if (!rows.length) {
+                    content.innerHTML = '<div class="no-history">No history yet.</div>';
+                } else {
                     let html = '<table class="score-table"><thead><tr><th>📅 Date</th><th>Max Level</th><th class="win">✅ Wins</th><th class="loss">❌ Losses</th></tr></thead><tbody>';
                     rows.forEach(date => {
                         const d   = combined[date] || {};
@@ -912,113 +1009,54 @@
                 document.getElementById('endlessRecordDisplay').textContent = loadEndlessRecord();
             }
 
-            renderShop() {
-                const container = document.getElementById('shopContainer');
-                container.innerHTML = '';
-                const groups = {};
-                SHOP_ITEMS.forEach(item => { if (!groups[item.category]) groups[item.category] = []; groups[item.category].push(item); });
-                for (const [cat, items] of Object.entries(groups)) {
-                    const catDiv = document.createElement('div');
-                    const title = document.createElement('div');
-                    title.className = 'shop-category-title';
-                    title.textContent = CAT_NAMES[cat] || cat.toUpperCase();
-                    catDiv.appendChild(title);
-                    const grid = document.createElement('div');
-                    grid.className = 'shop-grid';
-                    items.forEach(item => {
-                        const div = document.createElement('div');
-                        div.classList.add('shop-item');
-                        const owned = this.gameData.ownedSkins.includes(item.id);
-                        const isActive = (item.category === 'pions' && this.gameData.activeDiscSkin === item.id) ||
-                                         (item.category === 'effects' && this.gameData.activeEffectSkin === item.id) ||
-                                         (item.category === 'board' && this.gameData.activeBoardSkin === item.id) ||
-                                         (item.category === 'bg' && this.gameData.activeBgSkin === item.id);
-                        if (owned) div.classList.add('owned');
-                        if (isActive) div.style.borderColor = '#e1bee7';
-                        let previewHTML = '';
-                        if (item.category === 'board' || item.category === 'bg') {
-                            previewHTML = `<div class="preview-board" style="background:${item.css};"></div>`;
-                        } else {
-                            let clr = 'radial-gradient(circle at 30% 30%, #ff6b6b, #c0392b)';
-                            if (item.id === 'cyber_disc') clr = 'radial-gradient(circle at 30% 30%, #00ffff, #0066cc)';
-                            if (item.id === 'gold_disc') clr = 'radial-gradient(circle at 30% 30%, #ffd700, #b8860b)';
-                            if (item.id === 'lava_disc') clr = 'radial-gradient(circle at 30% 30%, #ff4500, #8b0000)';
-                            if (item.id === 'galaxy_disc') clr = 'radial-gradient(circle at 30% 30%, #d500f9, #4a148c)';
-                            if (item.id === 'rainbow_effect') clr = 'linear-gradient(45deg, red, orange, yellow, green, blue, purple)';
-                            if (item.id === 'neon_effect') clr = 'linear-gradient(45deg, #00ff00, #ff00ff)';
-                            previewHTML = `<div class="preview" style="background:${clr};"></div>`;
-                        }
-                        div.innerHTML = `<div class="shop-item-title">${item.name}</div>${previewHTML}<div class="shop-item-price">${owned ? (isActive ? '✅ Active' : 'Owned') : (item.price === 0 ? 'Free' : `🪙 ${item.price}`)}</div>`;
-                        div.addEventListener('click', () => {
-                            if (owned) {
-                                if (item.category === 'pions') this.gameData.activeDiscSkin = item.id;
-                                else if (item.category === 'effects') this.gameData.activeEffectSkin = item.id;
-                                else if (item.category === 'board') this.gameData.activeBoardSkin = item.id;
-                                else if (item.category === 'bg') this.gameData.activeBgSkin = item.id;
-                                writeSave(this.gameData); this.applySkins(); this.renderShop(); return;
-                            }
-                            if (item.price === 0) {
-                                this.gameData.ownedSkins.push(item.id);
-                                if (item.category === 'pions') this.gameData.activeDiscSkin = item.id;
-                                else if (item.category === 'effects') this.gameData.activeEffectSkin = item.id;
-                                else if (item.category === 'board') this.gameData.activeBoardSkin = item.id;
-                                else if (item.category === 'bg') this.gameData.activeBgSkin = item.id;
-                                writeSave(this.gameData); this.applySkins(); this.renderShop(); return;
-                            }
-                            if (this.gameData.coins >= item.price) {
-                                this.gameData.coins -= item.price;
-                                this.gameData.ownedSkins.push(item.id);
-                                if (item.category === 'pions') this.gameData.activeDiscSkin = item.id;
-                                else if (item.category === 'effects') this.gameData.activeEffectSkin = item.id;
-                                else if (item.category === 'board') this.gameData.activeBoardSkin = item.id;
-                                else if (item.category === 'bg') this.gameData.activeBgSkin = item.id;
-                                writeSave(this.gameData); this.applySkins(); this.updateCoinDisplay(); this.renderShop();
-                            } else { alert('Not enough coins!'); }
-                        });
-                        grid.appendChild(div);
-                    });
-                    catDiv.appendChild(grid);
-                    container.appendChild(catDiv);
-                }
-                // Double points boost button
-                const boostDiv = document.createElement('div');
-                boostDiv.style.cssText = 'margin: 12px 0; text-align: center;';
-                const boostBtn = document.createElement('button');
-                boostBtn.className = 'modal-action-btn win-btn';
-                boostBtn.style.cssText = 'background:linear-gradient(135deg,#e81cff,#7b1fa2);box-shadow:0 4px 0 #38006b;font-size:0.8rem;';
-                boostBtn.textContent = '⚡ Activate Double Points (free)';
-                boostBtn.addEventListener('click', () => this.activateXpBoost());
-                boostDiv.appendChild(boostBtn);
-                container.appendChild(boostDiv);
-            }
-
-            // ---- AI ----
             triggerAiTurn() {
                 this.isAiTurn = true; this.updateStatus();
                 const baseDelay = { easy:700, medium:500, hard:350, expert:250, unbeatable:180 };
                 const delay = (baseDelay[this.aiDiff] || 300) + Math.random() * 300;
-                // Αποθήκευση του ID του timeout για ακύρωση στο pause
-                this._aiTimeoutId = setTimeout(() => {
+                setTimeout(() => {
                     if (!this.gameInProgress) { this.isAiTurn = false; return; }
                     const col = this.computeAiMove(); this.isAiTurn = false; this.makeMove(col);
-                    this._aiTimeoutId = null;
                 }, delay);
             }
 
             computeAiMove() {
                 const valid = []; for (let c = 0; c < this.COLS; c++) if (this.getAvailableRow(c) !== -1) valid.push(c);
                 const params = getAiParams(this.level);
-                if (params.randomChance > 0 && Math.random() < params.randomChance) return valid[Math.floor(Math.random()*valid.length)];
+
+                if (params.randomChance > 0 && Math.random() < params.randomChance) {
+                    return valid[Math.floor(Math.random()*valid.length)];
+                }
+
                 for (let c of valid){let r=this.getAvailableRow(c);this.board[r][c]=2;if(this.checkWinSimulation(r,c,2)){this.board[r][c]=0;return c;}this.board[r][c]=0;}
-                if (Math.random() < params.blockWeight) { for (let c of valid){let r=this.getAvailableRow(c);this.board[r][c]=1;if(this.checkWinSimulation(r,c,1)){this.board[r][c]=0;return c;}this.board[r][c]=0;} }
+
+                if (Math.random() < params.blockWeight) {
+                    for (let c of valid){let r=this.getAvailableRow(c);this.board[r][c]=1;if(this.checkWinSimulation(r,c,1)){this.board[r][c]=0;return c;}this.board[r][c]=0;}
+                }
+
                 if (params.depth === 0) return valid[Math.floor(Math.random()*valid.length)];
+
                 if (this.aiDiff === 'medium' && Math.random() < 0.15) return valid[Math.floor(Math.random()*valid.length)];
-                if (params.openingBook) { const moveCount = this.board.flat().filter(x => x !== 0).length; if (moveCount < 4) { for (const bc of OPENING_BOOK) { if (valid.includes(bc)) return bc; } } }
+
+                if (params.openingBook) {
+                    const moveCount = this.board.flat().filter(x => x !== 0).length;
+                    if (moveCount < 4) {
+                        for (const bc of OPENING_BOOK) {
+                            if (valid.includes(bc)) return bc;
+                        }
+                    }
+                }
+
                 let best = -Infinity, cols = [valid[0]];
                 const ordered = [...valid].sort((a,b) => Math.abs(a-3) - Math.abs(b-3));
-                for (let c of ordered){ let r=this.getAvailableRow(c); this.board[r][c]=2; let s=this.minimax(params.depth,false,-Infinity,Infinity); this.board[r][c]=0; if(s>best){best=s;cols=[c];}else if(s===best)cols.push(c); }
+                for (let c of ordered){
+                    let r=this.getAvailableRow(c); this.board[r][c]=2;
+                    let s=this.minimax(params.depth,false,-Infinity,Infinity);
+                    this.board[r][c]=0;
+                    if(s>best){best=s;cols=[c];}else if(s===best)cols.push(c);
+                }
                 return cols[Math.floor(Math.random()*cols.length)];
             }
+
             checkWinSimulation(row,col,p) {
                 const dirs=[[0,1],[1,0],[1,1],[1,-1]];
                 for(let[dr,dc]of dirs){let count=1;for(let step of[1,-1]){let r=row+dr*step,c=col+dc*step;while(r>=0&&r<this.ROWS&&c>=0&&c<this.COLS&&this.board[r][c]===p){count++;if(count>=4)return true;r+=dr*step;c+=dc*step;}}}
@@ -1052,122 +1090,154 @@
                 let colors = ['#e74c3c', '#f1c40f', '#2ecc71', '#3498db', '#9b59b6'];
                 if (this.gameData.activeEffectSkin === 'rainbow_effect') colors = ['#ff0000', '#ff7f00', '#ffff00', '#00ff00', '#0000ff', '#4b0082', '#9400d3'];
                 if (this.gameData.activeEffectSkin === 'neon_effect') colors = ['#00ff00', '#ff00ff', '#00ffff', '#ff4500', '#adff2f', '#8a2be2'];
-                for(let i=0;i<60;i++){ const c=document.createElement('div'); c.classList.add('confetti'); c.style.left=Math.random()*100+'vw'; c.style.animationDelay=Math.random()*0.5+'s'; c.style.animationDuration=(Math.random()*2+2)+'s'; c.style.background = colors[Math.floor(Math.random() * colors.length)]; document.body.appendChild(c); setTimeout(()=>c.remove(),3500); }
+
+                for(let i=0;i<60;i++){
+                    const c=document.createElement('div');
+                    c.classList.add('confetti');
+                    c.style.left=Math.random()*100+'vw';
+                    c.style.animationDelay=Math.random()*0.5+'s';
+                    c.style.animationDuration=(Math.random()*2+2)+'s';
+                    c.style.background = colors[Math.floor(Math.random() * colors.length)];
+                    document.body.appendChild(c);
+                    setTimeout(()=>c.remove(),3500);
+                }
             }
 
             restartGame() {
                 this.currentPlayer=1; this.isAiTurn=false;
-                if (this._aiTimeoutId) { clearTimeout(this._aiTimeoutId); this._aiTimeoutId = null; }
                 this.initializeBoard(); this.updateStatus(); this.updatePlayerIndicators();
                 this.updateHUD(); this.applyTierToPlayerDiscs();
                 document.querySelectorAll('.confetti').forEach(c=>c.remove());
                 this.setButtonsEnabled(true);
             }
-            newGame() { this.matchScores = {1:0, 2:0}; this.endlessStreak = 0; this.restartGame(); }
+            newGame() {
+                this.matchScores = {1:0, 2:0};
+                this.endlessStreak = 0;
+                this.restartGame();
+            }
 
-            // ---- YouTube Platform Integration ----
-            applySavedData(data) {
-                try {
-                    const s = JSON.parse(data);
-                    if (s && typeof s === 'object') {
-                        if (s.gameData) { this.gameData = { ...this.gameData, ...s.gameData }; writeSave(this.gameData); this.applySkins(); this.updateHUD(); this.updateCoinDisplay(); this.updatePointsDisplay(); }
-                        if (s.scores) { this.scores = {1: s.scores[1]||0, 2: s.scores[2]||0}; this.updateScores(); }
-                    }
-                } catch(e) {}
-            }
-            cloudSave() {
-                if (YT && this._ytLoaded && YT.game && typeof YT.game.saveData === 'function') {
-                    try { YT.game.saveData(JSON.stringify({ gameData: this.gameData, scores: this.scores })).catch(function(){}); } catch(e) {}
+            // ===== RENDER SHOP (χωρίς διαφημίσεις) =====
+            renderShop() {
+                const container = document.getElementById('shopContainer');
+                container.innerHTML = '';
+
+                const groups = {};
+                SHOP_ITEMS.forEach(item => {
+                    if (!groups[item.category]) groups[item.category] = [];
+                    groups[item.category].push(item);
+                });
+
+                for (const [cat, items] of Object.entries(groups)) {
+                    const catDiv = document.createElement('div');
+                    const title = document.createElement('div');
+                    title.className = 'shop-category-title';
+                    title.textContent = CAT_NAMES[cat] || cat.toUpperCase();
+                    catDiv.appendChild(title);
+
+                    const grid = document.createElement('div');
+                    grid.className = 'shop-grid';
+
+                    items.forEach(item => {
+                        const div = document.createElement('div');
+                        div.classList.add('shop-item');
+
+                        const owned = this.gameData.ownedSkins.includes(item.id);
+                        const isActive =
+                            (item.category === 'pions' && this.gameData.activeDiscSkin === item.id) ||
+                            (item.category === 'effects' && this.gameData.activeEffectSkin === item.id) ||
+                            (item.category === 'board' && this.gameData.activeBoardSkin === item.id) ||
+                            (item.category === 'bg' && this.gameData.activeBgSkin === item.id);
+
+                        if (owned) div.classList.add('owned');
+                        if (isActive) div.style.borderColor = '#e1bee7';
+
+                        let previewHTML = '';
+                        if (item.category === 'board' || item.category === 'bg') {
+                            previewHTML = `<div class="preview-board" style="background:${item.css};"></div>`;
+                        } else {
+                            let clr = 'radial-gradient(circle at 30% 30%, #ff6b6b, #c0392b)';
+                            if (item.id === 'cyber_disc') clr = 'radial-gradient(circle at 30% 30%, #00ffff, #0066cc)';
+                            if (item.id === 'gold_disc') clr = 'radial-gradient(circle at 30% 30%, #ffd700, #b8860b)';
+                            if (item.id === 'lava_disc') clr = 'radial-gradient(circle at 30% 30%, #ff4500, #8b0000)';
+                            if (item.id === 'galaxy_disc') clr = 'radial-gradient(circle at 30% 30%, #d500f9, #4a148c)';
+                            if (item.id === 'rainbow_effect') clr = 'linear-gradient(45deg, red, orange, yellow, green, blue, purple)';
+                            if (item.id === 'neon_effect') clr = 'linear-gradient(45deg, #00ff00, #ff00ff)';
+                            previewHTML = `<div class="preview" style="background:${clr};"></div>`;
+                        }
+
+                        div.innerHTML = `
+                            <div class="shop-item-title">${item.name}</div>
+                            ${previewHTML}
+                            <div class="shop-item-price">${owned ? (isActive ? '✅ Active' : 'Owned') : (item.price === 0 ? 'Free' : `🪙 ${item.price}`)}</div>
+                        `;
+
+                        div.addEventListener('click', () => {
+                            if (owned) {
+                                if (item.category === 'pions') this.gameData.activeDiscSkin = item.id;
+                                else if (item.category === 'effects') this.gameData.activeEffectSkin = item.id;
+                                else if (item.category === 'board') this.gameData.activeBoardSkin = item.id;
+                                else if (item.category === 'bg') this.gameData.activeBgSkin = item.id;
+                                writeSave(this.gameData);
+                                this.applySkins();
+                                this.renderShop();
+                                return;
+                            }
+                            if (item.price === 0) {
+                                this.gameData.ownedSkins.push(item.id);
+                                if (item.category === 'pions') this.gameData.activeDiscSkin = item.id;
+                                else if (item.category === 'effects') this.gameData.activeEffectSkin = item.id;
+                                else if (item.category === 'board') this.gameData.activeBoardSkin = item.id;
+                                else if (item.category === 'bg') this.gameData.activeBgSkin = item.id;
+                                writeSave(this.gameData);
+                                this.applySkins();
+                                this.renderShop();
+                                return;
+                            }
+                            if (this.gameData.coins >= item.price) {
+                                this.gameData.coins -= item.price;
+                                this.gameData.ownedSkins.push(item.id);
+                                if (item.category === 'pions') this.gameData.activeDiscSkin = item.id;
+                                else if (item.category === 'effects') this.gameData.activeEffectSkin = item.id;
+                                else if (item.category === 'board') this.gameData.activeBoardSkin = item.id;
+                                else if (item.category === 'bg') this.gameData.activeBgSkin = item.id;
+                                writeSave(this.gameData);
+                                this.applySkins();
+                                this.updateCoinDisplay();
+                                this.renderShop();
+                            } else {
+                                alert('Not enough coins!');
+                            }
+                        });
+                        grid.appendChild(div);
+                    });
+                    catDiv.appendChild(grid);
+                    container.appendChild(catDiv);
                 }
+                // Αφαιρέθηκε το κουμπί boost (Διπλασιασμός πόντων)
             }
-            submitScore(score) {
-                if (this._ytReady && YT && YT.game && typeof YT.game.sendScore === 'function') {
-                    try { YT.game.sendScore(score).catch(function(){}); } catch(e) {}
-                }
-            }
-            handlePause() {
-                // Διακοπή όλων των χρονοδιακόπτων και κινήσεων
-                this._wasPaused = true;
-                this._savedProgress = this.gameInProgress;
-                this._savedAiTurn   = this.isAiTurn;
-                this.gameInProgress = false;
-                this.isAiTurn = false;
-                if (this._aiTimeoutId) { clearTimeout(this._aiTimeoutId); this._aiTimeoutId = null; }
-                if (this.audio) this.audio.setPaused(true);
-                pauseBackground();
-                document.body.classList.add('paused');
-            }
-            handleResume() {
-                if (this.audio) this.audio.setPaused(false);
-                document.body.classList.remove('paused');
-                resumeBackground();
-                if (this._wasPaused) {
-                    this.gameInProgress = !!this._savedProgress;
-                    this._wasPaused = false;
-                    if (this.gameInProgress && this._savedAiTurn) {
-                        this._savedAiTurn = false;
-                        this.triggerAiTurn();
-                    }
-                }
-                this.updateStatus();
-                this.updatePlayerIndicators();
-            }
-            setYtLoaded(loaded) { this._ytLoaded = loaded; }
-            setYtReady(ready) { this._ytReady = ready; }
         }
 
         // ============================================================
-        // YouTube Playables SDK lifecycle (FIXED)
+        // HELPER FUNCTIONS
         // ============================================================
-        const YT = (typeof ytgame !== 'undefined' && ytgame !== null) ? ytgame : null;
-        let ytLoaded = false;
-        let ytReady  = false;
-
-        async function initGameAssets() {
-            if (!YT) return;
-
-            if (YT.system) {
-                // 1. ΠΡΩΤΑ κάνουμε εγγραφή στο onAudioEnabledChange (όπως απαιτεί η πλατφόρμα)
-                try {
-                    if (typeof YT.system.onAudioEnabledChange === 'function') {
-                        YT.system.onAudioEnabledChange(function(enabled) {
-                            if (window._game) window._game.audio.setMuted(!enabled);
-                        });
-                    }
-                } catch(e) {}
-
-                // 2. ΜΕΤΑ ελέγχουμε την αρχική κατάσταση
-                try {
-                    if (typeof YT.system.isAudioEnabled === 'function') {
-                        window._game.audio.setMuted(!YT.system.isAudioEnabled());
-                    }
-                } catch(e) {}
-
-                // 3. Pause / Resume
-                try {
-                    if (typeof YT.system.onPause === 'function') {
-                        YT.system.onPause(function() {
-                            if (window._game) window._game.handlePause();
-                        });
-                    }
-                    if (typeof YT.system.onResume === 'function') {
-                        YT.system.onResume(function() {
-                            if (window._game) window._game.handleResume();
-                        });
-                    }
-                } catch(e) {}
-            }
-
-            // Load cloud save
-            try {
-                if (YT.game && typeof YT.game.loadData === 'function') {
-                    const data = await YT.game.loadData();
-                    if (data && window._game) window._game.applySavedData(data);
+        function getTodayKey() { const d = new Date(); return `${d.getFullYear()}-${d.getMonth()+1}-${d.getDate()}`; }
+        function loadAll()   { try { return JSON.parse(localStorage.getItem('cf_allscores_v3') || '{}'); } catch(e) { return {}; } }
+        function saveAll(a)  { try { localStorage.setItem('cf_allscores_v3', JSON.stringify(a)); } catch(e) {} }
+        function loadToday() { try { return JSON.parse(localStorage.getItem('cf_todayscores_v3') || '{}'); } catch(e) { return {}; } }
+        function saveToday(t){ try { localStorage.setItem('cf_todayscores_v3', JSON.stringify(t)); } catch(e) {} }
+        function checkDayReset() {
+            const last  = (function(){ try { return localStorage.getItem('cf_lastday_v3'); } catch(e) { return ''; } })() || '';
+            const today = getTodayKey();
+            if (last && last !== today) {
+                const all = loadAll(), saved = loadToday();
+                if (Object.keys(saved).length > 0) {
+                    all[last] = saved;
+                    const keys = Object.keys(all).sort().slice(-14);
+                    const trimmed = {}; keys.forEach(k => { trimmed[k] = all[k]; }); saveAll(trimmed);
                 }
-            } catch(e) {}
-
-            ytLoaded = true;
-            if (window._game) window._game.setYtLoaded(true);
+                try { localStorage.removeItem('cf_todayscores_v3'); } catch(e) {}
+            }
+            try { localStorage.setItem('cf_lastday_v3', today); } catch(e) {}
         }
 
         // ============================================================
@@ -1175,20 +1245,6 @@
         // ============================================================
         try { initBackgroundEffects(); } catch(e) {}
         try { window._game = new ConnectFour(); } catch(e) {}
-
-        window.addEventListener('load', async function() {
-            if (YT && YT.game && typeof YT.game.firstFrameReady === 'function') {
-                try { YT.game.firstFrameReady(); } catch(e) {}
-            }
-            try { await initGameAssets(); } catch(e) { ytLoaded = true; }
-            if (YT && YT.game && typeof YT.game.gameReady === 'function') {
-                try {
-                    YT.game.gameReady();
-                    ytReady = true;
-                    if (window._game) window._game.setYtReady(true);
-                } catch(e) {}
-            }
-        });
     })();
     </script>
 </body>
