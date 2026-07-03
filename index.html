@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!DOCTYPE html> 
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -89,7 +89,10 @@
         }
         .board { display: grid; grid-template-columns: repeat(7, 1fr); grid-template-rows: repeat(6, 1fr); gap: 4px; position: relative; z-index: 2; height: 95%; width: 95%; padding: 2px; }
         
-        #particleCanvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1; }
+        /* Particle Canvas - now below the discs to ensure discs are visible */
+        #particleCanvas { 
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1; 
+        }
         
         .slot { background: transparent; border-radius: 50%; cursor: pointer; position: relative; z-index: 2; box-shadow: inset 0 4px 10px rgba(0,0,0,0.9), inset 0 -2px 4px rgba(255,255,255,0.04); display: flex; align-items: center; justify-content: center; overflow: hidden; transition: box-shadow 0.15s ease; }
         .slot::before { content: ''; position: absolute; inset: 0; background: rgba(0,0,12,0.85); border-radius: 50%; z-index: 0; pointer-events: none; transition: background 0.15s; }
@@ -162,6 +165,7 @@
         .modal-action-btn:active { transform: translateY(3px); }
         .modal-action-btn:disabled { opacity: 0.6; pointer-events: none; }
 
+        /* ===== IMPROVED SCORE HISTORY MODAL STYLES ===== */
         .score-modal-box { background: #0e1027; border: 2px solid rgba(132,204,22,0.4); border-radius: 20px; padding: 20px 16px; width: 92%; max-width: 420px; max-height: 80vh; overflow-y: auto; box-shadow: 0 0 40px rgba(132,204,22,0.15); }
         .modal-title { color: #84cc16; font-size: 1.2rem; font-weight: 800; letter-spacing: 2px; text-align: center; margin-bottom: 14px; text-shadow: 0 0 12px rgba(132,204,22,0.5); }
         
@@ -180,6 +184,7 @@
         .modal-back-btn { display: block; width: 100%; margin-top: 14px; padding: 12px; background: linear-gradient(135deg, #84cc16, #65a30d); border: none; border-radius: 30px; color: #fff; font-size: 0.9rem; font-weight: 800; font-family: inherit; cursor: pointer; box-shadow: 0 4px 0 #4d7c0f; transition: all 0.2s; letter-spacing: 1px; }
         .modal-back-btn:active { transform: translateY(3px); box-shadow: 0 1px 0 #4d7c0f; }
 
+        /* ===== SHOP MODAL STYLES ===== */
         .shop-category-title { font-size: 0.9rem; font-weight: 700; color: #fbbf24; margin-top: 12px; margin-bottom: 6px; text-align: left; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 4px; }
         .shop-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(80px, 1fr)); gap: 8px; }
         .shop-item { background: rgba(255,255,255,0.04); border: 2px solid rgba(255,255,255,0.1); border-radius: 10px; padding: 8px 4px; text-align: center; cursor: pointer; transition: all 0.2s; }
@@ -226,7 +231,7 @@
 
             <div class="hud-top">
                 <div class="hud-level" id="hudLevel">LEVEL 1</div>
-                <div class="hud-zone" id="hudZone">🚀 Rookie Astronaut (Very Easy)</div>
+                <div class="hud-zone" id="hudZone">🚀 Rookie Astronaut (Easy)</div>
                 <div class="hud-match-score" id="hudMatchScore">You 0 – 0 AI</div>
             </div>
 
@@ -240,12 +245,13 @@
                 <div class="scores"><div class="score" id="scoreDisplay">0 - 0</div></div>
                 <div class="player" id="player2">
                     <div class="player-disc yellow" id="p2Disc"></div>
-                    <span id="aiLabel">AI (Very Easy)</span>
+                    <span id="aiLabel">AI (Easy)</span>
                 </div>
             </div>
 
             <div class="board-container">
                 <div class="board" id="board"></div>
+                <!-- Particle canvas overlay (now placed behind discs) -->
                 <canvas id="particleCanvas" style="position:absolute; top:0; left:0; width:100%; height:100%; pointer-events:none; z-index:1;"></canvas>
             </div>
             <div class="status" id="status">Your turn</div>
@@ -473,20 +479,18 @@
         const OPENING_BOOK = [3, 2, 4, 1, 5, 0, 6];
 
         const ZONE_DEFS = [
-            { min:1,  max:1,   name:'🌱 Padawan (Very Easy)',     diff:'very_easy',   tier:1 },
-            { min:2,  max:2,   name:'🚀 Rookie (Easy)',           diff:'easy',        tier:1 },
-            { min:3,  max:3,   name:'🛸 Cadet (Easy-Medium)',     diff:'easy_medium', tier:1 },
-            { min:4,  max:5,   name:'⚔️ Warrior (Medium)',        diff:'medium',      tier:2 },
-            { min:6,  max:7,   name:'🛡️ Knight (Medium-Hard)',    diff:'medium_hard', tier:3 },
-            { min:8,  max:9,   name:'👑 Commander (Hard)',        diff:'hard',        tier:4 },
-            { min:10, max:12,  name:'💀 Overlord (Expert)',       diff:'expert',      tier:5 },
-            { min:13, max:15,  name:'☠️ Cosmic Destroyer (God)',  diff:'unbeatable',  tier:5 },
+            { min:1,  max:3,   name:'🚀 Rookie Astronaut',   diff:'easy',       tier:1 },
+            { min:4,  max:6,   name:'🛸 Starship Commander', diff:'medium',     tier:2 },
+            { min:7,  max:9,   name:'⚔️ Space Warrior',      diff:'hard',       tier:3 },
+            { min:10, max:12,  name:'👑 Galaxy Overlord',    diff:'expert',     tier:4 },
+            { min:13, max:15,  name:'💀 Cosmic Destroyer',   diff:'unbeatable', tier:5 },
         ];
         const ENDLESS_LEVEL = 16;
 
         function getZoneForLevel(lvl) {
             if (lvl >= ENDLESS_LEVEL) return { name:'🌌 Endless Deep Space', diff:'unbeatable', tier:5 };
             for (const z of ZONE_DEFS) if (lvl >= z.min && lvl <= z.max) return z;
+            if (lvl > 15) return { name:'💀 Cosmic Destroyer', diff:'unbeatable', tier:5 };
             return ZONE_DEFS[0];
         }
 
@@ -497,22 +501,16 @@
             const progress = zoneSize > 1 ? posInZone / (zoneSize - 1) : 0;
 
             switch (zone.diff) {
-                case 'very_easy':
-                    return { randomChance: Math.max(0.10, 0.95 - progress * 0.15), depth: 0, blockWeight: 0.1 + progress * 0.1 };
                 case 'easy':
-                    return { randomChance: Math.max(0.05, 0.80 - progress * 0.30), depth: 0, blockWeight: 0.3 + progress * 0.2 };
-                case 'easy_medium':
-                    return { randomChance: Math.max(0.0, 0.50 - progress * 0.40), depth: 1, blockWeight: 0.5 + progress * 0.3 };
+                    return { randomChance: Math.max(0.05, 0.80 - progress * 0.35), depth: 0, blockWeight: 0.3 + progress * 0.1 };
                 case 'medium':
-                    return { randomChance: Math.max(0.0, 0.30 - progress * 0.20), depth: 2 + progress * 1, blockWeight: 0.6 + progress * 0.2 };
-                case 'medium_hard':
-                    return { randomChance: Math.max(0.0, 0.15 - progress * 0.15), depth: 3 + progress * 1, blockWeight: 0.8 + progress * 0.2 };
+                    return { randomChance: Math.max(0, 0.25 - progress * 0.2), depth: progress < 0.5 ? 2 : 3, blockWeight: 0.7 + progress * 0.1 };
                 case 'hard':
-                    return { randomChance: 0, depth: 4 + progress * 1, blockWeight: 1.0 };
+                    return { randomChance: 0, depth: progress < 0.5 ? 3 : 4, blockWeight: 1 };
                 case 'expert':
-                    return { randomChance: 0, depth: 5 + progress * 1, blockWeight: 1.0 };
+                    return { randomChance: 0, depth: progress < 0.5 ? 5 : 6, blockWeight: 1 };
                 case 'unbeatable':
-                    return { randomChance: 0, depth: 7, blockWeight: 1.0, openingBook: true };
+                    return { randomChance: 0, depth: 7, blockWeight: 1, openingBook: true };
                 default:
                     return { randomChance: 0, depth: 5, blockWeight: 1 };
             }
@@ -526,7 +524,7 @@
         function saveEndlessRecord(n) { try { localStorage.setItem('gal_endless_v3', String(n)); } catch(e) {} }
 
         // ============================================================
-        // PARTICLE SYSTEM
+        // PARTICLE SYSTEM – FIRE TRAIL & EXPLOSION (Fixed Overlay)
         // ============================================================
         class ParticleSystem {
             constructor(canvas) {
@@ -576,9 +574,11 @@
             }
 
             update() {
-                if (this.particles.length > 200) {
-                    this.particles.splice(0, this.particles.length - 200);
+                // Limit max particles to prevent performance issues
+                if (this.particles.length > 150) {
+                    this.particles.splice(0, this.particles.length - 150);
                 }
+                
                 for (let i = this.particles.length - 1; i >= 0; i--) {
                     const p = this.particles[i];
                     p.x += p.vx;
@@ -594,7 +594,7 @@
             draw() {
                 const ctx = this.ctx;
                 for (const p of this.particles) {
-                    const alpha = Math.max(0, p.life) * 0.75;
+                    const alpha = Math.max(0, p.life) * 0.7; // Reduced opacity for visibility
                     ctx.globalAlpha = alpha;
                     const grad = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.size);
                     grad.addColorStop(0, p.color1);
@@ -605,27 +605,28 @@
                     ctx.fillStyle = grad;
                     ctx.fill();
                     ctx.shadowColor = p.color1;
-                    ctx.shadowBlur = p.size * 1.5;
+                    ctx.shadowBlur = p.size * 1.2;
                     ctx.fill();
                     ctx.shadowBlur = 0;
                 }
                 ctx.globalAlpha = 1;
             }
 
+            // Spawn trail particles (Reduced count, smaller size)
             emitTrail(fromX, fromY, toX, toY, effectType, player) {
-                const count = 15; 
+                const count = 15; // Reduced from 30
                 const dx = toX - fromX;
                 const dy = toY - fromY;
                 for (let i = 0; i < count; i++) {
                     const t = i / count;
-                    const x = fromX + dx * t + (Math.random() - 0.5) * 8;
-                    const y = fromY + dy * t + (Math.random() - 0.5) * 8;
+                    const x = fromX + dx * t + (Math.random() - 0.5) * 6;
+                    const y = fromY + dy * t + (Math.random() - 0.5) * 6;
                     const colors = this.getEffectColors(effectType, player);
                     this.particles.push({
                         x: x, y: y,
                         vx: (Math.random() - 0.5) * 1.5,
                         vy: (Math.random() - 0.5) * 1.5 - 1,
-                        size: 3 + Math.random() * 6,
+                        size: 3 + Math.random() * 5, // Smaller size
                         life: 0.6 + Math.random() * 0.3,
                         decay: 0.025 + Math.random() * 0.02,
                         color1: colors[0], color2: colors[1], color3: colors[2]
@@ -634,17 +635,18 @@
                 this.start();
             }
 
+            // Spawn explosion particles (Reduced count, smaller size)
             emitExplosion(x, y, effectType, player) {
-                const count = 20; 
+                const count = 25; // Reduced from 60
                 const colors = this.getEffectColors(effectType, player);
                 for (let i = 0; i < count; i++) {
                     const angle = Math.random() * 2 * Math.PI;
                     const speed = 2 + Math.random() * 4;
                     this.particles.push({
-                        x: x + (Math.random()-0.5)*2, y: y + (Math.random()-0.5)*2,
+                        x: x, y: y,
                         vx: Math.cos(angle) * speed,
                         vy: Math.sin(angle) * speed - 1,
-                        size: 2 + Math.random() * 5,
+                        size: 2 + Math.random() * 6,
                         life: 0.6 + Math.random() * 0.4,
                         decay: 0.02 + Math.random() * 0.015,
                         color1: colors[0], color2: colors[1], color3: colors[2]
@@ -782,22 +784,11 @@
             updateHUD() {
                 document.getElementById('hudLevel').textContent =
                     this.isEndless ? '🌌 ENDLESS' : `LEVEL ${this.level}`;
-                document.getElementById('hudZone').textContent = this.zone.name;
+                document.getElementById('hudZone').textContent = this.zone.name + ' (' + this.aiDiff.charAt(0).toUpperCase() + this.aiDiff.slice(1) + ')';
                 document.getElementById('hudMatchScore').textContent =
                     `You ${this.matchScores[1]} – ${this.matchScores[2]} AI`;
-                
-                const labels = { 
-                    very_easy: 'AI (Very Easy)', 
-                    easy: 'AI (Easy)', 
-                    easy_medium: 'AI (Easy-Medium)',
-                    medium: 'AI (Medium)', 
-                    medium_hard: 'AI (Medium-Hard)',
-                    hard: 'AI (Hard)', 
-                    expert: 'AI (Expert)', 
-                    unbeatable: '💀 Unbeatable' 
-                };
+                const labels = { easy:'AI (Easy)', medium:'AI (Medium)', hard:'AI (Hard)', expert:'AI (Expert)', unbeatable:'💀 Unbeatable' };
                 document.getElementById('aiLabel').textContent = labels[this.aiDiff] || 'AI';
-                
                 this.updateCoinDisplay();
                 this.updatePointsDisplay();
 
@@ -864,6 +855,7 @@
                 this.playerMoves = 0; this.gameStartTime = Date.now();
                 if (this.aiFirst) { this.currentPlayer = 2; this.updateStatus(); this.updatePlayerIndicators(); this.triggerAiTurn(); }
                 else { this.updateStatus(); this.updatePlayerIndicators(); }
+                // Clear particles on new game
                 this.particleSystem.stop();
                 this.particleSystem.clear();
             }
@@ -925,6 +917,7 @@
                 disc.className = `disc ${colClass} ${tierClass}`.trim();
                 disc.style.animation = 'discDrop 0.4s cubic-bezier(0.25,0.46,0.45,0.94) forwards';
 
+                // ---- PARTICLE EFFECTS ----
                 const boardRect = this.domBoard.getBoundingClientRect();
                 const slotRect = slot.getBoundingClientRect();
                 const canvasRect = this.particleCanvas.getBoundingClientRect();
@@ -978,6 +971,7 @@
                 if (won) { this.scores[1]++; } else { this.scores[2]++; }
                 this.updateScores();
 
+                const oldLevel = this.level;
                 if (won) {
                     let pointsGain = 10;
                     if (this.gameData.xpBoostActive && this.gameData.xpBoostGames > 0) {
@@ -1090,14 +1084,14 @@
 
             // ===== INIT DOM EVENTS =====
             initDOMEvents() {
-                // RESTART BUTTON - Does a COMPLETE reset (Board, Match, Scores, Levels/XP)
+                // Restart Button - Proper Full Reset
                 this.restartBtn.addEventListener('click', () => {
                     this.restartGame();
                 });
                 
-                // NEW GAME BUTTON - Same as restart
+                // New Game Button - Proper Reset
                 this.newGameBtn.addEventListener('click', () => {
-                    this.restartGame(); 
+                    this.newGame();
                 });
 
                 this.toggleFirstBtn.addEventListener('click', () => this.toggleFirstPlayer());
@@ -1106,7 +1100,7 @@
                 modalBtn.addEventListener('click', () => {
                     if (this.gameInProgress) return;
                     document.getElementById('endModal').classList.remove('open');
-                    this.restartGame();
+                    this.newGame();
                 });
 
                 document.getElementById('dailyBtn').addEventListener('click', () => this.claimDailyReward());
@@ -1135,7 +1129,7 @@
             toggleFirstPlayer() {
                 this.aiFirst = !this.aiFirst;
                 this.toggleFirstBtn.textContent = this.aiFirst ? '👤 You First' : '🤖 AI First';
-                this.restartGame();
+                this.newGame();
             }
 
             saveTodayScore() {
@@ -1176,10 +1170,7 @@
 
             triggerAiTurn() {
                 this.isAiTurn = true; this.updateStatus();
-                const baseDelay = { 
-                    very_easy: 800, easy: 700, easy_medium: 600, 
-                    medium: 500, medium_hard: 450, hard: 350, expert: 250, unbeatable: 180 
-                };
+                const baseDelay = { easy:700, medium:500, hard:350, expert:250, unbeatable:180 };
                 const delay = (baseDelay[this.aiDiff] || 300) + Math.random() * 300;
                 setTimeout(() => {
                     if (!this.gameInProgress) { this.isAiTurn = false; return; }
@@ -1272,37 +1263,34 @@
             }
 
             restartGame() {
-                // FULL HARD RESET: Board, Current Player, Particles, Scores, LEVELS (Points)
+                // Full Reset
                 this.currentPlayer = 1; 
                 this.isAiTurn = false;
                 
-                // Reset Points and Level to 0 and 1
-                this.gameData.points = 0;
-                this.gameData.level = 1; // Explicitly set to 1 for HUD update
-                writeSave(this.gameData);
-                saveLevel(1); // Ensure level file is reset as well
-                
-                // Reset Match and Session Scores
-                this.matchScores = {1:0, 2:0};
-                this.scores = {1:0, 2:0};
-                this.endlessStreak = 0;
-                this.updateScores();
-                
-                // Reset Board
+                // Reset the board and UI
                 this.initializeBoard(); 
                 this.updateStatus(); 
                 this.updatePlayerIndicators();
                 this.updateHUD(); 
                 this.applyTierToPlayerDiscs();
                 
-                // Clear particles & confetti
+                // Kill leftover particles
                 this.particleSystem.stop();
                 this.particleSystem.clear();
-                document.querySelectorAll('.confetti').forEach(c=>c.remove());
                 
+                document.querySelectorAll('.confetti').forEach(c=>c.remove());
                 this.setButtonsEnabled(true);
             }
             
+            newGame() {
+                // Hard Reset (Full New Game, clear current session scores)
+                this.matchScores = {1:0, 2:0};
+                this.scores = {1:0, 2:0}; // Reset the displayed score board
+                this.updateScores();
+                this.endlessStreak = 0;
+                this.restartGame();
+            }
+
             // ===== RENDER SHOP =====
             renderShop() {
                 const container = document.getElementById('shopContainer');
