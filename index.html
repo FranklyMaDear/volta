@@ -81,12 +81,27 @@
         .scores { flex: 1; display: flex; justify-content: center; align-items: center; }
         .scores .score { font-size: 1.2rem; font-weight: bold; color: #e8e8ed; background: rgba(255,255,255,0.05); padding: 4px 12px; border-radius: 16px; min-width: 60px; border: 1px solid rgba(132,204,22,0.2); }
 
-        .board-container { background: var(--board-skin, linear-gradient(145deg, #1565c0, #0d47a1)); padding: 6px; border-radius: 12px; box-shadow: inset 0 0 20px rgba(0,0,0,0.4), 0 6px 20px rgba(0,0,0,0.5); margin: 6px 0; position: relative; width: 100%; aspect-ratio: 7/6; border: 2px solid #0a3d91; overflow: hidden; display: flex; justify-content: center; align-items: center; }
-        .board { display: grid; grid-template-columns: repeat(7, 1fr); grid-template-rows: repeat(6, 1fr); gap: 4px; position: relative; z-index: 1; height: 95%; width: 95%; padding: 2px; }
-        .slot { background: transparent; border-radius: 50%; cursor: pointer; position: relative; box-shadow: inset 0 4px 10px rgba(0,0,0,0.9), inset 0 -2px 4px rgba(255,255,255,0.04); display: flex; align-items: center; justify-content: center; overflow: hidden; transition: box-shadow 0.15s ease; }
+        .board-container { 
+            background: var(--board-skin, linear-gradient(145deg, #1565c0, #0d47a1)); 
+            padding: 6px; border-radius: 12px; box-shadow: inset 0 0 20px rgba(0,0,0,0.4), 0 6px 20px rgba(0,0,0,0.5); 
+            margin: 6px 0; position: relative; width: 100%; aspect-ratio: 7/6; border: 2px solid #0a3d91; overflow: hidden; 
+            display: flex; justify-content: center; align-items: center; 
+        }
+        .board { display: grid; grid-template-columns: repeat(7, 1fr); grid-template-rows: repeat(6, 1fr); gap: 4px; position: relative; z-index: 2; height: 95%; width: 95%; padding: 2px; }
+        
+        /* Particle Canvas - now below the discs to ensure discs are visible */
+        #particleCanvas { 
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1; 
+        }
+        
+        .slot { background: transparent; border-radius: 50%; cursor: pointer; position: relative; z-index: 2; box-shadow: inset 0 4px 10px rgba(0,0,0,0.9), inset 0 -2px 4px rgba(255,255,255,0.04); display: flex; align-items: center; justify-content: center; overflow: hidden; transition: box-shadow 0.15s ease; }
         .slot::before { content: ''; position: absolute; inset: 0; background: rgba(0,0,12,0.85); border-radius: 50%; z-index: 0; pointer-events: none; transition: background 0.15s; }
         .slot:hover::before, .slot:active::before { background: rgba(0,0,40,0.7); }
-        .disc { width: 85%; height: 85%; border-radius: 50%; box-shadow: inset 0 -4px 8px rgba(0,0,0,0.5), inset 0 2px 4px rgba(255,255,255,0.3), 0 3px 6px rgba(0,0,0,0.4); border: 2px solid rgba(255,255,255,0.4); position: relative; z-index: 2; opacity: 0; }
+        .disc { 
+            width: 85%; height: 85%; border-radius: 50%; z-index: 3; 
+            box-shadow: inset 0 -4px 8px rgba(0,0,0,0.5), inset 0 2px 4px rgba(255,255,255,0.3), 0 3px 6px rgba(0,0,0,0.4); 
+            border: 2px solid rgba(255,255,255,0.4); position: relative; opacity: 0; 
+        }
         .disc::before { content: ''; position: absolute; top: 12%; left: 12%; right: 12%; bottom: 12%; background: rgba(255,255,255,0.22); border-radius: 50%; filter: blur(1px); z-index: 3; }
         .disc.red    { background: radial-gradient(circle at 35% 35%, #ff5252, #c62828); opacity: 1; }
         .disc.yellow { background: radial-gradient(circle at 35% 35%, #ffeb3b, #f9a825); opacity: 1; }
@@ -150,7 +165,7 @@
         .modal-action-btn:active { transform: translateY(3px); }
         .modal-action-btn:disabled { opacity: 0.6; pointer-events: none; }
 
-        /* ===== IMPROVED SCORE HISTORY MODAL STYLES (PROFESSIONAL LOOK) ===== */
+        /* ===== IMPROVED SCORE HISTORY MODAL STYLES ===== */
         .score-modal-box { background: #0e1027; border: 2px solid rgba(132,204,22,0.4); border-radius: 20px; padding: 20px 16px; width: 92%; max-width: 420px; max-height: 80vh; overflow-y: auto; box-shadow: 0 0 40px rgba(132,204,22,0.15); }
         .modal-title { color: #84cc16; font-size: 1.2rem; font-weight: 800; letter-spacing: 2px; text-align: center; margin-bottom: 14px; text-shadow: 0 0 12px rgba(132,204,22,0.5); }
         
@@ -236,8 +251,8 @@
 
             <div class="board-container">
                 <div class="board" id="board"></div>
-                <!-- Particle canvas overlay -->
-                <canvas id="particleCanvas" style="position:absolute; top:0; left:0; width:100%; height:100%; pointer-events:none; z-index:10;"></canvas>
+                <!-- Particle canvas overlay (now placed behind discs) -->
+                <canvas id="particleCanvas" style="position:absolute; top:0; left:0; width:100%; height:100%; pointer-events:none; z-index:1;"></canvas>
             </div>
             <div class="status" id="status">Your turn</div>
 
@@ -297,7 +312,7 @@
     <script>
     (function() {
         // ============================================================
-        // STARFIELD (unchanged)
+        // STARFIELD
         // ============================================================
         const canvas = document.getElementById('starCanvas');
         const ctx = canvas.getContext('2d');
@@ -354,22 +369,10 @@
             resizeCanvas(); createStars(200); _rafId = requestAnimationFrame(drawStars);
             createNebulaParticles(15); scheduleShootingStar(); setTimeout(createShootingStar, 600);
         }
-        function pauseBackground() {
-            _bgPaused = true;
-            if (_rafId) { cancelAnimationFrame(_rafId); _rafId = null; }
-            if (_shootTimer) { clearTimeout(_shootTimer); _shootTimer = null; }
-        }
-        function resumeBackground() {
-            if (!_bgPaused) return;
-            _bgPaused = false;
-            if (_rafId) { cancelAnimationFrame(_rafId); _rafId = null; }
-            _rafId = requestAnimationFrame(drawStars);
-            scheduleShootingStar();
-        }
         window.addEventListener('resize', () => { resizeCanvas(); createStars(200); });
 
         // ============================================================
-        // AUDIO (unchanged)
+        // AUDIO
         // ============================================================
         class GameAudio {
             constructor() { this.audioCtx = null; this.initialized = false; this._muted = false; this._paused = false; }
@@ -412,7 +415,7 @@
         }
 
         // ============================================================
-        // SAVE / LOAD (unchanged)
+        // SAVE / LOAD
         // ============================================================
         const DEFAULT_SAVE = {
             coins: 0,
@@ -440,7 +443,7 @@
         }
 
         // ============================================================
-        // SHOP ITEMS – UPDATED EFFECTS (fire, explosion, plasma, ice, galaxy)
+        // SHOP ITEMS (Effects updated)
         // ============================================================
         const SHOP_ITEMS = [
             { id: 'default_disc', category: 'pions', name: 'Classic', price: 0, css: 'classic' },
@@ -448,14 +451,12 @@
             { id: 'gold_disc', category: 'pions', name: 'Golden Age', price: 60, css: 'gold' },
             { id: 'lava_disc', category: 'pions', name: 'Volcanic Lava', price: 50, css: 'lava' },
             { id: 'galaxy_disc', category: 'pions', name: 'Deep Galaxy', price: 80, css: 'galaxy' },
-            // Effects replaced with new ones
             { id: 'default_effect', category: 'effects', name: 'Standard', price: 0, css: 'standard' },
             { id: 'fire_effect', category: 'effects', name: '🔥 Fire Trail', price: 50, css: 'fire' },
             { id: 'explosion_effect', category: 'effects', name: '💥 Explosion', price: 60, css: 'explosion' },
             { id: 'plasma_effect', category: 'effects', name: '⚡ Plasma', price: 50, css: 'plasma' },
             { id: 'ice_effect', category: 'effects', name: '❄️ Ice Shards', price: 50, css: 'ice' },
             { id: 'galaxy_effect', category: 'effects', name: '🌌 Galaxy', price: 80, css: 'galaxy' },
-            // Boards and backgrounds unchanged
             { id: 'default', category: 'board', name: 'Deep Blue', price: 0, css: 'linear-gradient(145deg, #1565c0, #0d47a1)' },
             { id: 'dark', category: 'board', name: 'Void Black', price: 50, css: 'linear-gradient(145deg, #1a1a2e, #0f0f1a)' },
             { id: 'red', category: 'board', name: 'Volcanic', price: 75, css: 'linear-gradient(145deg, #b71c1c, #4a0000)' },
@@ -469,15 +470,10 @@
             { id: 'midnight_bg', category: 'bg', name: 'Midnight City', price: 50, css: 'linear-gradient(135deg, #000000, #1a1a2e, #16213e)' },
         ];
 
-        const CAT_NAMES = {
-            'pions': '🔵 Discs',
-            'effects': '🎆 Effects',
-            'board': '🖼️ Board',
-            'bg': '🌌 Background'
-        };
+        const CAT_NAMES = { 'pions': '🔵 Discs', 'effects': '🎆 Effects', 'board': '🖼️ Board', 'bg': '🌌 Background' };
 
         // ============================================================
-        // LEVEL SYSTEM (unchanged)
+        // LEVEL SYSTEM
         // ============================================================
         const POINTS_PER_LEVEL = 100;
         const OPENING_BOOK = [3, 2, 4, 1, 5, 0, 6];
@@ -506,36 +502,15 @@
 
             switch (zone.diff) {
                 case 'easy':
-                    return {
-                        randomChance: Math.max(0.05, 0.80 - progress * 0.35),
-                        depth: 0,
-                        blockWeight: 0.3 + progress * 0.1
-                    };
+                    return { randomChance: Math.max(0.05, 0.80 - progress * 0.35), depth: 0, blockWeight: 0.3 + progress * 0.1 };
                 case 'medium':
-                    return {
-                        randomChance: Math.max(0, 0.25 - progress * 0.2),
-                        depth: progress < 0.5 ? 2 : 3,
-                        blockWeight: 0.7 + progress * 0.1
-                    };
+                    return { randomChance: Math.max(0, 0.25 - progress * 0.2), depth: progress < 0.5 ? 2 : 3, blockWeight: 0.7 + progress * 0.1 };
                 case 'hard':
-                    return {
-                        randomChance: 0,
-                        depth: progress < 0.5 ? 3 : 4,
-                        blockWeight: 1
-                    };
+                    return { randomChance: 0, depth: progress < 0.5 ? 3 : 4, blockWeight: 1 };
                 case 'expert':
-                    return {
-                        randomChance: 0,
-                        depth: progress < 0.5 ? 5 : 6,
-                        blockWeight: 1
-                    };
+                    return { randomChance: 0, depth: progress < 0.5 ? 5 : 6, blockWeight: 1 };
                 case 'unbeatable':
-                    return {
-                        randomChance: 0,
-                        depth: 7,
-                        blockWeight: 1,
-                        openingBook: true
-                    };
+                    return { randomChance: 0, depth: 7, blockWeight: 1, openingBook: true };
                 default:
                     return { randomChance: 0, depth: 5, blockWeight: 1 };
             }
@@ -549,7 +524,7 @@
         function saveEndlessRecord(n) { try { localStorage.setItem('gal_endless_v3', String(n)); } catch(e) {} }
 
         // ============================================================
-        // PARTICLE SYSTEM – FIRE TRAIL & EXPLOSION
+        // PARTICLE SYSTEM – FIRE TRAIL & EXPLOSION (Fixed Overlay)
         // ============================================================
         class ParticleSystem {
             constructor(canvas) {
@@ -599,12 +574,17 @@
             }
 
             update() {
+                // Limit max particles to prevent performance issues
+                if (this.particles.length > 150) {
+                    this.particles.splice(0, this.particles.length - 150);
+                }
+                
                 for (let i = this.particles.length - 1; i >= 0; i--) {
                     const p = this.particles[i];
                     p.x += p.vx;
                     p.y += p.vy;
                     p.life -= p.decay;
-                    p.size *= 0.99;
+                    p.size *= 0.98;
                     if (p.life <= 0 || p.size < 0.5) {
                         this.particles.splice(i, 1);
                     }
@@ -614,9 +594,8 @@
             draw() {
                 const ctx = this.ctx;
                 for (const p of this.particles) {
-                    const alpha = Math.max(0, p.life);
+                    const alpha = Math.max(0, p.life) * 0.7; // Reduced opacity for visibility
                     ctx.globalAlpha = alpha;
-                    // Draw 3D-like particle with radial gradient
                     const grad = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.size);
                     grad.addColorStop(0, p.color1);
                     grad.addColorStop(0.6, p.color2);
@@ -625,89 +604,72 @@
                     ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
                     ctx.fillStyle = grad;
                     ctx.fill();
-                    // Add a soft glow
                     ctx.shadowColor = p.color1;
-                    ctx.shadowBlur = p.size * 1.5;
+                    ctx.shadowBlur = p.size * 1.2;
                     ctx.fill();
                     ctx.shadowBlur = 0;
                 }
                 ctx.globalAlpha = 1;
             }
 
-            // Spawn trail particles for a disc drop
+            // Spawn trail particles (Reduced count, smaller size)
             emitTrail(fromX, fromY, toX, toY, effectType, player) {
-                const count = 30;
+                const count = 15; // Reduced from 30
                 const dx = toX - fromX;
                 const dy = toY - fromY;
-                const duration = 400; // ms (same as drop animation)
-                const steps = count;
-                for (let i = 0; i < steps; i++) {
-                    const t = i / steps;
-                    const x = fromX + dx * t + (Math.random() - 0.5) * 10;
-                    const y = fromY + dy * t + (Math.random() - 0.5) * 10;
+                for (let i = 0; i < count; i++) {
+                    const t = i / count;
+                    const x = fromX + dx * t + (Math.random() - 0.5) * 6;
+                    const y = fromY + dy * t + (Math.random() - 0.5) * 6;
                     const colors = this.getEffectColors(effectType, player);
                     this.particles.push({
-                        x: x,
-                        y: y,
-                        vx: (Math.random() - 0.5) * 2,
-                        vy: (Math.random() - 0.5) * 2 - 1,
-                        size: 4 + Math.random() * 8,
-                        life: 0.8 + Math.random() * 0.4,
-                        decay: 0.01 + Math.random() * 0.02,
-                        color1: colors[0],
-                        color2: colors[1],
-                        color3: colors[2]
+                        x: x, y: y,
+                        vx: (Math.random() - 0.5) * 1.5,
+                        vy: (Math.random() - 0.5) * 1.5 - 1,
+                        size: 3 + Math.random() * 5, // Smaller size
+                        life: 0.6 + Math.random() * 0.3,
+                        decay: 0.025 + Math.random() * 0.02,
+                        color1: colors[0], color2: colors[1], color3: colors[2]
                     });
                 }
                 this.start();
             }
 
-            // Spawn explosion particles when disc lands
+            // Spawn explosion particles (Reduced count, smaller size)
             emitExplosion(x, y, effectType, player) {
-                const count = 60;
+                const count = 25; // Reduced from 60
                 const colors = this.getEffectColors(effectType, player);
                 for (let i = 0; i < count; i++) {
                     const angle = Math.random() * 2 * Math.PI;
-                    const speed = 2 + Math.random() * 6;
-                    const size = 3 + Math.random() * 10;
+                    const speed = 2 + Math.random() * 4;
                     this.particles.push({
-                        x: x,
-                        y: y,
+                        x: x, y: y,
                         vx: Math.cos(angle) * speed,
                         vy: Math.sin(angle) * speed - 1,
-                        size: size,
-                        life: 0.9 + Math.random() * 0.5,
-                        decay: 0.008 + Math.random() * 0.015,
-                        color1: colors[0],
-                        color2: colors[1],
-                        color3: colors[2]
+                        size: 2 + Math.random() * 6,
+                        life: 0.6 + Math.random() * 0.4,
+                        decay: 0.02 + Math.random() * 0.015,
+                        color1: colors[0], color2: colors[1], color3: colors[2]
                     });
                 }
                 this.start();
             }
 
-            // Define colors per effect and player (1=red, 2=yellow)
             getEffectColors(effectType, player) {
                 const base = player === 1 ? ['#ff5252', '#d50000', '#4a0000'] : ['#ffeb3b', '#f9a825', '#4a3b00'];
                 switch (effectType) {
-                    case 'fire':
-                        return ['#ff4500', '#ff8c00', '#ffd700'];
-                    case 'explosion':
-                        return ['#ffffff', '#ffdd00', '#ff6600'];
-                    case 'plasma':
-                        return ['#b388ff', '#7c4dff', '#311b92'];
-                    case 'ice':
-                        return ['#80deea', '#00bcd4', '#006064'];
-                    case 'galaxy':
-                        return ['#e040fb', '#7b1fa2', '#1a237e'];
-                    default: // standard
-                        return base;
+                    case 'fire': return ['#ff4500', '#ff8c00', '#ffd700'];
+                    case 'explosion': return ['#ffffff', '#ffdd00', '#ff6600'];
+                    case 'plasma': return ['#b388ff', '#7c4dff', '#311b92'];
+                    case 'ice': return ['#80deea', '#00bcd4', '#006064'];
+                    case 'galaxy': return ['#e040fb', '#7b1fa2', '#1a237e'];
+                    default: return base;
                 }
             }
         }
 
         // ============================================================
-        // CONNECT FOUR GAME CLASS (modified to include particle effects)
+        // CONNECT FOUR GAME CLASS
         // ============================================================
         class ConnectFour {
             constructor() {
@@ -741,7 +703,6 @@
                 this.newGameBtn     = document.getElementById('newGameBtn');
                 this.toggleFirstBtn = document.getElementById('toggleFirstBtn');
 
-                // Particle canvas
                 this.particleCanvas = document.getElementById('particleCanvas');
                 this.particleSystem = new ParticleSystem(this.particleCanvas);
 
@@ -770,7 +731,6 @@
             get tier()    { return this.zone.tier || 1; }
             get aiDiff()  { return this.zone.diff; }
             get effectType() {
-                // Map effect skin id to type for particle system
                 const id = this.gameData.activeEffectSkin;
                 if (id === 'fire_effect') return 'fire';
                 if (id === 'explosion_effect') return 'explosion';
@@ -958,26 +918,18 @@
                 disc.style.animation = 'discDrop 0.4s cubic-bezier(0.25,0.46,0.45,0.94) forwards';
 
                 // ---- PARTICLE EFFECTS ----
-                // Get slot positions for particle coordinates
                 const boardRect = this.domBoard.getBoundingClientRect();
                 const slotRect = slot.getBoundingClientRect();
                 const canvasRect = this.particleCanvas.getBoundingClientRect();
-                // Convert to canvas coordinates
                 const x = slotRect.left + slotRect.width/2 - canvasRect.left;
-                const yStart = slotRect.top - canvasRect.top - 50; // start above board
+                const yStart = slotRect.top - canvasRect.top - 50; 
                 const yEnd = slotRect.top + slotRect.height/2 - canvasRect.top;
 
-                // Fire trail: from top to landing
-                this.particleSystem.emitTrail(
-                    x, yStart,
-                    x, yEnd,
-                    this.effectType, player
-                );
+                this.particleSystem.emitTrail(x, yStart, x, yEnd, this.effectType, player);
 
-                // After drop animation ends (0.4s), trigger explosion
                 setTimeout(() => {
                     this.particleSystem.emitExplosion(x, yEnd, this.effectType, player);
-                }, 400);
+                }, 350);
             }
 
             updatePlayerIndicators() {
@@ -1132,8 +1084,16 @@
 
             // ===== INIT DOM EVENTS =====
             initDOMEvents() {
-                this.restartBtn.addEventListener('click',     () => this.restartGame());
-                this.newGameBtn.addEventListener('click',     () => this.newGame());
+                // Restart Button - Proper Full Reset
+                this.restartBtn.addEventListener('click', () => {
+                    this.restartGame();
+                });
+                
+                // New Game Button - Proper Reset
+                this.newGameBtn.addEventListener('click', () => {
+                    this.newGame();
+                });
+
                 this.toggleFirstBtn.addEventListener('click', () => this.toggleFirstPlayer());
 
                 const modalBtn = document.getElementById('endActionBtn');
@@ -1145,7 +1105,6 @@
 
                 document.getElementById('dailyBtn').addEventListener('click', () => this.claimDailyReward());
 
-                // SHOP BUTTONS
                 document.getElementById('shopBtn').addEventListener('click', () => {
                     this.renderShop();
                     document.getElementById('shopModal').classList.add('open');
@@ -1291,7 +1250,7 @@
                 if (this.gameData.activeEffectSkin === 'rainbow_effect') colors = ['#ff0000', '#ff7f00', '#ffff00', '#00ff00', '#0000ff', '#4b0082', '#9400d3'];
                 if (this.gameData.activeEffectSkin === 'neon_effect') colors = ['#00ff00', '#ff00ff', '#00ffff', '#ff4500', '#adff2f', '#8a2be2'];
 
-                for(let i=0;i<60;i++){
+                for(let i=0;i<40;i++){
                     const c=document.createElement('div');
                     c.classList.add('confetti');
                     c.style.left=Math.random()*100+'vw';
@@ -1304,22 +1263,35 @@
             }
 
             restartGame() {
-                this.currentPlayer=1; this.isAiTurn=false;
-                this.initializeBoard(); this.updateStatus(); this.updatePlayerIndicators();
-                this.updateHUD(); this.applyTierToPlayerDiscs();
-                document.querySelectorAll('.confetti').forEach(c=>c.remove());
-                this.setButtonsEnabled(true);
-                // Clear particles
+                // Full Reset
+                this.currentPlayer = 1; 
+                this.isAiTurn = false;
+                
+                // Reset the board and UI
+                this.initializeBoard(); 
+                this.updateStatus(); 
+                this.updatePlayerIndicators();
+                this.updateHUD(); 
+                this.applyTierToPlayerDiscs();
+                
+                // Kill leftover particles
                 this.particleSystem.stop();
                 this.particleSystem.clear();
+                
+                document.querySelectorAll('.confetti').forEach(c=>c.remove());
+                this.setButtonsEnabled(true);
             }
+            
             newGame() {
+                // Hard Reset (Full New Game, clear current session scores)
                 this.matchScores = {1:0, 2:0};
+                this.scores = {1:0, 2:0}; // Reset the displayed score board
+                this.updateScores();
                 this.endlessStreak = 0;
                 this.restartGame();
             }
 
-            // ===== RENDER SHOP (with new effects preview) =====
+            // ===== RENDER SHOP =====
             renderShop() {
                 const container = document.getElementById('shopContainer');
                 container.innerHTML = '';
@@ -1358,7 +1330,6 @@
                         if (item.category === 'board' || item.category === 'bg') {
                             previewHTML = `<div class="preview-board" style="background:${item.css};"></div>`;
                         } else if (item.category === 'effects') {
-                            // Preview with a small particle burst (css animation)
                             const colors = this.getPreviewColors(item.id);
                             previewHTML = `<div class="preview" style="background:${colors[0]}; border:1px solid ${colors[1]}; box-shadow:0 0 6px ${colors[0]};"></div>`;
                         } else {
