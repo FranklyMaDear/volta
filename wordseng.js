@@ -13,7 +13,7 @@ const WORDS_EN = [
     { word: "LITTLE RED RIDING HOOD", hint: "A young girl wearing a colorful cape who walks through the forest to visit her sick grandmother." },
     { word: "THE THREE LITTLE PIGS", hint: "Animal brothers who build houses out of straw, wood, and bricks to hide from a big wolf." },
     { word: "CASTLE", hint: "A massive stone building with high walls and towers where kings and queens live." },
-    { word: "PIRATE", hint: "A sailing robber from old stories who wears an eyepatch and hunts for buried gold." },
+    { word: "PIRATE", hint: "A sailing explorer from old stories who wears an eyepatch and hunts for buried gold." },
     { word: "WIZARD", hint: "A magical man in stories who wears a pointy hat and casts spells with a wand." },
 
     // ====== YOUTUBERS & TIKTOKERS ======
@@ -37,7 +37,7 @@ const WORDS_EN = [
     { word: "SCOOBY DOO", hint: "A scared brown dog who loves snacks and solves spooky mysteries with his human friends." },
     { word: "TOM AND JERRY", hint: "A classic cartoon duo featuring a grey cat constantly chasing a clever brown mouse." },
     { word: "LOONEY TUNES", hint: "Classic animated shorts featuring funny characters like Bugs Bunny and Daffy Duck." },
-    { word: "TEEN TITANS", hint: "A group of young comic book superheroes like Robin and Cyborg living together and fighting crime." },
+    { word: "TEEN TITANS", hint: "A group of young comic book superheroes like Robin and Cyborg living together and protecting their city." },
     { word: "THE SIMPSONS", hint: "A famous long-running animated show about a funny yellow family living in Springfield." },
     { word: "POPEYE", hint: "A classic sailor character who gets super strength whenever he eats a can of spinach." },
 
@@ -57,7 +57,7 @@ const WORDS_EN = [
     { word: "GROGU", hint: "A cute green alien baby with huge ears from Star Wars who uses the Force." },
     { word: "FIONA", hint: "A princess who turns into a green ogre when the sun goes down." },
     { word: "WOODY", hint: "A brave cowboy toy with a pull-string who is best friends with a space ranger." },
-    { word: "GRINCH", hint: "A furry green creature who hates Christmas and tries to steal it from a happy village." },
+    { word: "GRINCH", hint: "A furry green creature who learns to love Christmas and a happy village." },
     { word: "TARZAN", hint: "A man raised by apes in the jungle who swings on vines and wears a loincloth." },
     { word: "MINNIE", hint: "Mickey's favorite friend who wears a red or pink polka dot dress with a big bow." },
     { word: "DONALD DUCK", hint: "A funny white bird character with a blue sailor hat who gets angry very easily." },
@@ -65,7 +65,7 @@ const WORDS_EN = [
 
     // ====== SUPERHEROES ======
     { word: "SPIDERMAN", hint: "A hero who swings from city buildings using webs and wears a red and blue suit." },
-    { word: "BATMAN", hint: "The Dark Knight of Gotham City who uses high-tech gadgets and a special car to fight crime." },
+    { word: "BATMAN", hint: "The Dark Knight of Gotham City who uses high-tech gadgets and a special car to protect the city." },
     { word: "SUPERMAN", hint: "An alien hero from Krypton who can fly, has x-ray vision, and is weak to green rocks." },
     { word: "IRON MAN", hint: "A rich genius superhero who builds a flying metal armor suit powered by an arc reactor." },
     { word: "HULK", hint: "A giant green superhero who gets incredibly strong whenever he becomes angry." },
@@ -95,7 +95,7 @@ const WORDS_EN = [
     { word: "TWO WRONGS DONT MAKE A RIGHT", hint: "A lesson teaching kids that hurting someone back just because they hurt you first is not correct." },
 
     // ====== CHILDREN'S SONGS ======
-    { word: "BABY SHARK", hint: "A super popular tune about a family of ocean predators with a very catchy 'doo doo doo' sound." },
+    { word: "BABY SHARK", hint: "A super popular tune about a family of ocean animals with a very catchy 'doo doo doo' sound." },
     { word: "TWINKLE TWINKLE", hint: "A classic lullaby about a tiny, bright diamond shining high up in the dark night sky." },
     { word: "OLD MACDONALD", hint: "A famous song about a farmer who keeps cows, chicks, and ducks on his land." },
     { word: "THE WHEELS ON THE BUS", hint: "A fun song describing a large city vehicle going round and round all through the town." },
@@ -104,11 +104,11 @@ const WORDS_EN = [
     // ====== GAMES & POP CULTURE ======
     { word: "MINECRAFT", hint: "A sandbox video game where players mine blocks and build anything they want while avoiding Creepers." },
     { word: "ROBLOX", hint: "An online platform where kids can create their own custom games and hang out with avatars." },
-    { word: "FORTNITE", hint: "A battle royale game where players drop from a flying bus, build structures, and dance." },
+    { word: "FORTNITE", hint: "A colorful game where players drop from a flying bus, build structures, and dance." },
     { word: "SONIC", hint: "A bright blue hedgehog who can run faster than the speed of sound and collects golden rings." },
     { word: "MARIO", hint: "A friendly Italian plumber with a red cap who jumps on mushrooms to rescue a princess." },
     { word: "PIKACHU", hint: "The most famous electric mouse character that shoots yellow lightning bolts." },
-    { word: "AMONG US", hint: "A space game where crewmates complete tasks while trying to find the hidden impostor." },
+    { word: "AMONG US", hint: "A space game where crewmates complete tasks while trying to find the sneaky impostor." },
     { word: "CHESS", hint: "A smart board game with kings, queens, and knights where you try to trap the enemy king." },
     { word: "GAMER", hint: "A person who loves playing video games on a console, computer, or phone." },
     { word: "LEVEL", hint: "A specific stage or floor in a video game that you must complete to advance." },
