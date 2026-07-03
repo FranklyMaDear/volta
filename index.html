@@ -1,6 +1,4 @@
-
-
-<!DOCTYPE html>
+<!DOCTYPE html> 
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -9,9 +7,6 @@
     <meta name="theme-color" content="#0a0e27">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-
-    <!-- YouTube SDK Integration -->
-    <script src="https://www.youtube.com/game_api/v1"></script>
 
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
@@ -23,29 +18,11 @@
             position: relative; touch-action: manipulation;
             padding-bottom: 0; transition: background 0.4s ease;
         }
-
-        /* YouTube Pause Override */
-        body.paused, body.paused *, body.paused *::before, body.paused *::after {
-            animation-play-state: paused !important;
-        }
-        body.paused { pointer-events: none !important; user-select: none !important; }
-        body.paused #starCanvas { display: none; }
-
         #starCanvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; }
         .shooting-star { position: fixed; width: 3px; height: 80px; background: linear-gradient(to bottom, rgba(255,255,255,0.9), rgba(255,255,255,0)); border-radius: 50%; z-index: 1; pointer-events: none; animation: shoot linear forwards; transform-origin: top center; }
         @keyframes shoot { 0% { opacity: 1; transform: translate(0,0) rotate(-35deg); } 70% { opacity: 1; } 100% { opacity: 0; transform: translate(-400px,600px) rotate(-35deg); } }
         .nebula-particle { position: fixed; border-radius: 50%; z-index: 0; pointer-events: none; animation: nebulaFloat linear infinite; filter: blur(2px); }
         @keyframes nebulaFloat { 0% { transform: translate(0,0) scale(1); opacity: 0.6; } 50% { transform: translate(30px,-40px) scale(1.5); opacity: 0.2; } 100% { transform: translate(-20px,20px) scale(1); opacity: 0.6; } }
-
-        #homeBtn {
-            position: absolute; top: 12px; left: 12px; z-index: 100;
-            background: rgba(14,16,39,0.85); border: 2px solid #84cc16;
-            color: #84cc16; font-weight: 800; padding: 8px 16px;
-            border-radius: 30px; cursor: pointer; font-family: inherit;
-            backdrop-filter: blur(8px); box-shadow: 0 0 15px rgba(132,204,22,0.3);
-            font-size: 0.8rem; transition: all 0.2s;
-        }
-        #homeBtn:active { transform: scale(0.95); }
 
         .game-wrapper {
             display: flex; width: 100%; height: 100vh; height: 100dvh;
@@ -104,23 +81,23 @@
         .scores { flex: 1; display: flex; justify-content: center; align-items: center; }
         .scores .score { font-size: 1.2rem; font-weight: bold; color: #e8e8ed; background: rgba(255,255,255,0.05); padding: 4px 12px; border-radius: 16px; min-width: 60px; border: 1px solid rgba(132,204,22,0.2); }
 
-        .board-container {
-            background: var(--board-skin, linear-gradient(145deg, #1565c0, #0d47a1));
-            padding: 6px; border-radius: 12px; box-shadow: inset 0 0 20px rgba(0,0,0,0.4), 0 6px 20px rgba(0,0,0,0.5);
-            margin: 6px 0; position: relative; width: 100%; aspect-ratio: 7/6; border: 2px solid #0a3d91; overflow: hidden;
-            display: flex; justify-content: center; align-items: center;
+        .board-container { 
+            background: var(--board-skin, linear-gradient(145deg, #1565c0, #0d47a1)); 
+            padding: 6px; border-radius: 12px; box-shadow: inset 0 0 20px rgba(0,0,0,0.4), 0 6px 20px rgba(0,0,0,0.5); 
+            margin: 6px 0; position: relative; width: 100%; aspect-ratio: 7/6; border: 2px solid #0a3d91; overflow: hidden; 
+            display: flex; justify-content: center; align-items: center; 
         }
         .board { display: grid; grid-template-columns: repeat(7, 1fr); grid-template-rows: repeat(6, 1fr); gap: 4px; position: relative; z-index: 2; height: 95%; width: 95%; padding: 2px; }
-
+        
         #particleCanvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1; }
-
+        
         .slot { background: transparent; border-radius: 50%; cursor: pointer; position: relative; z-index: 2; box-shadow: inset 0 4px 10px rgba(0,0,0,0.9), inset 0 -2px 4px rgba(255,255,255,0.04); display: flex; align-items: center; justify-content: center; overflow: hidden; transition: box-shadow 0.15s ease; }
         .slot::before { content: ''; position: absolute; inset: 0; background: rgba(0,0,12,0.85); border-radius: 50%; z-index: 0; pointer-events: none; transition: background 0.15s; }
         .slot:hover::before, .slot:active::before { background: rgba(0,0,40,0.7); }
-        .disc {
-            width: 85%; height: 85%; border-radius: 50%; z-index: 3;
-            box-shadow: inset 0 -4px 8px rgba(0,0,0,0.5), inset 0 2px 4px rgba(255,255,255,0.3), 0 3px 6px rgba(0,0,0,0.4);
-            border: 2px solid rgba(255,255,255,0.4); position: relative; opacity: 0;
+        .disc { 
+            width: 85%; height: 85%; border-radius: 50%; z-index: 3; 
+            box-shadow: inset 0 -4px 8px rgba(0,0,0,0.5), inset 0 2px 4px rgba(255,255,255,0.3), 0 3px 6px rgba(0,0,0,0.4); 
+            border: 2px solid rgba(255,255,255,0.4); position: relative; opacity: 0; 
         }
         .disc::before { content: ''; position: absolute; top: 12%; left: 12%; right: 12%; bottom: 12%; background: rgba(255,255,255,0.22); border-radius: 50%; filter: blur(1px); z-index: 3; }
         .disc.red    { background: radial-gradient(circle at 35% 35%, #ff5252, #c62828); opacity: 1; }
@@ -187,7 +164,7 @@
 
         .score-modal-box { background: #0e1027; border: 2px solid rgba(132,204,22,0.4); border-radius: 20px; padding: 20px 16px; width: 92%; max-width: 420px; max-height: 80vh; overflow-y: auto; box-shadow: 0 0 40px rgba(132,204,22,0.15); }
         .modal-title { color: #84cc16; font-size: 1.2rem; font-weight: 800; letter-spacing: 2px; text-align: center; margin-bottom: 14px; text-shadow: 0 0 12px rgba(132,204,22,0.5); }
-
+        
         .score-table { width: 100%; border-collapse: separate; border-spacing: 0 4px; margin-top: 6px; font-family: 'Segoe UI', -apple-system, sans-serif; }
         .score-table th { background: rgba(132,204,22,0.12); color: #a3e635; font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; padding: 8px 6px; border-radius: 8px 8px 0 0; text-align: center; }
         .score-table td { background: rgba(255,255,255,0.04); color: #e8e8ed; padding: 8px 6px; font-size: 0.8rem; border-bottom: 1px solid rgba(255,255,255,0.05); text-align: center; transition: background 0.2s; }
@@ -235,9 +212,6 @@
 </head>
 <body>
     <canvas id="starCanvas"></canvas>
-
-    <!-- Home Button -->
-    <button id="homeBtn" onclick="goHome()">🏠 Home</button>
 
     <div class="game-wrapper">
         <div class="game-container">
@@ -332,15 +306,7 @@
     <script>
     (function() {
         // ============================================================
-        // UTILITIES & GLOBAL FUNCTIONS
-        // ============================================================
-        function goHome() {
-            window.location.href = 'https://t.me/Franklygames_bot?profile';
-        }
-        window.goHome = goHome;
-
-        // ============================================================
-        // STARFIELD (Updated with Pause Controls)
+        // STARFIELD
         // ============================================================
         const canvas = document.getElementById('starCanvas');
         const ctx = canvas.getContext('2d');
@@ -396,18 +362,6 @@
         function initBackgroundEffects() {
             resizeCanvas(); createStars(200); _rafId = requestAnimationFrame(drawStars);
             createNebulaParticles(15); scheduleShootingStar(); setTimeout(createShootingStar, 600);
-        }
-        function pauseBackground() {
-            _bgPaused = true;
-            if (_rafId) { cancelAnimationFrame(_rafId); _rafId = null; }
-            if (_shootTimer) { clearTimeout(_shootTimer); _shootTimer = null; }
-        }
-        function resumeBackground() {
-            if (!_bgPaused) return;
-            _bgPaused = false;
-            if (_rafId) cancelAnimationFrame(_rafId);
-            _rafId = requestAnimationFrame(drawStars);
-            scheduleShootingStar();
         }
         window.addEventListener('resize', () => { resizeCanvas(); createStars(200); });
 
@@ -483,7 +437,7 @@
         }
 
         // ============================================================
-        // SHOP ITEMS
+        // SHOP ITEMS (Effects updated)
         // ============================================================
         const SHOP_ITEMS = [
             { id: 'default_disc', category: 'pions', name: 'Classic', price: 0, css: 'classic' },
@@ -713,7 +667,7 @@
         }
 
         // ============================================================
-        // CONNECT FOUR GAME CLASS (Updated with YouTube SDK Integration)
+        // CONNECT FOUR GAME CLASS
         // ============================================================
         class ConnectFour {
             constructor() {
@@ -724,14 +678,6 @@
                 this.matchScores = {1:0, 2:0};
                 this.audio = new GameAudio(); this.aiFirst = false;
                 this._pendingEndResult = null;
-                this._aiTimeoutId = null;
-
-                // YouTube SDK state
-                this._ytLoaded = false;
-                this._ytReady = false;
-                this._wasPaused = false;
-                this._savedProgress = false;
-                this._savedAiTurn = false;
 
                 this.gameData = loadSave();
                 const extLevel = loadLevel();
@@ -897,106 +843,6 @@
                 this.updateCoinDisplay();
                 alert(`🎁 Daily Reward claimed!\nStreak: ${streak}x\n+${coins} coins!`);
             }
-
-            // ===== YOUTUBE SDK INTEGRATION =====
-            _showAdAndReward(callback) {
-                const YT = (typeof ytgame !== 'undefined' && ytgame !== null) ? ytgame : null;
-                if (YT && YT.game && typeof YT.game.showAd === 'function') {
-                    YT.game.showAd()
-                        .then(() => {
-                            if (callback) callback();
-                        })
-                        .catch((err) => {
-                            console.warn('Ad failed or rejected:', err);
-                            if (callback) callback();
-                        });
-                } else {
-                    if (callback) callback();
-                }
-            }
-
-            activateXpBoost() {
-                if (this.gameData.xpBoostActive) { alert('Double points boost is already active!'); return; }
-                this._showAdAndReward(() => {
-                    this.gameData.xpBoostActive = true;
-                    this.gameData.xpBoostGames = 2;
-                    writeSave(this.gameData);
-                    this.updateHUD();
-                    alert('⚡ Double points activated for the next 2 wins!');
-                });
-            }
-
-            applySavedData(data) {
-                try {
-                    const s = JSON.parse(data);
-                    if (s && typeof s === 'object') {
-                        if (s.gameData) {
-                            this.gameData = { ...this.gameData, ...s.gameData };
-                            writeSave(this.gameData);
-                            this.applySkins();
-                            this.updateHUD();
-                            this.updateCoinDisplay();
-                            this.updatePointsDisplay();
-                        }
-                        if (s.scores) {
-                            this.scores = {1: s.scores[1]||0, 2: s.scores[2]||0};
-                            this.updateScores();
-                        }
-                    }
-                } catch(e) {}
-            }
-
-            cloudSave() {
-                const YT = (typeof ytgame !== 'undefined' && ytgame !== null) ? ytgame : null;
-                if (YT && this._ytLoaded && YT.game && typeof YT.game.saveData === 'function') {
-                    try {
-                        YT.game.saveData(JSON.stringify({ gameData: this.gameData, scores: this.scores })).catch(function(){});
-                    } catch(e) {}
-                }
-            }
-
-            submitScore(score) {
-                const YT = (typeof ytgame !== 'undefined' && ytgame !== null) ? ytgame : null;
-                if (this._ytReady && YT && YT.game && typeof YT.game.sendScore === 'function') {
-                    try {
-                        YT.game.sendScore(score).catch(function(){});
-                    } catch(e) {}
-                }
-            }
-
-            handlePause() {
-                this._wasPaused = true;
-                this._savedProgress = this.gameInProgress;
-                this._savedAiTurn   = this.isAiTurn;
-                this.gameInProgress = false;
-                this.isAiTurn = false;
-                if (this._aiTimeoutId) {
-                    clearTimeout(this._aiTimeoutId);
-                    this._aiTimeoutId = null;
-                }
-                if (this.audio) this.audio.setPaused(true);
-                pauseBackground();
-                document.body.classList.add('paused');
-            }
-
-            handleResume() {
-                if (this.audio) this.audio.setPaused(false);
-                document.body.classList.remove('paused');
-                resumeBackground();
-                if (this._wasPaused) {
-                    this.gameInProgress = !!this._savedProgress;
-                    this._wasPaused = false;
-                    if (this.gameInProgress && this._savedAiTurn) {
-                        this._savedAiTurn = false;
-                        this.triggerAiTurn();
-                    }
-                }
-                this.updateStatus();
-                this.updatePlayerIndicators();
-            }
-
-            setYtLoaded(loaded) { this._ytLoaded = loaded; }
-            setYtReady(ready) { this._ytReady = ready; }
 
             // ===== CORE GAME =====
             initializeBoard() {
@@ -1244,10 +1090,12 @@
 
             // ===== INIT DOM EVENTS =====
             initDOMEvents() {
+                // RESTART BUTTON - Does a COMPLETE reset (Board, Match, Scores, Levels/XP)
                 this.restartBtn.addEventListener('click', () => {
                     this.restartGame();
                 });
                 
+                // NEW GAME BUTTON - Same as restart
                 this.newGameBtn.addEventListener('click', () => {
                     this.restartGame(); 
                 });
@@ -1257,16 +1105,8 @@
                 const modalBtn = document.getElementById('endActionBtn');
                 modalBtn.addEventListener('click', () => {
                     if (this.gameInProgress) return;
-                    const btn = document.getElementById('endActionBtn');
-                    btn.disabled = true;
-                    btn.textContent = '⏳ Loading Ad...';
-                    
-                    this._showAdAndReward(() => {
-                        document.getElementById('endModal').classList.remove('open');
-                        this.restartGame();
-                        btn.disabled = false;
-                        btn.textContent = '▶ Continue';
-                    });
+                    document.getElementById('endModal').classList.remove('open');
+                    this.restartGame();
                 });
 
                 document.getElementById('dailyBtn').addEventListener('click', () => this.claimDailyReward());
@@ -1306,12 +1146,7 @@
                 saveToday(today);
             }
 
-            saveProgress() {
-                this.saveTodayScore();
-                this.renderScoreboard();
-                this.cloudSave(); // Cloud Save via SDK
-            }
-
+            saveProgress() { this.saveTodayScore(); this.renderScoreboard(); }
             handleGameEnd() { this.saveProgress(); this.setButtonsEnabled(true); }
 
             renderScoreboard() {
@@ -1346,10 +1181,9 @@
                     medium: 500, medium_hard: 450, hard: 350, expert: 250, unbeatable: 180 
                 };
                 const delay = (baseDelay[this.aiDiff] || 300) + Math.random() * 300;
-                this._aiTimeoutId = setTimeout(() => {
+                setTimeout(() => {
                     if (!this.gameInProgress) { this.isAiTurn = false; return; }
                     const col = this.computeAiMove(); this.isAiTurn = false; this.makeMove(col);
-                    this._aiTimeoutId = null;
                 }, delay);
             }
 
@@ -1438,29 +1272,30 @@
             }
 
             restartGame() {
+                // FULL HARD RESET: Board, Current Player, Particles, Scores, LEVELS (Points)
                 this.currentPlayer = 1; 
                 this.isAiTurn = false;
-                if (this._aiTimeoutId) {
-                    clearTimeout(this._aiTimeoutId);
-                    this._aiTimeoutId = null;
-                }
                 
+                // Reset Points and Level to 0 and 1
                 this.gameData.points = 0;
-                this.gameData.level = 1;
+                this.gameData.level = 1; // Explicitly set to 1 for HUD update
                 writeSave(this.gameData);
-                saveLevel(1);
+                saveLevel(1); // Ensure level file is reset as well
                 
+                // Reset Match and Session Scores
                 this.matchScores = {1:0, 2:0};
                 this.scores = {1:0, 2:0};
                 this.endlessStreak = 0;
                 this.updateScores();
                 
+                // Reset Board
                 this.initializeBoard(); 
                 this.updateStatus(); 
                 this.updatePlayerIndicators();
                 this.updateHUD(); 
                 this.applyTierToPlayerDiscs();
                 
+                // Clear particles & confetti
                 this.particleSystem.stop();
                 this.particleSystem.clear();
                 document.querySelectorAll('.confetti').forEach(c=>c.remove());
@@ -1566,17 +1401,6 @@
                     catDiv.appendChild(grid);
                     container.appendChild(catDiv);
                 }
-
-                // Add Ad Boost Button
-                const boostDiv = document.createElement('div');
-                boostDiv.style.cssText = 'margin: 12px 0; text-align: center;';
-                const boostBtn = document.createElement('button');
-                boostBtn.className = 'modal-action-btn win-btn';
-                boostBtn.style.cssText = 'background:linear-gradient(135deg,#e81cff,#7b1fa2);box-shadow:0 4px 0 #38006b;font-size:0.8rem;';
-                boostBtn.textContent = '⚡ Watch Ad for Double Points';
-                boostBtn.addEventListener('click', () => this.activateXpBoost());
-                boostDiv.appendChild(boostBtn);
-                container.appendChild(boostDiv);
             }
 
             getPreviewColors(effectId) {
@@ -1615,71 +1439,10 @@
         }
 
         // ============================================================
-        // YOUTUBE SDK LIFECYCLE
-        // ============================================================
-        const YT = (typeof ytgame !== 'undefined' && ytgame !== null) ? ytgame : null;
-        let ytLoaded = false;
-        let ytReady = false;
-
-        async function initGameAssets() {
-            if (!YT) return;
-            if (YT.system) {
-                try {
-                    if (typeof YT.system.onAudioEnabledChange === 'function') {
-                        YT.system.onAudioEnabledChange(function(enabled) {
-                            if (window._game) window._game.audio.setMuted(!enabled);
-                        });
-                    }
-                } catch(e) {}
-                try {
-                    if (typeof YT.system.isAudioEnabled === 'function') {
-                        if (window._game) window._game.audio.setMuted(!YT.system.isAudioEnabled());
-                    }
-                } catch(e) {}
-                try {
-                    if (typeof YT.system.onPause === 'function') {
-                        YT.system.onPause(function() {
-                            if (window._game) window._game.handlePause();
-                        });
-                    }
-                } catch(e) {}
-                try {
-                    if (typeof YT.system.onResume === 'function') {
-                        YT.system.onResume(function() {
-                            if (window._game) window._game.handleResume();
-                        });
-                    }
-                } catch(e) {}
-            }
-            try {
-                if (YT.game && typeof YT.game.loadData === 'function') {
-                    const data = await YT.game.loadData();
-                    if (data && window._game) window._game.applySavedData(data);
-                }
-            } catch(e) {}
-            ytLoaded = true;
-            if (window._game) window._game.setYtLoaded(true);
-        }
-
-        // ============================================================
         // START
         // ============================================================
         try { initBackgroundEffects(); } catch(e) {}
         try { window._game = new ConnectFour(); } catch(e) {}
-
-        window.addEventListener('load', async function() {
-            if (YT && YT.game && typeof YT.game.firstFrameReady === 'function') {
-                try { YT.game.firstFrameReady(); } catch(e) {}
-            }
-            try { await initGameAssets(); } catch(e) { ytLoaded = true; }
-            if (YT && YT.game && typeof YT.game.gameReady === 'function') {
-                try {
-                    YT.game.gameReady();
-                    ytReady = true;
-                    if (window._game) window._game.setYtReady(true);
-                } catch(e) {}
-            }
-        });
     })();
     </script>
 </body>
