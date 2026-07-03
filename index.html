@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!DOCTYPE html> 
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -199,8 +199,6 @@
             .hud-resources { flex-wrap: wrap; justify-content: center; gap: 2px; }
         }
     </style>
-
-    <!-- Αφαιρέθηκε το script της Monetag -->
 </head>
 <body>
     <canvas id="starCanvas"></canvas>
@@ -213,7 +211,6 @@
                 <div class="hud-btns">
                     <button class="res-btn daily-btn" id="dailyBtn">🎁 Daily</button>
                     <button class="res-btn shop-btn" id="shopBtn">🛒 Shop</button>
-                    <!-- Αφαιρέθηκε το κουμπί adPointsBtn -->
                 </div>
             </div>
 
@@ -237,7 +234,11 @@
                 </div>
             </div>
 
-            <div class="board-container"><div class="board" id="board"></div></div>
+            <div class="board-container">
+                <div class="board" id="board"></div>
+                <!-- Particle canvas overlay -->
+                <canvas id="particleCanvas" style="position:absolute; top:0; left:0; width:100%; height:100%; pointer-events:none; z-index:10;"></canvas>
+            </div>
             <div class="status" id="status">Your turn</div>
 
             <div class="game-buttons">
@@ -287,7 +288,6 @@
             <div class="modal-title">🛒 Galactic Shop</div>
             <div id="shopContent">
                 <p style="color:rgba(255,255,255,0.6);font-size:0.7rem;text-align:center;margin-bottom:10px;">🪙 You have <span id="shopCoins">0</span> coins</p>
-                <!-- Αφαιρέθηκε το κουμπί shopWatchAdBtn -->
                 <div id="shopContainer"></div>
             </div>
             <button class="modal-back-btn" id="closeShopBtn">← Close Shop</button>
@@ -297,7 +297,7 @@
     <script>
     (function() {
         // ============================================================
-        // STARFIELD
+        // STARFIELD (unchanged)
         // ============================================================
         const canvas = document.getElementById('starCanvas');
         const ctx = canvas.getContext('2d');
@@ -369,7 +369,7 @@
         window.addEventListener('resize', () => { resizeCanvas(); createStars(200); });
 
         // ============================================================
-        // AUDIO
+        // AUDIO (unchanged)
         // ============================================================
         class GameAudio {
             constructor() { this.audioCtx = null; this.initialized = false; this._muted = false; this._paused = false; }
@@ -412,7 +412,7 @@
         }
 
         // ============================================================
-        // SAVE / LOAD (DATA LAYER)
+        // SAVE / LOAD (unchanged)
         // ============================================================
         const DEFAULT_SAVE = {
             coins: 0,
@@ -440,7 +440,7 @@
         }
 
         // ============================================================
-        // SHOP ITEMS
+        // SHOP ITEMS – UPDATED EFFECTS (fire, explosion, plasma, ice, galaxy)
         // ============================================================
         const SHOP_ITEMS = [
             { id: 'default_disc', category: 'pions', name: 'Classic', price: 0, css: 'classic' },
@@ -448,9 +448,14 @@
             { id: 'gold_disc', category: 'pions', name: 'Golden Age', price: 60, css: 'gold' },
             { id: 'lava_disc', category: 'pions', name: 'Volcanic Lava', price: 50, css: 'lava' },
             { id: 'galaxy_disc', category: 'pions', name: 'Deep Galaxy', price: 80, css: 'galaxy' },
+            // Effects replaced with new ones
             { id: 'default_effect', category: 'effects', name: 'Standard', price: 0, css: 'standard' },
-            { id: 'rainbow_effect', category: 'effects', name: 'Rainbow', price: 50, css: 'rainbow' },
-            { id: 'neon_effect', category: 'effects', name: 'Neon Blast', price: 50, css: 'neon' },
+            { id: 'fire_effect', category: 'effects', name: '🔥 Fire Trail', price: 50, css: 'fire' },
+            { id: 'explosion_effect', category: 'effects', name: '💥 Explosion', price: 60, css: 'explosion' },
+            { id: 'plasma_effect', category: 'effects', name: '⚡ Plasma', price: 50, css: 'plasma' },
+            { id: 'ice_effect', category: 'effects', name: '❄️ Ice Shards', price: 50, css: 'ice' },
+            { id: 'galaxy_effect', category: 'effects', name: '🌌 Galaxy', price: 80, css: 'galaxy' },
+            // Boards and backgrounds unchanged
             { id: 'default', category: 'board', name: 'Deep Blue', price: 0, css: 'linear-gradient(145deg, #1565c0, #0d47a1)' },
             { id: 'dark', category: 'board', name: 'Void Black', price: 50, css: 'linear-gradient(145deg, #1a1a2e, #0f0f1a)' },
             { id: 'red', category: 'board', name: 'Volcanic', price: 75, css: 'linear-gradient(145deg, #b71c1c, #4a0000)' },
@@ -472,7 +477,7 @@
         };
 
         // ============================================================
-        // LEVEL SYSTEM
+        // LEVEL SYSTEM (unchanged)
         // ============================================================
         const POINTS_PER_LEVEL = 100;
         const OPENING_BOOK = [3, 2, 4, 1, 5, 0, 6];
@@ -544,7 +549,165 @@
         function saveEndlessRecord(n) { try { localStorage.setItem('gal_endless_v3', String(n)); } catch(e) {} }
 
         // ============================================================
-        // CONNECT FOUR GAME CLASS
+        // PARTICLE SYSTEM – FIRE TRAIL & EXPLOSION
+        // ============================================================
+        class ParticleSystem {
+            constructor(canvas) {
+                this.canvas = canvas;
+                this.ctx = canvas.getContext('2d');
+                this.particles = [];
+                this.running = false;
+                this.animId = null;
+                this.resize();
+                window.addEventListener('resize', () => this.resize());
+            }
+
+            resize() {
+                const rect = this.canvas.parentElement.getBoundingClientRect();
+                this.canvas.width = rect.width;
+                this.canvas.height = rect.height;
+                this.canvas.style.width = '100%';
+                this.canvas.style.height = '100%';
+            }
+
+            start() {
+                if (this.running) return;
+                this.running = true;
+                this.loop();
+            }
+
+            stop() {
+                this.running = false;
+                if (this.animId) {
+                    cancelAnimationFrame(this.animId);
+                    this.animId = null;
+                }
+                this.clear();
+            }
+
+            clear() {
+                this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+                this.particles = [];
+            }
+
+            loop() {
+                if (!this.running) return;
+                this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+                this.update();
+                this.draw();
+                this.animId = requestAnimationFrame(() => this.loop());
+            }
+
+            update() {
+                for (let i = this.particles.length - 1; i >= 0; i--) {
+                    const p = this.particles[i];
+                    p.x += p.vx;
+                    p.y += p.vy;
+                    p.life -= p.decay;
+                    p.size *= 0.99;
+                    if (p.life <= 0 || p.size < 0.5) {
+                        this.particles.splice(i, 1);
+                    }
+                }
+            }
+
+            draw() {
+                const ctx = this.ctx;
+                for (const p of this.particles) {
+                    const alpha = Math.max(0, p.life);
+                    ctx.globalAlpha = alpha;
+                    // Draw 3D-like particle with radial gradient
+                    const grad = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.size);
+                    grad.addColorStop(0, p.color1);
+                    grad.addColorStop(0.6, p.color2);
+                    grad.addColorStop(1, p.color3);
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+                    ctx.fillStyle = grad;
+                    ctx.fill();
+                    // Add a soft glow
+                    ctx.shadowColor = p.color1;
+                    ctx.shadowBlur = p.size * 1.5;
+                    ctx.fill();
+                    ctx.shadowBlur = 0;
+                }
+                ctx.globalAlpha = 1;
+            }
+
+            // Spawn trail particles for a disc drop
+            emitTrail(fromX, fromY, toX, toY, effectType, player) {
+                const count = 30;
+                const dx = toX - fromX;
+                const dy = toY - fromY;
+                const duration = 400; // ms (same as drop animation)
+                const steps = count;
+                for (let i = 0; i < steps; i++) {
+                    const t = i / steps;
+                    const x = fromX + dx * t + (Math.random() - 0.5) * 10;
+                    const y = fromY + dy * t + (Math.random() - 0.5) * 10;
+                    const colors = this.getEffectColors(effectType, player);
+                    this.particles.push({
+                        x: x,
+                        y: y,
+                        vx: (Math.random() - 0.5) * 2,
+                        vy: (Math.random() - 0.5) * 2 - 1,
+                        size: 4 + Math.random() * 8,
+                        life: 0.8 + Math.random() * 0.4,
+                        decay: 0.01 + Math.random() * 0.02,
+                        color1: colors[0],
+                        color2: colors[1],
+                        color3: colors[2]
+                    });
+                }
+                this.start();
+            }
+
+            // Spawn explosion particles when disc lands
+            emitExplosion(x, y, effectType, player) {
+                const count = 60;
+                const colors = this.getEffectColors(effectType, player);
+                for (let i = 0; i < count; i++) {
+                    const angle = Math.random() * 2 * Math.PI;
+                    const speed = 2 + Math.random() * 6;
+                    const size = 3 + Math.random() * 10;
+                    this.particles.push({
+                        x: x,
+                        y: y,
+                        vx: Math.cos(angle) * speed,
+                        vy: Math.sin(angle) * speed - 1,
+                        size: size,
+                        life: 0.9 + Math.random() * 0.5,
+                        decay: 0.008 + Math.random() * 0.015,
+                        color1: colors[0],
+                        color2: colors[1],
+                        color3: colors[2]
+                    });
+                }
+                this.start();
+            }
+
+            // Define colors per effect and player (1=red, 2=yellow)
+            getEffectColors(effectType, player) {
+                const base = player === 1 ? ['#ff5252', '#d50000', '#4a0000'] : ['#ffeb3b', '#f9a825', '#4a3b00'];
+                switch (effectType) {
+                    case 'fire':
+                        return ['#ff4500', '#ff8c00', '#ffd700'];
+                    case 'explosion':
+                        return ['#ffffff', '#ffdd00', '#ff6600'];
+                    case 'plasma':
+                        return ['#b388ff', '#7c4dff', '#311b92'];
+                    case 'ice':
+                        return ['#80deea', '#00bcd4', '#006064'];
+                    case 'galaxy':
+                        return ['#e040fb', '#7b1fa2', '#1a237e'];
+                    default: // standard
+                        return base;
+                }
+            }
+        }
+
+        // ============================================================
+        // CONNECT FOUR GAME CLASS (modified to include particle effects)
         // ============================================================
         class ConnectFour {
             constructor() {
@@ -577,6 +740,11 @@
                 this.restartBtn     = document.getElementById('restartBtn');
                 this.newGameBtn     = document.getElementById('newGameBtn');
                 this.toggleFirstBtn = document.getElementById('toggleFirstBtn');
+
+                // Particle canvas
+                this.particleCanvas = document.getElementById('particleCanvas');
+                this.particleSystem = new ParticleSystem(this.particleCanvas);
+
                 this.initDOMEvents(); this.audio.init();
 
                 checkDayReset();
@@ -601,6 +769,16 @@
             get isEndless(){ return this.level >= ENDLESS_LEVEL; }
             get tier()    { return this.zone.tier || 1; }
             get aiDiff()  { return this.zone.diff; }
+            get effectType() {
+                // Map effect skin id to type for particle system
+                const id = this.gameData.activeEffectSkin;
+                if (id === 'fire_effect') return 'fire';
+                if (id === 'explosion_effect') return 'explosion';
+                if (id === 'plasma_effect') return 'plasma';
+                if (id === 'ice_effect') return 'ice';
+                if (id === 'galaxy_effect') return 'galaxy';
+                return 'standard';
+            }
 
             applyTierToPlayerDiscs() {
                 const t = this.tier;
@@ -688,7 +866,6 @@
             }
 
             claimDailyReward() {
-                // Χωρίς διαφήμιση – δίνει το reward απευθείας
                 const streak = this.checkDailyReward();
                 if (streak === null) { alert('Already claimed today!'); return; }
                 const coins = 10 * streak;
@@ -718,6 +895,9 @@
                 this.playerMoves = 0; this.gameStartTime = Date.now();
                 if (this.aiFirst) { this.currentPlayer = 2; this.updateStatus(); this.updatePlayerIndicators(); this.triggerAiTurn(); }
                 else { this.updateStatus(); this.updatePlayerIndicators(); }
+                // Clear particles on new game
+                this.particleSystem.stop();
+                this.particleSystem.clear();
             }
 
             handleSlotClick(col) { if (!this.gameInProgress || this.isAiTurn) return; this.makeMove(col); }
@@ -776,6 +956,28 @@
 
                 disc.className = `disc ${colClass} ${tierClass}`.trim();
                 disc.style.animation = 'discDrop 0.4s cubic-bezier(0.25,0.46,0.45,0.94) forwards';
+
+                // ---- PARTICLE EFFECTS ----
+                // Get slot positions for particle coordinates
+                const boardRect = this.domBoard.getBoundingClientRect();
+                const slotRect = slot.getBoundingClientRect();
+                const canvasRect = this.particleCanvas.getBoundingClientRect();
+                // Convert to canvas coordinates
+                const x = slotRect.left + slotRect.width/2 - canvasRect.left;
+                const yStart = slotRect.top - canvasRect.top - 50; // start above board
+                const yEnd = slotRect.top + slotRect.height/2 - canvasRect.top;
+
+                // Fire trail: from top to landing
+                this.particleSystem.emitTrail(
+                    x, yStart,
+                    x, yEnd,
+                    this.effectType, player
+                );
+
+                // After drop animation ends (0.4s), trigger explosion
+                setTimeout(() => {
+                    this.particleSystem.emitExplosion(x, yEnd, this.effectType, player);
+                }, 400);
             }
 
             updatePlayerIndicators() {
@@ -838,7 +1040,6 @@
                         localStorage.setItem('FRANKLY_C4_WINS', (c4Wins + 1).toString());
                     } catch(e) {}
                 } else {
-                    // Δεν αφαιρούνται πόντοι
                     if (this.isEndless) this.endlessStreak = 0;
                 }
 
@@ -935,7 +1136,6 @@
                 this.newGameBtn.addEventListener('click',     () => this.newGame());
                 this.toggleFirstBtn.addEventListener('click', () => this.toggleFirstPlayer());
 
-                // END MODAL BUTTON – απλό κλείσιμο και νέο παιχνίδι (χωρίς διαφήμιση)
                 const modalBtn = document.getElementById('endActionBtn');
                 modalBtn.addEventListener('click', () => {
                     if (this.gameInProgress) return;
@@ -1109,6 +1309,9 @@
                 this.updateHUD(); this.applyTierToPlayerDiscs();
                 document.querySelectorAll('.confetti').forEach(c=>c.remove());
                 this.setButtonsEnabled(true);
+                // Clear particles
+                this.particleSystem.stop();
+                this.particleSystem.clear();
             }
             newGame() {
                 this.matchScores = {1:0, 2:0};
@@ -1116,7 +1319,7 @@
                 this.restartGame();
             }
 
-            // ===== RENDER SHOP (χωρίς διαφημίσεις) =====
+            // ===== RENDER SHOP (with new effects preview) =====
             renderShop() {
                 const container = document.getElementById('shopContainer');
                 container.innerHTML = '';
@@ -1154,14 +1357,16 @@
                         let previewHTML = '';
                         if (item.category === 'board' || item.category === 'bg') {
                             previewHTML = `<div class="preview-board" style="background:${item.css};"></div>`;
+                        } else if (item.category === 'effects') {
+                            // Preview with a small particle burst (css animation)
+                            const colors = this.getPreviewColors(item.id);
+                            previewHTML = `<div class="preview" style="background:${colors[0]}; border:1px solid ${colors[1]}; box-shadow:0 0 6px ${colors[0]};"></div>`;
                         } else {
                             let clr = 'radial-gradient(circle at 30% 30%, #ff6b6b, #c0392b)';
                             if (item.id === 'cyber_disc') clr = 'radial-gradient(circle at 30% 30%, #00ffff, #0066cc)';
                             if (item.id === 'gold_disc') clr = 'radial-gradient(circle at 30% 30%, #ffd700, #b8860b)';
                             if (item.id === 'lava_disc') clr = 'radial-gradient(circle at 30% 30%, #ff4500, #8b0000)';
                             if (item.id === 'galaxy_disc') clr = 'radial-gradient(circle at 30% 30%, #d500f9, #4a148c)';
-                            if (item.id === 'rainbow_effect') clr = 'linear-gradient(45deg, red, orange, yellow, green, blue, purple)';
-                            if (item.id === 'neon_effect') clr = 'linear-gradient(45deg, #00ff00, #ff00ff)';
                             previewHTML = `<div class="preview" style="background:${clr};"></div>`;
                         }
 
@@ -1213,7 +1418,17 @@
                     catDiv.appendChild(grid);
                     container.appendChild(catDiv);
                 }
-                // Αφαιρέθηκε το κουμπί boost (Διπλασιασμός πόντων)
+            }
+
+            getPreviewColors(effectId) {
+                switch (effectId) {
+                    case 'fire_effect': return ['#ff4500', '#ff8c00'];
+                    case 'explosion_effect': return ['#ffffff', '#ffdd00'];
+                    case 'plasma_effect': return ['#b388ff', '#7c4dff'];
+                    case 'ice_effect': return ['#80deea', '#00bcd4'];
+                    case 'galaxy_effect': return ['#e040fb', '#7b1fa2'];
+                    default: return ['#ff6b6b', '#c0392b'];
+                }
             }
         }
 
