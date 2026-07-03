@@ -1,4 +1,4 @@
-const SECRET_WORDS = [
+const WORDS_IT = [
     // ====== CONTES DE FÉES (Παραμύθια - 30) ======
     { word: "CENERENTOLA", hint: "Una fanciulla perde una scarpetta di vetro al ballo prima di mezzanotte." },
     { word: "CAPPUCCETTO ROSSO", hint: "Una bambina con un mantello scarlatto visita la nonna nel bosco." },
