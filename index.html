@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!DOCTYPE html> 
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -231,7 +231,7 @@
 
             <div class="hud-top">
                 <div class="hud-level" id="hudLevel">LEVEL 1</div>
-                <div class="hud-zone" id="hudZone">🚀 Rookie Astronaut (Easy)</div>
+                <div class="hud-zone" id="hudZone">🚀 Rookie Astronaut (Very Easy)</div>
                 <div class="hud-match-score" id="hudMatchScore">You 0 – 0 AI</div>
             </div>
 
@@ -245,13 +245,13 @@
                 <div class="scores"><div class="score" id="scoreDisplay">0 - 0</div></div>
                 <div class="player" id="player2">
                     <div class="player-disc yellow" id="p2Disc"></div>
-                    <span id="aiLabel">AI (Easy)</span>
+                    <span id="aiLabel">AI (Very Easy)</span>
                 </div>
             </div>
 
             <div class="board-container">
                 <div class="board" id="board"></div>
-                <!-- Particle canvas overlay (now placed behind discs) -->
+                <!-- Particle canvas overlay (now behind discs) -->
                 <canvas id="particleCanvas" style="position:absolute; top:0; left:0; width:100%; height:100%; pointer-events:none; z-index:1;"></canvas>
             </div>
             <div class="status" id="status">Your turn</div>
@@ -473,24 +473,28 @@
         const CAT_NAMES = { 'pions': '🔵 Discs', 'effects': '🎆 Effects', 'board': '🖼️ Board', 'bg': '🌌 Background' };
 
         // ============================================================
-        // LEVEL SYSTEM
+        // LEVEL SYSTEM - REFINED DIFFICULTY SCALING
         // ============================================================
         const POINTS_PER_LEVEL = 100;
         const OPENING_BOOK = [3, 2, 4, 1, 5, 0, 6];
 
+        // New Zone Definitions with refined labels and difficulties
         const ZONE_DEFS = [
-            { min:1,  max:3,   name:'🚀 Rookie Astronaut',   diff:'easy',       tier:1 },
-            { min:4,  max:6,   name:'🛸 Starship Commander', diff:'medium',     tier:2 },
-            { min:7,  max:9,   name:'⚔️ Space Warrior',      diff:'hard',       tier:3 },
-            { min:10, max:12,  name:'👑 Galaxy Overlord',    diff:'expert',     tier:4 },
-            { min:13, max:15,  name:'💀 Cosmic Destroyer',   diff:'unbeatable', tier:5 },
+            { min:1,  max:1,   name:'🌱 Padawan (Very Easy)',     diff:'very_easy',   tier:1 },
+            { min:2,  max:2,   name:'🚀 Rookie (Easy)',           diff:'easy',        tier:1 },
+            { min:3,  max:3,   name:'🛸 Cadet (Easy-Medium)',     diff:'easy_medium', tier:1 },
+            { min:4,  max:5,   name:'⚔️ Warrior (Medium)',        diff:'medium',      tier:2 },
+            { min:6,  max:7,   name:'🛡️ Knight (Medium-Hard)',    diff:'medium_hard', tier:3 },
+            { min:8,  max:9,   name:'👑 Commander (Hard)',        diff:'hard',        tier:4 },
+            { min:10, max:12,  name:'💀 Overlord (Expert)',       diff:'expert',      tier:5 },
+            { min:13, max:15,  name:'☠️ Cosmic Destroyer (God)',  diff:'unbeatable',  tier:5 },
         ];
         const ENDLESS_LEVEL = 16;
 
         function getZoneForLevel(lvl) {
             if (lvl >= ENDLESS_LEVEL) return { name:'🌌 Endless Deep Space', diff:'unbeatable', tier:5 };
             for (const z of ZONE_DEFS) if (lvl >= z.min && lvl <= z.max) return z;
-            if (lvl > 15) return { name:'💀 Cosmic Destroyer', diff:'unbeatable', tier:5 };
+            // Fallback in case level jumps unexpectedly
             return ZONE_DEFS[0];
         }
 
@@ -501,16 +505,55 @@
             const progress = zoneSize > 1 ? posInZone / (zoneSize - 1) : 0;
 
             switch (zone.diff) {
+                case 'very_easy':
+                    return {
+                        randomChance: Math.max(0.10, 0.95 - progress * 0.15),
+                        depth: 0,
+                        blockWeight: 0.1 + progress * 0.1
+                    };
                 case 'easy':
-                    return { randomChance: Math.max(0.05, 0.80 - progress * 0.35), depth: 0, blockWeight: 0.3 + progress * 0.1 };
+                    return {
+                        randomChance: Math.max(0.05, 0.80 - progress * 0.30),
+                        depth: 0,
+                        blockWeight: 0.3 + progress * 0.2
+                    };
+                case 'easy_medium':
+                    return {
+                        randomChance: Math.max(0.0, 0.50 - progress * 0.40),
+                        depth: 1,
+                        blockWeight: 0.5 + progress * 0.3
+                    };
                 case 'medium':
-                    return { randomChance: Math.max(0, 0.25 - progress * 0.2), depth: progress < 0.5 ? 2 : 3, blockWeight: 0.7 + progress * 0.1 };
+                    return {
+                        randomChance: Math.max(0.0, 0.30 - progress * 0.20),
+                        depth: 2 + progress * 1,
+                        blockWeight: 0.6 + progress * 0.2
+                    };
+                case 'medium_hard':
+                    return {
+                        randomChance: Math.max(0.0, 0.15 - progress * 0.15),
+                        depth: 3 + progress * 1,
+                        blockWeight: 0.8 + progress * 0.2
+                    };
                 case 'hard':
-                    return { randomChance: 0, depth: progress < 0.5 ? 3 : 4, blockWeight: 1 };
+                    return {
+                        randomChance: 0,
+                        depth: 4 + progress * 1,
+                        blockWeight: 1.0
+                    };
                 case 'expert':
-                    return { randomChance: 0, depth: progress < 0.5 ? 5 : 6, blockWeight: 1 };
+                    return {
+                        randomChance: 0,
+                        depth: 5 + progress * 1,
+                        blockWeight: 1.0
+                    };
                 case 'unbeatable':
-                    return { randomChance: 0, depth: 7, blockWeight: 1, openingBook: true };
+                    return {
+                        randomChance: 0,
+                        depth: 7,
+                        blockWeight: 1.0,
+                        openingBook: true
+                    };
                 default:
                     return { randomChance: 0, depth: 5, blockWeight: 1 };
             }
@@ -574,9 +617,9 @@
             }
 
             update() {
-                // Limit max particles to prevent performance issues
-                if (this.particles.length > 150) {
-                    this.particles.splice(0, this.particles.length - 150);
+                // Limit max particles for performance
+                if (this.particles.length > 200) {
+                    this.particles.splice(0, this.particles.length - 200);
                 }
                 
                 for (let i = this.particles.length - 1; i >= 0; i--) {
@@ -594,7 +637,7 @@
             draw() {
                 const ctx = this.ctx;
                 for (const p of this.particles) {
-                    const alpha = Math.max(0, p.life) * 0.7; // Reduced opacity for visibility
+                    const alpha = Math.max(0, p.life) * 0.75; // Keep opacity readable
                     ctx.globalAlpha = alpha;
                     const grad = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.size);
                     grad.addColorStop(0, p.color1);
@@ -605,28 +648,28 @@
                     ctx.fillStyle = grad;
                     ctx.fill();
                     ctx.shadowColor = p.color1;
-                    ctx.shadowBlur = p.size * 1.2;
+                    ctx.shadowBlur = p.size * 1.5;
                     ctx.fill();
                     ctx.shadowBlur = 0;
                 }
                 ctx.globalAlpha = 1;
             }
 
-            // Spawn trail particles (Reduced count, smaller size)
+            // Spawn trail particles (Clean & lightweight)
             emitTrail(fromX, fromY, toX, toY, effectType, player) {
-                const count = 15; // Reduced from 30
+                const count = 15; 
                 const dx = toX - fromX;
                 const dy = toY - fromY;
                 for (let i = 0; i < count; i++) {
                     const t = i / count;
-                    const x = fromX + dx * t + (Math.random() - 0.5) * 6;
-                    const y = fromY + dy * t + (Math.random() - 0.5) * 6;
+                    const x = fromX + dx * t + (Math.random() - 0.5) * 8;
+                    const y = fromY + dy * t + (Math.random() - 0.5) * 8;
                     const colors = this.getEffectColors(effectType, player);
                     this.particles.push({
                         x: x, y: y,
                         vx: (Math.random() - 0.5) * 1.5,
                         vy: (Math.random() - 0.5) * 1.5 - 1,
-                        size: 3 + Math.random() * 5, // Smaller size
+                        size: 3 + Math.random() * 6,
                         life: 0.6 + Math.random() * 0.3,
                         decay: 0.025 + Math.random() * 0.02,
                         color1: colors[0], color2: colors[1], color3: colors[2]
@@ -635,18 +678,18 @@
                 this.start();
             }
 
-            // Spawn explosion particles (Reduced count, smaller size)
+            // Spawn explosion particles (Clean & lightweight)
             emitExplosion(x, y, effectType, player) {
-                const count = 25; // Reduced from 60
+                const count = 20; 
                 const colors = this.getEffectColors(effectType, player);
                 for (let i = 0; i < count; i++) {
                     const angle = Math.random() * 2 * Math.PI;
                     const speed = 2 + Math.random() * 4;
                     this.particles.push({
-                        x: x, y: y,
+                        x: x + (Math.random()-0.5)*2, y: y + (Math.random()-0.5)*2,
                         vx: Math.cos(angle) * speed,
                         vy: Math.sin(angle) * speed - 1,
-                        size: 2 + Math.random() * 6,
+                        size: 2 + Math.random() * 5,
                         life: 0.6 + Math.random() * 0.4,
                         decay: 0.02 + Math.random() * 0.015,
                         color1: colors[0], color2: colors[1], color3: colors[2]
@@ -784,11 +827,23 @@
             updateHUD() {
                 document.getElementById('hudLevel').textContent =
                     this.isEndless ? '🌌 ENDLESS' : `LEVEL ${this.level}`;
-                document.getElementById('hudZone').textContent = this.zone.name + ' (' + this.aiDiff.charAt(0).toUpperCase() + this.aiDiff.slice(1) + ')';
+                document.getElementById('hudZone').textContent = this.zone.name;
                 document.getElementById('hudMatchScore').textContent =
                     `You ${this.matchScores[1]} – ${this.matchScores[2]} AI`;
-                const labels = { easy:'AI (Easy)', medium:'AI (Medium)', hard:'AI (Hard)', expert:'AI (Expert)', unbeatable:'💀 Unbeatable' };
+                
+                // Update AI label based on diff
+                const labels = { 
+                    very_easy: 'AI (Very Easy)', 
+                    easy: 'AI (Easy)', 
+                    easy_medium: 'AI (Easy-Medium)',
+                    medium: 'AI (Medium)', 
+                    medium_hard: 'AI (Medium-Hard)',
+                    hard: 'AI (Hard)', 
+                    expert: 'AI (Expert)', 
+                    unbeatable: '💀 Unbeatable' 
+                };
                 document.getElementById('aiLabel').textContent = labels[this.aiDiff] || 'AI';
+                
                 this.updateCoinDisplay();
                 this.updatePointsDisplay();
 
@@ -855,7 +910,8 @@
                 this.playerMoves = 0; this.gameStartTime = Date.now();
                 if (this.aiFirst) { this.currentPlayer = 2; this.updateStatus(); this.updatePlayerIndicators(); this.triggerAiTurn(); }
                 else { this.updateStatus(); this.updatePlayerIndicators(); }
-                // Clear particles on new game
+                
+                // Clear leftover particles
                 this.particleSystem.stop();
                 this.particleSystem.clear();
             }
@@ -971,7 +1027,6 @@
                 if (won) { this.scores[1]++; } else { this.scores[2]++; }
                 this.updateScores();
 
-                const oldLevel = this.level;
                 if (won) {
                     let pointsGain = 10;
                     if (this.gameData.xpBoostActive && this.gameData.xpBoostGames > 0) {
@@ -1084,12 +1139,12 @@
 
             // ===== INIT DOM EVENTS =====
             initDOMEvents() {
-                // Restart Button - Proper Full Reset
+                // FIX: Restart Button - Proper Full Reset of board and effect
                 this.restartBtn.addEventListener('click', () => {
                     this.restartGame();
                 });
                 
-                // New Game Button - Proper Reset
+                // New Game Button - Proper Reset of match scores and board
                 this.newGameBtn.addEventListener('click', () => {
                     this.newGame();
                 });
@@ -1170,7 +1225,10 @@
 
             triggerAiTurn() {
                 this.isAiTurn = true; this.updateStatus();
-                const baseDelay = { easy:700, medium:500, hard:350, expert:250, unbeatable:180 };
+                const baseDelay = { 
+                    very_easy: 800, easy: 700, easy_medium: 600, 
+                    medium: 500, medium_hard: 450, hard: 350, expert: 250, unbeatable: 180 
+                };
                 const delay = (baseDelay[this.aiDiff] || 300) + Math.random() * 300;
                 setTimeout(() => {
                     if (!this.gameInProgress) { this.isAiTurn = false; return; }
@@ -1263,18 +1321,16 @@
             }
 
             restartGame() {
-                // Full Reset
+                // Full Reset: Board, Current Player, Particles, Effects
                 this.currentPlayer = 1; 
                 this.isAiTurn = false;
                 
-                // Reset the board and UI
                 this.initializeBoard(); 
                 this.updateStatus(); 
                 this.updatePlayerIndicators();
                 this.updateHUD(); 
                 this.applyTierToPlayerDiscs();
                 
-                // Kill leftover particles
                 this.particleSystem.stop();
                 this.particleSystem.clear();
                 
@@ -1283,7 +1339,7 @@
             }
             
             newGame() {
-                // Hard Reset (Full New Game, clear current session scores)
+                // Hard Reset: Resets current match scores and calls restart
                 this.matchScores = {1:0, 2:0};
                 this.scores = {1:0, 2:0}; // Reset the displayed score board
                 this.updateScores();
