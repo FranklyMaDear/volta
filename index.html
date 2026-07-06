@@ -22,7 +22,6 @@
             padding-bottom: 0; transition: background 0.4s ease;
         }
 
-        /* YouTube Pause Override */
         body.paused, body.paused *, body.paused *::before, body.paused *::after { animation-play-state: paused !important; }
         body.paused { pointer-events: none !important; user-select: none !important; }
         body.paused #starCanvas { display: none; }
@@ -192,18 +191,75 @@
         .modal-back-btn { display: block; width: 100%; margin-top: 14px; padding: 12px; background: linear-gradient(135deg, #84cc16, #65a30d); border: none; border-radius: 30px; color: #fff; font-size: 0.9rem; font-weight: 800; font-family: inherit; cursor: pointer; box-shadow: 0 4px 0 #4d7c0f; transition: all 0.2s; letter-spacing: 1px; }
         .modal-back-btn:active { transform: translateY(3px); box-shadow: 0 1px 0 #4d7c0f; }
 
-        /* Shop Styles */
-        .shop-category-title { font-size: 0.9rem; font-weight: 700; color: #fbbf24; margin-top: 12px; margin-bottom: 6px; text-align: left; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 4px; }
-        .shop-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(80px, 1fr)); gap: 8px; }
-        .shop-item { background: rgba(255,255,255,0.04); border: 2px solid rgba(255,255,255,0.1); border-radius: 10px; padding: 8px 4px; text-align: center; cursor: pointer; transition: all 0.2s; }
-        .shop-item:active { transform: scale(0.95); }
-        .shop-item.owned { border-color: #84cc16; background: rgba(132,204,22,0.1); }
-        .shop-item.locked { opacity: 0.4; cursor: not-allowed; }
-        .shop-item-title { font-size: 0.65rem; font-weight: 700; color: #e8e8ed; margin-bottom: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .shop-item-price { font-size: 0.6rem; color: #fbbf24; font-weight: 600; }
-        .shop-item .preview { width: 18px; height: 18px; border-radius: 50%; display: inline-block; margin: 4px 0; border: 1px solid rgba(255,255,255,0.3); }
-        .shop-item .preview-board { width: 24px; height: 16px; border-radius: 4px; display: inline-block; margin: 4px 0; border: 1px solid rgba(255,255,255,0.3); }
-        .shop-item .preview-bg { width: 24px; height: 16px; border-radius: 4px; display: inline-block; margin: 4px 0; border: 1px solid rgba(255,255,255,0.3); }
+        /* ===== PROFESSIONAL 3D SHOP STYLES ===== */
+        .shop-category-title { font-size: 1rem; font-weight: 700; color: #fbbf24; margin-top: 16px; margin-bottom: 8px; text-align: left; border-bottom: 1px solid rgba(255,255,255,0.15); padding-bottom: 6px; letter-spacing: 1px; }
+        .shop-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 12px; padding: 4px; }
+        
+        /* 3D Item Card */
+        .shop-item {
+            background: rgba(255,255,255,0.05);
+            border: 2px solid rgba(255,255,255,0.15);
+            border-radius: 16px;
+            padding: 12px 6px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            transform: perspective(600px) rotateX(5deg) rotateY(0deg);
+            box-shadow: 0 8px 16px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.1);
+            position: relative;
+        }
+        .shop-item:hover {
+            transform: perspective(600px) rotateX(2deg) rotateY(8deg) scale(1.03);
+            box-shadow: 0 12px 24px rgba(0,0,0,0.8), inset 0 1px 0 rgba(255,255,255,0.2);
+            border-color: rgba(132,204,22,0.5);
+        }
+        .shop-item:active { transform: perspective(600px) rotateX(2deg) rotateY(8deg) scale(0.97); }
+        .shop-item.owned {
+            border-color: #84cc16;
+            background: rgba(132,204,22,0.15);
+            box-shadow: 0 0 20px rgba(132,204,22,0.2);
+        }
+        .shop-item.owned::after {
+            content: '✓';
+            position: absolute; top: -8px; right: -8px;
+            background: #84cc16; color: #000; border-radius: 50%;
+            width: 20px; height: 20px; font-size: 0.7rem;
+            display: flex; justify-content: center; align-items: center;
+            font-weight: bold; box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+        }
+        .shop-item.locked { opacity: 0.4; cursor: not-allowed; filter: grayscale(0.5); }
+        .shop-item-title { font-size: 0.7rem; font-weight: 700; color: #e8e8ed; margin-bottom: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .shop-item-price { font-size: 0.65rem; color: #fbbf24; font-weight: 600; margin-top: 4px; }
+        
+        /* Preview styling */
+        .shop-item .preview { width: 32px; height: 32px; border-radius: 50%; display: inline-block; margin: 6px 0; border: 2px solid rgba(255,255,255,0.3); animation: pulsePreview 2s infinite; }
+        @keyframes pulsePreview { 0%,100% { transform: scale(1); box-shadow: 0 0 4px rgba(255,255,255,0.2); } 50% { transform: scale(1.05); box-shadow: 0 0 12px rgba(255,255,255,0.6); } }
+        
+        .shop-item .preview-board { width: 40px; height: 24px; border-radius: 6px; display: inline-block; margin: 6px 0; border: 1px solid rgba(255,255,255,0.3); }
+        .shop-item .preview-bg { width: 40px; height: 24px; border-radius: 6px; display: inline-block; margin: 6px 0; border: 1px solid rgba(255,255,255,0.3); }
+        
+        /* Effect Preview Animation */
+        .effect-preview-container {
+            width: 32px; height: 32px; margin: 6px auto; border-radius: 50%;
+            border: 2px solid rgba(255,255,255,0.3); overflow: hidden;
+            display: flex; align-items: center; justify-content: center;
+            background: #0a0a1a;
+        }
+        .effect-preview-anim {
+            width: 100%; height: 100%; border-radius: 50%;
+            animation: effectPulse 1.5s infinite ease-in-out;
+        }
+        @keyframes effectPulse {
+            0% { transform: scale(0.8); opacity: 0.5; }
+            50% { transform: scale(1.3); opacity: 1; }
+            100% { transform: scale(0.8); opacity: 0.5; }
+        }
+        .effect-preview-fire { background: radial-gradient(circle, #ff4500, #ff8c00, #ffd700); }
+        .effect-preview-explosion { background: radial-gradient(circle, #ffffff, #ffdd00, #ff6600); }
+        .effect-preview-plasma { background: radial-gradient(circle, #b388ff, #7c4dff, #311b92); }
+        .effect-preview-ice { background: radial-gradient(circle, #80deea, #00bcd4, #006064); }
+        .effect-preview-galaxy { background: radial-gradient(circle, #e040fb, #7b1fa2, #1a237e); }
+        .effect-preview-standard { background: radial-gradient(circle, #ff6b6b, #c0392b); }
 
         @media (max-width: 600px) {
             .game-container { max-width: 100%; padding: 8px 6px; }
@@ -214,38 +270,46 @@
             .game-btn { font-size: 0.7rem; padding: 6px 10px; min-width: 60px; max-width: 90px; }
             .game-btn.small-btn { font-size: 0.6rem; padding: 4px 6px; min-width: 50px; max-width: 70px; }
             .status { font-size: 0.8rem; padding: 4px; }
-            .shop-grid { grid-template-columns: repeat(auto-fill, minmax(70px, 1fr)); }
+            .shop-grid { grid-template-columns: repeat(auto-fill, minmax(80px, 1fr)); }
             .res-btn { font-size: 0.55rem; padding: 2px 6px; }
+            .shop-item .preview { width: 24px; height: 24px; }
+            .effect-preview-container { width: 24px; height: 24px; }
         }
         @media (max-width: 400px) {
             .hud-zone { display: none; }
             .hud-resources { flex-wrap: wrap; justify-content: center; gap: 2px; }
         }
 
-        /* ===== SPLASH SCREEN ===== */
+        /* ===== SPLASH SCREEN (New Design) ===== */
         #splashScreen {
-            position: fixed; inset: 0; background: rgba(10, 25, 47, 0.92); backdrop-filter: blur(4px);
+            position: fixed; inset: 0; background: #0a0e27; /* Deep space blue */
             z-index: 2000; display: flex; justify-content: center; align-items: center;
             flex-direction: column; transition: opacity 0.8s ease, transform 0.8s ease;
+            overflow: hidden;
         }
         #splashScreen.hidden {
             opacity: 0; transform: scale(1.1); pointer-events: none;
         }
         .splash-content {
-            text-align: center; padding: 20px; max-width: 90%;
+            text-align: center; padding: 20px; max-width: 90%; z-index: 10;
+            animation: floatIn 1.2s cubic-bezier(0.2, 0.9, 0.3, 1.1) forwards;
+            transform: perspective(800px) translateZ(-200px) scale(0.9);
+            opacity: 0;
+        }
+        @keyframes floatIn {
+            0% { transform: perspective(800px) translateZ(-200px) scale(0.8); opacity: 0; }
+            100% { transform: perspective(800px) translateZ(0px) scale(1); opacity: 1; }
         }
         .splash-title {
-            font-size: 3.5rem; font-weight: 900; letter-spacing: 3px;
-            color: #ffffff; text-shadow: 0 1px 0 #ccc, 0 2px 0 #c9c9c9, 0 3px 0 #bbb, 0 4px 0 #b9b9b9, 0 5px 0 #aaa, 0 6px 1px rgba(0,0,0,0.1), 0 0 5px rgba(0,0,0,0.1), 0 1px 3px rgba(0,0,0,0.3), 0 3px 5px rgba(0,0,0,0.2), 0 5px 10px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.2), 0 20px 20px rgba(0,0,0,0.15);
-            background: linear-gradient(135deg, #84cc16, #ffeb3b, #e81cff);
-            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-            background-clip: text; margin-bottom: 10px;
+            font-size: 3.8rem; font-weight: 900; letter-spacing: 4px;
+            color: #ffffff; text-shadow: 0 4px 0 #0a0e27, 0 8px 20px rgba(0,0,0,0.8), 0 0 40px rgba(132,204,22,0.4);
+            margin-bottom: 15px; font-family: 'Segoe UI', -apple-system, sans-serif;
         }
         .splash-disc {
-            width: 120px; height: 120px; border-radius: 50%; margin: 20px auto;
-            box-shadow: inset 0 -8px 15px rgba(0,0,0,0.6), inset 0 8px 15px rgba(255,255,255,0.4), 0 0 40px rgba(255,255,255,0.3);
+            width: 130px; height: 130px; border-radius: 50%; margin: 15px auto;
+            box-shadow: inset 0 -8px 15px rgba(0,0,0,0.7), inset 0 8px 15px rgba(255,255,255,0.4), 0 0 60px rgba(255,255,255,0.3);
             border: 4px solid rgba(255,255,255,0.4);
-            animation: spinDisc 4s infinite linear, colorChange 3s infinite ease-in-out;
+            animation: spinDisc 5s infinite linear, colorChange 3s infinite ease-in-out;
         }
         @keyframes spinDisc {
             0% { transform: rotate(0deg) scale(1); }
@@ -261,32 +325,50 @@
             83%  { background: radial-gradient(circle at 35% 35%, #66bb6a, #1b5e20); }
             100% { background: radial-gradient(circle at 35% 35%, #ff5252, #c62828); }
         }
-        .splash-btn {
-            margin-top: 30px; padding: 16px 48px; font-size: 1.2rem; font-weight: 800;
-            letter-spacing: 2px; border: none; border-radius: 60px;
-            background: linear-gradient(135deg, #84cc16, #65a30d);
-            color: #fff; box-shadow: 0 8px 0 #4d7c0f, 0 15px 35px rgba(132,204,22,0.4);
-            cursor: pointer; transition: all 0.15s ease; font-family: inherit;
-            text-transform: uppercase;
+        /* Splash Stars */
+        .splash-star {
+            position: absolute; background: white; border-radius: 50%;
+            animation: twinkleStar 2s infinite alternate;
         }
-        .splash-btn:active { transform: translateY(6px); box-shadow: 0 2px 0 #4d7c0f; }
-        .splash-btn:hover { transform: scale(1.02); }
-        @media (max-width: 600px) {
-            .splash-title { font-size: 2.5rem; }
-            .splash-disc { width: 90px; height: 90px; }
-            .splash-btn { padding: 14px 30px; font-size: 1rem; }
+        @keyframes twinkleStar {
+            0% { opacity: 0.2; transform: scale(0.8); }
+            100% { opacity: 1; transform: scale(1.2); }
+        }
+        /* Decorative splash shooting stars */
+        .splash-shoot {
+            position: absolute; width: 2px; height: 60px;
+            background: linear-gradient(to bottom, rgba(255,255,255,0.8), transparent);
+            animation: shootSplash 3s linear infinite;
+            transform: rotate(-35deg);
+        }
+        @keyframes shootSplash {
+            0% { opacity: 0; transform: translate(0,0) rotate(-35deg); }
+            20% { opacity: 1; }
+            80% { opacity: 1; }
+            100% { opacity: 0; transform: translate(-300px, 500px) rotate(-35deg); }
         }
     </style>
 </head>
 <body>
     <canvas id="starCanvas"></canvas>
 
-    <!-- ===== SPLASH SCREEN ===== -->
+    <!-- ===== SPLASH SCREEN (Auto-start after 2s) ===== -->
     <div id="splashScreen">
+        <!-- Background Stars (CSS generated) -->
+        <div class="splash-star" style="width:3px;height:3px;top:10%;left:20%;animation-delay:0s;"></div>
+        <div class="splash-star" style="width:2px;height:2px;top:30%;left:80%;animation-delay:0.5s;"></div>
+        <div class="splash-star" style="width:4px;height:4px;top:60%;left:10%;animation-delay:1s;"></div>
+        <div class="splash-star" style="width:2px;height:2px;top:80%;left:70%;animation-delay:1.5s;"></div>
+        <div class="splash-star" style="width:3px;height:3px;top:15%;left:60%;animation-delay:0.8s;"></div>
+        <div class="splash-star" style="width:1px;height:1px;top:45%;left:30%;animation-delay:0.3s;"></div>
+        <div class="splash-star" style="width:2px;height:2px;top:70%;left:40%;animation-delay:1.2s;"></div>
+        <div class="splash-shoot" style="left:10%;top:5%;animation-delay:0.5s;"></div>
+        <div class="splash-shoot" style="left:50%;top:20%;animation-delay:2s;"></div>
+        <div class="splash-shoot" style="left:80%;top:10%;animation-delay:3.5s;"></div>
+
         <div class="splash-content">
-            <div class="splash-title">FranklyGames</div>
+            <div class="splash-title">Connect Four</div>
             <div class="splash-disc"></div>
-            <button class="splash-btn" onclick="startGame()">START NEW GAME</button>
         </div>
     </div>
 
@@ -386,8 +468,8 @@
         // ============================================================
         // UTILITIES & GLOBAL FUNCTIONS
         // ============================================================
-        // Splash Screen Start Function
-        window.startGame = function() {
+        // Splash Screen Auto-Start
+        setTimeout(function() {
             const splash = document.getElementById('splashScreen');
             splash.classList.add('hidden');
             setTimeout(() => {
@@ -396,7 +478,7 @@
                     window._game.hardReset();
                 }
             }, 800);
-        };
+        }, 2000);
 
         // ============================================================
         // STARFIELD
@@ -562,48 +644,45 @@
         const CAT_NAMES = { 'pions': '🔵 Discs', 'effects': '🎆 Effects', 'board': '🖼️ Board', 'bg': '🌌 Background' };
 
         // ============================================================
-        // LEVEL SYSTEM
+        // LEVEL SYSTEM & AI DIFFICULTY (UPDATED)
         // ============================================================
         const POINTS_PER_LEVEL = 100;
         const OPENING_BOOK = [3, 2, 4, 1, 5, 0, 6];
 
+        // New AI difficulty logic (1-50 easy/medium, 51+ medium/hard but winnable)
+        function getAiParams(level) {
+            if (level <= 50) {
+                // Levels 1-50: Easy to Medium
+                const progress = (level - 1) / 49; // 0 to 1
+                return {
+                    randomChance: Math.max(0.15, 0.85 - progress * 0.6),
+                    depth: Math.floor(progress * 2), // 0, 1, 2
+                    blockWeight: 0.3 + progress * 0.3
+                };
+            } else {
+                // Levels 51+: Medium to Hard, but winnable (max depth 5)
+                const progress = Math.min(1, (level - 50) / 50); // 0 to 1
+                return {
+                    randomChance: Math.max(0.05, 0.35 - progress * 0.3),
+                    depth: Math.min(5, 2 + progress * 3), // 2 to 5
+                    blockWeight: 0.7 + progress * 0.3
+                };
+            }
+        }
+
         const ZONE_DEFS = [
-            { min:1,  max:3,   name:'🚀 Rookie Astronaut',   diff:'easy',       tier:1 },
-            { min:4,  max:6,   name:'🛸 Starship Commander', diff:'medium',     tier:2 },
-            { min:7,  max:9,   name:'⚔️ Space Warrior',      diff:'hard',       tier:3 },
-            { min:10, max:12,  name:'👑 Galaxy Overlord',    diff:'expert',     tier:4 },
-            { min:13, max:15,  name:'💀 Cosmic Destroyer',   diff:'unbeatable', tier:5 },
+            { min:1,  max:50,  name:'🚀 Rookie Astronaut',   diff:'easy',       tier:1 },
+            { min:51, max:99,  name:'🛸 Starship Commander', diff:'medium',     tier:2 },
+            { min:100, max:199, name:'⚔️ Space Warrior',      diff:'hard',       tier:3 },
+            { min:200, max:399, name:'👑 Galaxy Overlord',    diff:'expert',     tier:4 },
+            { min:400, max:Infinity, name:'💀 Cosmic Destroyer',   diff:'unbeatable', tier:5 },
         ];
-        const ENDLESS_LEVEL = 16;
+        const ENDLESS_LEVEL = 1000; // Adjusted for new scaling
 
         function getZoneForLevel(lvl) {
             if (lvl >= ENDLESS_LEVEL) return { name:'🌌 Endless Deep Space', diff:'unbeatable', tier:5 };
             for (const z of ZONE_DEFS) if (lvl >= z.min && lvl <= z.max) return z;
-            if (lvl > 15) return { name:'💀 Cosmic Destroyer', diff:'unbeatable', tier:5 };
             return ZONE_DEFS[0];
-        }
-
-        function getAiParams(level) {
-            const zone = getZoneForLevel(level);
-            const posInZone = zone.min ? (level - zone.min) : 0;
-            const zoneSize = zone.min ? (zone.max - zone.min + 1) : 3;
-            const progress = zoneSize > 1 ? posInZone / (zoneSize - 1) : 0;
-
-            // EASIER AI FOR EARLY LEVELS
-            switch (zone.diff) {
-                case 'easy':
-                    return { randomChance: Math.max(0.05, 0.90 - progress * 0.40), depth: 0, blockWeight: 0.2 + progress * 0.1 };
-                case 'medium':
-                    return { randomChance: Math.max(0, 0.35 - progress * 0.25), depth: progress < 0.5 ? 2 : 3, blockWeight: 0.6 + progress * 0.2 };
-                case 'hard':
-                    return { randomChance: 0, depth: progress < 0.5 ? 3 : 4, blockWeight: 1 };
-                case 'expert':
-                    return { randomChance: 0, depth: progress < 0.5 ? 5 : 6, blockWeight: 1 };
-                case 'unbeatable':
-                    return { randomChance: 0, depth: 7, blockWeight: 1, openingBook: true };
-                default:
-                    return { randomChance: 0, depth: 5, blockWeight: 1 };
-            }
         }
 
         function loadLevel() {
@@ -614,7 +693,7 @@
         function saveEndlessRecord(n) { try { localStorage.setItem('gal_endless_v3', String(n)); } catch(e) {} }
 
         // ============================================================
-        // PARTICLE SYSTEM – FIRE TRAIL & EXPLOSION
+        // PARTICLE SYSTEM
         // ============================================================
         class ParticleSystem {
             constructor(canvas) {
@@ -768,7 +847,6 @@
                 this.audio = new GameAudio(); this.aiFirst = false;
                 this._pendingEndResult = null;
                 
-                // YouTube SDK State Variables
                 this._ytLoaded = false;
                 this._ytReady = false;
                 this._wasPaused = false;
@@ -776,7 +854,6 @@
                 this._savedAiTurn = false;
                 this._aiTimeoutId = null;
 
-                // Timer
                 this.timerInterval = null;
                 this.timeLeft = 0;
                 this.maxTime = 0;
@@ -814,8 +891,6 @@
                 this.applyTierToPlayerDiscs();
                 this.applySkins();
                 this.updateHUD();
-                // NO AUTO NEW GAME - Wait for Splash Button
-                // this.newGame(); 
                 this.initScoreboardEvents();
                 this.renderScoreboard();
             }
@@ -1238,7 +1313,7 @@
                 this.showDrawModal();
             }
 
-            // ===== WIN MODAL (20pts + 20 coins, with option for +10 extra) =====
+            // ===== WIN MODAL (20pts + 20 coins, Ad for +10 extra) =====
             showWinModal() {
                 const modal = document.getElementById('endModal');
                 const title = document.getElementById('endTitle');
@@ -1246,9 +1321,6 @@
 
                 title.textContent = '🎉 Galaxy Conquered!';
                 title.className = 'modal-galaxy-title win';
-
-                let basePoints = 20;
-                let baseCoins = 20;
 
                 document.getElementById('progressLabelLeft').textContent = 'Level Progress';
                 document.getElementById('progressLabelRight').textContent = `${this.pointsInCurrentLevel}/${POINTS_PER_LEVEL} pts`;
@@ -1266,19 +1338,19 @@
                 document.getElementById('statFirst').textContent = this.aiFirst ? 'AI' : 'You';
 
                 buttonsDiv.innerHTML = `
-                    <button class="modal-action-btn win-btn" id="winContinueBtn">✅ Claim Rewards (${basePoints}pts + ${baseCoins}🪙)</button>
-                    <button class="modal-action-btn watch-btn" id="winWatchBtn" style="margin-top:8px;">📺 Watch Ad for +10 extra points</button>
+                    <button class="modal-action-btn win-btn" id="winContinueBtn">✅ Claim Rewards (20pts + 20🪙)</button>
+                    <button class="modal-action-btn watch-btn" id="winWatchBtn" style="margin-top:8px;">📺 Watch Ad (+10 extra points)</button>
                 `;
 
                 document.getElementById('winContinueBtn').addEventListener('click', () => {
                     document.getElementById('endModal').classList.remove('open');
-                    this.applyWinRewards(basePoints, baseCoins);
+                    this.applyWinRewards(20, 20);
                 });
 
                 document.getElementById('winWatchBtn').addEventListener('click', () => {
                     document.getElementById('endModal').classList.remove('open');
                     this._showAdAndReward(() => {
-                        this.applyWinRewards(basePoints + 10, baseCoins);
+                        this.applyWinRewards(30, 20); // 20 base + 10 extra
                     });
                 });
 
@@ -1295,7 +1367,7 @@
                 this.newGame();
             }
 
-            // ===== LOSE MODAL (Lose 10 pts, or watch ad to keep them) =====
+            // ===== LOSE MODAL (Lose 10pts & 10coins, or watch ad for +10pts) =====
             showLoseModal() {
                 const modal = document.getElementById('endModal');
                 const title = document.getElementById('endTitle');
@@ -1320,8 +1392,8 @@
                 document.getElementById('statFirst').textContent = this.aiFirst ? 'AI' : 'You';
 
                 buttonsDiv.innerHTML = `
-                    <button class="modal-action-btn lose-btn" id="losePenaltyBtn">❌ Lose 10 Points</button>
-                    <button class="modal-action-btn watch-btn" id="loseWatchBtn" style="margin-top:8px;">📺 Watch Ad (Keep your points)</button>
+                    <button class="modal-action-btn lose-btn" id="losePenaltyBtn">❌ Claim (-10pts & -10🪙)</button>
+                    <button class="modal-action-btn watch-btn" id="loseWatchBtn" style="margin-top:8px;">📺 Watch Ad (+10 points)</button>
                 `;
 
                 document.getElementById('losePenaltyBtn').addEventListener('click', () => {
@@ -1341,6 +1413,7 @@
 
             applyLosePenalty() {
                 this.gameData.points = Math.max(0, this.gameData.points - 10);
+                this.gameData.coins = Math.max(0, this.gameData.coins - 10);
                 writeSave(this.gameData);
                 saveLevel(this.level);
                 this.updateHUD();
@@ -1349,7 +1422,8 @@
             }
 
             applyLoseNoPenalty() {
-                // No points lost
+                // Instead of losing, player gains +10 points
+                this.gameData.points += 10;
                 writeSave(this.gameData);
                 saveLevel(this.level);
                 this.updateHUD();
@@ -1396,12 +1470,10 @@
 
             // ===== INIT DOM EVENTS =====
             initDOMEvents() {
-                // Restart Button (Hard Reset)
                 this.restartBtn.addEventListener('click', () => {
                     this.hardReset();
                 });
                 
-                // New Game Button (Hard Reset)
                 this.newGameBtn.addEventListener('click', () => {
                     this.hardReset();
                 });
@@ -1572,7 +1644,6 @@
             }
 
             hardReset() {
-                // Full reset: clear points, coins, level and restart
                 this.gameData.points = 0;
                 this.gameData.coins = 0;
                 this.gameData.level = 1;
@@ -1604,15 +1675,14 @@
             }
 
             newGame() {
-                // Standard new game (reset match scores, but keep points/coins/level)
                 this.matchScores = {1:0, 2:0};
                 this.scores = {1:0, 2:0};
                 this.updateScores();
                 this.endlessStreak = 0;
-                this.hardReset(); // Re-use hard reset logic for clean start
+                this.hardReset();
             }
 
-            // ===== RENDER SHOP =====
+            // ===== RENDER SHOP (Professional 3D Design) =====
             renderShop() {
                 const container = document.getElementById('shopContainer');
                 container.innerHTML = '';
@@ -1651,8 +1721,12 @@
                         if (item.category === 'board' || item.category === 'bg') {
                             previewHTML = `<div class="preview-board" style="background:${item.css};"></div>`;
                         } else if (item.category === 'effects') {
-                            const colors = this.getPreviewColors(item.id);
-                            previewHTML = `<div class="preview" style="background:${colors[0]}; border:1px solid ${colors[1]}; box-shadow:0 0 6px ${colors[0]};"></div>`;
+                            const effectClass = this.getEffectPreviewClass(item.id);
+                            previewHTML = `
+                                <div class="effect-preview-container">
+                                    <div class="effect-preview-anim ${effectClass}"></div>
+                                </div>
+                            `;
                         } else {
                             let clr = 'radial-gradient(circle at 30% 30%, #ff6b6b, #c0392b)';
                             if (item.id === 'cyber_disc') clr = 'radial-gradient(circle at 30% 30%, #00ffff, #0066cc)';
@@ -1711,7 +1785,7 @@
                     container.appendChild(catDiv);
                 }
 
-                // Add "Watch Ad to earn 10 Points" button in Shop
+                // Watch Ad for Points in Shop
                 const adDiv = document.createElement('div');
                 adDiv.style.cssText = 'margin: 12px 0; text-align: center;';
                 const adBtn = document.createElement('button');
@@ -1731,14 +1805,14 @@
                 container.appendChild(adDiv);
             }
 
-            getPreviewColors(effectId) {
+            getEffectPreviewClass(effectId) {
                 switch (effectId) {
-                    case 'fire_effect': return ['#ff4500', '#ff8c00'];
-                    case 'explosion_effect': return ['#ffffff', '#ffdd00'];
-                    case 'plasma_effect': return ['#b388ff', '#7c4dff'];
-                    case 'ice_effect': return ['#80deea', '#00bcd4'];
-                    case 'galaxy_effect': return ['#e040fb', '#7b1fa2'];
-                    default: return ['#ff6b6b', '#c0392b'];
+                    case 'fire_effect': return 'effect-preview-fire';
+                    case 'explosion_effect': return 'effect-preview-explosion';
+                    case 'plasma_effect': return 'effect-preview-plasma';
+                    case 'ice_effect': return 'effect-preview-ice';
+                    case 'galaxy_effect': return 'effect-preview-galaxy';
+                    default: return 'effect-preview-standard';
                 }
             }
         }
