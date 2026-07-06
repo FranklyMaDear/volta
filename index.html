@@ -1,4 +1,3 @@
-
 <!DOCTYPE html> 
 <html lang="en">
 <head>
@@ -9,7 +8,7 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 
-    <!-- YouTube SDK Integration (Προσθήκη 1) -->
+    <!-- YouTube SDK Integration -->
     <script src="https://www.youtube.com/game_api/v1"></script>
 
     <style>
@@ -23,13 +22,10 @@
             padding-bottom: 0; transition: background 0.4s ease;
         }
 
-        /* YouTube Pause Override (Προσθήκη 2) */
+        /* YouTube Pause Override */
         body.paused, body.paused *, body.paused *::before, body.paused *::after { animation-play-state: paused !important; }
         body.paused { pointer-events: none !important; user-select: none !important; }
         body.paused #starCanvas { display: none; }
-
-        #homeBtn { position: absolute; top: 12px; left: 12px; z-index: 100; background: rgba(14,16,39,0.85); border: 2px solid #84cc16; color: #84cc16; font-weight: 800; padding: 8px 16px; border-radius: 30px; cursor: pointer; font-family: inherit; backdrop-filter: blur(8px); box-shadow: 0 0 15px rgba(132,204,22,0.3); font-size: 0.8rem; transition: all 0.2s; }
-        #homeBtn:active { transform: scale(0.95); }
 
         #starCanvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; }
         .shooting-star { position: fixed; width: 3px; height: 80px; background: linear-gradient(to bottom, rgba(255,255,255,0.9), rgba(255,255,255,0)); border-radius: 50%; z-index: 1; pointer-events: none; animation: shoot linear forwards; transform-origin: top center; }
@@ -60,13 +56,11 @@
         .hud-resources { display: flex; align-items: center; justify-content: space-between; gap: 4px; margin-bottom: 6px; background: rgba(255,255,255,0.03); border-radius: 10px; padding: 4px 8px; border: 1px solid rgba(132,204,22,0.1); flex-wrap: wrap; }
         .hud-coins { display: flex; align-items: center; gap: 4px; font-size: 0.8rem; font-weight: 700; color: #fbbf24; }
         .hud-points { display: flex; align-items: center; gap: 4px; font-size: 0.8rem; font-weight: 700; color: #84cc16; }
+        .hud-timer { display: flex; align-items: center; gap: 4px; font-size: 0.75rem; font-weight: 700; color: #ffb74d; }
         .hud-btns { display: flex; gap: 4px; }
         .res-btn { font-size: 0.6rem; font-weight: 700; color: white; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15); padding: 3px 8px; border-radius: 10px; cursor: pointer; transition: all 0.2s; }
         .res-btn:active { transform: scale(0.95); }
-        .res-btn.daily-btn { border-color: #fbbf24; color: #fbbf24; }
         .res-btn.shop-btn { border-color: #84cc16; color: #84cc16; }
-        .res-btn.boost-active { border-color: #e81cff; color: #e81cff; animation: boostPulse 1.5s infinite; }
-        @keyframes boostPulse { 0%,100% { box-shadow: 0 0 5px rgba(232,28,255,0.4); } 50% { box-shadow: 0 0 12px rgba(232,28,255,0.8); } }
 
         h1 { color: #84cc16; margin-bottom: 6px; font-size: 1.4rem; font-weight: 800; letter-spacing: 2px; text-shadow: 0 0 20px rgba(132,204,22,0.5); }
         .players-info { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; padding: 0 2px; gap: 4px; }
@@ -102,7 +96,6 @@
         }
         .board { display: grid; grid-template-columns: repeat(7, 1fr); grid-template-rows: repeat(6, 1fr); gap: 4px; position: relative; z-index: 2; height: 95%; width: 95%; padding: 2px; }
         
-        /* Particle Canvas - now below the discs to ensure discs are visible */
         #particleCanvas { 
             position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1; 
         }
@@ -157,6 +150,7 @@
         .modal-galaxy-title.win  { color: #84cc16; }
         .modal-galaxy-title.lose { color: #f87171; }
         .modal-galaxy-title.draw { color: #fbbf24; }
+        .modal-galaxy-title.timeout { color: #ffb74d; }
 
         .progress-wrap { margin: 14px 0 10px; }
         .progress-label { display: flex; justify-content: space-between; font-size: 0.7rem; color: rgba(255,255,255,0.5); margin-bottom: 5px; font-weight: 700; }
@@ -172,13 +166,14 @@
         .stat-label { color: rgba(255,255,255,0.45); font-weight: 600; }
         .stat-value { color: #e8e8ed; font-weight: 700; }
         .modal-action-btn { display: block; width: 100%; margin-top: 12px; padding: 12px; border-radius: 30px; border: none; cursor: pointer; font-family: inherit; font-size: 0.9rem; font-weight: 800; letter-spacing: 1px; transition: all 0.2s; }
+        .modal-action-btn:active { transform: translateY(3px); }
+        .modal-action-btn:disabled { opacity: 0.6; pointer-events: none; }
         .modal-action-btn.win-btn  { background: linear-gradient(135deg, #84cc16, #65a30d); color: #fff; box-shadow: 0 4px 0 #4d7c0f; }
         .modal-action-btn.lose-btn { background: linear-gradient(135deg, #f87171, #b91c1c); color: #fff; box-shadow: 0 4px 0 #7f1d1d; }
         .modal-action-btn.draw-btn { background: linear-gradient(135deg, #fbbf24, #d97706); color: #fff; box-shadow: 0 4px 0 #92400e; }
-        .modal-action-btn:active { transform: translateY(3px); }
-        .modal-action-btn:disabled { opacity: 0.6; pointer-events: none; }
+        .modal-action-btn.watch-btn { background: linear-gradient(135deg, #e81cff, #7b1fa2); color: #fff; box-shadow: 0 4px 0 #38006b; }
 
-        /* ===== IMPROVED SCORE HISTORY MODAL STYLES ===== */
+        /* Score History & Shop Modals */
         .score-modal-box { background: #0e1027; border: 2px solid rgba(132,204,22,0.4); border-radius: 20px; padding: 20px 16px; width: 92%; max-width: 420px; max-height: 80vh; overflow-y: auto; box-shadow: 0 0 40px rgba(132,204,22,0.15); }
         .modal-title { color: #84cc16; font-size: 1.2rem; font-weight: 800; letter-spacing: 2px; text-align: center; margin-bottom: 14px; text-shadow: 0 0 12px rgba(132,204,22,0.5); }
         
@@ -197,7 +192,7 @@
         .modal-back-btn { display: block; width: 100%; margin-top: 14px; padding: 12px; background: linear-gradient(135deg, #84cc16, #65a30d); border: none; border-radius: 30px; color: #fff; font-size: 0.9rem; font-weight: 800; font-family: inherit; cursor: pointer; box-shadow: 0 4px 0 #4d7c0f; transition: all 0.2s; letter-spacing: 1px; }
         .modal-back-btn:active { transform: translateY(3px); box-shadow: 0 1px 0 #4d7c0f; }
 
-        /* ===== SHOP MODAL STYLES ===== */
+        /* Shop Styles */
         .shop-category-title { font-size: 0.9rem; font-weight: 700; color: #fbbf24; margin-top: 12px; margin-bottom: 6px; text-align: left; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 4px; }
         .shop-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(80px, 1fr)); gap: 8px; }
         .shop-item { background: rgba(255,255,255,0.04); border: 2px solid rgba(255,255,255,0.1); border-radius: 10px; padding: 8px 4px; text-align: center; cursor: pointer; transition: all 0.2s; }
@@ -231,16 +226,13 @@
 <body>
     <canvas id="starCanvas"></canvas>
 
-    <!-- Home Button (Προσθήκη 2) -->
-    <button id="homeBtn" onclick="goHome()">🏠 Home</button>
-
     <div class="game-wrapper">
         <div class="game-container">
             <div class="hud-resources">
                 <div class="hud-points">⭐ <span id="pointsDisplay">0</span>/<span id="pointsNeeded">100</span></div>
                 <div class="hud-coins">🪙 <span id="coinDisplay">0</span></div>
+                <div class="hud-timer">⏱ <span id="timerDisplay">05:00</span></div>
                 <div class="hud-btns">
-                    <button class="res-btn daily-btn" id="dailyBtn">🎁 Daily</button>
                     <button class="res-btn shop-btn" id="shopBtn">🛒 Shop</button>
                 </div>
             </div>
@@ -267,22 +259,22 @@
 
             <div class="board-container">
                 <div class="board" id="board"></div>
-                <!-- Particle canvas overlay (now placed behind discs) -->
                 <canvas id="particleCanvas" style="position:absolute; top:0; left:0; width:100%; height:100%; pointer-events:none; z-index:1;"></canvas>
             </div>
             <div class="status" id="status">Your turn</div>
 
             <div class="game-buttons">
                 <button class="game-btn" id="restartBtn">↺ Restart</button>
-                <button class="game-btn new-game" id="newGameBtn">⊕ New Game</button>
+                <button class="game-btn new-game" id="newGameBtn">⊕ New</button>
                 <button class="game-btn small-btn" id="toggleFirstBtn">🤖 AI First</button>
                 <button class="game-btn small-btn" id="openScoreboardBtn" style="background:linear-gradient(135deg,#7b1fa2,#4a148c);border-color:#ce93d8;box-shadow:0 4px 0 #38006b;">🏆 Scores</button>
             </div>
         </div>
     </div>
 
+    <!-- Universal End Modal (Handles Win, Lose, Draw, Timeout) -->
     <div class="modal-overlay" id="endModal">
-        <div class="modal-box">
+        <div class="modal-box" id="endModalBox">
             <div class="modal-galaxy-title win" id="endTitle">🎉 Galaxy Conquered!</div>
             <div class="progress-wrap">
                 <div class="progress-label">
@@ -298,7 +290,8 @@
                 <div class="stat-row"><span class="stat-label">Duration</span><span class="stat-value" id="statTime">0s</span></div>
                 <div class="stat-row"><span class="stat-label">First to Move</span><span class="stat-value" id="statFirst">You</span></div>
             </div>
-            <button class="modal-action-btn win-btn" id="endActionBtn">▶ Continue</button>
+            <!-- Container for dynamic buttons (Watch Ad, Continue, etc.) -->
+            <div id="endModalButtons"></div>
         </div>
     </div>
 
@@ -328,12 +321,9 @@
     <script>
     (function() {
         // ============================================================
-        // UTILITIES & GLOBAL FUNCTIONS (Προσθήκη 3)
+        // UTILITIES & GLOBAL FUNCTIONS
         // ============================================================
-        function goHome() {
-            window.location.href = 'https://t.me/Franklygames_bot?profile';
-        }
-        window.goHome = goHome;
+        // Home function removed.
 
         // ============================================================
         // STARFIELD
@@ -526,11 +516,12 @@
             const zoneSize = zone.min ? (zone.max - zone.min + 1) : 3;
             const progress = zoneSize > 1 ? posInZone / (zoneSize - 1) : 0;
 
+            // EASIER AI FOR EARLY LEVELS
             switch (zone.diff) {
                 case 'easy':
-                    return { randomChance: Math.max(0.05, 0.80 - progress * 0.35), depth: 0, blockWeight: 0.3 + progress * 0.1 };
+                    return { randomChance: Math.max(0.05, 0.90 - progress * 0.40), depth: 0, blockWeight: 0.2 + progress * 0.1 };
                 case 'medium':
-                    return { randomChance: Math.max(0, 0.25 - progress * 0.2), depth: progress < 0.5 ? 2 : 3, blockWeight: 0.7 + progress * 0.1 };
+                    return { randomChance: Math.max(0, 0.35 - progress * 0.25), depth: progress < 0.5 ? 2 : 3, blockWeight: 0.6 + progress * 0.2 };
                 case 'hard':
                     return { randomChance: 0, depth: progress < 0.5 ? 3 : 4, blockWeight: 1 };
                 case 'expert':
@@ -692,7 +683,7 @@
         }
 
         // ============================================================
-        // CONNECT FOUR GAME CLASS (Updated with YouTube SDK Integration)
+        // CONNECT FOUR GAME CLASS
         // ============================================================
         class ConnectFour {
             constructor() {
@@ -704,13 +695,18 @@
                 this.audio = new GameAudio(); this.aiFirst = false;
                 this._pendingEndResult = null;
                 
-                // YouTube SDK State Variables (Προσθήκη 3)
+                // YouTube SDK State Variables
                 this._ytLoaded = false;
                 this._ytReady = false;
                 this._wasPaused = false;
                 this._savedProgress = false;
                 this._savedAiTurn = false;
                 this._aiTimeoutId = null;
+
+                // Timer
+                this.timerInterval = null;
+                this.timeLeft = 0;
+                this.maxTime = 0;
 
                 this.gameData = loadSave();
                 const extLevel = loadLevel();
@@ -739,7 +735,6 @@
 
                 this.initDOMEvents(); this.audio.init();
 
-                checkDayReset();
                 const t = loadToday();
                 this.scores = {1: t.wins||0, 2: t.losses||0};
 
@@ -822,15 +817,7 @@
                 document.getElementById('aiLabel').textContent = labels[this.aiDiff] || 'AI';
                 this.updateCoinDisplay();
                 this.updatePointsDisplay();
-
-                const db = document.getElementById('dailyBtn');
-                if (this.gameData.xpBoostActive && this.gameData.xpBoostGames > 0) {
-                    db.classList.add('boost-active');
-                    db.textContent = '⚡ DOUBLE POINTS';
-                } else {
-                    db.classList.remove('boost-active');
-                    db.textContent = '🎁 Daily';
-                }
+                this.updateTimerDisplay();
             }
 
             updateScores() { this.domScore.textContent = `${this.scores[1]} - ${this.scores[2]}`; }
@@ -838,35 +825,7 @@
                 [this.restartBtn, this.newGameBtn, this.toggleFirstBtn].forEach(b => { if(b) b.disabled = !enabled; });
             }
 
-            checkDailyReward() {
-                const today = new Date().toDateString();
-                if (this.gameData.lastLogin !== today) {
-                    const prevDate = this.gameData.lastLogin ? new Date(this.gameData.lastLogin) : null;
-                    let streak = 1;
-                    if (prevDate) {
-                        const diff = (new Date(today) - prevDate) / (1000 * 60 * 60 * 24);
-                        if (diff <= 1) streak = this.gameData.streak + 1;
-                        else streak = 1;
-                    }
-                    this.gameData.lastLogin = today;
-                    this.gameData.streak = streak;
-                    writeSave(this.gameData);
-                    return streak;
-                }
-                return null;
-            }
-
-            claimDailyReward() {
-                const streak = this.checkDailyReward();
-                if (streak === null) { alert('Already claimed today!'); return; }
-                const coins = 10 * streak;
-                this.gameData.coins += coins;
-                writeSave(this.gameData);
-                this.updateCoinDisplay();
-                alert(`🎁 Daily Reward claimed!\nStreak: ${streak}x\n+${coins} coins!`);
-            }
-
-            // ===== YOUTUBE SDK INTEGRATION (Προσθήκη 3) =====
+            // ===== YOUTUBE SDK INTEGRATION =====
             _showAdAndReward(callback) {
                 const YT = (typeof ytgame !== 'undefined' && ytgame !== null) ? ytgame : null;
                 if (YT && YT.game && typeof YT.game.showAd === 'function') {
@@ -881,17 +840,6 @@
                 } else {
                     if (callback) callback();
                 }
-            }
-
-            activateXpBoost() {
-                if (this.gameData.xpBoostActive) { alert('Double points boost is already active!'); return; }
-                this._showAdAndReward(() => {
-                    this.gameData.xpBoostActive = true;
-                    this.gameData.xpBoostGames = 2;
-                    writeSave(this.gameData);
-                    this.updateHUD();
-                    alert('⚡ Double points activated for the next 2 wins!');
-                });
             }
 
             applySavedData(data) {
@@ -966,8 +914,104 @@
             setYtLoaded(loaded) { this._ytLoaded = loaded; }
             setYtReady(ready) { this._ytReady = ready; }
 
+            // ===== TIMER =====
+            startTimer() {
+                this.stopTimer();
+                this.maxTime = Math.max(60, 300 - (this.level - 1) * 15);
+                this.timeLeft = this.maxTime;
+                this.updateTimerDisplay();
+                this.timerInterval = setInterval(() => {
+                    this.timeLeft--;
+                    this.updateTimerDisplay();
+                    if (this.timeLeft <= 0) {
+                        this.stopTimer();
+                        this.handleTimeout();
+                    }
+                }, 1000);
+            }
+
+            stopTimer() {
+                if (this.timerInterval) {
+                    clearInterval(this.timerInterval);
+                    this.timerInterval = null;
+                }
+            }
+
+            updateTimerDisplay() {
+                const el = document.getElementById('timerDisplay');
+                if (!el) return;
+                const mins = Math.floor(Math.max(0, this.timeLeft) / 60);
+                const secs = Math.floor(Math.max(0, this.timeLeft) % 60);
+                el.textContent = `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+                if (this.timeLeft <= 10) el.style.color = '#ff1744';
+                else el.style.color = '#ffb74d';
+            }
+
+            handleTimeout() {
+                if (!this.gameInProgress) return;
+                this.gameInProgress = false;
+                this.isAiTurn = false;
+                if (this._aiTimeoutId) {
+                    clearTimeout(this._aiTimeoutId);
+                    this._aiTimeoutId = null;
+                }
+                this.domStatus.textContent = '⏰ Time is up!';
+
+                // 10 points penalty, but can watch ad to void it
+                const applyPenalty = () => {
+                    this.gameData.points = Math.max(0, this.gameData.points - 10);
+                    writeSave(this.gameData);
+                    this.updateHUD();
+                    this.showEndModal('timeout', false);
+                };
+
+                const watchAdAndSkipPenalty = () => {
+                    this._showAdAndReward(() => {
+                        this.showEndModal('timeout', true);
+                    });
+                };
+
+                this.showTimeoutModal(applyPenalty, watchAdAndSkipPenalty);
+            }
+
+            showTimeoutModal(applyPenalty, watchAdAndSkipPenalty) {
+                const modal = document.getElementById('endModal');
+                const title = document.getElementById('endTitle');
+                const buttonsDiv = document.getElementById('endModalButtons');
+
+                title.textContent = '⏰ Time is up!';
+                title.className = 'modal-galaxy-title timeout';
+
+                document.getElementById('progressLabelLeft').textContent = 'Time Left';
+                document.getElementById('progressLabelRight').textContent = '0s';
+                document.getElementById('progressBar').style.width = '0%';
+                document.getElementById('progressNext').textContent = '';
+
+                document.getElementById('statMoves').textContent = this.playerMoves;
+                const sec = Math.round((Date.now() - this.gameStartTime) / 1000);
+                document.getElementById('statTime').textContent = sec < 60 ? `${sec}s` : `${Math.floor(sec/60)}m ${sec%60}s`;
+                document.getElementById('statFirst').textContent = this.aiFirst ? 'AI' : 'You';
+
+                buttonsDiv.innerHTML = `
+                    <button class="modal-action-btn watch-btn" id="timeoutWatchBtn">📺 Watch Ad (Skip Penalty)</button>
+                    <button class="modal-action-btn lose-btn" id="timeoutPenaltyBtn" style="margin-top:8px;">❌ Lose 10 Points</button>
+                `;
+
+                document.getElementById('timeoutWatchBtn').addEventListener('click', () => {
+                    document.getElementById('endModal').classList.remove('open');
+                    watchAdAndSkipPenalty();
+                });
+                document.getElementById('timeoutPenaltyBtn').addEventListener('click', () => {
+                    document.getElementById('endModal').classList.remove('open');
+                    applyPenalty();
+                });
+
+                modal.classList.add('open');
+            }
+
             // ===== CORE GAME =====
             initializeBoard() {
+                this.stopTimer();
                 this.board = Array(this.ROWS).fill(null).map(() => Array(this.COLS).fill(0));
                 this.domBoard.innerHTML = '';
                 for (let r = 0; r < this.ROWS; r++) {
@@ -984,6 +1028,7 @@
                 }
                 this.gameInProgress = true; this.currentPlayer = 1;
                 this.playerMoves = 0; this.gameStartTime = Date.now();
+                this.startTimer();
                 if (this.aiFirst) { this.currentPlayer = 2; this.updateStatus(); this.updatePlayerIndicators(); this.triggerAiTurn(); }
                 else { this.updateStatus(); this.updatePlayerIndicators(); }
                 this.particleSystem.stop();
@@ -1095,152 +1140,201 @@
 
             handleWinState() {
                 this.gameInProgress = false;
+                this.stopTimer();
                 const won = this.currentPlayer === 1;
                 this.matchScores[this.currentPlayer]++;
                 if (won) { this.scores[1]++; } else { this.scores[2]++; }
                 this.updateScores();
 
-                const oldLevel = this.level;
-                if (won) {
-                    let pointsGain = 10;
-                    if (this.gameData.xpBoostActive && this.gameData.xpBoostGames > 0) {
-                        pointsGain = 20;
-                        this.gameData.xpBoostGames--;
-                        if (this.gameData.xpBoostGames <= 0) this.gameData.xpBoostActive = false;
-                    }
-                    this.gameData.points += pointsGain;
-                    this.gameData.coins += pointsGain;
-
-                    if (this.isEndless) {
-                        this.endlessStreak++;
-                        if (this.endlessStreak > loadEndlessRecord()) saveEndlessRecord(this.endlessStreak);
-                    }
-
-                    try {
-                        let c4Wins = parseInt(localStorage.getItem('FRANKLY_C4_WINS') || '0');
-                        localStorage.setItem('FRANKLY_C4_WINS', (c4Wins + 1).toString());
-                    } catch(e) {}
-                } else {
-                    if (this.isEndless) this.endlessStreak = 0;
-                }
-
-                saveLevel(this.level);
-                writeSave(this.gameData);
-
-                this.updateHUD();
                 this.audio.playVictorySound();
                 if (won) this.triggerConfettiEffect();
-                this.domStatus.textContent = won ? 'You Win! 🎉' : 'AI Wins! 😞';
 
-                this.handleGameEnd();
-                setTimeout(() => this.showEndModal(won ? 'win' : 'lose'), 600);
+                if (won) {
+                    this.domStatus.textContent = 'You Win! 🎉';
+                    this.showWinModal();
+                } else {
+                    this.domStatus.textContent = 'AI Wins! 😞';
+                    this.showLoseModal();
+                }
             }
 
             handleDrawState() {
                 this.gameInProgress = false;
+                this.stopTimer();
                 this.domStatus.textContent = "It's a Draw! 🤝";
-                this.handleGameEnd();
-                setTimeout(() => this.showEndModal('draw'), 600);
+                this.showDrawModal();
             }
 
-            showEndModal(result) {
-                const titleEl  = document.getElementById('endTitle');
-                const barEl    = document.getElementById('progressBar');
-                const labelL   = document.getElementById('progressLabelLeft');
-                const labelR   = document.getElementById('progressLabelRight');
-                const nextEl   = document.getElementById('progressNext');
-                const btnEl    = document.getElementById('endActionBtn');
+            // ===== WIN MODAL (20pts + 20 coins, with option for +10 extra) =====
+            showWinModal() {
+                const modal = document.getElementById('endModal');
+                const title = document.getElementById('endTitle');
+                const buttonsDiv = document.getElementById('endModalButtons');
 
-                if (result === 'win') {
-                    titleEl.textContent = '🎉 Galaxy Conquered!';
-                    titleEl.className = 'modal-galaxy-title win';
-                } else if (result === 'lose') {
-                    titleEl.textContent = '💀 Lost in Space...';
-                    titleEl.className = 'modal-galaxy-title lose';
-                } else {
-                    titleEl.textContent = '🤝 Stray Asteroid!';
-                    titleEl.className = 'modal-galaxy-title draw';
-                }
+                title.textContent = '🎉 Galaxy Conquered!';
+                title.className = 'modal-galaxy-title win';
 
-                barEl.classList.remove('full');
-                const pct = (this.pointsInCurrentLevel / POINTS_PER_LEVEL) * 100;
+                // Points logic
+                let basePoints = 20;
+                let baseCoins = 20;
 
-                if (result === 'win') {
-                    if (this.isEndless) {
-                        labelL.textContent = '🌌 Endless Streak';
-                        labelR.textContent = `${this.endlessStreak} wins`;
-                        barEl.style.width = '0%';
-                        setTimeout(() => { barEl.style.width = '100%'; barEl.classList.add('full'); }, 100);
-                    } else {
-                        labelL.textContent = `Level ${this.level} Progress`;
-                        labelR.textContent = `${this.pointsInCurrentLevel}/${POINTS_PER_LEVEL} pts`;
-                        barEl.style.width = '0%';
-                        setTimeout(() => {
-                            barEl.style.width = pct + '%';
-                            if (pct >= 100) barEl.classList.add('full');
-                        }, 100);
-                    }
-                    if (this.isEndless) nextEl.textContent = 'Continue in Endless Deep Space!';
-                    else {
-                        const nz = getZoneForLevel(this.level);
-                        const oz = getZoneForLevel(this.level - 1);
-                        if (this.level === ENDLESS_LEVEL) nextEl.textContent = '🌌 Next: Endless Deep Space!';
-                        else if (this.level > 1 && nz.tier > (oz.tier || 0)) nextEl.textContent = `🔥 Zone Up! ${nz.name} — Disc Tier ${nz.tier}!`;
-                        else nextEl.textContent = `${POINTS_PER_LEVEL - this.pointsInCurrentLevel} pts to Level ${this.level + 1}`;
-                    }
-                } else {
-                    labelL.textContent = 'Level Progress';
-                    labelR.textContent = `${this.pointsInCurrentLevel}/${POINTS_PER_LEVEL} pts`;
-                    barEl.style.width = '0%';
-                    setTimeout(() => barEl.style.width = pct + '%', 100);
-                    nextEl.textContent = '';
-                }
+                document.getElementById('progressLabelLeft').textContent = 'Level Progress';
+                document.getElementById('progressLabelRight').textContent = `${this.pointsInCurrentLevel}/${POINTS_PER_LEVEL} pts`;
+                document.getElementById('progressBar').style.width = '0%';
+                setTimeout(() => {
+                    const pct = (this.pointsInCurrentLevel / POINTS_PER_LEVEL) * 100;
+                    document.getElementById('progressBar').style.width = pct + '%';
+                    if (pct >= 100) document.getElementById('progressBar').classList.add('full');
+                }, 100);
+                document.getElementById('progressNext').textContent = '';
 
                 document.getElementById('statMoves').textContent = this.playerMoves;
                 const sec = Math.round((Date.now() - this.gameStartTime) / 1000);
-                document.getElementById('statTime').textContent  = sec < 60 ? `${sec}s` : `${Math.floor(sec/60)}m ${sec%60}s`;
+                document.getElementById('statTime').textContent = sec < 60 ? `${sec}s` : `${Math.floor(sec/60)}m ${sec%60}s`;
                 document.getElementById('statFirst').textContent = this.aiFirst ? 'AI' : 'You';
 
-                btnEl.textContent = '▶ Continue';
-                btnEl.disabled = false;
-                if (result === 'win') btnEl.className = 'modal-action-btn win-btn';
-                else if (result === 'lose') btnEl.className = 'modal-action-btn lose-btn';
-                else btnEl.className = 'modal-action-btn draw-btn';
+                buttonsDiv.innerHTML = `
+                    <button class="modal-action-btn win-btn" id="winContinueBtn">✅ Claim Rewards (${basePoints}pts + ${baseCoins}🪙)</button>
+                    <button class="modal-action-btn watch-btn" id="winWatchBtn" style="margin-top:8px;">📺 Watch Ad for +10 extra points</button>
+                `;
 
-                this._pendingEndResult = result;
-                document.getElementById('endModal').classList.add('open');
+                document.getElementById('winContinueBtn').addEventListener('click', () => {
+                    document.getElementById('endModal').classList.remove('open');
+                    this.applyWinRewards(basePoints, baseCoins);
+                });
+
+                document.getElementById('winWatchBtn').addEventListener('click', () => {
+                    document.getElementById('endModal').classList.remove('open');
+                    this._showAdAndReward(() => {
+                        this.applyWinRewards(basePoints + 10, baseCoins);
+                    });
+                });
+
+                modal.classList.add('open');
+            }
+
+            applyWinRewards(points, coins) {
+                this.gameData.points += points;
+                this.gameData.coins += coins;
+                writeSave(this.gameData);
+                saveLevel(this.level);
+                this.updateHUD();
+                this.handleGameEnd();
+                this.newGame();
+            }
+
+            // ===== LOSE MODAL (Lose 10 pts, or watch ad to keep them) =====
+            showLoseModal() {
+                const modal = document.getElementById('endModal');
+                const title = document.getElementById('endTitle');
+                const buttonsDiv = document.getElementById('endModalButtons');
+
+                title.textContent = '💀 Lost in Space...';
+                title.className = 'modal-galaxy-title lose';
+
+                document.getElementById('progressLabelLeft').textContent = 'Level Progress';
+                document.getElementById('progressLabelRight').textContent = `${this.pointsInCurrentLevel}/${POINTS_PER_LEVEL} pts`;
+                document.getElementById('progressBar').style.width = '0%';
+                setTimeout(() => {
+                    const pct = (this.pointsInCurrentLevel / POINTS_PER_LEVEL) * 100;
+                    document.getElementById('progressBar').style.width = pct + '%';
+                    if (pct >= 100) document.getElementById('progressBar').classList.add('full');
+                }, 100);
+                document.getElementById('progressNext').textContent = '';
+
+                document.getElementById('statMoves').textContent = this.playerMoves;
+                const sec = Math.round((Date.now() - this.gameStartTime) / 1000);
+                document.getElementById('statTime').textContent = sec < 60 ? `${sec}s` : `${Math.floor(sec/60)}m ${sec%60}s`;
+                document.getElementById('statFirst').textContent = this.aiFirst ? 'AI' : 'You';
+
+                buttonsDiv.innerHTML = `
+                    <button class="modal-action-btn lose-btn" id="losePenaltyBtn">❌ Lose 10 Points</button>
+                    <button class="modal-action-btn watch-btn" id="loseWatchBtn" style="margin-top:8px;">📺 Watch Ad (Keep your points)</button>
+                `;
+
+                document.getElementById('losePenaltyBtn').addEventListener('click', () => {
+                    document.getElementById('endModal').classList.remove('open');
+                    this.applyLosePenalty();
+                });
+
+                document.getElementById('loseWatchBtn').addEventListener('click', () => {
+                    document.getElementById('endModal').classList.remove('open');
+                    this._showAdAndReward(() => {
+                        this.applyLoseNoPenalty();
+                    });
+                });
+
+                modal.classList.add('open');
+            }
+
+            applyLosePenalty() {
+                this.gameData.points = Math.max(0, this.gameData.points - 10);
+                writeSave(this.gameData);
+                saveLevel(this.level);
+                this.updateHUD();
+                this.handleGameEnd();
+                this.newGame();
+            }
+
+            applyLoseNoPenalty() {
+                // No points lost
+                writeSave(this.gameData);
+                saveLevel(this.level);
+                this.updateHUD();
+                this.handleGameEnd();
+                this.newGame();
+            }
+
+            // ===== DRAW MODAL =====
+            showDrawModal() {
+                const modal = document.getElementById('endModal');
+                const title = document.getElementById('endTitle');
+                const buttonsDiv = document.getElementById('endModalButtons');
+
+                title.textContent = '🤝 Stray Asteroid!';
+                title.className = 'modal-galaxy-title draw';
+
+                document.getElementById('progressLabelLeft').textContent = 'Level Progress';
+                document.getElementById('progressLabelRight').textContent = `${this.pointsInCurrentLevel}/${POINTS_PER_LEVEL} pts`;
+                document.getElementById('progressBar').style.width = '0%';
+                setTimeout(() => {
+                    const pct = (this.pointsInCurrentLevel / POINTS_PER_LEVEL) * 100;
+                    document.getElementById('progressBar').style.width = pct + '%';
+                    if (pct >= 100) document.getElementById('progressBar').classList.add('full');
+                }, 100);
+                document.getElementById('progressNext').textContent = '';
+
+                document.getElementById('statMoves').textContent = this.playerMoves;
+                const sec = Math.round((Date.now() - this.gameStartTime) / 1000);
+                document.getElementById('statTime').textContent = sec < 60 ? `${sec}s` : `${Math.floor(sec/60)}m ${sec%60}s`;
+                document.getElementById('statFirst').textContent = this.aiFirst ? 'AI' : 'You';
+
+                buttonsDiv.innerHTML = `
+                    <button class="modal-action-btn draw-btn" id="drawContinueBtn">▶ Continue</button>
+                `;
+
+                document.getElementById('drawContinueBtn').addEventListener('click', () => {
+                    document.getElementById('endModal').classList.remove('open');
+                    this.handleGameEnd();
+                    this.newGame();
+                });
+
+                modal.classList.add('open');
             }
 
             // ===== INIT DOM EVENTS =====
             initDOMEvents() {
-                // Restart Button
+                // Restart Button (Hard Reset)
                 this.restartBtn.addEventListener('click', () => {
-                    this.restartGame();
+                    this.hardReset();
                 });
                 
-                // New Game Button
+                // New Game Button (Hard Reset)
                 this.newGameBtn.addEventListener('click', () => {
-                    this.newGame();
+                    this.hardReset();
                 });
 
                 this.toggleFirstBtn.addEventListener('click', () => this.toggleFirstPlayer());
-
-                const modalBtn = document.getElementById('endActionBtn');
-                modalBtn.addEventListener('click', () => {
-                    if (this.gameInProgress) return;
-                    const btn = document.getElementById('endActionBtn');
-                    btn.disabled = true;
-                    btn.textContent = '⏳ Loading Ad...';
-                    
-                    this._showAdAndReward(() => {
-                        document.getElementById('endModal').classList.remove('open');
-                        this.newGame();
-                        btn.disabled = false;
-                        btn.textContent = '▶ Continue';
-                    });
-                });
-
-                document.getElementById('dailyBtn').addEventListener('click', () => this.claimDailyReward());
 
                 document.getElementById('shopBtn').addEventListener('click', () => {
                     this.renderShop();
@@ -1266,7 +1360,7 @@
             toggleFirstPlayer() {
                 this.aiFirst = !this.aiFirst;
                 this.toggleFirstBtn.textContent = this.aiFirst ? '👤 You First' : '🤖 AI First';
-                this.newGame();
+                this.hardReset();
             }
 
             saveTodayScore() {
@@ -1280,7 +1374,7 @@
             saveProgress() {
                 this.saveTodayScore();
                 this.renderScoreboard();
-                this.cloudSave(); // Cloud Save via SDK (Προσθήκη 3)
+                this.cloudSave();
             }
 
             handleGameEnd() { this.saveProgress(); this.setButtonsEnabled(true); }
@@ -1405,8 +1499,19 @@
                 }
             }
 
-            restartGame() {
-                // Full Reset
+            hardReset() {
+                // Full reset: clear points, coins, level and restart
+                this.gameData.points = 0;
+                this.gameData.coins = 0;
+                this.gameData.level = 1;
+                writeSave(this.gameData);
+                saveLevel(1);
+                
+                this.matchScores = {1:0, 2:0};
+                this.scores = {1:0, 2:0};
+                this.updateScores();
+                this.endlessStreak = 0;
+                
                 this.currentPlayer = 1; 
                 this.isAiTurn = false;
                 if (this._aiTimeoutId) {
@@ -1424,15 +1529,6 @@
                 this.particleSystem.clear();
                 document.querySelectorAll('.confetti').forEach(c=>c.remove());
                 this.setButtonsEnabled(true);
-            }
-            
-            newGame() {
-                // Hard Reset (Full New Game, clear current session scores)
-                this.matchScores = {1:0, 2:0};
-                this.scores = {1:0, 2:0};
-                this.updateScores();
-                this.endlessStreak = 0;
-                this.restartGame();
             }
 
             // ===== RENDER SHOP =====
@@ -1534,16 +1630,24 @@
                     container.appendChild(catDiv);
                 }
 
-                // Add Ad Boost Button (Προσθήκη 3)
-                const boostDiv = document.createElement('div');
-                boostDiv.style.cssText = 'margin: 12px 0; text-align: center;';
-                const boostBtn = document.createElement('button');
-                boostBtn.className = 'modal-action-btn win-btn';
-                boostBtn.style.cssText = 'background:linear-gradient(135deg,#e81cff,#7b1fa2);box-shadow:0 4px 0 #38006b;font-size:0.8rem;';
-                boostBtn.textContent = '⚡ Watch Ad for Double Points';
-                boostBtn.addEventListener('click', () => this.activateXpBoost());
-                boostDiv.appendChild(boostBtn);
-                container.appendChild(boostDiv);
+                // Add "Watch Ad to earn 10 Points" button in Shop
+                const adDiv = document.createElement('div');
+                adDiv.style.cssText = 'margin: 12px 0; text-align: center;';
+                const adBtn = document.createElement('button');
+                adBtn.className = 'modal-action-btn win-btn';
+                adBtn.style.cssText = 'background:linear-gradient(135deg,#e81cff,#7b1fa2);box-shadow:0 4px 0 #38006b;font-size:0.8rem;';
+                adBtn.textContent = '📺 Watch Ad to earn +10 Points';
+                adBtn.addEventListener('click', () => {
+                    this._showAdAndReward(() => {
+                        this.gameData.points += 10;
+                        writeSave(this.gameData);
+                        this.updateHUD();
+                        this.renderShop();
+                        alert('+10 Points earned!');
+                    });
+                });
+                adDiv.appendChild(adBtn);
+                container.appendChild(adDiv);
             }
 
             getPreviewColors(effectId) {
@@ -1582,7 +1686,7 @@
         }
 
         // ============================================================
-        // YOUTUBE SDK LIFECYCLE (Προσθήκη 3)
+        // YOUTUBE SDK LIFECYCLE
         // ============================================================
         const YT = (typeof ytgame !== 'undefined' && ytgame !== null) ? ytgame : null;
         let ytLoaded = false;
