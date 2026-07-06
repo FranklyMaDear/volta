@@ -280,7 +280,7 @@
             .hud-resources { flex-wrap: wrap; justify-content: center; gap: 2px; }
         }
 
-        /* ===== SPLASH SCREEN (New Design - 3D Title, Slow float, Start Button with Sound) ===== */
+        /* ===== SPLASH SCREEN (3D Title, Simultaneous Start Button) ===== */
         #splashScreen {
             position: fixed; inset: 0; background: #0a0e27; /* Deep space blue */
             z-index: 2000; display: flex; justify-content: center; align-items: center;
@@ -356,7 +356,7 @@
             80% { opacity: 1; }
             100% { opacity: 0; transform: translate(-300px, 500px) rotate(-35deg); }
         }
-        /* Start Button */
+        /* Start Button - appears simultaneously with title and disc */
         #splashStartBtn {
             margin-top: 30px; padding: 14px 40px; font-size: 1.1rem; font-weight: 800;
             letter-spacing: 2px; border: none; border-radius: 60px;
@@ -365,10 +365,8 @@
             cursor: pointer; transition: all 0.15s ease; font-family: inherit;
             text-transform: uppercase; opacity: 0; 
             transform: translateY(20px);
-        }
-        #splashStartBtn.visible {
-            opacity: 1; transform: translateY(0);
-            transition: opacity 1.5s ease 3s, transform 1.5s ease 3s;
+            animation: floatInSlow 2s cubic-bezier(0.2, 0.9, 0.3, 1.1) forwards;
+            animation-delay: 0s; /* same as content */
         }
         #splashStartBtn:active { transform: translateY(6px); box-shadow: 0 2px 0 #4d7c0f; }
         #splashStartBtn:hover { transform: scale(1.02); }
@@ -382,9 +380,9 @@
 <body>
     <canvas id="starCanvas"></canvas>
 
-    <!-- ===== SPLASH SCREEN (Manual Start) ===== -->
+    <!-- ===== SPLASH SCREEN ===== -->
     <div id="splashScreen">
-        <!-- Background Stars (CSS generated) -->
+        <!-- Background Stars -->
         <div class="splash-star" style="width:3px;height:3px;top:8%;left:10%;animation-delay:0s;"></div>
         <div class="splash-star" style="width:2px;height:2px;top:25%;left:75%;animation-delay:0.4s;"></div>
         <div class="splash-star" style="width:4px;height:4px;top:55%;left:15%;animation-delay:0.9s;"></div>
@@ -409,9 +407,9 @@
         <div class="splash-content">
             <div class="splash-title">Connect Four</div>
             <div class="splash-disc"></div>
+            <!-- Start Button - appears simultaneously -->
+            <button id="splashStartBtn" onclick="startGame()">START</button>
         </div>
-        <!-- Start Button - will become visible after 3 seconds (2s float + 1s) -->
-        <button id="splashStartBtn" onclick="startGame()">START</button>
     </div>
 
     <div class="game-wrapper">
@@ -510,9 +508,7 @@
         // ============================================================
         // UTILITIES & GLOBAL FUNCTIONS
         // ============================================================
-        // Global Start Game Function (Triggered by Start Button)
         window.startGame = function() {
-            // Play sound on start
             if (window._game) {
                 window._game.audio.playDropSound();
             }
@@ -692,7 +688,7 @@
         // ============================================================
         // LEVEL SYSTEM & AI DIFFICULTY
         // ============================================================
-        const POINTS_PER_LEVEL = 100; // 100 points = 1 Level
+        const POINTS_PER_LEVEL = 100;
 
         function getAiParams(level) {
             if (level <= 50) {
@@ -1413,7 +1409,7 @@
                 saveLevel(this.level);
                 this.updateHUD();
                 this.handleGameEnd();
-                this.restartGame(); // Start a fresh game, keeping points/coins
+                this.restartGame();
             }
 
             // ===== LOSE MODAL =====
@@ -1514,12 +1510,10 @@
 
             // ===== INIT DOM EVENTS =====
             initDOMEvents() {
-                // RESTART: Resets board only, keeps points/coins/level
                 this.restartBtn.addEventListener('click', () => {
                     this.restartGame();
                 });
                 
-                // NEW: Hard reset, clears points/coins/level
                 this.newGameBtn.addEventListener('click', () => {
                     this.hardReset();
                 });
@@ -1689,7 +1683,7 @@
                 }
             }
 
-            // ===== RESTART GAME (Keeps points, coins, level) =====
+            // ===== RESTART (Keeps points/coins/level) =====
             restartGame() {
                 this.currentPlayer = 1;
                 this.isAiTurn = false;
@@ -1708,7 +1702,7 @@
                 this.setButtonsEnabled(true);
             }
 
-            // ===== HARD RESET (Clears points, coins, level, everything) =====
+            // ===== HARD RESET (Clears everything) =====
             hardReset() {
                 this.gameData.points = 0;
                 this.gameData.coins = 0;
@@ -1951,14 +1945,6 @@
         // ============================================================
         try { initBackgroundEffects(); } catch(e) {}
         try { window._game = new ConnectFour(); } catch(e) {}
-
-        // Make the Start Button visible after 3 seconds (2s float + 1s delay)
-        setTimeout(() => {
-            const startBtn = document.getElementById('splashStartBtn');
-            if (startBtn) {
-                startBtn.classList.add('visible');
-            }
-        }, 3000);
 
         window.addEventListener('load', async function() {
             if (YT && YT.game && typeof YT.game.firstFrameReady === 'function') {
