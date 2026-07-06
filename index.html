@@ -280,7 +280,7 @@
             .hud-resources { flex-wrap: wrap; justify-content: center; gap: 2px; }
         }
 
-        /* ===== SPLASH SCREEN (New Design - Slow float, Start Button) ===== */
+        /* ===== SPLASH SCREEN (New Design - 3D Title, Slow float, Start Button with Sound) ===== */
         #splashScreen {
             position: fixed; inset: 0; background: #0a0e27; /* Deep space blue */
             z-index: 2000; display: flex; justify-content: center; align-items: center;
@@ -302,9 +302,17 @@
         }
         .splash-title {
             font-size: 3rem; font-weight: 900; letter-spacing: 2px;
-            color: #ffffff; text-shadow: 0 4px 0 #0a0e27, 0 8px 20px rgba(0,0,0,0.8), 0 0 40px rgba(132,204,22,0.4);
+            color: #ffffff;
+            text-shadow: 0 1px 0 #ccc, 0 2px 0 #c9c9c9, 0 3px 0 #bbb, 0 4px 0 #b9b9b9, 0 5px 0 #aaa, 0 6px 1px rgba(0,0,0,0.1), 0 0 5px rgba(0,0,0,0.1), 0 1px 3px rgba(0,0,0,0.3), 0 3px 5px rgba(0,0,0,0.2), 0 5px 10px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.2), 0 20px 20px rgba(0,0,0,0.15);
+            animation: titleGlow 3s infinite alternate;
             margin-bottom: 10px; font-family: 'Segoe UI', -apple-system, sans-serif;
-            white-space: nowrap; /* Force single line */
+            white-space: nowrap;
+            transform: perspective(800px) rotateX(2deg);
+        }
+        @keyframes titleGlow {
+            0% { text-shadow: 0 1px 0 #ccc, 0 2px 0 #c9c9c9, 0 3px 0 #bbb, 0 4px 0 #b9b9b9, 0 5px 0 #aaa, 0 6px 1px rgba(0,0,0,0.1), 0 0 5px rgba(0,0,0,0.1), 0 1px 3px rgba(0,0,0,0.3), 0 3px 5px rgba(0,0,0,0.2), 0 5px 10px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.2), 0 20px 20px rgba(0,0,0,0.15); color: #ffffff; }
+            50% { text-shadow: 0 1px 0 #84cc16, 0 2px 0 #65a30d, 0 3px 0 #4d7c0f, 0 4px 0 #3b5c0b, 0 5px 0 #2e4a08, 0 6px 1px rgba(0,0,0,0.1), 0 0 15px rgba(132,204,22,0.6), 0 1px 3px rgba(0,0,0,0.3), 0 3px 5px rgba(0,0,0,0.2), 0 5px 10px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.2), 0 20px 20px rgba(0,0,0,0.15); color: #84cc16; }
+            100% { text-shadow: 0 1px 0 #e81cff, 0 2px 0 #7b1fa2, 0 3px 0 #38006b, 0 4px 0 #2a0050, 0 5px 0 #1c0035, 0 6px 1px rgba(0,0,0,0.1), 0 0 15px rgba(232,28,255,0.6), 0 1px 3px rgba(0,0,0,0.3), 0 3px 5px rgba(0,0,0,0.2), 0 5px 10px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.2), 0 20px 20px rgba(0,0,0,0.15); color: #e81cff; }
         }
         .splash-disc {
             width: 110px; height: 110px; border-radius: 50%; margin: 10px auto;
@@ -360,7 +368,7 @@
         }
         #splashStartBtn.visible {
             opacity: 1; transform: translateY(0);
-            transition: opacity 1.5s ease 2.3s, transform 1.5s ease 2.3s;
+            transition: opacity 1.5s ease 3s, transform 1.5s ease 3s;
         }
         #splashStartBtn:active { transform: translateY(6px); box-shadow: 0 2px 0 #4d7c0f; }
         #splashStartBtn:hover { transform: scale(1.02); }
@@ -376,7 +384,7 @@
 
     <!-- ===== SPLASH SCREEN (Manual Start) ===== -->
     <div id="splashScreen">
-        <!-- Background Stars (CSS generated) - Many more stars -->
+        <!-- Background Stars (CSS generated) -->
         <div class="splash-star" style="width:3px;height:3px;top:8%;left:10%;animation-delay:0s;"></div>
         <div class="splash-star" style="width:2px;height:2px;top:25%;left:75%;animation-delay:0.4s;"></div>
         <div class="splash-star" style="width:4px;height:4px;top:55%;left:15%;animation-delay:0.9s;"></div>
@@ -402,7 +410,7 @@
             <div class="splash-title">Connect Four</div>
             <div class="splash-disc"></div>
         </div>
-        <!-- Start Button - will become visible after 2.3s -->
+        <!-- Start Button - will become visible after 3 seconds (2s float + 1s) -->
         <button id="splashStartBtn" onclick="startGame()">START</button>
     </div>
 
@@ -504,6 +512,10 @@
         // ============================================================
         // Global Start Game Function (Triggered by Start Button)
         window.startGame = function() {
+            // Play sound on start
+            if (window._game) {
+                window._game.audio.playDropSound();
+            }
             const splash = document.getElementById('splashScreen');
             splash.classList.add('hidden');
             setTimeout(() => {
@@ -625,7 +637,7 @@
         const DEFAULT_SAVE = {
             coins: 0,
             points: 0,
-            level: 1, // Level is derived from points, but stored for backward compatibility
+            level: 1,
             lastLogin: null,
             streak: 0,
             xpBoostActive: false,
@@ -682,22 +694,19 @@
         // ============================================================
         const POINTS_PER_LEVEL = 100; // 100 points = 1 Level
 
-        // New AI difficulty logic (1-50 easy/medium, 51+ medium/hard but winnable)
         function getAiParams(level) {
             if (level <= 50) {
-                // Levels 1-50: Easy to Medium
-                const progress = (level - 1) / 49; // 0 to 1
+                const progress = (level - 1) / 49;
                 return {
                     randomChance: Math.max(0.15, 0.85 - progress * 0.6),
-                    depth: Math.floor(progress * 2), // 0, 1, 2
+                    depth: Math.floor(progress * 2),
                     blockWeight: 0.3 + progress * 0.3
                 };
             } else {
-                // Levels 51+: Medium to Hard, but winnable (max depth 5)
-                const progress = Math.min(1, (level - 50) / 50); // 0 to 1
+                const progress = Math.min(1, (level - 50) / 50);
                 return {
                     randomChance: Math.max(0.05, 0.35 - progress * 0.3),
-                    depth: Math.min(5, 2 + progress * 3), // 2 to 5
+                    depth: Math.min(5, 2 + progress * 3),
                     blockWeight: 0.7 + progress * 0.3
                 };
             }
@@ -710,7 +719,7 @@
             { min:200, max:399, name:'👑 Galaxy Overlord',    diff:'expert',     tier:4 },
             { min:400, max:Infinity, name:'💀 Cosmic Destroyer',   diff:'unbeatable', tier:5 },
         ];
-        const ENDLESS_LEVEL = 1000; // Adjusted for new scaling
+        const ENDLESS_LEVEL = 1000;
 
         function getZoneForLevel(lvl) {
             if (lvl >= ENDLESS_LEVEL) return { name:'🌌 Endless Deep Space', diff:'unbeatable', tier:5 };
@@ -894,9 +903,6 @@
                 this.gameData = loadSave();
                 const extLevel = loadLevel();
                 
-                // Ensure points and coins are consistent
-                // If points exist but coins don't match, we rebuild coins from points
-                // (Assuming 1 point = 1 coin)
                 if (this.gameData.coins !== this.gameData.points) {
                     this.gameData.coins = this.gameData.points;
                 }
@@ -991,9 +997,8 @@
             }
 
             updatePointsDisplay() {
-                // Since coins = points, we show points and the "Level Progress" bar
                 document.getElementById('pointsDisplay').textContent = this.gameData.points;
-                document.getElementById('pointsNeeded').textContent = '∞'; // No limit, points accumulate
+                document.getElementById('pointsNeeded').textContent = '∞'; 
             }
 
             updateHUD() {
@@ -1037,7 +1042,6 @@
                     if (s && typeof s === 'object') {
                         if (s.gameData) {
                             this.gameData = { ...this.gameData, ...s.gameData };
-                            // Ensure consistency
                             if (this.gameData.coins !== this.gameData.points) {
                                 this.gameData.coins = this.gameData.points;
                             }
@@ -1358,7 +1362,7 @@
                 this.showDrawModal();
             }
 
-            // ===== WIN MODAL (20pts + 20 coins, Ad for +10 extra) =====
+            // ===== WIN MODAL =====
             showWinModal() {
                 const modal = document.getElementById('endModal');
                 const title = document.getElementById('endTitle');
@@ -1367,12 +1371,13 @@
                 title.textContent = '🎉 Galaxy Conquered!';
                 title.className = 'modal-galaxy-title win';
 
-                document.getElementById('progressLabelLeft').textContent = 'Total Points';
-                document.getElementById('progressLabelRight').textContent = `${this.gameData.points} pts`;
+                document.getElementById('progressLabelLeft').textContent = 'Level Progress';
+                document.getElementById('progressLabelRight').textContent = `${this.pointsInCurrentLevel}/${POINTS_PER_LEVEL} pts`;
                 document.getElementById('progressBar').style.width = '0%';
                 setTimeout(() => {
-                    // Progress bar is now just decorative or showing total progress
-                    document.getElementById('progressBar').style.width = '100%';
+                    const pct = (this.pointsInCurrentLevel / POINTS_PER_LEVEL) * 100;
+                    document.getElementById('progressBar').style.width = pct + '%';
+                    if (pct >= 100) document.getElementById('progressBar').classList.add('full');
                 }, 100);
                 document.getElementById('progressNext').textContent = `Level ${this.level}`;
 
@@ -1394,7 +1399,7 @@
                 document.getElementById('winWatchBtn').addEventListener('click', () => {
                     document.getElementById('endModal').classList.remove('open');
                     this._showAdAndReward(() => {
-                        this.applyWinRewards(30, 30); // 20 base + 10 extra
+                        this.applyWinRewards(30, 30);
                     });
                 });
 
@@ -1408,10 +1413,10 @@
                 saveLevel(this.level);
                 this.updateHUD();
                 this.handleGameEnd();
-                this.newGame();
+                this.restartGame(); // Start a fresh game, keeping points/coins
             }
 
-            // ===== LOSE MODAL (Lose 10pts & 10coins, or watch ad for +10pts & 10coins) =====
+            // ===== LOSE MODAL =====
             showLoseModal() {
                 const modal = document.getElementById('endModal');
                 const title = document.getElementById('endTitle');
@@ -1420,9 +1425,14 @@
                 title.textContent = '💀 Lost in Space...';
                 title.className = 'modal-galaxy-title lose';
 
-                document.getElementById('progressLabelLeft').textContent = 'Total Points';
-                document.getElementById('progressLabelRight').textContent = `${this.gameData.points} pts`;
-                document.getElementById('progressBar').style.width = '100%';
+                document.getElementById('progressLabelLeft').textContent = 'Level Progress';
+                document.getElementById('progressLabelRight').textContent = `${this.pointsInCurrentLevel}/${POINTS_PER_LEVEL} pts`;
+                document.getElementById('progressBar').style.width = '0%';
+                setTimeout(() => {
+                    const pct = (this.pointsInCurrentLevel / POINTS_PER_LEVEL) * 100;
+                    document.getElementById('progressBar').style.width = pct + '%';
+                    if (pct >= 100) document.getElementById('progressBar').classList.add('full');
+                }, 100);
                 document.getElementById('progressNext').textContent = `Level ${this.level}`;
 
                 document.getElementById('statMoves').textContent = this.playerMoves;
@@ -1457,18 +1467,17 @@
                 saveLevel(this.level);
                 this.updateHUD();
                 this.handleGameEnd();
-                this.newGame();
+                this.restartGame();
             }
 
             applyLoseNoPenalty() {
-                // Instead of losing, player gains +10 points & +10 coins
                 this.gameData.points += 10;
                 this.gameData.coins += 10;
                 writeSave(this.gameData);
                 saveLevel(this.level);
                 this.updateHUD();
                 this.handleGameEnd();
-                this.newGame();
+                this.restartGame();
             }
 
             // ===== DRAW MODAL =====
@@ -1480,8 +1489,8 @@
                 title.textContent = '🤝 Stray Asteroid!';
                 title.className = 'modal-galaxy-title draw';
 
-                document.getElementById('progressLabelLeft').textContent = 'Total Points';
-                document.getElementById('progressLabelRight').textContent = `${this.gameData.points} pts`;
+                document.getElementById('progressLabelLeft').textContent = 'Level Progress';
+                document.getElementById('progressLabelRight').textContent = `${this.pointsInCurrentLevel}/${POINTS_PER_LEVEL} pts`;
                 document.getElementById('progressBar').style.width = '100%';
                 document.getElementById('progressNext').textContent = `Level ${this.level}`;
 
@@ -1497,7 +1506,7 @@
                 document.getElementById('drawContinueBtn').addEventListener('click', () => {
                     document.getElementById('endModal').classList.remove('open');
                     this.handleGameEnd();
-                    this.newGame();
+                    this.restartGame();
                 });
 
                 modal.classList.add('open');
@@ -1505,10 +1514,12 @@
 
             // ===== INIT DOM EVENTS =====
             initDOMEvents() {
+                // RESTART: Resets board only, keeps points/coins/level
                 this.restartBtn.addEventListener('click', () => {
-                    this.hardReset();
+                    this.restartGame();
                 });
                 
+                // NEW: Hard reset, clears points/coins/level
                 this.newGameBtn.addEventListener('click', () => {
                     this.hardReset();
                 });
@@ -1678,6 +1689,26 @@
                 }
             }
 
+            // ===== RESTART GAME (Keeps points, coins, level) =====
+            restartGame() {
+                this.currentPlayer = 1;
+                this.isAiTurn = false;
+                if (this._aiTimeoutId) {
+                    clearTimeout(this._aiTimeoutId);
+                    this._aiTimeoutId = null;
+                }
+                this.initializeBoard();
+                this.updateStatus();
+                this.updatePlayerIndicators();
+                this.updateHUD();
+                this.applyTierToPlayerDiscs();
+                this.particleSystem.stop();
+                this.particleSystem.clear();
+                document.querySelectorAll('.confetti').forEach(c=>c.remove());
+                this.setButtonsEnabled(true);
+            }
+
+            // ===== HARD RESET (Clears points, coins, level, everything) =====
             hardReset() {
                 this.gameData.points = 0;
                 this.gameData.coins = 0;
@@ -1709,15 +1740,7 @@
                 this.setButtonsEnabled(true);
             }
 
-            newGame() {
-                this.matchScores = {1:0, 2:0};
-                this.scores = {1:0, 2:0};
-                this.updateScores();
-                this.endlessStreak = 0;
-                this.hardReset();
-            }
-
-            // ===== RENDER SHOP (Professional 3D Design) =====
+            // ===== RENDER SHOP =====
             renderShop() {
                 const container = document.getElementById('shopContainer');
                 container.innerHTML = '';
@@ -1929,13 +1952,13 @@
         try { initBackgroundEffects(); } catch(e) {}
         try { window._game = new ConnectFour(); } catch(e) {}
 
-        // Make the Start Button visible after the animation completes
+        // Make the Start Button visible after 3 seconds (2s float + 1s delay)
         setTimeout(() => {
             const startBtn = document.getElementById('splashStartBtn');
             if (startBtn) {
                 startBtn.classList.add('visible');
             }
-        }, 2300); // 2.3 seconds matches the CSS transition delay
+        }, 3000);
 
         window.addEventListener('load', async function() {
             if (YT && YT.game && typeof YT.game.firstFrameReady === 'function') {
