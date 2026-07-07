@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
 <!-- YouTube Playables SDK -->
 <script src="https://www.youtube.com/game_api/v1"></script>
-<title>Merge Cubes 3D – Progression</title>
+<title>Merge Cubes 3D</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;touch-action:none;-webkit-tap-highlight-color:transparent}
 html,body{height:100%;width:100%;overflow:hidden;position:fixed;top:0;left:0}
@@ -81,7 +81,9 @@ body.paused *,body.paused *::before,body.paused *::after{animation-play-state:pa
 #lost-modal.active{display:flex}
 #lost-modal h1{font-size:56px;color:#ff3333;text-shadow:0 0 30px red;margin:0}
 #lost-modal .lost-score{font-size:22px;color:#FFD700}
-#lost-modal button{background:#ff4444;color:#fff;border:none;padding:12px 40px;border-radius:16px;font-size:20px;font-weight:800;cursor:pointer;box-shadow:0 0 20px rgba(255,0,0,.6)}
+#lost-modal .lost-actions{display:flex;gap:16px;flex-wrap:wrap;justify-content:center}
+#lost-modal .lost-actions button{background:#ff4444;color:#fff;border:none;padding:12px 40px;border-radius:16px;font-size:20px;font-weight:800;cursor:pointer;box-shadow:0 0 20px rgba(255,0,0,.6)}
+#lost-modal .lost-actions .ad-btn{background:#16a34a;}
 #rank-modal{position:absolute;inset:0;z-index:500;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,.88);padding:20px}
 #rank-modal.active{display:flex}
 #rank-box{background:linear-gradient(145deg,#1a1a3a,#111122);border:2px solid #ffaa33;border-radius:24px;padding:24px 20px 20px;width:92%;max-width:380px;max-height:82vh;overflow-y:auto;box-shadow:0 0 40px rgba(255,170,51,.25),inset 0 1px 0 rgba(255,255,255,.05);scrollbar-width:thin;scrollbar-color:#ffaa33 #111}
@@ -102,7 +104,7 @@ body.paused *,body.paused *::before,body.paused *::after{animation-play-state:pa
 #rank-close-btn{display:block;margin:16px auto 0;background:linear-gradient(135deg,#ffaa33,#cc8800);color:#000;border:none;border-radius:12px;padding:10px 36px;font-size:15px;font-weight:800;cursor:pointer;letter-spacing:.5px;box-shadow:0 4px 16px rgba(255,170,51,.4)}
 #rank-close-btn:active{transform:scale(.94)}
 
-/* ----- Shop Modal (BIGGER UI) ----- */
+/* ----- Shop Modal (BIGGER UI + PULSE) ----- */
 #shop-modal{position:absolute;inset:0;z-index:600;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,.88);padding:20px}
 #shop-modal.active{display:flex}
 #shop-box{background:linear-gradient(145deg,#1a1a3a,#111122);border:2px solid #7d4bdd;border-radius:24px;padding:30px 25px 25px;width:95%;max-width:420px;max-height:85vh;overflow-y:auto;box-shadow:0 0 40px rgba(120,90,220,.25),inset 0 1px 0 rgba(255,255,255,.05);scrollbar-width:thin;scrollbar-color:#7d4bdd #111}
@@ -123,6 +125,10 @@ body.paused *,body.paused *::before,body.paused *::after{animation-play-state:pa
 #shop-close-btn{display:block;margin:16px auto 0;background:linear-gradient(135deg,#7b3fcc,#a855f7);color:#fff;border:none;border-radius:12px;padding:12px 40px;font-size:16px;font-weight:800;cursor:pointer;letter-spacing:.5px;box-shadow:0 4px 16px rgba(168,85,247,.4)}
 #shop-close-btn:active{transform:scale(.94)}
 
+/* ----- Shop Button Pulse ----- */
+#btn-shop{width:38px;height:38px;font-size:18px;animation:shopPulse 2s ease-in-out infinite;box-shadow:0 0 15px rgba(160,120,255,.4);border-color:#a070ff;background:rgba(160,120,255,.15)}
+@keyframes shopPulse{0%,100%{box-shadow:0 0 10px rgba(160,120,255,.4)}50%{box-shadow:0 0 30px rgba(160,120,255,.8)}}
+
 /* ----- Revive Modal ----- */
 #revive-modal{position:absolute;inset:0;z-index:450;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,.88);flex-direction:column;gap:20px}
 #revive-modal.active{display:flex}
@@ -132,15 +138,26 @@ body.paused *,body.paused *::before,body.paused *::after{animation-play-state:pa
 #revive-ad-btn{background:#16a34a;color:#fff;border:none;padding:12px 30px;border-radius:16px;font-size:18px;font-weight:800;cursor:pointer;box-shadow:0 0 20px rgba(22,163,74,.6)}
 #revive-skip-btn{background:#444;color:#fff;border:none;padding:12px 30px;border-radius:16px;font-size:18px;font-weight:800;cursor:pointer}
 
-/* ----- Daily Rewards Modal ----- */
-#daily-modal{position:absolute;inset:0;z-index:700;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,.85);padding:20px}
-#daily-modal.active{display:flex}
-#daily-box{background:linear-gradient(145deg,#2a1a4a,#15152a);border:2px solid #ffaa33;border-radius:24px;padding:30px 25px;width:90%;max-width:380px;text-align:center;box-shadow:0 0 40px rgba(255,170,51,.3)}
-#daily-box h2{color:#ffaa33;font-size:28px;font-weight:800;margin-bottom:4px}
-#daily-box p{color:#ccc;font-size:16px;margin:8px 0 20px}
-#daily-box .daily-reward{font-size:24px;color:#FFD700;font-weight:700;background:rgba(255,215,0,.1);padding:10px;border-radius:12px;margin-bottom:16px}
-#daily-claim-btn{background:linear-gradient(135deg,#ffaa33,#cc8800);color:#000;border:none;padding:14px 40px;border-radius:16px;font-size:18px;font-weight:800;cursor:pointer;box-shadow:0 4px 16px rgba(255,170,51,.4)}
-#daily-claim-btn:active{transform:scale(.94)}
+/* ----- Daily Missions Modal ----- */
+#missions-modal{position:absolute;inset:0;z-index:700;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,.88);padding:20px}
+#missions-modal.active{display:flex}
+#missions-box{background:linear-gradient(145deg,#1a1a3a,#111122);border:2px solid #ffaa33;border-radius:24px;padding:24px 20px;width:92%;max-width:400px;max-height:85vh;overflow-y:auto;box-shadow:0 0 30px rgba(255,170,51,.3);scrollbar-width:thin;scrollbar-color:#ffaa33 #111}
+#missions-box h2{color:#ffaa33;text-align:center;font-size:22px;font-weight:800;letter-spacing:1px;margin-bottom:4px}
+#missions-box .missions-subtitle{color:#aaa;text-align:center;font-size:12px;letter-spacing:1px;margin-bottom:16px}
+#missions-box .missions-streak{background:rgba(255,170,51,.1);border-radius:12px;padding:8px;text-align:center;margin-bottom:12px;color:#FFD700;font-size:14px;font-weight:600}
+.mission-item{display:flex;justify-content:space-between;align-items:center;padding:10px 6px;border-bottom:1px solid rgba(255,255,255,.06);font-size:14px;color:#ddd}
+.mission-item:last-child{border-bottom:none}
+.mission-item .mission-info{flex:1}
+.mission-item .mission-name{font-weight:600;color:#fff}
+.mission-item .mission-progress{font-size:12px;color:#888}
+.mission-item .mission-reward{color:#FFD700;font-weight:700;font-size:13px}
+.mission-item .mission-status{min-width:50px;text-align:right;font-weight:700}
+.mission-item .mission-status.done{color:#7cfc00}
+.mission-item .mission-status.pending{color:#aaa}
+#missions-close-btn{display:block;margin:16px auto 0;background:linear-gradient(135deg,#ffaa33,#cc8800);color:#000;border:none;border-radius:12px;padding:10px 36px;font-size:15px;font-weight:800;cursor:pointer;letter-spacing:.5px;box-shadow:0 4px 16px rgba(255,170,51,.4)}
+#missions-close-btn:active{transform:scale(.94)}
+#missions-refresh-btn{display:block;margin:8px auto 0;background:#16a34a;color:#fff;border:none;border-radius:12px;padding:10px 36px;font-size:15px;font-weight:800;cursor:pointer;letter-spacing:.5px;box-shadow:0 4px 16px rgba(22,163,74,.4)}
+#missions-refresh-btn:active{transform:scale(.94)}
 
 /* ----- Booster Purchase Modal ----- */
 #booster-modal{position:absolute;inset:0;z-index:650;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,.88);padding:20px}
@@ -153,6 +170,10 @@ body.paused *,body.paused *::before,body.paused *::after{animation-play-state:pa
 #booster-ad-btn{background:#16a34a;color:#fff;}
 #booster-coin-btn{background:#b8860b;color:#FFD700;}
 #booster-close-btn{background:#444;color:#fff;margin-top:8px;}
+
+/* ----- Near Miss Warning (Red Glow) ----- */
+#danger-overlay{position:absolute;top:0;left:0;right:0;bottom:0;pointer-events:none;z-index:5;background:rgba(255,0,0,0);transition:background 0.2s ease;border:4px solid rgba(255,0,0,0);box-shadow:inset 0 0 0 0 rgba(255,0,0,0);}
+#danger-overlay.active{border-color:rgba(255,0,0,.4);box-shadow:inset 0 0 40px rgba(255,0,0,.3);background:rgba(255,0,0,0.05);}
 </style>
 </head>
 <body>
@@ -165,6 +186,7 @@ body.paused *,body.paused *::before,body.paused *::after{animation-play-state:pa
     <div id="score-box"><div id="score-lbl">SCORE</div><div id="score-val">0</div></div>
     <div id="highscore-box"><div id="highscore-lbl">BEST</div><div id="highscore-val">0</div></div>
     <div style="display:flex;gap:6px">
+      <div class="hbtn" id="btn-missions">📋</div>
       <div class="hbtn" id="btn-shop">🛒</div>
       <div class="hbtn" id="btn-restart">🔄</div>
       <div class="hbtn" id="btn-sound">🔊</div>
@@ -185,6 +207,7 @@ body.paused *,body.paused *::before,body.paused *::after{animation-play-state:pa
   <canvas id="three-canvas"></canvas>
   <div id="fx-layer"></div>
   <div id="overlay"></div>
+  <div id="danger-overlay"></div>
 </div>
 <div id="boosters">
   <div class="boost-btn locked" id="boost-bomb">
@@ -207,9 +230,12 @@ body.paused *,body.paused *::before,body.paused *::after{animation-play-state:pa
 </div>
 
 <div id="lost-modal">
-  <h1>LOST</h1>
+  <h1>GAME OVER</h1>
   <div class="lost-score" id="lost-final-score">Score: 0</div>
-  <button id="lost-newgame-btn">NEW GAME</button>
+  <div class="lost-actions">
+    <button class="ad-btn" id="lost-double-btn">🎬 Watch Ad → Double Coins</button>
+    <button id="lost-newgame-btn">NEW GAME</button>
+  </div>
 </div>
 
 <div id="revive-modal">
@@ -247,12 +273,14 @@ body.paused *,body.paused *::before,body.paused *::after{animation-play-state:pa
   </div>
 </div>
 
-<div id="daily-modal">
-  <div id="daily-box">
-    <h2>🎁 DAILY REWARD</h2>
-    <p>Claim your daily bonus!</p>
-    <div class="daily-reward">🪙 50 Coins + 💣 1 Bomb</div>
-    <button id="daily-claim-btn">CLAIM</button>
+<div id="missions-modal">
+  <div id="missions-box">
+    <h2>📋 DAILY MISSIONS</h2>
+    <div class="missions-subtitle">Complete missions to earn rewards</div>
+    <div class="missions-streak" id="missions-streak-display">🔥 Streak: 0x</div>
+    <div id="missions-list"></div>
+    <button id="missions-close-btn">CLOSE</button>
+    <button id="missions-refresh-btn" style="display:none;">🎬 Watch Ad for New Missions</button>
   </div>
 </div>
 
@@ -396,7 +424,10 @@ const LS_LEVEL='mergeCubes3D_playerLevel';
 const LS_XP='mergeCubes3D_playerXP';
 const LS_COINS='mergeCubes3D_coins';
 const GIFT_DATE_KEY='mergeCubes3D_giftDate';
-const DAILY_REWARD_KEY='mergeCubes3D_dailyReward';
+const DAILY_MISSIONS_KEY='mergeCubes3D_dailyMissions';
+const STREAK_KEY='mergeCubes3D_streak';
+const LAST_PLAY_KEY='mergeCubes3D_lastPlay';
+const FIRST_LAUNCH_KEY='mergeCubes3D_firstLaunch';
 const FREE_BOMB_KEY='mergeCubes3D_freeBomb';
 const FREE_RAINBOW_KEY='mergeCubes3D_freeRainbow';
 
@@ -412,6 +443,199 @@ let upgradeLives = parseInt(store.get(UPGRADE_LIVES)||'0',10);
 let upgradeCoins = parseInt(store.get(UPGRADE_COINS)||'0',10);
 let upgradeBooster = parseInt(store.get(UPGRADE_BOOSTER)||'0',10);
 
+let freeBomb = parseInt(store.get(FREE_BOMB_KEY)||'0',10);
+let freeRainbow = parseInt(store.get(FREE_RAINBOW_KEY)||'0',10);
+
+let firstLaunch = store.get(FIRST_LAUNCH_KEY) !== 'true';
+
+// ---- Daily Missions System ----
+const MISSION_TEMPLATES = [
+  { id: 'first_merge', name: 'Make your first merge', target: 1, reward: 20, rewardType: 'coins' },
+  { id: 'reach_8', name: 'Reach cube 8', target: 1, reward: 1, rewardType: 'bomb' },
+  { id: 'perform_10_merges', name: 'Perform 10 merges', target: 10, reward: 30, rewardType: 'coins' },
+  { id: 'reach_500', name: 'Reach 500 score', target: 500, reward: 50, rewardType: 'coins' },
+  { id: 'survive_30s', name: 'Survive 30 seconds', target: 30, reward: 1, rewardType: 'rainbow' },
+  { id: 'collect_100_coins', name: 'Collect 100 coins', target: 100, reward: 100, rewardType: 'coins' },
+  { id: 'combo_3', name: 'Perform a 3-merge combo', target: 1, reward: 1, rewardType: 'bomb' },
+  { id: 'reach_level_2', name: 'Reach Level 2', target: 1, reward: 50, rewardType: 'coins' },
+  { id: 'play_5_games', name: 'Play 5 games', target: 5, reward: 100, rewardType: 'coins' },
+  { id: 'reach_64', name: 'Reach cube 64', target: 1, reward: 1, rewardType: 'rainbow' },
+];
+
+let dailyMissions = [];
+let streak = 0;
+let lastPlayDate = '';
+
+function loadMissions() {
+  const data = store.get(DAILY_MISSIONS_KEY);
+  if (data) {
+    try { dailyMissions = JSON.parse(data); } catch(e) { dailyMissions = []; }
+  }
+  if (!dailyMissions || dailyMissions.length === 0) {
+    resetMissions();
+  }
+  streak = parseInt(store.get(STREAK_KEY)||'0',10);
+  lastPlayDate = store.get(LAST_PLAY_KEY)||'';
+}
+
+function resetMissions() {
+  dailyMissions = MISSION_TEMPLATES.map(t => ({
+    ...t,
+    progress: 0,
+    done: false,
+  }));
+  store.set(DAILY_MISSIONS_KEY, JSON.stringify(dailyMissions));
+}
+
+function saveMissions() {
+  store.set(DAILY_MISSIONS_KEY, JSON.stringify(dailyMissions));
+  store.set(STREAK_KEY, streak.toString());
+  store.set(LAST_PLAY_KEY, new Date().toISOString().slice(0,10));
+}
+
+function checkDailyReset() {
+  const today = new Date().toISOString().slice(0,10);
+  if (lastPlayDate !== today) {
+    // Check if it's a new day
+    const last = new Date(lastPlayDate);
+    const now = new Date(today);
+    if (lastPlayDate && now > last) {
+      // Streak logic
+      const diffDays = Math.floor((now - last) / (1000 * 60 * 60 * 24));
+      if (diffDays === 1) {
+        streak++;
+      } else if (diffDays > 1) {
+        streak = 0;
+      } else {
+        // Same day, do nothing
+      }
+      // Reset missions if not already done today
+      const missionsDoneToday = dailyMissions.every(m => m.done);
+      if (missionsDoneToday && lastPlayDate !== today) {
+        resetMissions();
+      } else if (lastPlayDate !== today) {
+        // Partial progress, but we keep progress (missions are daily)
+        // Actually, we should reset missions at midnight regardless of completion
+        resetMissions();
+      }
+    }
+    lastPlayDate = today;
+    saveMissions();
+  }
+}
+
+function updateMissionProgress(id, amount) {
+  const mission = dailyMissions.find(m => m.id === id);
+  if (!mission || mission.done) return;
+  mission.progress = Math.min(mission.target, mission.progress + amount);
+  if (mission.progress >= mission.target) {
+    mission.done = true;
+    // Give reward
+    giveMissionReward(mission);
+    // Show toast
+    showToast(`✅ Mission Complete: ${mission.name}! +${mission.reward} ${mission.rewardType}`);
+  }
+  saveMissions();
+}
+
+function giveMissionReward(mission) {
+  const multiplier = 1 + Math.floor(streak / 2) * 0.5; // 0→1, 1→1.5, 2→2, 3→2.5, 4→3
+  let reward = Math.floor(mission.reward * multiplier);
+  if (mission.rewardType === 'coins') {
+    coins += reward;
+    saveProgression();
+    updateCoinsDisplay();
+  } else if (mission.rewardType === 'bomb') {
+    freeBomb += reward;
+    updateBoosterBadges();
+    saveFreeItems();
+  } else if (mission.rewardType === 'rainbow') {
+    freeRainbow += reward;
+    updateBoosterBadges();
+    saveFreeItems();
+  }
+  // Visual feedback
+  floatText(0, trackY+4, 0, `🎁 +${reward} ${mission.rewardType}`, 'gift');
+}
+
+function updateMissionsUI() {
+  const list = document.getElementById('missions-list');
+  if (!list) return;
+  let html = '';
+  dailyMissions.forEach(m => {
+    const status = m.done ? '✅' : `${m.progress}/${m.target}`;
+    const statusClass = m.done ? 'done' : 'pending';
+    const rewardStr = m.rewardType === 'coins' ? `🪙${m.reward}` : m.rewardType === 'bomb' ? '💣' : '🌈';
+    html += `
+      <div class="mission-item">
+        <div class="mission-info">
+          <div class="mission-name">${m.name}</div>
+          <div class="mission-progress">Progress: ${m.progress}/${m.target}</div>
+        </div>
+        <div class="mission-reward">${rewardStr}</div>
+        <div class="mission-status ${statusClass}">${status}</div>
+      </div>
+    `;
+  });
+  list.innerHTML = html;
+  document.getElementById('missions-streak-display').textContent = `🔥 Streak: ${streak}x`;
+
+  // Show refresh button if all missions are done
+  const allDone = dailyMissions.every(m => m.done);
+  const refreshBtn = document.getElementById('missions-refresh-btn');
+  if (allDone) {
+    refreshBtn.style.display = 'block';
+  } else {
+    refreshBtn.style.display = 'none';
+  }
+}
+
+function openMissionsModal() {
+  checkDailyReset();
+  document.getElementById('missions-modal').classList.add('active');
+  updateMissionsUI();
+}
+
+function closeMissionsModal() {
+  document.getElementById('missions-modal').classList.remove('active');
+}
+
+document.getElementById('btn-missions').addEventListener('click', openMissionsModal);
+document.getElementById('missions-close-btn').addEventListener('click', closeMissionsModal);
+document.getElementById('missions-modal').addEventListener('click', (e) => {
+  if (e.target === document.getElementById('missions-modal')) closeMissionsModal();
+});
+
+document.getElementById('missions-refresh-btn').addEventListener('click', () => {
+  // Only works if all missions are done
+  if (dailyMissions.every(m => m.done)) {
+    if (YT && YT.game && typeof YT.game.showRewardedAd === 'function') {
+      YT.game.showRewardedAd().then(() => {
+        resetMissions();
+        updateMissionsUI();
+        showToast('🎬 New missions unlocked!');
+      }).catch(() => {
+        showToast('Ad failed or skipped.');
+      });
+    } else {
+      resetMissions();
+      updateMissionsUI();
+      showToast('🎬 New missions unlocked!');
+    }
+  }
+});
+// -------------------------------------------------------------
+
+/* ---------- First Launch Gift ---------- */
+if (firstLaunch) {
+  freeBomb += 1;
+  freeRainbow += 1;
+  store.set(FIRST_LAUNCH_KEY, 'true');
+  saveFreeItems();
+  updateBoosterBadges();
+}
+// -------------------------------------------------------------
+
 function xpForLevel(lv){return Math.floor(1000*Math.pow(lv,2));}
 function saveProgression(){
   store.set(LS_LEVEL,playerLevel);
@@ -424,6 +648,11 @@ function saveProgression(){
   store.set(UPGRADE_LIVES, upgradeLives);
   store.set(UPGRADE_COINS, upgradeCoins);
   store.set(UPGRADE_BOOSTER, upgradeBooster);
+}
+
+function saveFreeItems(){
+  store.set(FREE_BOMB_KEY,freeBomb.toString());
+  store.set(FREE_RAINBOW_KEY,freeRainbow.toString());
 }
 
 let roundScoreGoal=5000,roundCubeGoal=16,roundScoreMet=false,roundCubeMet=false,roundCoins=0;
@@ -565,12 +794,12 @@ const newRowMat=new CANNON.Material('newRow');
 const wallPhysMat=new CANNON.Material('wall');
 
 world.addContactMaterial(new CANNON.ContactMaterial(bouncyCubeMat,cannonFloorMat,{friction:.5,restitution:0.15}));
-world.addContactMaterial(new CANNON.ContactMaterial(bouncyCubeMat,bouncyCubeMat,{friction:.3,restitution:0.1})); // Αυξήθηκε το restitution για χοροπήδημα
+world.addContactMaterial(new CANNON.ContactMaterial(bouncyCubeMat,bouncyCubeMat,{friction:.3,restitution:0.1}));
 world.addContactMaterial(new CANNON.ContactMaterial(bouncyCubeMat,wallPhysMat,{friction:.2,restitution:0.1}));
 world.addContactMaterial(new CANNON.ContactMaterial(bouncyCubeMat,cubeMat,{friction:.3,restitution:0.25}));
 world.addContactMaterial(new CANNON.ContactMaterial(bouncyCubeMat,newRowMat,{friction:.3,restitution:0.0}));
 world.addContactMaterial(new CANNON.ContactMaterial(cubeMat,cannonFloorMat,{friction:.6,restitution:0.05}));
-world.addContactMaterial(new CANNON.ContactMaterial(cubeMat,cubeMat,{friction:.4,restitution:0.3})); // Αυξήθηκε το restitution για χοροπήδημα
+world.addContactMaterial(new CANNON.ContactMaterial(cubeMat,cubeMat,{friction:.4,restitution:0.3}));
 world.addContactMaterial(new CANNON.ContactMaterial(cubeMat,wallPhysMat,{friction:.3,restitution:0.15}));
 world.addContactMaterial(new CANNON.ContactMaterial(newRowMat,cannonFloorMat,{friction:.95,restitution:0.0}));
 world.addContactMaterial(new CANNON.ContactMaterial(newRowMat,wallPhysMat,{friction:.8,restitution:0.0}));
@@ -587,19 +816,14 @@ world.addEventListener('beginContact',(e)=>{
   const tc=cubes.find(c=>c.body===targetBody&&!c.isShot&&!c.isNewRow);
   if(!tc) return;
   
-  // --- ΝΕΑ ΦΥΣΙΚΗ: ΣΠΡΩΞΙΜΟ ΚΑΙ ΧΟΡΟΠΗΔΗΜΑ ---
-  // Ο κύβος που ρίχνουμε σπρώχνει τον άλλο κύβο, χωρίς να σταματάει ο ίδιος.
-  // Η ώθηση είναι προς τα εμπρός, πλάγια και πάνω (για χοροπήδημα).
   const shotVel = shotCube.body.velocity;
   const speed = Math.sqrt(shotVel.x*shotVel.x + shotVel.z*shotVel.z);
   const angle = Math.random() * Math.PI * 2;
   const pushX = Math.cos(angle) * 3 + shotVel.x * 0.3;
-  const pushY = Math.abs(shotVel.y) * 0.5 + 2.5; // Πάνω
+  const pushY = Math.abs(shotVel.y) * 0.5 + 2.5;
   const pushZ = Math.sin(angle) * 3 + shotVel.z * 0.3 + 2.0;
   
   tc.body.applyImpulse(new CANNON.Vec3(pushX, pushY, pushZ), new CANNON.Vec3(0,0,0));
-  
-  // Ο shotCube συνεχίζει την πορεία του (δεν τον αλλάζουμε)
 });
 
 const floorBody=new CANNON.Body({mass:0,shape:new CANNON.Plane(),material:cannonFloorMat});
@@ -810,6 +1034,9 @@ let surviveSeconds = 0;
 let surviveStartTime = 0;
 let survivalGoalMet = false;
 let firstTimeAt16 = false;
+let totalMerges = 0;
+let totalGamesPlayed = 0;
+let roundCoinsAccumulated = 0;
 
 function tryMerge(a,b){
   const nv=nextVal(a.value);
@@ -842,6 +1069,7 @@ function tryMerge(a,b){
     addXP(50);
     floatText(px-trackY, py-trackY+2, pz, '✨ FIRST MERGE! +50 XP', 'gift');
     audio.gift();
+    updateMissionProgress('first_merge', 1);
   }
 
   if(nv === 8 && !giftAt8Done){
@@ -850,6 +1078,7 @@ function tryMerge(a,b){
     updateBoosterBadges();
     floatText(px-trackY, py-trackY+2, pz, '🎁 +1 BOMB!', 'gift');
     audio.gift();
+    updateMissionProgress('reach_8', 1);
   }
 
   if(nv >= 16 && !firstTimeAt16){
@@ -857,6 +1086,11 @@ function tryMerge(a,b){
     document.getElementById('btn-rank').classList.add('glow');
   }
 
+  if(nv === 64) {
+    updateMissionProgress('reach_64', 1);
+  }
+
+  // Combo
   const now = performance.now();
   if(now - lastMergeTime < 3000){
     comboStreak++;
@@ -869,12 +1103,20 @@ function tryMerge(a,b){
     bonusXP = Math.floor(nv * 0.5);
     floatText(px-trackY, py-trackY+2, pz, '🔥 COMBO x2 XP!', 'points-big');
     audio.milestone();
+    updateMissionProgress('combo_3', 1);
   }
+
+  // Merge count
+  totalMerges++;
+  updateMissionProgress('perform_10_merges', 1);
 
   const pts = nv;
   addScore(pts);
   addXP(pts + bonusXP);
-  addCoins(Math.max(1, Math.floor(nv/10)));
+  const coinReward = Math.max(1, Math.floor(nv/10));
+  addCoins(coinReward);
+  roundCoinsAccumulated += coinReward;
+
   shakeAmt=Math.min(.65,.1+Math.log2(nv)*.04);
   const lt=nv>=64?'points-mega':nv>=16?'points-big':'points';
   floatText(px-trackY,py-trackY+.6,pz,`+${pts}${bonusXP > 0 ? ' (+'+bonusXP+' XP)' : ''}`,lt);
@@ -905,6 +1147,17 @@ function sweepMerges(){
 
 function addScore(p){
   score+=p;saveHighScoreIfNeeded(score);updateRankScoreDisplay(score);checkScoreGoal();
+  updateMissionProgress('reach_500', score);
+}
+
+function addCoins(amount){
+  if(!gameOn)return;
+  const boost = 1 + upgradeCoins;
+  const finalAmount = Math.floor(amount * boost);
+  roundCoinsAccumulated += finalAmount;
+  coins += finalAmount;
+  saveProgression();updateCoinsDisplay();
+  updateMissionProgress('collect_100_coins', finalAmount);
 }
 
 function clearSpawnZone(){
@@ -1026,38 +1279,19 @@ let rampBody=null,rampMesh=null,rampState='idle';
 let targetVal=4;
 let shooterGlow=null;
 let aimLine=null;
-let freeBomb=0,freeRainbow=0;
 
 const BOMB_COST=200;
 const RAINBOW_COST=300;
-const BOOSTER_BUY_COST=100; // Τιμή αγοράς με νομίσματα
+const BOOSTER_BUY_COST=100;
 
 let extraLives = 0;
 let reviveCount = 0;
-const MAX_REVIVES = 2; // 2 ευκαιρίες, 3η φορά χάνει
+const MAX_REVIVES = 2;
 let badCubeToRemove = null;
 
 let gentleShield = 3;
 let tutorialShots = 0;
 let tutorialActive = true;
-
-function applyDailyGift(){
-  const today=new Date().toISOString().slice(0,10);
-  const lastDate=store.get(GIFT_DATE_KEY);
-  if(lastDate!==today){
-    freeBomb=2;freeRainbow=2;
-    store.set(GIFT_DATE_KEY,today);
-    store.set(FREE_BOMB_KEY,'2');
-    store.set(FREE_RAINBOW_KEY,'2');
-  } else {
-    freeBomb=parseInt(store.get(FREE_BOMB_KEY)||'0',10);
-    freeRainbow=parseInt(store.get(FREE_RAINBOW_KEY)||'0',10);
-  }
-}
-function saveFreeItems(){
-  store.set(FREE_BOMB_KEY,freeBomb.toString());
-  store.set(FREE_RAINBOW_KEY,freeRainbow.toString());
-}
 
 function updateBoosterBadges(){
   const bb=document.getElementById('badge-bomb'),rb=document.getElementById('badge-rainbow');
@@ -1077,14 +1311,7 @@ function addXP(amount){
   playerXP+=amount;
   while(playerXP>=xpForLevel(playerLevel)){playerXP-=xpForLevel(playerLevel);playerLevel++;floatText(0,trackY+5,0,`⭐ LEVEL UP: ${playerLevel}! ⭐`,'milestone');audio.milestone();}
   refreshAllProgressionUI();saveProgression();
-}
-function addCoins(amount){
-  if(!gameOn)return;
-  const boost = 1 + upgradeCoins;
-  const finalAmount = Math.floor(amount * boost);
-  roundCoins += finalAmount;
-  coins += finalAmount;
-  saveProgression();updateCoinsDisplay();
+  updateMissionProgress('reach_level_2', playerLevel >= 2 ? 1 : 0);
 }
 function checkScoreGoal(){if(!roundScoreMet&&score>=roundScoreGoal){roundScoreMet=true;floatText(0,trackY+5,0,'🎯 SCORE GOAL MET!','gift');updateGoalsUI();}}
 function checkCubeGoal(val){if(!roundCubeMet&&val>=roundCubeGoal){roundCubeMet=true;floatText(0,trackY+4.5,0,'🎯 CUBE GOAL MET!','gift');updateGoalsUI();}}
@@ -1093,9 +1320,35 @@ function showLostModal(){
   document.getElementById('lost-final-score').textContent = 'Score: ' + score.toLocaleString();
   document.getElementById('lost-modal').classList.add('active');
 }
+
 document.getElementById('lost-newgame-btn').addEventListener('click', ()=>{
   document.getElementById('lost-modal').classList.remove('active');
   startGame();
+});
+
+document.getElementById('lost-double-btn').addEventListener('click', ()=>{
+  if (YT && YT.game && typeof YT.game.showRewardedAd === 'function') {
+    YT.game.showRewardedAd().then(() => {
+      const bonus = roundCoinsAccumulated;
+      coins += bonus;
+      saveProgression();
+      updateCoinsDisplay();
+      document.getElementById('lost-modal').classList.remove('active');
+      showToast(`🎬 Double coins! +${bonus} coins`);
+      startGame();
+    }).catch(() => {
+      document.getElementById('lost-modal').classList.remove('active');
+      startGame();
+    });
+  } else {
+    const bonus = roundCoinsAccumulated;
+    coins += bonus;
+    saveProgression();
+    updateCoinsDisplay();
+    document.getElementById('lost-modal').classList.remove('active');
+    showToast(`🎬 Double coins! +${bonus} coins`);
+    startGame();
+  }
 });
 
 function buildOverlay(htmlContent){
@@ -1114,97 +1367,6 @@ function showInitialOverlay(){
   document.getElementById('startBtn').addEventListener('click',startGame);
 }
 
-/* ------------------ ΣΥΣΤΗΜΑ DAILY REWARDS ------------------ */
-function checkDailyReward() {
-  const today = new Date().toISOString().slice(0,10);
-  const lastClaim = store.get(DAILY_REWARD_KEY);
-  if (lastClaim !== today) {
-    // Εμφάνιση modal
-    document.getElementById('daily-modal').classList.add('active');
-  }
-}
-document.getElementById('daily-claim-btn').addEventListener('click', ()=>{
-  const today = new Date().toISOString().slice(0,10);
-  store.set(DAILY_REWARD_KEY, today);
-  // Δώρο: 50 coins + 1 bomb
-  coins += 50;
-  freeBomb += 1;
-  saveProgression();
-  updateCoinsDisplay();
-  updateBoosterBadges();
-  document.getElementById('daily-modal').classList.remove('active');
-  showToast('🎁 Daily reward claimed! +50 coins, +1 bomb');
-});
-
-/* ------------------ ΣΥΣΤΗΜΑ BOOSTER PURCHASE ------------------ */
-let pendingBoosterType = null; // 'bomb' or 'rainbow'
-
-function openBoosterModal(type) {
-  pendingBoosterType = type;
-  const title = document.getElementById('booster-title');
-  const desc = document.getElementById('booster-desc');
-  if (type === 'bomb') {
-    title.textContent = '💣 Get Bomb';
-    desc.textContent = 'Watch an ad or spend 100 coins to use a Bomb.';
-  } else {
-    title.textContent = '🌈 Get Rainbow';
-    desc.textContent = 'Watch an ad or spend 100 coins to use a Rainbow.';
-  }
-  document.getElementById('booster-modal').classList.add('active');
-}
-
-document.getElementById('booster-ad-btn').addEventListener('click', ()=>{
-  document.getElementById('booster-modal').classList.remove('active');
-  if (pendingBoosterType === 'bomb') {
-    if (YT && YT.game && typeof YT.game.showRewardedAd === 'function') {
-      YT.game.showRewardedAd().then(() => {
-        useBomb();
-      }).catch(() => {
-        showToast('Ad failed or skipped.');
-      });
-    } else {
-      useBomb();
-    }
-  } else if (pendingBoosterType === 'rainbow') {
-    if (YT && YT.game && typeof YT.game.showRewardedAd === 'function') {
-      YT.game.showRewardedAd().then(() => {
-        useRainbow();
-      }).catch(() => {
-        showToast('Ad failed or skipped.');
-      });
-    } else {
-      useRainbow();
-    }
-  }
-  pendingBoosterType = null;
-});
-
-document.getElementById('booster-coin-btn').addEventListener('click', ()=>{
-  if (coins < BOOSTER_BUY_COST) {
-    showToast('🪙 Not enough coins! Need 100.');
-    document.getElementById('booster-modal').classList.remove('active');
-    pendingBoosterType = null;
-    return;
-  }
-  coins -= BOOSTER_BUY_COST;
-  saveProgression();
-  updateCoinsDisplay();
-  document.getElementById('booster-modal').classList.remove('active');
-  if (pendingBoosterType === 'bomb') {
-    useBomb();
-  } else if (pendingBoosterType === 'rainbow') {
-    useRainbow();
-  }
-  pendingBoosterType = null;
-});
-
-document.getElementById('booster-close-btn').addEventListener('click', ()=>{
-  document.getElementById('booster-modal').classList.remove('active');
-  pendingBoosterType = null;
-});
-/* --------------------------------------------------------- */
-
-/* ------------------ ΣΥΣΤΗΜΑ REVIVE (2 ευκαιρίες) ------------------ */
 function handleDeath(crossedCube) {
   if (gentleShield > 0) {
     gentleShield--;
@@ -1221,7 +1383,6 @@ function handleDeath(crossedCube) {
     floatText(0, trackY+2, DANGER_Z-2, '💔 Extra Life Used!', 'points');
     return;
   }
-  // Revive system: 2 chances
   if (reviveCount < MAX_REVIVES) {
     badCubeToRemove = crossedCube;
     paused = true;
@@ -1235,6 +1396,10 @@ function handleDeath(crossedCube) {
 function reviveGame() {
   document.getElementById('revive-modal').classList.remove('active');
   if (badCubeToRemove) {
+    // Remove the bad cube with an explosion effect
+    const pos = badCubeToRemove.body.position;
+    spawnShards(pos.x-trackY, pos.y-trackY, pos.z, 0xff5500, 15);
+    spawnParticles(pos.x-trackY, pos.y-trackY, pos.z, 0xff8800, 20, 6);
     removeCube(badCubeToRemove);
     badCubeToRemove = null;
   }
@@ -1264,7 +1429,6 @@ document.getElementById('revive-skip-btn').addEventListener('click', () => {
   document.getElementById('revive-modal').classList.remove('active');
   triggerGameOver();
 });
-/* ------------------------------------------------------------- */
 
 function triggerGameOver(){
   gameOn=false;gameStarted=false;
@@ -1277,7 +1441,7 @@ function triggerGameOver(){
   let bonus=0;
   if(roundScoreMet)bonus+=playerLevel*50;
   if(roundCubeMet)bonus+=playerLevel*100;
-  if(bonus>0){coins+=bonus;roundCoins+=bonus;saveProgression();}
+  if(bonus>0){coins+=bonus;roundCoinsAccumulated+=bonus;saveProgression();}
 
   if (_ytReady && YT && YT.game && typeof YT.game.sendScore === 'function') {
     try { YT.game.sendScore(Math.max(0, Math.round(score))); } catch(e) {}
@@ -1463,6 +1627,23 @@ function update(){
       camera.position.y = 32 + (Math.random()-.5)*shakeAmt;
       shakeAmt *= .86;
       if(shakeAmt<.005){shakeAmt=0; camera.position.set(0,32,28); camera.lookAt(0,trackY,1);}
+    }
+
+    // --- NEAR MISS WARNING ---
+    let nearMiss = false;
+    for(const c of cubes){
+      if(c.isShot || c.isNewRow) continue;
+      if(c.body.position.z > DANGER_Z - 2.0 && c.body.position.z < DANGER_Z + 0.5) {
+        nearMiss = true;
+        break;
+      }
+    }
+    const dangerOverlay = document.getElementById('danger-overlay');
+    if (nearMiss && gameStarted) {
+      dangerOverlay.classList.add('active');
+      shakeAmt = Math.max(shakeAmt, 0.1);
+    } else {
+      dangerOverlay.classList.remove('active');
     }
 
     if(gameStarted && rampState==='idle'){
@@ -1710,13 +1891,13 @@ document.getElementById('boost-bomb').addEventListener('click',()=>{
   if(!gameOn||paused)return;
   if(freeBomb>0){freeBomb--;updateBoosterBadges();useBomb();}
   else if(coins>=BOMB_COST){coins-=BOMB_COST;saveProgression();updateCoinsDisplay();updateBoosterBadges();useBomb();}
-  else { openBoosterModal('bomb'); } // Προσφορά Ad ή 100 coins
+  else { openBoosterModal('bomb'); }
 });
 document.getElementById('boost-rainbow').addEventListener('click',()=>{
   if(!gameOn||paused)return;
   if(freeRainbow>0){freeRainbow--;updateBoosterBadges();useRainbow();}
   else if(coins>=RAINBOW_COST){coins-=RAINBOW_COST;saveProgression();updateCoinsDisplay();updateBoosterBadges();useRainbow();}
-  else { openBoosterModal('rainbow'); } // Προσφορά Ad ή 100 coins
+  else { openBoosterModal('rainbow'); }
 });
 document.getElementById('btn-newgames').addEventListener('click',()=>{
   if(_sdkPaused)return;
@@ -1766,10 +1947,7 @@ function startGame(){
   roundScoreGoal=playerLevel*2500;
   const cubeIdx=Math.min(SEQ.length-1,3+Math.floor(playerLevel/3));
   roundCubeGoal=SEQ[cubeIdx];
-  roundScoreMet=false;roundCubeMet=false;roundCoins=0;
-  
-  // Καθημερινό δώρο (2+2) – χωρίς τα +1 δώρα έναρξης
-  applyDailyGift();
+  roundScoreMet=false;roundCubeMet=false;roundCoinsAccumulated=0;
   
   updateBoosterBadges();refreshAllProgressionUI();updateRankScoreDisplay(0);updateTarget();
   document.getElementById('highscore-val').textContent=highScore.toLocaleString();
@@ -1777,9 +1955,8 @@ function startGame(){
   curVal=rndStart();nxtVal=rndStart();aimX=0;gameOn=true;
   makeShooter();
 
-  // Εφαρμογή upgrades
   extraLives = upgradeLives;
-  reviveCount = 0; // Επαναφορά των revives
+  reviveCount = 0;
   badCubeToRemove = null;
   gentleShield = 3;
   tutorialShots = 0;
@@ -1809,13 +1986,10 @@ function startGame(){
 
   drawTargetHUD(); audio.init();
   
-  // Έλεγχος Daily Reward
-  checkDailyReward();
-
   if(tutorialActive){
-    floatText(0, trackY+0.5, SHOOTER_Z-1, 'Σημάδεψε και άφησε!', 'points');
+    floatText(0, trackY+0.5, SHOOTER_Z-1, 'Aim and release!', 'points');
     setTimeout(() => {
-        if(gameOn) floatText(0, trackY+0.5, DANGER_Z-2, 'Μην περάσεις τη γραμμή!', 'points');
+        if(gameOn) floatText(0, trackY+0.5, DANGER_Z-2, 'Don\'t cross the line!', 'points');
     }, 1500);
   }
 }
@@ -1881,6 +2055,77 @@ function closeShopModal() { document.getElementById('shop-modal').classList.remo
 document.getElementById('btn-shop').addEventListener('click', openShopModal);
 document.getElementById('shop-close-btn').addEventListener('click', closeShopModal);
 document.getElementById('shop-modal').addEventListener('click', (e) => { if (e.target === document.getElementById('shop-modal')) closeShopModal(); });
+
+/* ================= BOOSTER PURCHASE ================= */
+let pendingBoosterType = null;
+
+function openBoosterModal(type) {
+  pendingBoosterType = type;
+  const title = document.getElementById('booster-title');
+  const desc = document.getElementById('booster-desc');
+  if (type === 'bomb') {
+    title.textContent = '💣 Get Bomb';
+    desc.textContent = 'Watch an ad or spend 100 coins to use a Bomb.';
+  } else {
+    title.textContent = '🌈 Get Rainbow';
+    desc.textContent = 'Watch an ad or spend 100 coins to use a Rainbow.';
+  }
+  document.getElementById('booster-modal').classList.add('active');
+}
+
+document.getElementById('booster-ad-btn').addEventListener('click', ()=>{
+  document.getElementById('booster-modal').classList.remove('active');
+  if (pendingBoosterType === 'bomb') {
+    if (YT && YT.game && typeof YT.game.showRewardedAd === 'function') {
+      YT.game.showRewardedAd().then(() => {
+        useBomb();
+      }).catch(() => {
+        showToast('Ad failed or skipped.');
+      });
+    } else {
+      useBomb();
+    }
+  } else if (pendingBoosterType === 'rainbow') {
+    if (YT && YT.game && typeof YT.game.showRewardedAd === 'function') {
+      YT.game.showRewardedAd().then(() => {
+        useRainbow();
+      }).catch(() => {
+        showToast('Ad failed or skipped.');
+      });
+    } else {
+      useRainbow();
+    }
+  }
+  pendingBoosterType = null;
+});
+
+document.getElementById('booster-coin-btn').addEventListener('click', ()=>{
+  if (coins < BOOSTER_BUY_COST) {
+    showToast('🪙 Not enough coins! Need 100.');
+    document.getElementById('booster-modal').classList.remove('active');
+    pendingBoosterType = null;
+    return;
+  }
+  coins -= BOOSTER_BUY_COST;
+  saveProgression();
+  updateCoinsDisplay();
+  document.getElementById('booster-modal').classList.remove('active');
+  if (pendingBoosterType === 'bomb') {
+    useBomb();
+  } else if (pendingBoosterType === 'rainbow') {
+    useRainbow();
+  }
+  pendingBoosterType = null;
+});
+
+document.getElementById('booster-close-btn').addEventListener('click', ()=>{
+  document.getElementById('booster-modal').classList.remove('active');
+  pendingBoosterType = null;
+});
+
+// Load missions on startup
+loadMissions();
+checkDailyReset();
 
 refreshAllProgressionUI();
 showInitialOverlay();
