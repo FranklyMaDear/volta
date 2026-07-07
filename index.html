@@ -122,6 +122,15 @@ body.paused *,body.paused *::before,body.paused *::after{animation-play-state:pa
 .shop-item .shop-btn.maxed{background:#16a34a;color:#000}
 #shop-close-btn{display:block;margin:16px auto 0;background:linear-gradient(135deg,#7b3fcc,#a855f7);color:#fff;border:none;border-radius:12px;padding:10px 36px;font-size:15px;font-weight:800;cursor:pointer;letter-spacing:.5px;box-shadow:0 4px 16px rgba(168,85,247,.4)}
 #shop-close-btn:active{transform:scale(.94)}
+
+/* ----- Revive Modal (NEW) ----- */
+#revive-modal{position:absolute;inset:0;z-index:450;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,.88);flex-direction:column;gap:20px}
+#revive-modal.active{display:flex}
+#revive-modal h1{font-size:48px;color:#ffaa33;text-shadow:0 0 30px orange;margin:0}
+#revive-modal .revive-score{font-size:18px;color:#ddd}
+#revive-modal .revive-actions{display:flex;gap:16px;flex-wrap:wrap;justify-content:center}
+#revive-ad-btn{background:#16a34a;color:#fff;border:none;padding:12px 30px;border-radius:16px;font-size:18px;font-weight:800;cursor:pointer;box-shadow:0 0 20px rgba(22,163,74,.6)}
+#revive-skip-btn{background:#444;color:#fff;border:none;padding:12px 30px;border-radius:16px;font-size:18px;font-weight:800;cursor:pointer}
 </style>
 </head>
 <body>
@@ -180,6 +189,17 @@ body.paused *,body.paused *::before,body.paused *::after{animation-play-state:pa
   <h1>LOST</h1>
   <div class="lost-score" id="lost-final-score">Score: 0</div>
   <button id="lost-newgame-btn">NEW GAME</button>
+</div>
+
+<!-- REVIVE MODAL (NEW) -->
+<div id="revive-modal">
+  <h1>💀 GAME OVER?</h1>
+  <div class="revive-score" id="revive-current-score">Score: 0</div>
+  <p style="color:#ccc;text-align:center;max-width:300px;">Don't give up! Watch a short ad to continue your run.</p>
+  <div class="revive-actions">
+    <button id="revive-ad-btn">🎬 WATCH AD & CONTINUE</button>
+    <button id="revive-skip-btn">✖ QUIT</button>
+  </div>
 </div>
 
 <!-- RANK MODAL -->
@@ -930,6 +950,9 @@ const RAINBOW_COST=300;
 
 // ---- Extra lives (from upgrade) ----
 let extraLives = 0;
+// ---- Revive system ----
+let reviveAvailable = true;
+let badCubeToRemove = null;
 
 function applyDailyGift(){
   const today=new Date().toISOString().slice(0,10);
@@ -970,7 +993,8 @@ function addXP(amount){
 }
 function addCoins(amount){
   if(!gameOn)return;
-  const boost = 1 + upgradeCoins; // 0→1, 1→2, 2→3
+  // Apply Coin Boost upgrade
+  const boost = 1 + upgradeCoins; // Lv.0->1, Lv.1->2, Lv.2->3
   const finalAmount = Math.floor(amount * boost);
   roundCoins += finalAmount;
   coins += finalAmount;
@@ -1003,6 +1027,71 @@ function showInitialOverlay(){
   `);
   document.getElementById('startBtn').addEventListener('click',startGame);
 }
+
+// ================ REVIVE SYSTEM =================
+function handleDeath(crossedCube) {
+  // First, check Extra Lives upgrade
+  if (extraLives > 0) {
+    extraLives--;
+    removeCube(crossedCube);
+    floatText(0, trackY+2, DANGER_Z-2, '💔 Extra Life Used!', 'points');
+    return; // Continue game
+  }
+  // Then, check if a revive is available
+  if (reviveAvailable) {
+    badCubeToRemove = crossedCube;
+    // Pause the game logic
+    paused = true;
+    document.getElementById('revive-current-score').textContent = 'Score: ' + score.toLocaleString();
+    document.getElementById('revive-modal').classList.add('active');
+    return;
+  }
+  // Otherwise, trigger hard Game Over
+  triggerGameOver();
+}
+
+function reviveGame() {
+  document.getElementById('revive-modal').classList.remove('active');
+  // Remove the bad cube that crossed
+  if (badCubeToRemove) {
+    removeCube(badCubeToRemove);
+    badCubeToRemove = null;
+  }
+  // Mark revive as used (no second chance in this run)
+  reviveAvailable = false;
+  // Unpause the game
+  paused = false;
+  // Make sure the game is marked as running
+  gameOn = true;
+  // Restore HUD and Boosters
+  document.getElementById('hud').classList.add('active');
+  document.getElementById('boosters').classList.add('active');
+  // Resume audio if needed
+  audio.resume();
+}
+
+document.getElementById('revive-ad-btn').addEventListener('click', () => {
+  if (YT && YT.game && typeof YT.game.showRewardedAd === 'function') {
+    YT.game.showRewardedAd().then(() => {
+      // Ad watched successfully
+      reviveGame();
+    }).catch(() => {
+      // Ad failed or user skipped
+      document.getElementById('revive-modal').classList.remove('active');
+      triggerGameOver();
+    });
+  } else {
+    // Fallback if SDK is not fully implemented
+    reviveGame();
+  }
+});
+
+document.getElementById('revive-skip-btn').addEventListener('click', () => {
+  document.getElementById('revive-modal').classList.remove('active');
+  triggerGameOver();
+});
+
+// ================================================
 
 function triggerGameOver(){
   gameOn=false;gameStarted=false;
@@ -1046,11 +1135,10 @@ function update(){
     }
     if(gameStarted&&rampState==='idle'){
       rowTimer+=dt;
-      // Base interval with upgrade slow
+      // Base interval with UPGRADE SLOW
       let baseInterval = 4.2 - (playerLevel-1) * 0.12;
       baseInterval = Math.max(2.0, baseInterval);
-      // Slow upgrade: reduce by 10% per level (up to 30%)
-      const slowFactor = 1 - upgradeSlow * 0.10;
+      const slowFactor = 1 - upgradeSlow * 0.10; // 0% -> 10% -> 20% -> 30%
       const interval = Math.max(2.0, baseInterval * slowFactor);
       const liveCubes=cubes.filter(c=>!c.isShot).length;
       if(rowTimer>=interval||liveCubes<=2){rowTimer=0;triggerRampSpawn();}
@@ -1206,17 +1294,9 @@ function update(){
         const settled = Math.abs(c.body.velocity.z)<0.8 && Math.abs(c.body.velocity.x)<0.8
                      && c.body.position.y < trackY + CUBE_SZ + 0.5;
         if(c.body.position.z > DANGER_Z && settled){
-          // Use extra life if available
-          if (extraLives > 0) {
-            extraLives--;
-            removeCube(c);
-            floatText(0, trackY+2, DANGER_Z-2, '💔 Extra Life Used!', 'points');
-            // Continue game
-            return;
-          } else {
-            triggerGameOver();
-            return;
-          }
+          // Instead of instant Game Over, handle death (Extra Lives / Revive / Game Over)
+          handleDeath(c);
+          return;
         }
       }
     }
@@ -1275,7 +1355,7 @@ function shooterPool(){
   return pool;
 }
 function rndStart(){
-  // If power upgrade is active, override starting value
+  // Apply Power Start upgrade
   if (upgradePower >= 2) return 8;
   if (upgradePower >= 1) return 4;
   const p=shooterPool();return p[Math.floor(Math.random()*p.length)];
@@ -1519,6 +1599,9 @@ function startGame(){
 
   // Apply upgrades on game start
   extraLives = upgradeLives; // max 3
+  reviveAvailable = true; // reset revive chance
+  badCubeToRemove = null;
+
   // If free booster upgrade is active, give a free bomb at start
   if (upgradeBooster >= 1) {
     freeBomb += 1;
