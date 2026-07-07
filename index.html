@@ -10,6 +10,12 @@
 *{margin:0;padding:0;box-sizing:border-box;touch-action:none;-webkit-tap-highlight-color:transparent}
 html,body{height:100%;width:100%;overflow:hidden;position:fixed;top:0;left:0}
 body{background:#000;font-family:'Segoe UI',system-ui,sans-serif;user-select:none;color:#fff}
+/* Loading Overlay */
+#loading-overlay{position:fixed;inset:0;z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;background:#000;color:#fff;font-size:20px;font-weight:700}
+#loading-overlay.hidden{display:none}
+#loading-overlay .loader{width:50px;height:50px;border:4px solid #333;border-top:4px solid #7d4bdd;border-radius:50%;animation:spin 1s linear infinite;margin-bottom:20px}
+@keyframes spin{0%{transform:rotate(0deg)}100%{transform:rotate(360deg)}}
+
 #gameRoot{position:fixed;top:0;left:0;width:100%;height:100%;overflow:hidden;background:#000;display:flex;flex-direction:column;align-items:center}
 .tap-ripple{position:fixed;width:22px;height:22px;border-radius:50%;background:rgba(160,120,255,.95);box-shadow:0 0 18px rgba(160,120,255,.9),0 0 36px rgba(120,220,255,.6);transform:translate(-50%,-50%) scale(.5);pointer-events:none;z-index:900;animation:tapRipple .9s ease-out forwards}
 @keyframes tapRipple{0%{opacity:.95;transform:translate(-50%,-50%) scale(.5)}100%{opacity:0;transform:translate(-50%,-50%) scale(4)}}
@@ -177,6 +183,12 @@ body.paused *,body.paused *::before,body.paused *::after{animation-play-state:pa
 </style>
 </head>
 <body>
+<!-- Loading Overlay -->
+<div id="loading-overlay">
+  <div class="loader"></div>
+  <div>Loading...</div>
+</div>
+
 <div id="gameRoot">
 <div id="hud">
   <div class="hud-row">
@@ -313,7 +325,7 @@ const YT = (typeof ytgame !== 'undefined' && ytgame !== null) ? ytgame : null;
 let _ytReady = false;
 let _sdkPaused = false;
 
-/* ---------- Cloud-save storage shim ---------- */
+/* ---------- Cloud-save storage shim (ΔΙΟΡΘΩΜΕΝΟ) ---------- */
 const store = (() => {
   let mem = {};
   const useYT = !!(YT && YT.game && typeof YT.game.loadData === 'function');
@@ -336,8 +348,24 @@ const store = (() => {
     set(k, v) { v = String(v); mem[k] = v; try { localStorage.setItem(k, v); } catch (e) {} persist(); },
   };
 })();
-await store.hydrate();
 
+// Προσπαθούμε να φορτώσουμε τα δεδομένα, αλλά ΔΕΝ σταματάμε την εκτέλεση αν αποτύχει.
+// Τοποθετούμε την κλήση σε ένα try/catch μέσα σε μια ασύγχρονη συνάρτηση.
+let dataLoaded = false;
+async function loadGameData() {
+  try {
+    await store.hydrate();
+  } catch (e) {
+    console.warn("Data load failed, using defaults:", e);
+  } finally {
+    dataLoaded = true;
+    // Αφαιρούμε το loading overlay
+    document.getElementById('loading-overlay').classList.add('hidden');
+  }
+}
+loadGameData();
+
+/* ---------- Viewport / layout engine ---------- */
 const gameRoot = document.getElementById('gameRoot');
 let _lastW = 0, _lastH = 0;
 function measureViewport() {
@@ -496,28 +524,18 @@ function saveMissions() {
 function checkDailyReset() {
   const today = new Date().toISOString().slice(0,10);
   if (lastPlayDate !== today) {
-    // Check if it's a new day
     const last = new Date(lastPlayDate);
     const now = new Date(today);
     if (lastPlayDate && now > last) {
-      // Streak logic
       const diffDays = Math.floor((now - last) / (1000 * 60 * 60 * 24));
       if (diffDays === 1) {
         streak++;
       } else if (diffDays > 1) {
         streak = 0;
-      } else {
-        // Same day, do nothing
       }
-      // Reset missions if not already done today
-      const missionsDoneToday = dailyMissions.every(m => m.done);
-      if (missionsDoneToday && lastPlayDate !== today) {
-        resetMissions();
-      } else if (lastPlayDate !== today) {
-        // Partial progress, but we keep progress (missions are daily)
-        // Actually, we should reset missions at midnight regardless of completion
-        resetMissions();
-      }
+    }
+    if (lastPlayDate !== today) {
+      resetMissions();
     }
     lastPlayDate = today;
     saveMissions();
@@ -530,16 +548,14 @@ function updateMissionProgress(id, amount) {
   mission.progress = Math.min(mission.target, mission.progress + amount);
   if (mission.progress >= mission.target) {
     mission.done = true;
-    // Give reward
     giveMissionReward(mission);
-    // Show toast
     showToast(`✅ Mission Complete: ${mission.name}! +${mission.reward} ${mission.rewardType}`);
   }
   saveMissions();
 }
 
 function giveMissionReward(mission) {
-  const multiplier = 1 + Math.floor(streak / 2) * 0.5; // 0→1, 1→1.5, 2→2, 3→2.5, 4→3
+  const multiplier = 1 + Math.floor(streak / 2) * 0.5;
   let reward = Math.floor(mission.reward * multiplier);
   if (mission.rewardType === 'coins') {
     coins += reward;
@@ -554,7 +570,6 @@ function giveMissionReward(mission) {
     updateBoosterBadges();
     saveFreeItems();
   }
-  // Visual feedback
   floatText(0, trackY+4, 0, `🎁 +${reward} ${mission.rewardType}`, 'gift');
 }
 
@@ -580,7 +595,6 @@ function updateMissionsUI() {
   list.innerHTML = html;
   document.getElementById('missions-streak-display').textContent = `🔥 Streak: ${streak}x`;
 
-  // Show refresh button if all missions are done
   const allDone = dailyMissions.every(m => m.done);
   const refreshBtn = document.getElementById('missions-refresh-btn');
   if (allDone) {
@@ -607,7 +621,6 @@ document.getElementById('missions-modal').addEventListener('click', (e) => {
 });
 
 document.getElementById('missions-refresh-btn').addEventListener('click', () => {
-  // Only works if all missions are done
   if (dailyMissions.every(m => m.done)) {
     if (YT && YT.game && typeof YT.game.showRewardedAd === 'function') {
       YT.game.showRewardedAd().then(() => {
@@ -624,9 +637,7 @@ document.getElementById('missions-refresh-btn').addEventListener('click', () => 
     }
   }
 });
-// -------------------------------------------------------------
 
-/* ---------- First Launch Gift ---------- */
 if (firstLaunch) {
   freeBomb += 1;
   freeRainbow += 1;
@@ -634,7 +645,6 @@ if (firstLaunch) {
   saveFreeItems();
   updateBoosterBadges();
 }
-// -------------------------------------------------------------
 
 function xpForLevel(lv){return Math.floor(1000*Math.pow(lv,2));}
 function saveProgression(){
@@ -817,7 +827,6 @@ world.addEventListener('beginContact',(e)=>{
   if(!tc) return;
   
   const shotVel = shotCube.body.velocity;
-  const speed = Math.sqrt(shotVel.x*shotVel.x + shotVel.z*shotVel.z);
   const angle = Math.random() * Math.PI * 2;
   const pushX = Math.cos(angle) * 3 + shotVel.x * 0.3;
   const pushY = Math.abs(shotVel.y) * 0.5 + 2.5;
@@ -1025,7 +1034,6 @@ function useBomb(){
 }
 function useRainbow(){rainbowArmed=true;floatText(aimX,trackY+2,SHOOTER_Z-1,'RAINBOW READY!','points-big');}
 
-/* ─── MERGE ────────────────────────────────────── */
 let firstMergeDone = false;
 let comboStreak = 0;
 let lastMergeTime = 0;
@@ -1090,7 +1098,6 @@ function tryMerge(a,b){
     updateMissionProgress('reach_64', 1);
   }
 
-  // Combo
   const now = performance.now();
   if(now - lastMergeTime < 3000){
     comboStreak++;
@@ -1106,7 +1113,6 @@ function tryMerge(a,b){
     updateMissionProgress('combo_3', 1);
   }
 
-  // Merge count
   totalMerges++;
   updateMissionProgress('perform_10_merges', 1);
 
@@ -1396,7 +1402,6 @@ function handleDeath(crossedCube) {
 function reviveGame() {
   document.getElementById('revive-modal').classList.remove('active');
   if (badCubeToRemove) {
-    // Remove the bad cube with an explosion effect
     const pos = badCubeToRemove.body.position;
     spawnShards(pos.x-trackY, pos.y-trackY, pos.z, 0xff5500, 15);
     spawnParticles(pos.x-trackY, pos.y-trackY, pos.z, 0xff8800, 20, 6);
@@ -1629,7 +1634,6 @@ function update(){
       if(shakeAmt<.005){shakeAmt=0; camera.position.set(0,32,28); camera.lookAt(0,trackY,1);}
     }
 
-    // --- NEAR MISS WARNING ---
     let nearMiss = false;
     for(const c of cubes){
       if(c.isShot || c.isNewRow) continue;
@@ -2220,6 +2224,10 @@ function initSystemHandlers(){
 function waitFrames(n){ return new Promise(resolve=>{ let done=false; function finish(){if(!done){done=true;resolve();}} function step(){if(done)return;if(--n<=0)finish();else requestAnimationFrame(step);} requestAnimationFrame(step); setTimeout(finish,400); }); }
 async function bootSequence(){
   layoutRoot();
+  // Δίνουμε λίγο χρόνο στο viewport να σταθεροποιηθεί
+  await new Promise(r => setTimeout(r, 100));
+  // Καλούμε resize για σίγουρες διαστάσεις
+  if (typeof resize === 'function') resize();
   try{composer.render();}catch(e){}
   await waitFrames(2);
   if(YT&&YT.game&&typeof YT.game.firstFrameReady==='function'){try{YT.game.firstFrameReady();}catch(e){}}
