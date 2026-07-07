@@ -2806,15 +2806,25 @@
         function updateAimLine() {}
         const raycaster = new THREE.Raycaster();
         const mouse = new THREE.Vector2();
-        const groundPlane = new THREE.Plane(new THREE.Vector3(0, 1, 0), -trackY);
+        const targetPlane = new THREE.Plane(new THREE.Vector3(0, 0, 1), -SHOOTER_Z); // Σταθερό επίπεδο
 
-        function getAimX(clientX, clientY) { const rect = canvas.getBoundingClientRect();
+        function getAimX(clientX, clientY) { 
+            const rect = canvas.getBoundingClientRect();
             mouse.x = ((clientX - rect.left) / rect.width) * 2 - 1;
             mouse.y = -((clientY - rect.top) / rect.height) * 2 + 1;
-            raycaster.setFromCamera(mouse, camera); const target = new THREE.Vector3();
-            raycaster.ray.intersectPlane(groundPlane, target); if (target && isFinite(target.x)) { aimX = Math.max(-
-                    X_LIMIT, Math.min(X_LIMIT, target.x)); } if (readyCubeMesh) readyCubeMesh.position.x = aimX; if (
-                shooterGlow) shooterGlow.position.x = aimX; }
+            raycaster.setFromCamera(mouse, camera); 
+            const target = new THREE.Vector3();
+            // Διορθωμένο: Προσπαθούμε να βρούμε το σημείο στο ΣΤΑΘΕΡΟ βάθος SHOOTER_Z αντί για το έδαφος
+            if (raycaster.ray.intersectPlane(targetPlane, target) && isFinite(target.x)) { 
+                aimX = Math.max(-X_LIMIT, Math.min(X_LIMIT, target.x)); 
+            } else {
+                // Αν αποτύχει για οποιονδήποτε λόγο (π.χ. γωνία κάμερας), χρησιμοποιούμε αναλογικότητα οθόνης για να μην κολλήσει
+                aimX = mouse.x * X_LIMIT; 
+            }
+            if (readyCubeMesh) readyCubeMesh.position.x = aimX; 
+            if (shooterGlow) shooterGlow.position.x = aimX; 
+        }
+
         canvas.addEventListener('mousedown', e => { if (!gameOn || paused) return;
             getAimX(e.clientX, e.clientY); });
         canvas.addEventListener('mousemove', e => { if (!gameOn || paused || e.buttons === 0) return;
