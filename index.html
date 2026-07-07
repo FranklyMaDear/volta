@@ -911,19 +911,20 @@
         #shop-close-btn {
             display: block;
             margin: 16px auto 0;
-            background: linear-gradient(135deg, #7b3fcc, #a855f7);
-            color: #fff;
-            border: none;
+            background: #ffffff;
+            color: #1a1a3a;
+            border: 2px solid #ddd;
             border-radius: 12px;
             padding: 12px 40px;
             font-size: 16px;
-            font-weight: 800;
+            font-weight: 900;
             cursor: pointer;
-            letter-spacing: .5px;
-            box-shadow: 0 4px 16px rgba(168, 85, 247, .4)
+            letter-spacing: 1px;
+            box-shadow: 0 4px 20px rgba(255, 255, 255, 0.4);
         }
         #shop-close-btn:active {
-            transform: scale(.94)
+            transform: scale(.94);
+            background: #eeeeee;
         }
         #revive-modal {
             position: absolute;
@@ -1420,8 +1421,8 @@
 
         function measureViewport() { let w = 0,
                 h = 0; try { if (window.visualViewport) { w = window.visualViewport.width || 0;
-                    h = window.visualViewport.height || 0; } if (!w) w = window.innerWidth || 0; if (!h) h =
-                    window.innerHeight || 0; if (!w) w = document.documentElement.clientWidth || 0; if (!h) h = document
+                    h = window.visualViewport.height || 0; } if (!w) w = window.innerWidth || 0; if (!h) h = window
+                    .innerHeight || 0; if (!w) w = document.documentElement.clientWidth || 0; if (!h) h = document
                     .documentElement.clientHeight || 0; } catch (e) {} return { w: Math.round(w), h: Math.round(h) }; }
 
         function layoutRoot() { try { const v = measureViewport(); let w = v.w,
@@ -1904,6 +1905,7 @@
         function createReadyCube(value) { if (readyCubeMesh) { scene.remove(readyCubeMesh);
                 readyCubeMesh = null; }
             readyCubeValue = value; const mats = getMats(value); const mesh = new THREE.Mesh(cubeGeo, mats);
+            mesh.rotation.x = -0.2; // Διορθωμένη φορά
             mesh.castShadow = true;
             mesh.position.set(aimX, trackY + CUBE_SZ / 2 + 0.15, SHOOTER_Z);
             scene.add(mesh);
@@ -1924,6 +1926,7 @@
             readyCubeMesh = null; const launchX = aimX; const launchY = CUBE_SZ / 2 + 0.15; const launchZ =
                 SHOOTER_Z; const nc = spawnCube(launchX, launchY, launchZ, readyCubeValue, { isShot: true,
                 rainbow: rainbowArmed, addToCubes: false });
+            nc.mesh.rotation.x = -0.2; // Διορθωμένη φορά κατά την εκτόξευση
             nc.body.type = CANNON.Body.DYNAMIC;
             nc.body.mass = 2;
             nc.body.linearDamping = 0.0;
@@ -2292,20 +2295,29 @@
         let tutorialActive = true;
         let doubleCoinsPending = false;
 
-        function applyDailyGift() { const today = new Date().toISOString().slice(0, 10); const lastDate = store.get(
-                GIFT_DATE_KEY); if (lastDate !== today) { freeBomb = 2;
-                freeRainbow = 2;
+        function applyDailyGift() {
+            const today = new Date().toISOString().slice(0, 10);
+            const lastDate = store.get(GIFT_DATE_KEY);
+            if (lastDate !== today) {
+                freeBomb = 1; // Το ημερήσιο δώρο είναι πλέον 1
+                freeRainbow = 1; // Το ημερήσιο δώρο είναι πλέον 1
                 store.set(GIFT_DATE_KEY, today);
-                store.set(FREE_BOMB_KEY, '2');
-                store.set(FREE_RAINBOW_KEY, '2'); } else { freeBomb = parseInt(store.get(FREE_BOMB_KEY) || '0', 10);
-                freeRainbow = parseInt(store.get(FREE_RAINBOW_KEY) || '0', 10); } }
+                store.set(FREE_BOMB_KEY, '1');
+                store.set(FREE_RAINBOW_KEY, '1');
+            } else {
+                freeBomb = parseInt(store.get(FREE_BOMB_KEY) || '0', 10);
+                freeRainbow = parseInt(store.get(FREE_RAINBOW_KEY) || '0', 10);
+            }
+        }
 
-        function checkFirstTimeGift() { const hasGift = store.get(FIRST_TIME_KEY); if (!hasGift) { store.set(
-                    FIRST_TIME_KEY, '1');
-                freeBomb += 1;
-                freeRainbow += 1;
-                saveFreeItems();
-                showToast('🎁 Welcome gift: +1 Bomb & +1 Rainbow!'); } }
+        function checkFirstTimeGift() {
+            const hasGift = store.get(FIRST_TIME_KEY);
+            if (!hasGift) {
+                store.set(FIRST_TIME_KEY, '1');
+                // Αφαιρέσαμε τα επιπλέον +1 μιας και το daily παρέχει ήδη 1.
+                showToast('🎁 Welcome gift: +1 Bomb & +1 Rainbow available daily!');
+            }
+        }
 
         function saveFreeItems() { store.set(FREE_BOMB_KEY, freeBomb.toString());
             store.set(FREE_RAINBOW_KEY, freeRainbow.toString()); }
@@ -2761,7 +2773,7 @@
         function updateShooter() { if (!readyCubeMesh) return;
             readyCubeMesh.scale.setScalar(1 + 0.1 * Math.sin(Date.now() / 150));
             readyCubeMesh.position.set(aimX, trackY + CUBE_SZ / 2 + 0.15, SHOOTER_Z);
-            readyCubeMesh.rotation.set(0, 0, 0);
+            readyCubeMesh.rotation.x = -0.2; // Διορθωμένη φορά
             readyCubeMesh.material = rainbowArmed ? getRainbowMats() : getMats(readyCubeValue); if (shooterGlow) {
                 shooterGlow.position.x = aimX;
                 shooterGlow.position.y = trackY + 0.03;
@@ -2842,7 +2854,12 @@
             camera.updateProjectionMatrix(); }
         resize();
 
-        function startGame() { while (cubes.length) removeCube(cubes[0]);
+        function startGame() { 
+            // Μηδενίζουμε πριν τα δώρα ώστε να έχουμε ακριβώς 1 και 1
+            freeBomb = 0;
+            freeRainbow = 0;
+            
+            while (cubes.length) removeCube(cubes[0]);
             shotCube = null; if (readyCubeMesh) { scene.remove(readyCubeMesh);
                 readyCubeMesh = null; } for (let i = particles.length - 1; i >= 0; i--) { scene.remove(particles[i].mesh);
                 particles[i].mat.dispose(); }
@@ -2881,6 +2898,7 @@
             maxComboThisRound = 0;
             surviveSeconds = 0;
             doubleCoinsPending = false;
+            
             applyDailyGift();
             checkFirstTimeGift();
             updateStreak();
@@ -2901,9 +2919,9 @@
             badCubeToRemove = null;
             gentleShield = 3;
             tutorialShots = 0;
-            tutorialActive = true; if (upgradeBooster >= 1) { freeBomb += 1;
-                updateBoosterBadges();
-                floatText(0, trackY + 4, 0, '🎁 Free Booster!', 'gift'); } const rampWidth = TRACK_W + 0.6;
+            tutorialActive = true; 
+            // Αφαιρέσαμε το ανεπιθύμητο upgrade: if (upgradeBooster >= 1) { freeBomb += 1; ... }
+            const rampWidth = TRACK_W + 0.6;
             rampBody = new CANNON.Body({ type: CANNON.Body.KINEMATIC, material: wallPhysMat, shape: new CANNON.Box(
                     new CANNON.Vec3(rampWidth / 2, 0.55, 0.24)) });
             rampBody.position.set(0, 0.55 + trackY, RAMP_HOME_Z);
@@ -2983,25 +3001,17 @@
                 'shop-modal')) closeShopModal(); });
 
         const MISSION_DEFS = [
-            { id: 'm1', icon: '🎯', name: 'Score Hunter', desc: 'Earn 3000 points', target: 3000, reward: '🪙 80',
-                type: 'score' },
-            { id: 'm2', icon: '🔄', name: 'Merge Master', desc: 'Perform 15 merges', target: 15, reward: '🪙 60',
-                type: 'merge' },
-            { id: 'm3', icon: '🧊', name: 'Cube Crafter', desc: 'Reach cube 64', target: 64, reward: '🪙 100',
-            type: 'reach_cube' },
-            { id: 'm4', icon: '💣', name: 'Bomb User', desc: 'Use 1 bomb', target: 1, reward: '🪙 50', type: 'use_bomb' },
-            { id: 'm5', icon: '🌈', name: 'Rainbow User', desc: 'Use 1 rainbow', target: 1, reward: '🪙 50',
-                type: 'use_rainbow' },
-            { id: 'm6', icon: '🎮', name: 'Game Player', desc: 'Play 2 games', target: 2, reward: '🪙 70',
-            type: 'play_game' },
-            { id: 'm7', icon: '🔥', name: 'Combo King', desc: 'Get a 4x combo', target: 4, reward: '🪙 90',
-            type: 'combo' },
-            { id: 'm8', icon: '⏱️', name: 'Survivor', desc: 'Survive 120 seconds', target: 120, reward: '🪙 75',
-                type: 'survive' },
-            { id: 'm9', icon: '🏆', name: 'High Scorer', desc: 'Earn 8000 points', target: 8000, reward: '🪙 120',
-                type: 'score' },
-            { id: 'm10', icon: '🚀', name: 'Shooter', desc: 'Shoot 20 cubes', target: 20, reward: '🪙 60',
-            type: 'shots' }, ];
+            { id: 'm1', icon: '🎯', name: 'Score Hunter', desc: 'Earn 5000 points', target: 5000, reward: '🪙 100', type: 'score' },
+            { id: 'm2', icon: '🔄', name: 'Merge Master', desc: 'Perform 20 merges', target: 20, reward: '🪙 80', type: 'merge' },
+            { id: 'm3', icon: '🧊', name: 'Cube Crafter', desc: 'Reach cube 128', target: 128, reward: '🪙 120', type: 'reach_cube' },
+            { id: 'm4', icon: '💣', name: 'Bomb User', desc: 'Use 10 bombs', target: 10, reward: '🪙 150', type: 'use_bomb' },
+            { id: 'm5', icon: '🌈', name: 'Rainbow User', desc: 'Use 10 rainbows', target: 10, reward: '🪙 150', type: 'use_rainbow' },
+            { id: 'm6', icon: '🎮', name: 'Game Player', desc: 'Play 3 games', target: 3, reward: '🪙 80', type: 'play_game' },
+            { id: 'm7', icon: '🔥', name: 'Combo King', desc: 'Get a 5x combo', target: 5, reward: '🪙 100', type: 'combo' },
+            { id: 'm8', icon: '⏱️', name: 'Survivor', desc: 'Survive 120 seconds', target: 120, reward: '🪙 90', type: 'survive' },
+            { id: 'm9', icon: '🏆', name: 'High Scorer', desc: 'Earn 10000 points', target: 10000, reward: '🪙 150', type: 'score' },
+            { id: 'm10', icon: '🚀', name: 'Shooter', desc: 'Shoot 35 cubes', target: 35, reward: '🪙 100', type: 'shots' },
+        ];
         let dailyMissions = [];
         let missionDate = '';
         let missionsUnlockedExtra = false;
