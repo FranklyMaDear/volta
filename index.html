@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-<!-- YouTube Playables SDK: MUST be the very first executable script -->
+<!-- YouTube Playables SDK -->
 <script src="https://www.youtube.com/game_api/v1"></script>
 <title>Merge Cubes 3D – Progression</title>
 <style>
@@ -101,8 +101,6 @@ body.paused *,body.paused *::before,body.paused *::after{animation-play-state:pa
 #rank-box .bonus-row{text-align:center;font-size:12px;color:#FFD700;margin-top:6px;font-weight:600}
 #rank-close-btn{display:block;margin:16px auto 0;background:linear-gradient(135deg,#ffaa33,#cc8800);color:#000;border:none;border-radius:12px;padding:10px 36px;font-size:15px;font-weight:800;cursor:pointer;letter-spacing:.5px;box-shadow:0 4px 16px rgba(255,170,51,.4)}
 #rank-close-btn:active{transform:scale(.94)}
-
-/* ----- Shop Modal (NEW) ----- */
 #shop-modal{position:absolute;inset:0;z-index:600;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,.88);padding:20px}
 #shop-modal.active{display:flex}
 #shop-box{background:linear-gradient(145deg,#1a1a3a,#111122);border:2px solid #7d4bdd;border-radius:24px;padding:24px 20px 20px;width:92%;max-width:400px;max-height:82vh;overflow-y:auto;box-shadow:0 0 40px rgba(120,90,220,.25),inset 0 1px 0 rgba(255,255,255,.05);scrollbar-width:thin;scrollbar-color:#7d4bdd #111}
@@ -122,8 +120,6 @@ body.paused *,body.paused *::before,body.paused *::after{animation-play-state:pa
 .shop-item .shop-btn.maxed{background:#16a34a;color:#000}
 #shop-close-btn{display:block;margin:16px auto 0;background:linear-gradient(135deg,#7b3fcc,#a855f7);color:#fff;border:none;border-radius:12px;padding:10px 36px;font-size:15px;font-weight:800;cursor:pointer;letter-spacing:.5px;box-shadow:0 4px 16px rgba(168,85,247,.4)}
 #shop-close-btn:active{transform:scale(.94)}
-
-/* ----- Revive Modal (NEW) ----- */
 #revive-modal{position:absolute;inset:0;z-index:450;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,.88);flex-direction:column;gap:20px}
 #revive-modal.active{display:flex}
 #revive-modal h1{font-size:48px;color:#ffaa33;text-shadow:0 0 30px orange;margin:0}
@@ -131,6 +127,9 @@ body.paused *,body.paused *::before,body.paused *::after{animation-play-state:pa
 #revive-modal .revive-actions{display:flex;gap:16px;flex-wrap:wrap;justify-content:center}
 #revive-ad-btn{background:#16a34a;color:#fff;border:none;padding:12px 30px;border-radius:16px;font-size:18px;font-weight:800;cursor:pointer;box-shadow:0 0 20px rgba(22,163,74,.6)}
 #revive-skip-btn{background:#444;color:#fff;border:none;padding:12px 30px;border-radius:16px;font-size:18px;font-weight:800;cursor:pointer}
+/* Rank Glow */
+#btn-rank.glow .boost-circle { box-shadow: 0 0 25px rgba(255,170,51,0.8); border-color: #ffaa33; animation: rankPulse 1.2s ease-in-out infinite; }
+@keyframes rankPulse { 0%, 100% { box-shadow: 0 0 15px rgba(255,170,51,0.6); } 50% { box-shadow: 0 0 35px rgba(255,170,51,0.9); } }
 </style>
 </head>
 <body>
@@ -184,14 +183,11 @@ body.paused *,body.paused *::before,body.paused *::after{animation-play-state:pa
   </div>
 </div>
 
-<!-- LOST MODAL -->
 <div id="lost-modal">
   <h1>LOST</h1>
   <div class="lost-score" id="lost-final-score">Score: 0</div>
   <button id="lost-newgame-btn">NEW GAME</button>
 </div>
-
-<!-- REVIVE MODAL (NEW) -->
 <div id="revive-modal">
   <h1>💀 GAME OVER?</h1>
   <div class="revive-score" id="revive-current-score">Score: 0</div>
@@ -201,8 +197,6 @@ body.paused *,body.paused *::before,body.paused *::after{animation-play-state:pa
     <button id="revive-skip-btn">✖ QUIT</button>
   </div>
 </div>
-
-<!-- RANK MODAL -->
 <div id="rank-modal">
   <div id="rank-box">
     <h2>🏆 WEEKLY TOP 10</h2>
@@ -217,8 +211,6 @@ body.paused *,body.paused *::before,body.paused *::after{animation-play-state:pa
     <button id="rank-close-btn">CLOSE</button>
   </div>
 </div>
-
-<!-- SHOP MODAL (NEW) -->
 <div id="shop-modal">
   <div id="shop-box">
     <h2>🛒 eShop</h2>
@@ -231,7 +223,7 @@ body.paused *,body.paused *::before,body.paused *::after{animation-play-state:pa
 
 <div id="inputGlow"></div>
 <div id="toast"></div>
-</div><!-- /#gameRoot -->
+</div>
 
 <script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/","cannon-es":"https://cdn.jsdelivr.net/npm/cannon-es@0.20.0/dist/cannon-es.js"}}</script>
 
@@ -242,7 +234,6 @@ import{EffectComposer}from'three/addons/postprocessing/EffectComposer.js';
 import{RenderPass}from'three/addons/postprocessing/RenderPass.js';
 import{UnrealBloomPass}from'three/addons/postprocessing/UnrealBloomPass.js';
 
-/* ================= YOUTUBE PLAYABLES SDK GLUE ================= */
 const YT = (typeof ytgame !== 'undefined' && ytgame !== null) ? ytgame : null;
 let _ytReady = false;
 let _sdkPaused = false;
@@ -272,7 +263,6 @@ const store = (() => {
 })();
 await store.hydrate();
 
-/* ---------- Viewport / layout engine ---------- */
 const gameRoot = document.getElementById('gameRoot');
 let _lastW = 0, _lastH = 0;
 function measureViewport() {
@@ -296,15 +286,13 @@ function layoutRoot() {
     gameRoot.style.width = w + 'px';
     gameRoot.style.height = h + 'px';
     if (typeof resize === 'function') { try { resize(); } catch (e) {} }
-  } catch (e) { /* must never throw */ }
+  } catch (e) {}
 }
 window.addEventListener('resize', layoutRoot);
 window.addEventListener('orientationchange', layoutRoot);
 if (window.visualViewport) { try { window.visualViewport.addEventListener('resize', layoutRoot); } catch (e) {} }
 layoutRoot();
 (function () { let n = 0; const t = setInterval(function () { layoutRoot(); if (++n >= 20) clearInterval(t); }, 150); })();
-/* ================= /SDK GLUE (part 1) ================= */
-
 
 function buildStarfield(){
   const sf=document.getElementById('starfield');if(!sf)return;sf.innerHTML='';
@@ -350,14 +338,12 @@ const GRP_SHOT   = 2;
 const GRP_WALL   = 4;
 const GRP_NEWROW = 8;
 
-// ---- Upgrade keys ----
 const UPGRADE_SLOW = 'mergeCubes3D_upgrade_slow';
 const UPGRADE_POWER = 'mergeCubes3D_upgrade_power';
 const UPGRADE_LIVES = 'mergeCubes3D_upgrade_lives';
 const UPGRADE_COINS = 'mergeCubes3D_upgrade_coins';
 const UPGRADE_BOOSTER = 'mergeCubes3D_upgrade_booster';
 
-// ---- Existing keys ----
 const LS_HIGHSCORE='mergeCubes3D_highscore';
 const LS_LEVEL='mergeCubes3D_playerLevel';
 const LS_XP='mergeCubes3D_playerXP';
@@ -372,7 +358,6 @@ let coins=parseInt(store.get(LS_COINS)||'0',10);
 let highScore=parseInt(store.get(LS_HIGHSCORE)||'0',10);
 store.set('FRANKLY_CUBE_WINS',playerLevel);
 
-// ---- Upgrade levels ----
 let upgradeSlow = parseInt(store.get(UPGRADE_SLOW)||'0',10);
 let upgradePower = parseInt(store.get(UPGRADE_POWER)||'0',10);
 let upgradeLives = parseInt(store.get(UPGRADE_LIVES)||'0',10);
@@ -386,7 +371,6 @@ function saveProgression(){
   store.set(LS_COINS,coins);
   store.set(LS_HIGHSCORE,highScore);
   store.set('FRANKLY_CUBE_WINS',playerLevel);
-  // Save upgrades
   store.set(UPGRADE_SLOW, upgradeSlow);
   store.set(UPGRADE_POWER, upgradePower);
   store.set(UPGRADE_LIVES, upgradeLives);
@@ -456,7 +440,6 @@ scene.fog=new THREE.Fog(0x080614,46,92);
 
 const camera=new THREE.PerspectiveCamera(64,1,0.1,250);
 const trackY=3;
-
 camera.position.set(0, 32, 28);
 camera.lookAt(0, trackY, 1);
 
@@ -556,14 +539,17 @@ world.addEventListener('beginContact',(e)=>{
   const tc=cubes.find(c=>c.body===targetBody&&!c.isShot&&!c.isNewRow);
   if(!tc)return;
   if(tc.value===shotCube.value)return;
-  if(pushedThisShot.has(tc.id))return;
-  pushedThisShot.add(tc.id);
-  const shotSpd=Math.abs(shotCube.body.velocity.z);
-  const fmag=Math.min(shotSpd*0.4+3, 12);
-  const angle=Math.random()*Math.PI*2;
-  const pushX=Math.cos(angle)*fmag*0.35;
-  const pushZ=Math.sin(angle)*fmag*0.35 + 2.0;
-  tc.body.applyImpulse(new CANNON.Vec3(pushX, 0.4, pushZ), new CANNON.Vec3(0,0,0));
+  // --- ΔΙΟΡΘΩΣΗ ΦΥΣΙΚΗΣ ΣΥΓΚΡΟΥΣΗΣ ---
+  // Ο shotCube ΔΕΝ σπρώχνει πλέον τον άλλο κύβο, αλλά ΣΤΑΜΑΤΑΕΙ φυσικά δίπλα του.
+  shotCube.isShot = false;
+  shotCube.body.collisionFilterGroup = GRP_TRACK;
+  shotCube.body.collisionFilterMask = ~0;
+  shotCube.body.mass = 1.2;
+  shotCube.body.updateMassProperties();
+  shotCube.body.linearDamping = 0.25;
+  shotCube.body.angularDamping = 0.35;
+  shotCube.mergeCooldown = 0.3;
+  if(shotCube === shotCube) shotCube = null; // Απενεργοποίηση του shotCube
 });
 
 const floorBody=new CANNON.Body({mass:0,shape:new CANNON.Plane(),material:cannonFloorMat});
@@ -648,7 +634,8 @@ function spawnCube(x,y,z,value,opts={}){
 
   if(opts.isShot){
     body.collisionFilterGroup=GRP_SHOT;
-    body.collisionFilterMask=GRP_WALL;
+    // --- ΔΙΟΡΘΩΣΗ: Ο shotCube πρέπει να συγκρούεται και με κύβους, όχι μόνο με τοίχους ---
+    body.collisionFilterMask=GRP_WALL | GRP_TRACK | GRP_NEWROW;
   } else if(opts.isNewRow){
     body.collisionFilterGroup=GRP_NEWROW;
     body.collisionFilterMask=GRP_WALL;
@@ -668,7 +655,8 @@ function spawnCube(x,y,z,value,opts={}){
     mergeCooldown:opts.mergeCooldown||0,
     isNewRow:!!opts.isNewRow,
     newRowTimer:opts.isNewRow?1.5:0,
-    passedDanger: false
+    passedDanger: false,
+    landed: false // Για το Coin on landing
   };
 
   if(opts.addToCubes!==false){cubes.push(cube);}
@@ -765,6 +753,15 @@ function useBomb(){
 function useRainbow(){rainbowArmed=true;floatText(aimX,trackY+2,SHOOTER_Z-1,'RAINBOW READY!','points-big');}
 
 /* ─── MERGE ────────────────────────────────────── */
+let firstMergeDone = false;
+let comboStreak = 0;
+let lastMergeTime = 0;
+let giftAt8Done = false;
+let surviveSeconds = 0;
+let surviveStartTime = 0;
+let survivalGoalMet = false;
+let firstTimeAt16 = false;
+
 function tryMerge(a,b){
   const nv=nextVal(a.value);
   if(nv>maxReached){maxReached=nv;updateTarget();checkCubeGoal(nv);}
@@ -790,11 +787,52 @@ function tryMerge(a,b){
   spawnParticles(px-trackY,py-trackY,pz,0xff6600,18,5);
   if(nv>=16)spawnParticles(px-trackY,py-trackY,pz,0xFFD700,14,7);
   spawnFlashSphere(px-trackY,py-trackY,pz,pal.glow);spawnFlashSphere(px-trackY,py-trackY,pz,0xff8800);
-  const pts=nv;
-  addScore(pts);addXP(pts);addCoins(Math.max(1,Math.floor(nv/10)));
+  
+  // --- ΧΡΥΣΟ ΠΡΩΤΟ MERGE ---
+  if(!firstMergeDone){
+    firstMergeDone = true;
+    addXP(50);
+    floatText(px-trackY, py-trackY+2, pz, '✨ FIRST MERGE! +50 XP', 'gift');
+    audio.gift();
+  }
+
+  // --- ΣΤΙΓΜΙΑΙΟ ΔΩΡΟ BOOSTER ΣΤΟ 8 ---
+  if(nv === 8 && !giftAt8Done){
+    giftAt8Done = true;
+    freeBomb += 1;
+    updateBoosterBadges();
+    floatText(px-trackY, py-trackY+2, pz, '🎁 +1 BOMB!', 'gift');
+    audio.gift();
+  }
+
+  // --- RANK GLOW ΣΤΟ 16 ---
+  if(nv >= 16 && !firstTimeAt16){
+    firstTimeAt16 = true;
+    document.getElementById('btn-rank').classList.add('glow');
+  }
+
+  // --- COMBO SYSTEM ---
+  const now = performance.now();
+  if(now - lastMergeTime < 3000){
+    comboStreak++;
+  } else {
+    comboStreak = 1;
+  }
+  lastMergeTime = now;
+  let bonusXP = 0;
+  if(comboStreak >= 3){
+    bonusXP = Math.floor(nv * 0.5);
+    floatText(px-trackY, py-trackY+2, pz, '🔥 COMBO x2 XP!', 'points-big');
+    audio.milestone(); // Μελωδικό chime ως ανταμοιβή combo
+  }
+
+  const pts = nv;
+  addScore(pts);
+  addXP(pts + bonusXP);
+  addCoins(Math.max(1, Math.floor(nv/10)));
   shakeAmt=Math.min(.65,.1+Math.log2(nv)*.04);
   const lt=nv>=64?'points-mega':nv>=16?'points-big':'points';
-  floatText(px-trackY,py-trackY+.6,pz,`+${pts}`,lt);
+  floatText(px-trackY,py-trackY+.6,pz,`+${pts}${bonusXP > 0 ? ' (+'+bonusXP+' XP)' : ''}`,lt);
   if(SEQ.includes(nv)&&!seenMS.has(nv)){seenMS.add(nv);floatText(0,trackY+3,0,`✦ ${nv} REACHED! ✦`,'milestone');audio.milestone();}
   audio.mergeBoom();
   spawnParticles(px-trackY,py-trackY,pz,0xffaa00,30,9);
@@ -948,11 +986,16 @@ let freeBomb=0,freeRainbow=0;
 const BOMB_COST=200;
 const RAINBOW_COST=300;
 
-// ---- Extra lives (from upgrade) ----
 let extraLives = 0;
-// ---- Revive system ----
 let reviveAvailable = true;
 let badCubeToRemove = null;
+
+// --- ΠΡΟΣΤΑΣΙΑ ΣΤΗΝ ΑΡΧΗ (Gentle Shield) ---
+let gentleShield = 3;
+
+// --- ΟΔΗΓΟΣ ΠΑΙΧΝΙΔΙΟΥ ---
+let tutorialShots = 0;
+let tutorialActive = true;
 
 function applyDailyGift(){
   const today=new Date().toISOString().slice(0,10);
@@ -993,8 +1036,7 @@ function addXP(amount){
 }
 function addCoins(amount){
   if(!gameOn)return;
-  // Apply Coin Boost upgrade
-  const boost = 1 + upgradeCoins; // Lv.0->1, Lv.1->2, Lv.2->3
+  const boost = 1 + upgradeCoins;
   const finalAmount = Math.floor(amount * boost);
   roundCoins += finalAmount;
   coins += finalAmount;
@@ -1028,60 +1070,58 @@ function showInitialOverlay(){
   document.getElementById('startBtn').addEventListener('click',startGame);
 }
 
-// ================ REVIVE SYSTEM =================
 function handleDeath(crossedCube) {
-  // First, check Extra Lives upgrade
+  // Gentle Shield (Προστασία στην αρχή)
+  if (gentleShield > 0) {
+    gentleShield--;
+    crossedCube.body.position.z = Z_BACK + 2;
+    crossedCube.body.velocity.z = 0;
+    crossedCube.body.velocity.x *= 0.5;
+    floatText(0, trackY+2, DANGER_Z-2, '🛡️ OOPS! Shield used! (-10 pts)', 'points');
+    addScore(-10);
+    return;
+  }
+  // Extra Lives
   if (extraLives > 0) {
     extraLives--;
     removeCube(crossedCube);
     floatText(0, trackY+2, DANGER_Z-2, '💔 Extra Life Used!', 'points');
-    return; // Continue game
+    return;
   }
-  // Then, check if a revive is available
+  // Revive
   if (reviveAvailable) {
     badCubeToRemove = crossedCube;
-    // Pause the game logic
     paused = true;
     document.getElementById('revive-current-score').textContent = 'Score: ' + score.toLocaleString();
     document.getElementById('revive-modal').classList.add('active');
     return;
   }
-  // Otherwise, trigger hard Game Over
   triggerGameOver();
 }
 
 function reviveGame() {
   document.getElementById('revive-modal').classList.remove('active');
-  // Remove the bad cube that crossed
   if (badCubeToRemove) {
     removeCube(badCubeToRemove);
     badCubeToRemove = null;
   }
-  // Mark revive as used (no second chance in this run)
   reviveAvailable = false;
-  // Unpause the game
   paused = false;
-  // Make sure the game is marked as running
   gameOn = true;
-  // Restore HUD and Boosters
   document.getElementById('hud').classList.add('active');
   document.getElementById('boosters').classList.add('active');
-  // Resume audio if needed
   audio.resume();
 }
 
 document.getElementById('revive-ad-btn').addEventListener('click', () => {
   if (YT && YT.game && typeof YT.game.showRewardedAd === 'function') {
     YT.game.showRewardedAd().then(() => {
-      // Ad watched successfully
       reviveGame();
     }).catch(() => {
-      // Ad failed or user skipped
       document.getElementById('revive-modal').classList.remove('active');
       triggerGameOver();
     });
   } else {
-    // Fallback if SDK is not fully implemented
     reviveGame();
   }
 });
@@ -1090,8 +1130,6 @@ document.getElementById('revive-skip-btn').addEventListener('click', () => {
   document.getElementById('revive-modal').classList.remove('active');
   triggerGameOver();
 });
-
-// ================================================
 
 function triggerGameOver(){
   gameOn=false;gameStarted=false;
@@ -1135,10 +1173,9 @@ function update(){
     }
     if(gameStarted&&rampState==='idle'){
       rowTimer+=dt;
-      // Base interval with UPGRADE SLOW
       let baseInterval = 4.2 - (playerLevel-1) * 0.12;
       baseInterval = Math.max(2.0, baseInterval);
-      const slowFactor = 1 - upgradeSlow * 0.10; // 0% -> 10% -> 20% -> 30%
+      const slowFactor = 1 - upgradeSlow * 0.10;
       const interval = Math.max(2.0, baseInterval * slowFactor);
       const liveCubes=cubes.filter(c=>!c.isShot).length;
       if(rowTimer>=interval||liveCubes<=2){rowTimer=0;triggerRampSpawn();}
@@ -1215,6 +1252,13 @@ function update(){
         const cx = -TRACK_W/2 + COL_W/2 + col*COL_W;
         c.body.position.x += (cx - c.body.position.x) * 0.01;
         c.body.velocity.x *= 0.85;
+        // --- ΖΩΝΤΑΝΟ COIN GAIN (1 νόμισμα για κάθε προσγείωση) ---
+        if (!c.landed) {
+          c.landed = true;
+          addCoins(1);
+          // Μικροί Αστέρες (Floating Stars) στα νομίσματα
+          spawnParticles(c.body.position.x, c.body.position.y-trackY, c.body.position.z, 0xFFD700, 6, 2);
+        }
       }
 
       c.mesh.position.copy(c.body.position);
@@ -1288,13 +1332,13 @@ function update(){
       if(shakeAmt<.005){shakeAmt=0; camera.position.set(0,32,28); camera.lookAt(0,trackY,1);}
     }
 
+    // --- ΕΛΕΓΧΟΣ ΠΑΙΧΝΙΔΙΟΥ ΓΙΑ DANGER ZONE ---
     if(gameStarted && rampState==='idle'){
       for(const c of cubes){
         if(c.isShot || c.isNewRow) continue;
         const settled = Math.abs(c.body.velocity.z)<0.8 && Math.abs(c.body.velocity.x)<0.8
                      && c.body.position.y < trackY + CUBE_SZ + 0.5;
         if(c.body.position.z > DANGER_Z && settled){
-          // Instead of instant Game Over, handle death (Extra Lives / Revive / Game Over)
           handleDeath(c);
           return;
         }
@@ -1355,7 +1399,6 @@ function shooterPool(){
   return pool;
 }
 function rndStart(){
-  // Apply Power Start upgrade
   if (upgradePower >= 2) return 8;
   if (upgradePower >= 1) return 4;
   const p=shooterPool();return p[Math.floor(Math.random()*p.length)];
@@ -1477,6 +1520,8 @@ function makeShooter(){
 
 function updateShooter(){
   if(!readyCubeMesh) return;
+  // --- ΠΑΛΜΟΣ ΣΤΟ ΣΤΟΧΟ ---
+  readyCubeMesh.scale.setScalar(1 + 0.1 * Math.sin(Date.now() / 150));
   readyCubeMesh.position.set(aimX, trackY + CUBE_SZ/2 + 0.15, SHOOTER_Z);
   readyCubeMesh.rotation.set(0,0,0);
   readyCubeMesh.material = rainbowArmed ? getRainbowMats() : getMats(readyCubeValue);
@@ -1591,18 +1636,26 @@ function startGame(){
   const cubeIdx=Math.min(SEQ.length-1,3+Math.floor(playerLevel/3));
   roundCubeGoal=SEQ[cubeIdx];
   roundScoreMet=false;roundCubeMet=false;roundCoins=0;
-  applyDailyGift();updateBoosterBadges();refreshAllProgressionUI();updateRankScoreDisplay(0);updateTarget();
+  applyDailyGift();
+  
+  // --- ΔΩΡΟ ΕΝΑΡΞΗΣ (+1 BOMB και +1 RAINBOW) ---
+  freeBomb += 1;
+  freeRainbow += 1;
+  
+  updateBoosterBadges();refreshAllProgressionUI();updateRankScoreDisplay(0);updateTarget();
   document.getElementById('highscore-val').textContent=highScore.toLocaleString();
   camera.position.set(0,32,28); camera.lookAt(0,trackY,1);
   curVal=rndStart();nxtVal=rndStart();aimX=0;gameOn=true;
   makeShooter();
 
-  // Apply upgrades on game start
-  extraLives = upgradeLives; // max 3
-  reviveAvailable = true; // reset revive chance
+  // Εφαρμογή upgrades
+  extraLives = upgradeLives;
+  reviveAvailable = true;
   badCubeToRemove = null;
+  gentleShield = 3; // Επαναφορά της προστασίας
+  tutorialShots = 0;
+  tutorialActive = true;
 
-  // If free booster upgrade is active, give a free bomb at start
   if (upgradeBooster >= 1) {
     freeBomb += 1;
     updateBoosterBadges();
@@ -1626,10 +1679,17 @@ function startGame(){
   }
 
   drawTargetHUD(); audio.init();
+  
+  // --- ΕΜΦΑΝΙΣΗ ΟΔΗΓΟΥ ΣΤΟ ΠΑΤΩΜΑ ---
+  if(tutorialActive){
+    floatText(0, trackY+0.5, SHOOTER_Z-1, 'Σημάδεψε και άφησε!', 'points');
+    setTimeout(() => {
+        if(gameOn) floatText(0, trackY+0.5, DANGER_Z-2, 'Μην περάσεις τη γραμμή!', 'points');
+    }, 1500);
+  }
 }
 
-/* ================= SHOP SYSTEM (NEW) ================= */
-
+/* ================= SHOP SYSTEM ================= */
 const shopItems = [
   { id: 'slow', icon: '🐢', name: 'Slow Waves', desc: 'Slows down incoming waves by 10% per level', maxLv: 3, costs: [300,500,800], getLv: ()=>upgradeSlow, setLv: (v)=>{upgradeSlow=v;saveProgression();} },
   { id: 'power', icon: '💪', name: 'Power Start', desc: 'Start with a bigger cube (4 → 8)', maxLv: 2, costs: [400,700], getLv: ()=>upgradePower, setLv: (v)=>{upgradePower=v;saveProgression();} },
@@ -1641,7 +1701,6 @@ const shopItems = [
 function updateShopUI() {
   const coinsDisplay = document.getElementById('shop-coins-val');
   if (coinsDisplay) coinsDisplay.textContent = coins.toLocaleString();
-
   const list = document.getElementById('shop-items-list');
   if (!list) return;
   let html = '';
@@ -1651,13 +1710,11 @@ function updateShopUI() {
     const isMaxed = curLv >= maxLv;
     const nextCost = isMaxed ? null : item.costs[curLv];
     const canAfford = !isMaxed && coins >= nextCost;
-
     let btnText = isMaxed ? 'MAX' : `Buy (🪙${nextCost})`;
     let btnDisabled = isMaxed || !canAfford;
     let btnClass = isMaxed ? 'shop-btn maxed' : 'shop-btn';
     let levelText = isMaxed ? '' : ` (${curLv}/${maxLv})`;
     if (!isMaxed && curLv === 0) levelText = '';
-
     html += `
       <div class="shop-item">
         <span class="item-icon">${item.icon}</span>
@@ -1670,8 +1727,6 @@ function updateShopUI() {
     `;
   });
   list.innerHTML = html;
-
-  // Attach buy events
   list.querySelectorAll('.shop-btn:not(:disabled)').forEach(btn => {
     btn.addEventListener('click', (e) => {
       const id = btn.dataset.id;
@@ -1679,10 +1734,7 @@ function updateShopUI() {
       if (!item) return;
       const curLv = item.getLv();
       const cost = item.costs[curLv];
-      if (coins < cost) {
-        showToast('🪙 Not enough coins!');
-        return;
-      }
+      if (coins < cost) { showToast('🪙 Not enough coins!'); return; }
       coins -= cost;
       item.setLv(curLv + 1);
       saveProgression();
@@ -1693,26 +1745,14 @@ function updateShopUI() {
   });
 }
 
-function openShopModal() {
-  document.getElementById('shop-modal').classList.add('active');
-  updateShopUI();
-}
-function closeShopModal() {
-  document.getElementById('shop-modal').classList.remove('active');
-}
-
+function openShopModal() { document.getElementById('shop-modal').classList.add('active'); updateShopUI(); }
+function closeShopModal() { document.getElementById('shop-modal').classList.remove('active'); }
 document.getElementById('btn-shop').addEventListener('click', openShopModal);
 document.getElementById('shop-close-btn').addEventListener('click', closeShopModal);
-document.getElementById('shop-modal').addEventListener('click', (e) => {
-  if (e.target === document.getElementById('shop-modal')) closeShopModal();
-});
-
-/* ================= /SHOP ================= */
+document.getElementById('shop-modal').addEventListener('click', (e) => { if (e.target === document.getElementById('shop-modal')) closeShopModal(); });
 
 refreshAllProgressionUI();
 showInitialOverlay();
-
-/* ================= PLAYABLES SDK GLUE (part 2): pause/resume, input feedback, boot ================= */
 
 let _toastTimer=null;
 function showToast(msg){
@@ -1743,10 +1783,7 @@ function handleResume(){
 
 ['click','pointerdown','pointerup','mousedown','mouseup','touchstart','touchend','touchmove','pointermove','keydown','keyup','keypress','input'].forEach(function(type){
   document.addEventListener(type,function(e){
-    if(_sdkPaused){
-      e.stopPropagation();
-      if(type.indexOf('key')===0||type==='input'){try{e.preventDefault();}catch(err){}}
-    }
+    if(_sdkPaused){ e.stopPropagation(); if(type.indexOf('key')===0||type==='input'){try{e.preventDefault();}catch(err){}} }
   },true);
 });
 
@@ -1796,29 +1833,15 @@ function initSystemHandlers(){
   try{if(typeof YT.system.onResume==='function')YT.system.onResume(()=>handleResume());}catch(e){}
   try{
     if(typeof YT.system.onAudioEnabledChange==='function'){
-      YT.system.onAudioEnabledChange(en=>{
-        audio.setEnabled(!!en);
-        try{document.getElementById('btn-sound').textContent=en?'🔊':'🔇';}catch(err){}
-      });
+      YT.system.onAudioEnabledChange(en=>{ audio.setEnabled(!!en); try{document.getElementById('btn-sound').textContent=en?'🔊':'🔇';}catch(err){} });
     }
   }catch(e){}
   try{
-    if(typeof YT.system.isAudioEnabled==='function'&&!YT.system.isAudioEnabled()){
-      audio.setEnabled(false);
-      try{document.getElementById('btn-sound').textContent='🔇';}catch(err){}
-    }
+    if(typeof YT.system.isAudioEnabled==='function'&&!YT.system.isAudioEnabled()){ audio.setEnabled(false); try{document.getElementById('btn-sound').textContent='🔇';}catch(err){} }
   }catch(e){}
 }
 
-function waitFrames(n){
-  return new Promise(resolve=>{
-    let done=false;
-    function finish(){if(!done){done=true;resolve();}}
-    function step(){if(done)return;if(--n<=0)finish();else requestAnimationFrame(step);}
-    requestAnimationFrame(step);
-    setTimeout(finish,400);
-  });
-}
+function waitFrames(n){ return new Promise(resolve=>{ let done=false; function finish(){if(!done){done=true;resolve();}} function step(){if(done)return;if(--n<=0)finish();else requestAnimationFrame(step);} requestAnimationFrame(step); setTimeout(finish,400); }); }
 async function bootSequence(){
   layoutRoot();
   try{composer.render();}catch(e){}
