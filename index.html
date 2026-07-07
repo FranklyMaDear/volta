@@ -35,16 +35,18 @@
         .game-wrapper {
             display: flex; width: 100%; height: 100vh; height: 100dvh;
             justify-content: center; align-items: center;
-            padding: 4px; position: relative; z-index: 50; overflow: hidden;
+            padding: 0 !important; /* YouTube SDK Fix: Full width/height */
+            position: relative; z-index: 50; overflow: hidden;
         }
         .game-container {
             text-align: center; background: rgba(14,16,39,0.92);
-            border-radius: 22px; padding: 8px 10px 12px;
+            border-radius: 0 !important; /* YouTube SDK Fix: No border radius to maximize space */
+            border: none !important; /* YouTube SDK Fix */
             box-shadow: 0 10px 40px rgba(0,0,0,0.5);
             width: 100%; max-width: 440px;
-            max-height: calc(100vh - 8px); max-height: calc(100dvh - 8px);
+            max-height: 100dvh;
             overflow-y: auto; overflow-x: hidden;
-            border: 2px solid rgba(132,204,22,0.3); backdrop-filter: blur(10px);
+            backdrop-filter: blur(10px);
         }
 
         .hud-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; gap: 4px; flex-wrap: wrap; }
@@ -90,7 +92,8 @@
         .board-container { 
             background: var(--board-skin, linear-gradient(145deg, #1565c0, #0d47a1)); 
             padding: 6px; border-radius: 12px; box-shadow: inset 0 0 20px rgba(0,0,0,0.4), 0 6px 20px rgba(0,0,0,0.5); 
-            margin: 6px 0; position: relative; width: 100%; aspect-ratio: 7/6; border: 2px solid #0a3d91; overflow: hidden; 
+            margin: 6px 0; position: relative; width: 100%; max-width: 100%; /* YouTube SDK Fix */
+            aspect-ratio: 7/6; border: 2px solid #0a3d91; overflow: hidden; 
             display: flex; justify-content: center; align-items: center; 
         }
         .board { display: grid; grid-template-columns: repeat(7, 1fr); grid-template-rows: repeat(6, 1fr); gap: 4px; position: relative; z-index: 2; height: 95%; width: 95%; padding: 2px; }
@@ -290,13 +293,14 @@
         .effect-preview-galaxy { background: radial-gradient(circle, #e040fb, #7b1fa2, #1a237e); }
         .effect-preview-standard { background: radial-gradient(circle, #ff6b6b, #c0392b); }
 
+        /* ===== YouTube SDK / Mobile Specific Fixes ===== */
         @media (max-width: 600px) {
             .game-container { max-width: 100%; padding: 8px 6px; }
             h1 { font-size: 1.2rem; }
             .player span { font-size: 0.6rem; }
             .player-disc { width: 22px; height: 22px; }
             .scores .score { font-size: 1rem; padding: 4px 10px; min-width: 50px; }
-            .game-btn { font-size: 0.65rem; padding: 8px 6px; min-width: 50px; }
+            .game-btn { font-size: 0.65rem; padding: 8px 6px; min-width: 40px !important; } /* Tighter fit */
             .status { font-size: 0.8rem; padding: 4px; }
             .shop-grid { grid-template-columns: repeat(auto-fill, minmax(80px, 1fr)); }
             .res-btn { font-size: 0.55rem; padding: 2px 6px; }
@@ -306,12 +310,14 @@
         @media (max-width: 400px) {
             .hud-zone { display: none; }
             .hud-resources { flex-wrap: wrap; justify-content: center; gap: 2px; }
-            .game-btn { font-size: 0.55rem; padding: 6px 4px; }
+            .game-btn { font-size: 0.55rem; padding: 6px 4px; min-width: 30px !important; }
+            .res-btn { font-size: 0.5rem !important; padding: 3px 6px !important; }
+            .hud-coins, .hud-points { font-size: 0.65rem !important; }
         }
 
-        /* ===== SPLASH SCREEN (Transparent background, shows starCanvas) ===== */
+        /* ===== SPLASH SCREEN ===== */
         #splashScreen {
-            position: fixed; inset: 0; background: rgba(10, 14, 39, 0.5); /* Semi-transparent to let stars shine through */
+            position: fixed; inset: 0; background: rgba(10, 14, 39, 0.5);
             z-index: 2000; display: flex; justify-content: center; align-items: center;
             flex-direction: column; transition: opacity 0.8s ease, transform 0.8s ease;
             overflow: hidden; pointer-events: auto;
@@ -363,7 +369,6 @@
             83%  { background: radial-gradient(circle at 35% 35%, #66bb6a, #1b5e20); }
             100% { background: radial-gradient(circle at 35% 35%, #ff5252, #c62828); }
         }
-        /* Start Button */
         #splashStartBtn {
             margin-top: 30px; padding: 14px 40px; font-size: 1.1rem; font-weight: 800;
             letter-spacing: 2px; border: none; border-radius: 60px;
@@ -406,7 +411,7 @@
 <body>
     <canvas id="starCanvas"></canvas>
 
-    <!-- ===== SPLASH SCREEN (No CSS stars, just the background starCanvas) ===== -->
+    <!-- ===== SPLASH SCREEN ===== -->
     <div id="splashScreen">
         <div class="splash-content">
             <div class="splash-title">Connect Four</div>
@@ -535,6 +540,13 @@
             splash.classList.add('hidden');
             setTimeout(() => {
                 splash.style.display = 'none';
+                
+                // YouTube SDK Fix: gameReady must be called here, after first frame is visible
+                const YT = (typeof ytgame !== 'undefined' && ytgame !== null) ? ytgame : null;
+                if (YT && YT.game && typeof YT.game.gameReady === 'function') {
+                    YT.game.gameReady();
+                }
+                
                 if (window._game) {
                     window._game.hardReset(); // First time starts clean
                 }
@@ -551,7 +563,12 @@
         let _rafId = null;
         let _shootTimer = null;
 
-        function resizeCanvas() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+        function resizeCanvas() {
+            // YouTube SDK Fix: Prevent Zero-height viewport error
+            if (window.innerHeight === 0) return; 
+            canvas.width = window.innerWidth; 
+            canvas.height = window.innerHeight; 
+        }
         function createStars(count) {
             stars = [];
             for (let i = 0; i < count; i++) stars.push({
@@ -602,6 +619,16 @@
         function pauseBackground() { _bgPaused = true; if (_rafId) { cancelAnimationFrame(_rafId); _rafId = null; } if (_shootTimer) { clearTimeout(_shootTimer); _shootTimer = null; } }
         function resumeBackground() { if (!_bgPaused) return; _bgPaused = false; if (_rafId) { cancelAnimationFrame(_rafId); _rafId = null; } _rafId = requestAnimationFrame(drawStars); scheduleShootingStar(); }
         window.addEventListener('resize', () => { resizeCanvas(); createStars(200); });
+
+        // YouTube SDK Fix: Handle orientation change for mobile/portrait
+        window.addEventListener('orientationchange', function() {
+            setTimeout(function() {
+                resizeCanvas();
+                if (window._game && window._game.particleSystem) {
+                    window._game.particleSystem.resize();
+                }
+            }, 300);
+        });
 
         // ============================================================
         // AUDIO
@@ -1992,13 +2019,11 @@
                 try { YT.game.firstFrameReady(); } catch(e) {}
             }
             try { await initGameAssets(); } catch(e) { ytLoaded = true; }
-            if (YT && YT.game && typeof YT.game.gameReady === 'function') {
-                try {
-                    YT.game.gameReady();
-                    ytReady = true;
-                    if (window._game) window._game.setYtReady(true);
-                } catch(e) {}
-            }
+            
+            // YouTube SDK Fix: gameReady is now called inside startGame()
+            // YT.game.gameReady(); <--- REMOVED FROM HERE
+            
+            if (window._game) window._game.setYtReady(true);
         });
     })();
     </script>
