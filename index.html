@@ -56,10 +56,10 @@
         .hud-coins { display: flex; align-items: center; gap: 4px; font-size: 0.8rem; font-weight: 700; color: #fbbf24; }
         .hud-points { display: flex; align-items: center; gap: 4px; font-size: 0.8rem; font-weight: 700; color: #84cc16; }
         .hud-timer { display: flex; align-items: center; gap: 4px; font-size: 0.75rem; font-weight: 700; color: #ffb74d; }
-        .hud-btns { display: flex; gap: 4px; }
-        .res-btn { font-size: 0.6rem; font-weight: 700; color: white; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15); padding: 3px 8px; border-radius: 10px; cursor: pointer; transition: all 0.2s; }
+        .hud-btns { display: flex; gap: 4px; justify-content: flex-end; flex: 1; }
+        .res-btn { font-size: 0.7rem; font-weight: 700; color: white; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15); padding: 6px 14px; border-radius: 12px; cursor: pointer; transition: all 0.2s; }
         .res-btn:active { transform: scale(0.95); }
-        .res-btn.shop-btn { border-color: #84cc16; color: #84cc16; }
+        .res-btn.shop-btn { border-color: #84cc16; color: #84cc16; font-size: 0.8rem; padding: 8px 20px; box-shadow: 0 0 15px rgba(132,204,22,0.2); }
 
         h1 { color: #84cc16; margin-bottom: 6px; font-size: 1.4rem; font-weight: 800; letter-spacing: 2px; text-shadow: 0 0 20px rgba(132,204,22,0.5); }
         .players-info { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; padding: 0 2px; gap: 4px; }
@@ -130,12 +130,38 @@
         .status { margin: 6px 0; font-size: 0.9rem; font-weight: 700; color: #e8e8ed; min-height: 20px; padding: 6px; background: rgba(255,255,255,0.05); border-radius: 8px; border: 1px solid rgba(132,204,22,0.2); text-align: center; }
         .ai-thinking { color: #fbbf24; font-weight: bold; }
 
-        .game-buttons { display: flex; justify-content: center; align-items: center; gap: 4px; margin-top: 6px; padding: 0 2px; flex-wrap: wrap; }
-        .game-btn { background: linear-gradient(135deg, #ff4081, #c51162); border: 2px solid #ff69b4; color: white; padding: 8px 14px; font-size: 0.75rem; border-radius: 30px; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 4px 0 #880e4f, 0 6px 12px rgba(0,0,0,0.4); font-family: inherit; font-weight: 700; flex: 1; min-width: 80px; max-width: 110px; }
-        .game-btn:active { transform: translateY(3px); box-shadow: 0 1px 0 #880e4f; }
-        .game-btn:disabled { opacity: 0.5; pointer-events: none; }
+        /* ===== GAME BUTTONS (New Design) ===== */
+        .game-buttons { display: flex; justify-content: center; align-items: center; gap: 6px; margin-top: 8px; padding: 0 2px; flex-wrap: wrap; }
+        .game-btn {
+            background: linear-gradient(135deg, #ff4081, #c51162);
+            border: 2px solid #ff69b4;
+            color: white;
+            padding: 12px 10px;
+            font-size: 0.8rem;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 0 #880e4f, 0 6px 12px rgba(0,0,0,0.4);
+            font-family: inherit;
+            font-weight: 700;
+            flex: 1;
+            min-width: 60px;
+            animation: btnPulse 2.5s infinite;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        @keyframes btnPulse {
+            0%, 100% { opacity: 0.85; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.02); box-shadow: 0 4px 0 #880e4f, 0 0 15px rgba(255,64,129,0.4); }
+        }
+        .game-btn:active { transform: translateY(4px) scale(0.98); box-shadow: 0 1px 0 #880e4f; animation: none; }
+        .game-btn:disabled { opacity: 0.5; pointer-events: none; animation: none; }
         .game-btn.new-game { background: linear-gradient(135deg, #84cc16, #65a30d); border: 2px solid #a3e635; box-shadow: 0 4px 0 #4d7c0f, 0 6px 12px rgba(0,0,0,0.4); }
-        .game-btn.small-btn { background: linear-gradient(135deg, #f39c12, #d35400); border: 2px solid #f1c40f; box-shadow: 0 4px 0 #b9770e, 0 6px 12px rgba(0,0,0,0.4); font-size: 0.65rem; padding: 6px 8px; min-width: 60px; max-width: 80px; }
+        .game-btn.new-game:active { box-shadow: 0 1px 0 #4d7c0f; }
+        .game-btn.small-btn { background: linear-gradient(135deg, #f39c12, #d35400); border: 2px solid #f1c40f; box-shadow: 0 4px 0 #b9770e, 0 6px 12px rgba(0,0,0,0.4); }
+        .game-btn.small-btn:active { box-shadow: 0 1px 0 #b9770e; }
+        .game-btn.score-btn { background: linear-gradient(135deg, #7b1fa2, #4a148c); border: 2px solid #ce93d8; box-shadow: 0 4px 0 #38006b, 0 6px 12px rgba(0,0,0,0.4); }
+        .game-btn.score-btn:active { box-shadow: 0 1px 0 #38006b; }
 
         @keyframes confettiFall { 0% { transform: translateY(-10px) rotate(0deg); opacity: 1; } 100% { transform: translateY(100vh) rotate(720deg); opacity: 0; } }
         .confetti { position: fixed; width: 6px; height: 6px; top: -10px; animation: confettiFall 3s linear forwards; z-index: 200; border-radius: 50%; }
@@ -171,6 +197,9 @@
         .modal-action-btn.lose-btn { background: linear-gradient(135deg, #f87171, #b91c1c); color: #fff; box-shadow: 0 4px 0 #7f1d1d; }
         .modal-action-btn.draw-btn { background: linear-gradient(135deg, #fbbf24, #d97706); color: #fff; box-shadow: 0 4px 0 #92400e; }
         .modal-action-btn.watch-btn { background: linear-gradient(135deg, #e81cff, #7b1fa2); color: #fff; box-shadow: 0 4px 0 #38006b; }
+        .modal-action-btn.danger-btn { background: linear-gradient(135deg, #ef4444, #991b1b); color: #fff; box-shadow: 0 4px 0 #450a0a; }
+        .modal-action-btn.cancel-btn { background: linear-gradient(135deg, #6b7280, #374151); color: #fff; box-shadow: 0 4px 0 #1f2937; }
+        .modal-action-btn.cancel-btn:active, .modal-action-btn.danger-btn:active { transform: translateY(3px); }
 
         /* Score History & Shop Modals */
         .score-modal-box { background: #0e1027; border: 2px solid rgba(132,204,22,0.4); border-radius: 20px; padding: 20px 16px; width: 92%; max-width: 420px; max-height: 80vh; overflow-y: auto; box-shadow: 0 0 40px rgba(132,204,22,0.15); }
@@ -267,8 +296,7 @@
             .player span { font-size: 0.6rem; }
             .player-disc { width: 22px; height: 22px; }
             .scores .score { font-size: 1rem; padding: 4px 10px; min-width: 50px; }
-            .game-btn { font-size: 0.7rem; padding: 6px 10px; min-width: 60px; max-width: 90px; }
-            .game-btn.small-btn { font-size: 0.6rem; padding: 4px 6px; min-width: 50px; max-width: 70px; }
+            .game-btn { font-size: 0.65rem; padding: 8px 6px; min-width: 50px; }
             .status { font-size: 0.8rem; padding: 4px; }
             .shop-grid { grid-template-columns: repeat(auto-fill, minmax(80px, 1fr)); }
             .res-btn { font-size: 0.55rem; padding: 2px 6px; }
@@ -278,14 +306,15 @@
         @media (max-width: 400px) {
             .hud-zone { display: none; }
             .hud-resources { flex-wrap: wrap; justify-content: center; gap: 2px; }
+            .game-btn { font-size: 0.55rem; padding: 6px 4px; }
         }
 
-        /* ===== SPLASH SCREEN (3D Title, Simultaneous Start Button) ===== */
+        /* ===== SPLASH SCREEN (Transparent background, shows stars) ===== */
         #splashScreen {
-            position: fixed; inset: 0; background: #0a0e27; /* Deep space blue */
+            position: fixed; inset: 0; background: rgba(10, 14, 39, 0.7);
             z-index: 2000; display: flex; justify-content: center; align-items: center;
             flex-direction: column; transition: opacity 0.8s ease, transform 0.8s ease;
-            overflow: hidden;
+            overflow: hidden; pointer-events: auto;
         }
         #splashScreen.hidden {
             opacity: 0; transform: scale(1.1); pointer-events: none;
@@ -334,7 +363,7 @@
             83%  { background: radial-gradient(circle at 35% 35%, #66bb6a, #1b5e20); }
             100% { background: radial-gradient(circle at 35% 35%, #ff5252, #c62828); }
         }
-        /* Splash Stars */
+        /* Splash Stars (CSS) */
         .splash-star {
             position: absolute; background: white; border-radius: 50%;
             animation: twinkleStar 2.5s infinite alternate;
@@ -343,7 +372,6 @@
             0% { opacity: 0.1; transform: scale(0.8); }
             100% { opacity: 1; transform: scale(1.2); }
         }
-        /* Splash Shooting Stars */
         .splash-shoot {
             position: absolute; width: 2px; height: 60px;
             background: linear-gradient(to bottom, rgba(255,255,255,0.8), transparent);
@@ -356,7 +384,6 @@
             80% { opacity: 1; }
             100% { opacity: 0; transform: translate(-300px, 500px) rotate(-35deg); }
         }
-        /* Start Button - appears simultaneously with title and disc */
         #splashStartBtn {
             margin-top: 30px; padding: 14px 40px; font-size: 1.1rem; font-weight: 800;
             letter-spacing: 2px; border: none; border-radius: 60px;
@@ -366,7 +393,7 @@
             text-transform: uppercase; opacity: 0; 
             transform: translateY(20px);
             animation: floatInSlow 2s cubic-bezier(0.2, 0.9, 0.3, 1.1) forwards;
-            animation-delay: 0s; /* same as content */
+            animation-delay: 0s;
         }
         #splashStartBtn:active { transform: translateY(6px); box-shadow: 0 2px 0 #4d7c0f; }
         #splashStartBtn:hover { transform: scale(1.02); }
@@ -375,6 +402,25 @@
             .splash-disc { width: 90px; height: 90px; }
             #splashStartBtn { padding: 12px 28px; font-size: 1rem; }
         }
+
+        /* ===== RESTART CONFIRM MODAL ===== */
+        #resetConfirmModal .modal-box {
+            text-align: center;
+            border-color: #f87171;
+        }
+        #resetConfirmModal .reset-icon {
+            font-size: 3rem; margin-bottom: 10px;
+        }
+        #resetConfirmModal .modal-desc {
+            color: rgba(255,255,255,0.7);
+            font-size: 0.9rem; line-height: 1.5; margin-bottom: 16px;
+        }
+        #resetConfirmModal .modal-buttons {
+            display: flex; gap: 10px; margin-top: 10px;
+        }
+        #resetConfirmModal .modal-buttons .modal-action-btn {
+            flex: 1;
+        }
     </style>
 </head>
 <body>
@@ -382,7 +428,7 @@
 
     <!-- ===== SPLASH SCREEN ===== -->
     <div id="splashScreen">
-        <!-- Background Stars -->
+        <!-- CSS Stars (Decorational) -->
         <div class="splash-star" style="width:3px;height:3px;top:8%;left:10%;animation-delay:0s;"></div>
         <div class="splash-star" style="width:2px;height:2px;top:25%;left:75%;animation-delay:0.4s;"></div>
         <div class="splash-star" style="width:4px;height:4px;top:55%;left:15%;animation-delay:0.9s;"></div>
@@ -407,7 +453,6 @@
         <div class="splash-content">
             <div class="splash-title">Connect Four</div>
             <div class="splash-disc"></div>
-            <!-- Start Button - appears simultaneously -->
             <button id="splashStartBtn" onclick="startGame()">START</button>
         </div>
     </div>
@@ -415,7 +460,7 @@
     <div class="game-wrapper">
         <div class="game-container">
             <div class="hud-resources">
-                <div class="hud-points">⭐ <span id="pointsDisplay">0</span>/<span id="pointsNeeded">100</span></div>
+                <div class="hud-points">⭐ <span id="pointsDisplay">0</span></div>
                 <div class="hud-coins">🪙 <span id="coinDisplay">0</span></div>
                 <div class="hud-timer">⏱ <span id="timerDisplay">05:00</span></div>
                 <div class="hud-btns">
@@ -449,11 +494,11 @@
             </div>
             <div class="status" id="status">Your turn</div>
 
+            <!-- New Game Buttons Layout (Full Width, Pulsing) -->
             <div class="game-buttons">
-                <button class="game-btn" id="restartBtn">↺ Restart</button>
                 <button class="game-btn new-game" id="newGameBtn">⊕ New</button>
                 <button class="game-btn small-btn" id="toggleFirstBtn">🤖 AI First</button>
-                <button class="game-btn small-btn" id="openScoreboardBtn" style="background:linear-gradient(135deg,#7b1fa2,#4a148c);border-color:#ce93d8;box-shadow:0 4px 0 #38006b;">🏆 Scores</button>
+                <button class="game-btn score-btn" id="openScoreboardBtn">🏆 Scores</button>
             </div>
         </div>
     </div>
@@ -503,6 +548,22 @@
         </div>
     </div>
 
+    <!-- Restart Confirmation Modal -->
+    <div class="modal-overlay" id="resetConfirmModal">
+        <div class="modal-box">
+            <div class="reset-icon">⚠️</div>
+            <div class="modal-galaxy-title" style="color:#f87171;">Reset Game Progress</div>
+            <div class="modal-desc">
+                Do you want to reset to level zero and lose all your points and coins?<br>
+                <strong>This action cannot be undone!</strong>
+            </div>
+            <div class="modal-buttons">
+                <button class="modal-action-btn cancel-btn" id="resetNoBtn">No, Cancel</button>
+                <button class="modal-action-btn danger-btn" id="resetYesBtn">Yes, Reset</button>
+            </div>
+        </div>
+    </div>
+
     <script>
     (function() {
         // ============================================================
@@ -517,7 +578,7 @@
             setTimeout(() => {
                 splash.style.display = 'none';
                 if (window._game) {
-                    window._game.hardReset();
+                    window._game.hardReset(); // First time starts clean
                 }
             }, 800);
         };
@@ -656,31 +717,31 @@
         }
 
         // ============================================================
-        // SHOP ITEMS
+        // SHOP ITEMS (Increased Prices)
         // ============================================================
         const SHOP_ITEMS = [
             { id: 'default_disc', category: 'pions', name: 'Classic', price: 0, css: 'classic' },
-            { id: 'cyber_disc', category: 'pions', name: 'Cyberpunk', price: 40, css: 'cyber' },
-            { id: 'gold_disc', category: 'pions', name: 'Golden Age', price: 60, css: 'gold' },
-            { id: 'lava_disc', category: 'pions', name: 'Volcanic Lava', price: 50, css: 'lava' },
-            { id: 'galaxy_disc', category: 'pions', name: 'Deep Galaxy', price: 80, css: 'galaxy' },
+            { id: 'cyber_disc', category: 'pions', name: 'Cyberpunk', price: 100, css: 'cyber' },
+            { id: 'gold_disc', category: 'pions', name: 'Golden Age', price: 150, css: 'gold' },
+            { id: 'lava_disc', category: 'pions', name: 'Volcanic Lava', price: 120, css: 'lava' },
+            { id: 'galaxy_disc', category: 'pions', name: 'Deep Galaxy', price: 200, css: 'galaxy' },
             { id: 'default_effect', category: 'effects', name: 'Standard', price: 0, css: 'standard' },
-            { id: 'fire_effect', category: 'effects', name: '🔥 Fire Trail', price: 50, css: 'fire' },
-            { id: 'explosion_effect', category: 'effects', name: '💥 Explosion', price: 60, css: 'explosion' },
-            { id: 'plasma_effect', category: 'effects', name: '⚡ Plasma', price: 50, css: 'plasma' },
-            { id: 'ice_effect', category: 'effects', name: '❄️ Ice Shards', price: 50, css: 'ice' },
-            { id: 'galaxy_effect', category: 'effects', name: '🌌 Galaxy', price: 80, css: 'galaxy' },
+            { id: 'fire_effect', category: 'effects', name: '🔥 Fire Trail', price: 120, css: 'fire' },
+            { id: 'explosion_effect', category: 'effects', name: '💥 Explosion', price: 150, css: 'explosion' },
+            { id: 'plasma_effect', category: 'effects', name: '⚡ Plasma', price: 120, css: 'plasma' },
+            { id: 'ice_effect', category: 'effects', name: '❄️ Ice Shards', price: 120, css: 'ice' },
+            { id: 'galaxy_effect', category: 'effects', name: '🌌 Galaxy', price: 200, css: 'galaxy' },
             { id: 'default', category: 'board', name: 'Deep Blue', price: 0, css: 'linear-gradient(145deg, #1565c0, #0d47a1)' },
-            { id: 'dark', category: 'board', name: 'Void Black', price: 50, css: 'linear-gradient(145deg, #1a1a2e, #0f0f1a)' },
-            { id: 'red', category: 'board', name: 'Volcanic', price: 75, css: 'linear-gradient(145deg, #b71c1c, #4a0000)' },
-            { id: 'green', category: 'board', name: 'Neon Matrix', price: 100, css: 'linear-gradient(145deg, #2e7d32, #003300)' },
-            { id: 'iceberg', category: 'board', name: 'Iceberg', price: 65, css: 'linear-gradient(145deg, #0097a7, #004d40)' },
-            { id: 'cyber_grid', category: 'board', name: 'Cyber Grid', price: 110, css: 'linear-gradient(145deg, #1a237e, #0d47a1)' },
+            { id: 'dark', category: 'board', name: 'Void Black', price: 120, css: 'linear-gradient(145deg, #1a1a2e, #0f0f1a)' },
+            { id: 'red', category: 'board', name: 'Volcanic', price: 180, css: 'linear-gradient(145deg, #b71c1c, #4a0000)' },
+            { id: 'green', category: 'board', name: 'Neon Matrix', price: 250, css: 'linear-gradient(145deg, #2e7d32, #003300)' },
+            { id: 'iceberg', category: 'board', name: 'Iceberg', price: 160, css: 'linear-gradient(145deg, #0097a7, #004d40)' },
+            { id: 'cyber_grid', category: 'board', name: 'Cyber Grid', price: 280, css: 'linear-gradient(145deg, #1a237e, #0d47a1)' },
             { id: 'default_bg', category: 'bg', name: 'Deep Void', price: 0, css: '#000010' },
-            { id: 'nebula_bg', category: 'bg', name: 'Galactic Nebula', price: 40, css: 'linear-gradient(135deg, #0f0c29, #302b63, #24243e)' },
-            { id: 'aurora_bg', category: 'bg', name: 'Aurora', price: 40, css: 'linear-gradient(135deg, #0b0d1a, #172a4a, #0d4a3a)' },
-            { id: 'sunset_bg', category: 'bg', name: 'Cyber Sunset', price: 40, css: 'linear-gradient(135deg, #1a0b0b, #4a1a2e, #0d1a4a)' },
-            { id: 'midnight_bg', category: 'bg', name: 'Midnight City', price: 50, css: 'linear-gradient(135deg, #000000, #1a1a2e, #16213e)' },
+            { id: 'nebula_bg', category: 'bg', name: 'Galactic Nebula', price: 100, css: 'linear-gradient(135deg, #0f0c29, #302b63, #24243e)' },
+            { id: 'aurora_bg', category: 'bg', name: 'Aurora', price: 100, css: 'linear-gradient(135deg, #0b0d1a, #172a4a, #0d4a3a)' },
+            { id: 'sunset_bg', category: 'bg', name: 'Cyber Sunset', price: 100, css: 'linear-gradient(135deg, #1a0b0b, #4a1a2e, #0d1a4a)' },
+            { id: 'midnight_bg', category: 'bg', name: 'Midnight City', price: 120, css: 'linear-gradient(135deg, #000000, #1a1a2e, #16213e)' },
         ];
 
         const CAT_NAMES = { 'pions': '🔵 Discs', 'effects': '🎆 Effects', 'board': '🖼️ Board', 'bg': '🌌 Background' };
@@ -917,7 +978,6 @@
                 this.domBoard  = document.getElementById('board');
                 this.domStatus = document.getElementById('status');
                 this.domScore  = document.getElementById('scoreDisplay');
-                this.restartBtn     = document.getElementById('restartBtn');
                 this.newGameBtn     = document.getElementById('newGameBtn');
                 this.toggleFirstBtn = document.getElementById('toggleFirstBtn');
 
@@ -994,7 +1054,6 @@
 
             updatePointsDisplay() {
                 document.getElementById('pointsDisplay').textContent = this.gameData.points;
-                document.getElementById('pointsNeeded').textContent = '∞'; 
             }
 
             updateHUD() {
@@ -1012,7 +1071,7 @@
 
             updateScores() { this.domScore.textContent = `${this.scores[1]} - ${this.scores[2]}`; }
             setButtonsEnabled(enabled) {
-                [this.restartBtn, this.newGameBtn, this.toggleFirstBtn].forEach(b => { if(b) b.disabled = !enabled; });
+                [this.newGameBtn, this.toggleFirstBtn].forEach(b => { if(b) b.disabled = !enabled; });
             }
 
             // ===== YOUTUBE SDK INTEGRATION =====
@@ -1510,12 +1569,9 @@
 
             // ===== INIT DOM EVENTS =====
             initDOMEvents() {
-                this.restartBtn.addEventListener('click', () => {
-                    this.restartGame();
-                });
-                
+                // NEW GAME: Just restarts the board, keeps points/coins/level
                 this.newGameBtn.addEventListener('click', () => {
-                    this.hardReset();
+                    this.restartGame();
                 });
 
                 this.toggleFirstBtn.addEventListener('click', () => this.toggleFirstPlayer());
@@ -1529,6 +1585,19 @@
                 });
                 document.getElementById('shopModal').addEventListener('click', (e) => {
                     if (e.target === e.currentTarget) document.getElementById('shopModal').classList.remove('open');
+                });
+
+                // Reset Confirmation Modal Events
+                document.getElementById('resetNoBtn').addEventListener('click', () => {
+                    document.getElementById('resetConfirmModal').classList.remove('open');
+                });
+                document.getElementById('resetYesBtn').addEventListener('click', () => {
+                    document.getElementById('resetConfirmModal').classList.remove('open');
+                    this.hardReset(); // Performs full reset
+                });
+                // Close modal on overlay click
+                document.getElementById('resetConfirmModal').addEventListener('click', (e) => {
+                    if (e.target === e.currentTarget) document.getElementById('resetConfirmModal').classList.remove('open');
                 });
             }
 
@@ -1544,7 +1613,7 @@
             toggleFirstPlayer() {
                 this.aiFirst = !this.aiFirst;
                 this.toggleFirstBtn.textContent = this.aiFirst ? '👤 You First' : '🤖 AI First';
-                this.hardReset();
+                this.restartGame(); // Restart the board on toggle
             }
 
             saveTodayScore() {
@@ -1683,7 +1752,7 @@
                 }
             }
 
-            // ===== RESTART (Keeps points/coins/level) =====
+            // ===== RESTART GAME (Keeps points, coins, level) =====
             restartGame() {
                 this.currentPlayer = 1;
                 this.isAiTurn = false;
@@ -1855,7 +1924,21 @@
                     });
                 });
                 adDiv.appendChild(adBtn);
+
+                // Restart / Reset Button in Shop (Opens Confirmation Modal)
+                const resetDiv = document.createElement('div');
+                resetDiv.style.cssText = 'margin: 8px 0 12px 0; text-align: center;';
+                const resetBtn = document.createElement('button');
+                resetBtn.className = 'modal-action-btn danger-btn';
+                resetBtn.style.cssText = 'font-size:0.8rem; box-shadow: 0 4px 0 #450a0a;';
+                resetBtn.textContent = '🗑️ Reset Progress (Level 0)';
+                resetBtn.addEventListener('click', () => {
+                    document.getElementById('resetConfirmModal').classList.add('open');
+                });
+                resetDiv.appendChild(resetBtn);
+
                 container.appendChild(adDiv);
+                container.appendChild(resetDiv);
             }
 
             getEffectPreviewClass(effectId) {
