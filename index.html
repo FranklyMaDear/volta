@@ -101,25 +101,29 @@ body.paused *,body.paused *::before,body.paused *::after{animation-play-state:pa
 #rank-box .bonus-row{text-align:center;font-size:12px;color:#FFD700;margin-top:6px;font-weight:600}
 #rank-close-btn{display:block;margin:16px auto 0;background:linear-gradient(135deg,#ffaa33,#cc8800);color:#000;border:none;border-radius:12px;padding:10px 36px;font-size:15px;font-weight:800;cursor:pointer;letter-spacing:.5px;box-shadow:0 4px 16px rgba(255,170,51,.4)}
 #rank-close-btn:active{transform:scale(.94)}
+
+/* ----- Shop Modal (BIGGER UI) ----- */
 #shop-modal{position:absolute;inset:0;z-index:600;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,.88);padding:20px}
 #shop-modal.active{display:flex}
-#shop-box{background:linear-gradient(145deg,#1a1a3a,#111122);border:2px solid #7d4bdd;border-radius:24px;padding:24px 20px 20px;width:92%;max-width:400px;max-height:82vh;overflow-y:auto;box-shadow:0 0 40px rgba(120,90,220,.25),inset 0 1px 0 rgba(255,255,255,.05);scrollbar-width:thin;scrollbar-color:#7d4bdd #111}
-#shop-box h2{color:#c0aaff;text-align:center;font-size:20px;font-weight:800;letter-spacing:1px;margin-bottom:4px}
-#shop-box .shop-subtitle{color:#aaa;text-align:center;font-size:11px;letter-spacing:1px;margin-bottom:16px}
-#shop-coins-display{background:rgba(255,215,0,.1);border:1px solid rgba(255,215,0,.2);border-radius:12px;padding:10px;text-align:center;margin-bottom:14px;color:#FFD700;font-size:16px;font-weight:700}
-.shop-item{display:flex;align-items:center;justify-content:space-between;padding:10px 8px;border-bottom:1px solid rgba(255,255,255,.06);font-size:14px;color:#ddd}
+#shop-box{background:linear-gradient(145deg,#1a1a3a,#111122);border:2px solid #7d4bdd;border-radius:24px;padding:30px 25px 25px;width:95%;max-width:420px;max-height:85vh;overflow-y:auto;box-shadow:0 0 40px rgba(120,90,220,.25),inset 0 1px 0 rgba(255,255,255,.05);scrollbar-width:thin;scrollbar-color:#7d4bdd #111}
+#shop-box h2{color:#c0aaff;text-align:center;font-size:24px;font-weight:800;letter-spacing:1px;margin-bottom:4px}
+#shop-box .shop-subtitle{color:#aaa;text-align:center;font-size:13px;letter-spacing:1px;margin-bottom:16px}
+#shop-coins-display{background:rgba(255,215,0,.1);border:1px solid rgba(255,215,0,.2);border-radius:12px;padding:10px;text-align:center;margin-bottom:14px;color:#FFD700;font-size:18px;font-weight:700}
+.shop-item{display:flex;align-items:center;justify-content:space-between;padding:14px 10px;border-bottom:1px solid rgba(255,255,255,.08);font-size:16px;color:#ddd}
 .shop-item:last-child{border-bottom:none}
-.shop-item .item-icon{font-size:22px;margin-right:8px}
+.shop-item .item-icon{font-size:28px;margin-right:12px}
 .shop-item .item-info{flex:1}
-.shop-item .item-name{font-weight:700;color:#fff}
-.shop-item .item-desc{font-size:11px;color:#888}
-.shop-item .item-level{font-size:11px;color:#7cfc00;margin-left:6px}
-.shop-item .shop-btn{background:#7b3fcc;color:#fff;border:none;padding:6px 14px;border-radius:10px;font-size:12px;font-weight:700;cursor:pointer;transition:background .15s}
-.shop-item .shop-btn:disabled{background:#444;color:#666;cursor:default}
+.shop-item .item-name{font-weight:700;color:#fff;font-size:16px}
+.shop-item .item-desc{font-size:13px;color:#aaa;margin-top:2px}
+.shop-item .item-level{font-size:13px;color:#7cfc00;margin-left:6px}
+.shop-item .shop-btn{background:#7b3fcc;color:#fff;border:none;padding:8px 18px;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;transition:background .15s}
+.shop-item .shop-btn:disabled{background:#444;color:#888;cursor:default}
 .shop-item .shop-btn:active:not(:disabled){transform:scale(.93)}
 .shop-item .shop-btn.maxed{background:#16a34a;color:#000}
-#shop-close-btn{display:block;margin:16px auto 0;background:linear-gradient(135deg,#7b3fcc,#a855f7);color:#fff;border:none;border-radius:12px;padding:10px 36px;font-size:15px;font-weight:800;cursor:pointer;letter-spacing:.5px;box-shadow:0 4px 16px rgba(168,85,247,.4)}
+#shop-close-btn{display:block;margin:16px auto 0;background:linear-gradient(135deg,#7b3fcc,#a855f7);color:#fff;border:none;border-radius:12px;padding:12px 40px;font-size:16px;font-weight:800;cursor:pointer;letter-spacing:.5px;box-shadow:0 4px 16px rgba(168,85,247,.4)}
 #shop-close-btn:active{transform:scale(.94)}
+
+/* ----- Revive Modal ----- */
 #revive-modal{position:absolute;inset:0;z-index:450;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,.88);flex-direction:column;gap:20px}
 #revive-modal.active{display:flex}
 #revive-modal h1{font-size:48px;color:#ffaa33;text-shadow:0 0 30px orange;margin:0}
@@ -127,9 +131,28 @@ body.paused *,body.paused *::before,body.paused *::after{animation-play-state:pa
 #revive-modal .revive-actions{display:flex;gap:16px;flex-wrap:wrap;justify-content:center}
 #revive-ad-btn{background:#16a34a;color:#fff;border:none;padding:12px 30px;border-radius:16px;font-size:18px;font-weight:800;cursor:pointer;box-shadow:0 0 20px rgba(22,163,74,.6)}
 #revive-skip-btn{background:#444;color:#fff;border:none;padding:12px 30px;border-radius:16px;font-size:18px;font-weight:800;cursor:pointer}
-/* Rank Glow */
-#btn-rank.glow .boost-circle { box-shadow: 0 0 25px rgba(255,170,51,0.8); border-color: #ffaa33; animation: rankPulse 1.2s ease-in-out infinite; }
-@keyframes rankPulse { 0%, 100% { box-shadow: 0 0 15px rgba(255,170,51,0.6); } 50% { box-shadow: 0 0 35px rgba(255,170,51,0.9); } }
+
+/* ----- Daily Rewards Modal ----- */
+#daily-modal{position:absolute;inset:0;z-index:700;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,.85);padding:20px}
+#daily-modal.active{display:flex}
+#daily-box{background:linear-gradient(145deg,#2a1a4a,#15152a);border:2px solid #ffaa33;border-radius:24px;padding:30px 25px;width:90%;max-width:380px;text-align:center;box-shadow:0 0 40px rgba(255,170,51,.3)}
+#daily-box h2{color:#ffaa33;font-size:28px;font-weight:800;margin-bottom:4px}
+#daily-box p{color:#ccc;font-size:16px;margin:8px 0 20px}
+#daily-box .daily-reward{font-size:24px;color:#FFD700;font-weight:700;background:rgba(255,215,0,.1);padding:10px;border-radius:12px;margin-bottom:16px}
+#daily-claim-btn{background:linear-gradient(135deg,#ffaa33,#cc8800);color:#000;border:none;padding:14px 40px;border-radius:16px;font-size:18px;font-weight:800;cursor:pointer;box-shadow:0 4px 16px rgba(255,170,51,.4)}
+#daily-claim-btn:active{transform:scale(.94)}
+
+/* ----- Booster Purchase Modal ----- */
+#booster-modal{position:absolute;inset:0;z-index:650;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,.88);padding:20px}
+#booster-modal.active{display:flex}
+#booster-box{background:linear-gradient(145deg,#1a1a3a,#111122);border:2px solid #7766cc;border-radius:24px;padding:24px 20px;width:90%;max-width:360px;text-align:center;box-shadow:0 0 30px rgba(120,90,220,.3)}
+#booster-box h2{color:#c0aaff;font-size:22px;font-weight:800;margin-bottom:4px}
+#booster-box p{color:#ccc;font-size:15px;margin:8px 0 16px}
+#booster-box .booster-actions{display:flex;flex-direction:column;gap:12px}
+#booster-box .booster-actions button{width:100%;padding:12px;border-radius:12px;font-size:16px;font-weight:700;border:none;cursor:pointer}
+#booster-ad-btn{background:#16a34a;color:#fff;}
+#booster-coin-btn{background:#b8860b;color:#FFD700;}
+#booster-close-btn{background:#444;color:#fff;margin-top:8px;}
 </style>
 </head>
 <body>
@@ -188,15 +211,17 @@ body.paused *,body.paused *::before,body.paused *::after{animation-play-state:pa
   <div class="lost-score" id="lost-final-score">Score: 0</div>
   <button id="lost-newgame-btn">NEW GAME</button>
 </div>
+
 <div id="revive-modal">
-  <h1>💀 GAME OVER?</h1>
+  <h1>⚡ CONTINUE?</h1>
   <div class="revive-score" id="revive-current-score">Score: 0</div>
-  <p style="color:#ccc;text-align:center;max-width:300px;">Don't give up! Watch a short ad to continue your run.</p>
+  <p style="color:#ccc;text-align:center;max-width:300px;">Watch a short ad to continue your run.</p>
   <div class="revive-actions">
     <button id="revive-ad-btn">🎬 WATCH AD & CONTINUE</button>
     <button id="revive-skip-btn">✖ QUIT</button>
   </div>
 </div>
+
 <div id="rank-modal">
   <div id="rank-box">
     <h2>🏆 WEEKLY TOP 10</h2>
@@ -211,6 +236,7 @@ body.paused *,body.paused *::before,body.paused *::after{animation-play-state:pa
     <button id="rank-close-btn">CLOSE</button>
   </div>
 </div>
+
 <div id="shop-modal">
   <div id="shop-box">
     <h2>🛒 eShop</h2>
@@ -218,6 +244,27 @@ body.paused *,body.paused *::before,body.paused *::after{animation-play-state:pa
     <div id="shop-coins-display">🪙 <span id="shop-coins-val">0</span></div>
     <div id="shop-items-list"></div>
     <button id="shop-close-btn">CLOSE</button>
+  </div>
+</div>
+
+<div id="daily-modal">
+  <div id="daily-box">
+    <h2>🎁 DAILY REWARD</h2>
+    <p>Claim your daily bonus!</p>
+    <div class="daily-reward">🪙 50 Coins + 💣 1 Bomb</div>
+    <button id="daily-claim-btn">CLAIM</button>
+  </div>
+</div>
+
+<div id="booster-modal">
+  <div id="booster-box">
+    <h2 id="booster-title">🔋 Get Booster</h2>
+    <p id="booster-desc">Watch an ad or spend coins to use it now.</p>
+    <div class="booster-actions">
+      <button id="booster-ad-btn">🎬 Watch Ad (Free)</button>
+      <button id="booster-coin-btn">🪙 Pay 100 Coins</button>
+      <button id="booster-close-btn">✖ Cancel</button>
+    </div>
   </div>
 </div>
 
@@ -349,6 +396,7 @@ const LS_LEVEL='mergeCubes3D_playerLevel';
 const LS_XP='mergeCubes3D_playerXP';
 const LS_COINS='mergeCubes3D_coins';
 const GIFT_DATE_KEY='mergeCubes3D_giftDate';
+const DAILY_REWARD_KEY='mergeCubes3D_dailyReward';
 const FREE_BOMB_KEY='mergeCubes3D_freeBomb';
 const FREE_RAINBOW_KEY='mergeCubes3D_freeRainbow';
 
@@ -517,12 +565,12 @@ const newRowMat=new CANNON.Material('newRow');
 const wallPhysMat=new CANNON.Material('wall');
 
 world.addContactMaterial(new CANNON.ContactMaterial(bouncyCubeMat,cannonFloorMat,{friction:.5,restitution:0.15}));
-world.addContactMaterial(new CANNON.ContactMaterial(bouncyCubeMat,bouncyCubeMat,{friction:.3,restitution:0.0}));
+world.addContactMaterial(new CANNON.ContactMaterial(bouncyCubeMat,bouncyCubeMat,{friction:.3,restitution:0.1})); // Αυξήθηκε το restitution για χοροπήδημα
 world.addContactMaterial(new CANNON.ContactMaterial(bouncyCubeMat,wallPhysMat,{friction:.2,restitution:0.1}));
 world.addContactMaterial(new CANNON.ContactMaterial(bouncyCubeMat,cubeMat,{friction:.3,restitution:0.25}));
 world.addContactMaterial(new CANNON.ContactMaterial(bouncyCubeMat,newRowMat,{friction:.3,restitution:0.0}));
 world.addContactMaterial(new CANNON.ContactMaterial(cubeMat,cannonFloorMat,{friction:.6,restitution:0.05}));
-world.addContactMaterial(new CANNON.ContactMaterial(cubeMat,cubeMat,{friction:.4,restitution:0.2}));
+world.addContactMaterial(new CANNON.ContactMaterial(cubeMat,cubeMat,{friction:.4,restitution:0.3})); // Αυξήθηκε το restitution για χοροπήδημα
 world.addContactMaterial(new CANNON.ContactMaterial(cubeMat,wallPhysMat,{friction:.3,restitution:0.15}));
 world.addContactMaterial(new CANNON.ContactMaterial(newRowMat,cannonFloorMat,{friction:.95,restitution:0.0}));
 world.addContactMaterial(new CANNON.ContactMaterial(newRowMat,wallPhysMat,{friction:.8,restitution:0.0}));
@@ -530,26 +578,28 @@ world.addContactMaterial(new CANNON.ContactMaterial(newRowMat,cubeMat,{friction:
 
 const pushedThisShot=new Set();
 world.addEventListener('beginContact',(e)=>{
-  if(!shotCube)return;
+  if(!shotCube) return;
   const bodyA=e.bodyA, bodyB=e.bodyB;
   let targetBody=null;
   if(bodyA===shotCube.body) targetBody=bodyB;
   else if(bodyB===shotCube.body) targetBody=bodyA;
-  if(!targetBody)return;
+  if(!targetBody) return;
   const tc=cubes.find(c=>c.body===targetBody&&!c.isShot&&!c.isNewRow);
-  if(!tc)return;
-  if(tc.value===shotCube.value)return;
-  // --- ΔΙΟΡΘΩΣΗ ΦΥΣΙΚΗΣ ΣΥΓΚΡΟΥΣΗΣ ---
-  // Ο shotCube ΔΕΝ σπρώχνει πλέον τον άλλο κύβο, αλλά ΣΤΑΜΑΤΑΕΙ φυσικά δίπλα του.
-  shotCube.isShot = false;
-  shotCube.body.collisionFilterGroup = GRP_TRACK;
-  shotCube.body.collisionFilterMask = ~0;
-  shotCube.body.mass = 1.2;
-  shotCube.body.updateMassProperties();
-  shotCube.body.linearDamping = 0.25;
-  shotCube.body.angularDamping = 0.35;
-  shotCube.mergeCooldown = 0.3;
-  if(shotCube === shotCube) shotCube = null; // Απενεργοποίηση του shotCube
+  if(!tc) return;
+  
+  // --- ΝΕΑ ΦΥΣΙΚΗ: ΣΠΡΩΞΙΜΟ ΚΑΙ ΧΟΡΟΠΗΔΗΜΑ ---
+  // Ο κύβος που ρίχνουμε σπρώχνει τον άλλο κύβο, χωρίς να σταματάει ο ίδιος.
+  // Η ώθηση είναι προς τα εμπρός, πλάγια και πάνω (για χοροπήδημα).
+  const shotVel = shotCube.body.velocity;
+  const speed = Math.sqrt(shotVel.x*shotVel.x + shotVel.z*shotVel.z);
+  const angle = Math.random() * Math.PI * 2;
+  const pushX = Math.cos(angle) * 3 + shotVel.x * 0.3;
+  const pushY = Math.abs(shotVel.y) * 0.5 + 2.5; // Πάνω
+  const pushZ = Math.sin(angle) * 3 + shotVel.z * 0.3 + 2.0;
+  
+  tc.body.applyImpulse(new CANNON.Vec3(pushX, pushY, pushZ), new CANNON.Vec3(0,0,0));
+  
+  // Ο shotCube συνεχίζει την πορεία του (δεν τον αλλάζουμε)
 });
 
 const floorBody=new CANNON.Body({mass:0,shape:new CANNON.Plane(),material:cannonFloorMat});
@@ -634,7 +684,6 @@ function spawnCube(x,y,z,value,opts={}){
 
   if(opts.isShot){
     body.collisionFilterGroup=GRP_SHOT;
-    // --- ΔΙΟΡΘΩΣΗ: Ο shotCube πρέπει να συγκρούεται και με κύβους, όχι μόνο με τοίχους ---
     body.collisionFilterMask=GRP_WALL | GRP_TRACK | GRP_NEWROW;
   } else if(opts.isNewRow){
     body.collisionFilterGroup=GRP_NEWROW;
@@ -656,7 +705,7 @@ function spawnCube(x,y,z,value,opts={}){
     isNewRow:!!opts.isNewRow,
     newRowTimer:opts.isNewRow?1.5:0,
     passedDanger: false,
-    landed: false // Για το Coin on landing
+    landed: false
   };
 
   if(opts.addToCubes!==false){cubes.push(cube);}
@@ -788,7 +837,6 @@ function tryMerge(a,b){
   if(nv>=16)spawnParticles(px-trackY,py-trackY,pz,0xFFD700,14,7);
   spawnFlashSphere(px-trackY,py-trackY,pz,pal.glow);spawnFlashSphere(px-trackY,py-trackY,pz,0xff8800);
   
-  // --- ΧΡΥΣΟ ΠΡΩΤΟ MERGE ---
   if(!firstMergeDone){
     firstMergeDone = true;
     addXP(50);
@@ -796,7 +844,6 @@ function tryMerge(a,b){
     audio.gift();
   }
 
-  // --- ΣΤΙΓΜΙΑΙΟ ΔΩΡΟ BOOSTER ΣΤΟ 8 ---
   if(nv === 8 && !giftAt8Done){
     giftAt8Done = true;
     freeBomb += 1;
@@ -805,13 +852,11 @@ function tryMerge(a,b){
     audio.gift();
   }
 
-  // --- RANK GLOW ΣΤΟ 16 ---
   if(nv >= 16 && !firstTimeAt16){
     firstTimeAt16 = true;
     document.getElementById('btn-rank').classList.add('glow');
   }
 
-  // --- COMBO SYSTEM ---
   const now = performance.now();
   if(now - lastMergeTime < 3000){
     comboStreak++;
@@ -823,7 +868,7 @@ function tryMerge(a,b){
   if(comboStreak >= 3){
     bonusXP = Math.floor(nv * 0.5);
     floatText(px-trackY, py-trackY+2, pz, '🔥 COMBO x2 XP!', 'points-big');
-    audio.milestone(); // Μελωδικό chime ως ανταμοιβή combo
+    audio.milestone();
   }
 
   const pts = nv;
@@ -985,15 +1030,14 @@ let freeBomb=0,freeRainbow=0;
 
 const BOMB_COST=200;
 const RAINBOW_COST=300;
+const BOOSTER_BUY_COST=100; // Τιμή αγοράς με νομίσματα
 
 let extraLives = 0;
-let reviveAvailable = true;
+let reviveCount = 0;
+const MAX_REVIVES = 2; // 2 ευκαιρίες, 3η φορά χάνει
 let badCubeToRemove = null;
 
-// --- ΠΡΟΣΤΑΣΙΑ ΣΤΗΝ ΑΡΧΗ (Gentle Shield) ---
 let gentleShield = 3;
-
-// --- ΟΔΗΓΟΣ ΠΑΙΧΝΙΔΙΟΥ ---
 let tutorialShots = 0;
 let tutorialActive = true;
 
@@ -1070,8 +1114,98 @@ function showInitialOverlay(){
   document.getElementById('startBtn').addEventListener('click',startGame);
 }
 
+/* ------------------ ΣΥΣΤΗΜΑ DAILY REWARDS ------------------ */
+function checkDailyReward() {
+  const today = new Date().toISOString().slice(0,10);
+  const lastClaim = store.get(DAILY_REWARD_KEY);
+  if (lastClaim !== today) {
+    // Εμφάνιση modal
+    document.getElementById('daily-modal').classList.add('active');
+  }
+}
+document.getElementById('daily-claim-btn').addEventListener('click', ()=>{
+  const today = new Date().toISOString().slice(0,10);
+  store.set(DAILY_REWARD_KEY, today);
+  // Δώρο: 50 coins + 1 bomb
+  coins += 50;
+  freeBomb += 1;
+  saveProgression();
+  updateCoinsDisplay();
+  updateBoosterBadges();
+  document.getElementById('daily-modal').classList.remove('active');
+  showToast('🎁 Daily reward claimed! +50 coins, +1 bomb');
+});
+
+/* ------------------ ΣΥΣΤΗΜΑ BOOSTER PURCHASE ------------------ */
+let pendingBoosterType = null; // 'bomb' or 'rainbow'
+
+function openBoosterModal(type) {
+  pendingBoosterType = type;
+  const title = document.getElementById('booster-title');
+  const desc = document.getElementById('booster-desc');
+  if (type === 'bomb') {
+    title.textContent = '💣 Get Bomb';
+    desc.textContent = 'Watch an ad or spend 100 coins to use a Bomb.';
+  } else {
+    title.textContent = '🌈 Get Rainbow';
+    desc.textContent = 'Watch an ad or spend 100 coins to use a Rainbow.';
+  }
+  document.getElementById('booster-modal').classList.add('active');
+}
+
+document.getElementById('booster-ad-btn').addEventListener('click', ()=>{
+  document.getElementById('booster-modal').classList.remove('active');
+  if (pendingBoosterType === 'bomb') {
+    if (YT && YT.game && typeof YT.game.showRewardedAd === 'function') {
+      YT.game.showRewardedAd().then(() => {
+        useBomb();
+      }).catch(() => {
+        showToast('Ad failed or skipped.');
+      });
+    } else {
+      useBomb();
+    }
+  } else if (pendingBoosterType === 'rainbow') {
+    if (YT && YT.game && typeof YT.game.showRewardedAd === 'function') {
+      YT.game.showRewardedAd().then(() => {
+        useRainbow();
+      }).catch(() => {
+        showToast('Ad failed or skipped.');
+      });
+    } else {
+      useRainbow();
+    }
+  }
+  pendingBoosterType = null;
+});
+
+document.getElementById('booster-coin-btn').addEventListener('click', ()=>{
+  if (coins < BOOSTER_BUY_COST) {
+    showToast('🪙 Not enough coins! Need 100.');
+    document.getElementById('booster-modal').classList.remove('active');
+    pendingBoosterType = null;
+    return;
+  }
+  coins -= BOOSTER_BUY_COST;
+  saveProgression();
+  updateCoinsDisplay();
+  document.getElementById('booster-modal').classList.remove('active');
+  if (pendingBoosterType === 'bomb') {
+    useBomb();
+  } else if (pendingBoosterType === 'rainbow') {
+    useRainbow();
+  }
+  pendingBoosterType = null;
+});
+
+document.getElementById('booster-close-btn').addEventListener('click', ()=>{
+  document.getElementById('booster-modal').classList.remove('active');
+  pendingBoosterType = null;
+});
+/* --------------------------------------------------------- */
+
+/* ------------------ ΣΥΣΤΗΜΑ REVIVE (2 ευκαιρίες) ------------------ */
 function handleDeath(crossedCube) {
-  // Gentle Shield (Προστασία στην αρχή)
   if (gentleShield > 0) {
     gentleShield--;
     crossedCube.body.position.z = Z_BACK + 2;
@@ -1081,15 +1215,14 @@ function handleDeath(crossedCube) {
     addScore(-10);
     return;
   }
-  // Extra Lives
   if (extraLives > 0) {
     extraLives--;
     removeCube(crossedCube);
     floatText(0, trackY+2, DANGER_Z-2, '💔 Extra Life Used!', 'points');
     return;
   }
-  // Revive
-  if (reviveAvailable) {
+  // Revive system: 2 chances
+  if (reviveCount < MAX_REVIVES) {
     badCubeToRemove = crossedCube;
     paused = true;
     document.getElementById('revive-current-score').textContent = 'Score: ' + score.toLocaleString();
@@ -1105,12 +1238,13 @@ function reviveGame() {
     removeCube(badCubeToRemove);
     badCubeToRemove = null;
   }
-  reviveAvailable = false;
+  reviveCount++;
   paused = false;
   gameOn = true;
   document.getElementById('hud').classList.add('active');
   document.getElementById('boosters').classList.add('active');
   audio.resume();
+  showToast('⚡ Revived! (' + reviveCount + '/' + MAX_REVIVES + ')');
 }
 
 document.getElementById('revive-ad-btn').addEventListener('click', () => {
@@ -1130,6 +1264,7 @@ document.getElementById('revive-skip-btn').addEventListener('click', () => {
   document.getElementById('revive-modal').classList.remove('active');
   triggerGameOver();
 });
+/* ------------------------------------------------------------- */
 
 function triggerGameOver(){
   gameOn=false;gameStarted=false;
@@ -1252,11 +1387,9 @@ function update(){
         const cx = -TRACK_W/2 + COL_W/2 + col*COL_W;
         c.body.position.x += (cx - c.body.position.x) * 0.01;
         c.body.velocity.x *= 0.85;
-        // --- ΖΩΝΤΑΝΟ COIN GAIN (1 νόμισμα για κάθε προσγείωση) ---
         if (!c.landed) {
           c.landed = true;
           addCoins(1);
-          // Μικροί Αστέρες (Floating Stars) στα νομίσματα
           spawnParticles(c.body.position.x, c.body.position.y-trackY, c.body.position.z, 0xFFD700, 6, 2);
         }
       }
@@ -1332,7 +1465,6 @@ function update(){
       if(shakeAmt<.005){shakeAmt=0; camera.position.set(0,32,28); camera.lookAt(0,trackY,1);}
     }
 
-    // --- ΕΛΕΓΧΟΣ ΠΑΙΧΝΙΔΙΟΥ ΓΙΑ DANGER ZONE ---
     if(gameStarted && rampState==='idle'){
       for(const c of cubes){
         if(c.isShot || c.isNewRow) continue;
@@ -1520,7 +1652,6 @@ function makeShooter(){
 
 function updateShooter(){
   if(!readyCubeMesh) return;
-  // --- ΠΑΛΜΟΣ ΣΤΟ ΣΤΟΧΟ ---
   readyCubeMesh.scale.setScalar(1 + 0.1 * Math.sin(Date.now() / 150));
   readyCubeMesh.position.set(aimX, trackY + CUBE_SZ/2 + 0.15, SHOOTER_Z);
   readyCubeMesh.rotation.set(0,0,0);
@@ -1579,13 +1710,13 @@ document.getElementById('boost-bomb').addEventListener('click',()=>{
   if(!gameOn||paused)return;
   if(freeBomb>0){freeBomb--;updateBoosterBadges();useBomb();}
   else if(coins>=BOMB_COST){coins-=BOMB_COST;saveProgression();updateCoinsDisplay();updateBoosterBadges();useBomb();}
-  else{showToast('🪙 Not enough coins — merge cubes to earn more!');}
+  else { openBoosterModal('bomb'); } // Προσφορά Ad ή 100 coins
 });
 document.getElementById('boost-rainbow').addEventListener('click',()=>{
   if(!gameOn||paused)return;
   if(freeRainbow>0){freeRainbow--;updateBoosterBadges();useRainbow();}
   else if(coins>=RAINBOW_COST){coins-=RAINBOW_COST;saveProgression();updateCoinsDisplay();updateBoosterBadges();useRainbow();}
-  else{showToast('🪙 Not enough coins — merge cubes to earn more!');}
+  else { openBoosterModal('rainbow'); } // Προσφορά Ad ή 100 coins
 });
 document.getElementById('btn-newgames').addEventListener('click',()=>{
   if(_sdkPaused)return;
@@ -1636,11 +1767,9 @@ function startGame(){
   const cubeIdx=Math.min(SEQ.length-1,3+Math.floor(playerLevel/3));
   roundCubeGoal=SEQ[cubeIdx];
   roundScoreMet=false;roundCubeMet=false;roundCoins=0;
-  applyDailyGift();
   
-  // --- ΔΩΡΟ ΕΝΑΡΞΗΣ (+1 BOMB και +1 RAINBOW) ---
-  freeBomb += 1;
-  freeRainbow += 1;
+  // Καθημερινό δώρο (2+2) – χωρίς τα +1 δώρα έναρξης
+  applyDailyGift();
   
   updateBoosterBadges();refreshAllProgressionUI();updateRankScoreDisplay(0);updateTarget();
   document.getElementById('highscore-val').textContent=highScore.toLocaleString();
@@ -1650,9 +1779,9 @@ function startGame(){
 
   // Εφαρμογή upgrades
   extraLives = upgradeLives;
-  reviveAvailable = true;
+  reviveCount = 0; // Επαναφορά των revives
   badCubeToRemove = null;
-  gentleShield = 3; // Επαναφορά της προστασίας
+  gentleShield = 3;
   tutorialShots = 0;
   tutorialActive = true;
 
@@ -1680,7 +1809,9 @@ function startGame(){
 
   drawTargetHUD(); audio.init();
   
-  // --- ΕΜΦΑΝΙΣΗ ΟΔΗΓΟΥ ΣΤΟ ΠΑΤΩΜΑ ---
+  // Έλεγχος Daily Reward
+  checkDailyReward();
+
   if(tutorialActive){
     floatText(0, trackY+0.5, SHOOTER_Z-1, 'Σημάδεψε και άφησε!', 'points');
     setTimeout(() => {
