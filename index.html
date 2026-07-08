@@ -2514,27 +2514,34 @@
                 requestAnimationFrame(update); return; } const now = performance.now(),
                 dt = Math.min(.05, (now - lastT) / 1000);
             lastT = now;
-            spaceStars.rotation.y += dt * 0.008; if (gameOn && !paused) { for (const c of cubes) { if (c
-                        .mergeCooldown > 0) c.mergeCooldown -= dt; } for (const c of cubes) { if (c.isNewRow) { c
-                            .newRowTimer -= dt; if (c.newRowTimer <= 0) activateNewRowCube(c); } } if (shotCube &&
-                    !shotCube.passedDanger) { shotCube.passedDanger = true;
-                    shotCube.body.collisionFilterMask = GRP_TRACK | GRP_NEWROW | GRP_WALL; } if (gameStarted &&
-                    rampState === 'idle') { rowTimer += dt; let baseInterval = 4.2 - (playerLevel - 1) * 0.12;
+            spaceStars.rotation.y += dt * 0.008; 
+            
+            if (gameOn && !paused) {
+                // Η κρίσιμη γραμμή που έλειπε! Προχωράει τη φυσική.
+                world.step(1 / 60, dt, 3);
+
+                for (const c of cubes) { if (c.mergeCooldown > 0) c.mergeCooldown -= dt; }
+                for (const c of cubes) { if (c.isNewRow) { c.newRowTimer -= dt; if (c.newRowTimer <= 0) activateNewRowCube(c); } }
+                if (shotCube && !shotCube.passedDanger) { shotCube.passedDanger = true;
+                    shotCube.body.collisionFilterMask = GRP_TRACK | GRP_NEWROW | GRP_WALL; }
+                if (gameStarted && rampState === 'idle') { rowTimer += dt; let baseInterval = 4.2 - (playerLevel - 1) * 0.12;
                     baseInterval = Math.max(2.0, baseInterval); const slowFactor = 1 - upgradeSlow * 0.10; const
                         interval = Math.max(2.0, baseInterval * slowFactor); const liveCubes = cubes.filter(c => !c
                             .isShot).length; if (rowTimer >= interval || liveCubes <= 2) { rowTimer = 0;
-                        triggerRampSpawn(); } } if (rampBody) { if (rampState === 'pushing') { rampBody.velocity
-                        .set(0, 0, RAMP_SPEED); if (rampBody.position.z >= RAMP_PUSH_Z) { rampBody.position.z =
-                            RAMP_PUSH_Z;
-                        rampBody.velocity.set(0, 0, -RAMP_SPEED * 2);
-                        rampState = 'retracting'; } } else if (rampState === 'retracting') { if (rampBody.position
-                        .z <= RAMP_HOME_Z) { rampBody.position.set(0, 0.55 + trackY, RAMP_HOME_Z);
-                        rampBody.velocity.set(0, 0, 0);
-                        rampState = 'idle'; if (rampMesh) rampMesh.visible = false; const minZ = RAMP_PUSH_Z + 0.6;
-                        cubes.forEach(c => { if (c.isShot || c.isNewRow) return; if (c.body.position.z <
-                            minZ) { c.body.position.z = minZ;
-                                c.body.velocity.z = 0; } });
-                        spawnRow(Z_BACK); } } } if (rampMesh && rampBody) rampMesh.position.z = rampBody.position.z; const
+                        triggerRampSpawn(); }
+                }
+                if (rampBody) {
+                    if (rampState === 'pushing') { rampBody.velocity.set(0, 0, RAMP_SPEED); if (rampBody.position.z >= RAMP_PUSH_Z) { rampBody.position.z = RAMP_PUSH_Z;
+                            rampBody.velocity.set(0, 0, -RAMP_SPEED * 2);
+                            rampState = 'retracting'; } } else if (rampState === 'retracting') { if (rampBody.position
+                            .z <= RAMP_HOME_Z) { rampBody.position.set(0, 0.55 + trackY, RAMP_HOME_Z);
+                            rampBody.velocity.set(0, 0, 0);
+                            rampState = 'idle'; if (rampMesh) rampMesh.visible = false; const minZ = RAMP_PUSH_Z + 0.6;
+                            cubes.forEach(c => { if (c.isShot || c.isNewRow) return; if (c.body.position.z <
+                                minZ) { c.body.position.z = minZ;
+                                    c.body.velocity.z = 0; } });
+                            spawnRow(Z_BACK); } } }
+                if (rampMesh && rampBody) rampMesh.position.z = rampBody.position.z; const
                     settling = (rampState === 'idle'); for (const c of cubes) { if (c.flash > 0) c.flash--; if (c.body
                         .position.y > trackY + 8) { c.body.position.y = trackY + 8; if (c.body.velocity.y > 0) c.body
                             .velocity.y = 0; } if (!c.isShot && c.body.velocity.y > 4) c.body.velocity.y = 4; if (!c
@@ -2567,15 +2574,16 @@
                             1.7 : .28; const mats = Array.isArray(c.mesh.material) ? c.mesh.material : [c.mesh
                             .material];
                         mats.forEach(m => { if (m && m.emissiveIntensity !== undefined) m.emissiveIntensity =
-                            ei; }); } if (shotCube) { shotLight.position.copy(shotCube.body.position);
-                        shotLight.intensity = 10; } else { shotLight.intensity = 0; } if (shotCube && !shotCube
-                        .rainbow) { const s = shotCube.body; const worldPos = new THREE.Vector3(s.position.x, s
-                            .position.y, s.position.z); const quat = new THREE.Quaternion(s.quaternion.x, s.quaternion
-                            .y, s.quaternion.z, s.quaternion.w); for (let i = 0; i < 8; i++)
-                    spawnTrailParticle(worldPos, new THREE.Vector3(s.velocity.x, s.velocity.y, s.velocity.z), quat); } if (
-                        shotCube && shotCube.rainbow) { let rbHit = false; for (const c of cubes) { if (c ===
-                            shotCube || c.isShot) continue; const rbdx = c.body.position.x - shotCube.body.position
-                            .x,
+                            ei; }); }
+                if (shotCube) { shotLight.position.copy(shotCube.body.position);
+                    shotLight.intensity = 10; } else { shotLight.intensity = 0; }
+                if (shotCube && !shotCube.rainbow) { const s = shotCube.body; const worldPos = new THREE.Vector3(s
+                        .position.x, s.position.y, s.position.z); const quat = new THREE.Quaternion(s.quaternion
+                        .x, s.quaternion.y, s.quaternion.z, s.quaternion.w); for (let i = 0; i < 8; i++)
+                        spawnTrailParticle(worldPos, new THREE.Vector3(s.velocity.x, s.velocity.y, s.velocity.z),
+                            quat); }
+                if (shotCube && shotCube.rainbow) { let rbHit = false; for (const c of cubes) { if (c === shotCube ||
+                            c.isShot) continue; const rbdx = c.body.position.x - shotCube.body.position.x,
                             rbdz = c.body.position.z - shotCube.body.position.z; if (rbdx * rbdx + rbdz * rbdz < (
                                     CUBE_SZ * 1.3) * (CUBE_SZ * 1.3)) { const hitX = c.body.position.x,
                                 hitZ = c.body.position.z; const toRemove = cubes.filter(x => !x.isShot && Math.abs(
@@ -2610,28 +2618,32 @@
                                 shotCube.mergeCooldown = 0.3;
                                 triggerRowBreak(landZ);
                                 shotCube = null; } } } if (shotCube && shotCube.body.position.z < Z_BACK - 1)
-                    shotCube = null; } if (shakeAmt > 0) { camera.position.x = 0 + (Math.random() - .5) * shakeAmt *
-                        2;
+                            shotCube = null; }
+                if (shakeAmt > 0) { camera.position.x = 0 + (Math.random() - .5) * shakeAmt * 2;
                     camera.position.y = 32 + (Math.random() - .5) * shakeAmt;
                     shakeAmt *= .86; if (shakeAmt < .005) { shakeAmt = 0;
                         camera.position.set(0, 32, 28);
-                        camera.lookAt(0, trackY, 1); } } let nearMissDetected = false; if (gameStarted && rampState ===
-                    'idle') { for (const c of cubes) { if (c.isShot || c.isNewRow) continue; const settled = Math.abs(
-                            c.body.velocity.z) < 0.8 && Math.abs(c.body.velocity.x) < 0.8 && c.body.position.y <
-                        trackY + CUBE_SZ + 0.5; if (c.body.position.z > DANGER_Z && settled) { handleDeath(
-                        c); return; } if (c.body.position.z > DANGER_Z - 3 && c.body.position.z <=
-                        DANGER_Z && settled) { nearMissDetected = true; } } } const vignette = document
-                    .getElementById('red-vignette'); if (nearMissDetected && gameOn && !paused) { vignette.classList
-                        .add('active'); if (shakeAmt < 0.15) shakeAmt = 0.15; } else { vignette.classList.remove(
-                        'active'); } if (gameStarted && gameOn && !paused) { surviveSeconds += dt;
-                    missionProgress('survive', Math.floor(surviveSeconds)); } } for (let i = flashSpheres.length - 1; i >=
-                0; i--) { const fs = flashSpheres[i];
+                        camera.lookAt(0, trackY, 1); } }
+                let nearMissDetected = false; if (gameStarted && rampState === 'idle') { for (const c of cubes) { if (
+                            c.isShot || c.isNewRow) continue; const settled = Math.abs(c.body.velocity.z) < 0.8 &&
+                            Math.abs(c.body.velocity.x) < 0.8 && c.body.position.y < trackY + CUBE_SZ + 0.5; if (
+                            c.body.position.z > DANGER_Z && settled) { handleDeath(c); return; } if (c.body
+                            .position.z > DANGER_Z - 3 && c.body.position.z <= DANGER_Z && settled) {
+                            nearMissDetected = true; } } }
+                const vignette = document.getElementById('red-vignette'); if (nearMissDetected && gameOn && !paused) {
+                    vignette.classList.add('active'); if (shakeAmt < 0.15) shakeAmt = 0.15; } else { vignette.classList
+                        .remove('active'); }
+                if (gameStarted && gameOn && !paused) { surviveSeconds += dt;
+                    missionProgress('survive', Math.floor(surviveSeconds)); }
+            }
+
+            for (let i = flashSpheres.length - 1; i >= 0; i--) { const fs = flashSpheres[i];
                 fs.life -= dt;
                 fs.mesh.scale.setScalar(fs.mesh.scale.x + fs.scaleSpeed * dt);
                 fs.mat.opacity = Math.max(0, fs.life * 1.8); if (fs.life <= 0) { scene.remove(fs.mesh);
                     fs.mat.dispose();
-                    flashSpheres.splice(i, 1); } } for (let i = trailParticles.length - 1; i >= 0; i--) { const p =
-                    trailParticles[i];
+                    flashSpheres.splice(i, 1); } } 
+            for (let i = trailParticles.length - 1; i >= 0; i--) { const p = trailParticles[i];
                 p.mesh.position.x += p.vx * dt;
                 p.mesh.position.y += p.vy * dt;
                 p.mesh.position.z += p.vz * dt;
@@ -2640,8 +2652,8 @@
                 p.mat.opacity = Math.max(0, p.life);
                 p.mesh.scale.setScalar(0.3 + p.life * 0.7); if (p.life <= 0) { scene.remove(p.mesh);
                     p.mat.dispose();
-                    trailParticles.splice(i, 1); } } for (let i = particles.length - 1; i >= 0; i--) { const p =
-                    particles[i];
+                    trailParticles.splice(i, 1); } } 
+            for (let i = particles.length - 1; i >= 0; i--) { const p = particles[i];
                 p.mesh.position.x += p.vx * dt;
                 p.mesh.position.y += p.vy * dt;
                 p.mesh.position.z += p.vz * dt;
