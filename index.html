@@ -941,6 +941,10 @@
             cursor: pointer;
             letter-spacing: 1px;
             box-shadow: 0 4px 20px rgba(255, 255, 255, 0.4);
+            white-space: nowrap;
+            width: auto;
+            min-width: 120px;
+            text-align: center;
         }
         #shop-close-btn:active {
             transform: scale(.94);
@@ -1457,7 +1461,7 @@
         window.addEventListener('orientationchange', layoutRoot); if (window.visualViewport) { try { window.visualViewport
                     .addEventListener('resize', layoutRoot); } catch (e) {} }
         layoutRoot();
-        (function() { let n = 0; const t = setInterval(function() { layoutRoot(); if (++n >= 20) clearInterval(t); },
+        (function() { let n = 0; const t = setInterval(function() { layoutRoot(); if (++n >= 20) clearInterval(t);
             150); })();
 
         function buildStarfield() { const sf = document.getElementById('starfield'); if (!sf) return;
