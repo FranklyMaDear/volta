@@ -1933,41 +1933,48 @@
                 checkCubeGoal(nv);
                 missionProgress('reach_cube', nv); } const px = (a.body.position.x + b.body.position.x) / 2; const py = Math.max(trackY + CUBE_SZ / 2 + .1, (a.body.position.y + b.body.position.y) / 2); const pz = (a.body.position.z + b.body.position.z) / 2;
             removeCube(a);
-            removeCube(b); const nc = spawnCube(px - trackY, py - trackY, pz, nv);
+            removeCube(b);
+            // ΔΙΟΡΘΩΣΗ: Αφαιρέθηκε το -trackY από τον άξονα X
+            const nc = spawnCube(px, py - trackY, pz, nv);
             nc.flash = 12;
             nc.mergeActive = true;
             nc.mergeCooldown = 0.5;
             nc.body.velocity.set(0, 1.8, 1.2);
             nc.body.angularVelocity.set(0, 0, 0); for (const c2 of cubes) { if (c2.id === nc.id) continue; const dz = c2.body.position.z - pz; const dist = Math.abs(dz) + 0.5; if (dist < 4.0) { const f = Math.min(3.5 / dist, 2.5);
                     c2.body.applyImpulse(new CANNON.Vec3(0, 0.3, f), new CANNON.Vec3(0, 0, 0)); } } const pal = gp(nv);
-            spawnShards(px - trackY, py - trackY, pz, gp(a.value).hex, 16);
-            spawnParticles(px - trackY, py - trackY, pz, pal.glow, 24, 7);
-            spawnParticles(px - trackY, py - trackY, pz, 0xff6600, 18, 5); if (nv >= 16) spawnParticles(px - trackY, py - trackY, pz, 0xFFD700, 14, 7);
-            spawnFlashSphere(px - trackY, py - trackY, pz, pal.glow);
-            spawnFlashSphere(px - trackY, py - trackY, pz, 0xff8800); if (!firstMergeDone) { firstMergeDone = true;
+            // ΔΙΟΡΘΩΣΗ: Αφαιρέθηκε το -trackY από τον άξονα X σε όλα τα εφέ
+            spawnShards(px, py - trackY, pz, gp(a.value).hex, 16);
+            spawnParticles(px, py - trackY, pz, pal.glow, 24, 7);
+            spawnParticles(px, py - trackY, pz, 0xff6600, 18, 5); if (nv >= 16) spawnParticles(px, py - trackY, pz, 0xFFD700, 14, 7);
+            spawnFlashSphere(px, py - trackY, pz, pal.glow);
+            spawnFlashSphere(px, py - trackY, pz, 0xff8800);
+            // ΔΙΟΡΘΩΣΗ: Random offset για τα floating texts ώστε να μην επικαλύπτονται
+            const offsetX = (Math.random() - 0.5) * 0.5;
+            const offsetY = (Math.random() - 0.5) * 0.5;
+            if (!firstMergeDone) { firstMergeDone = true;
                 addXP(50);
-                floatText(px - trackY, py - trackY + 2, pz, '✨ FIRST MERGE! +50 XP', 'gift');
+                floatText(px + offsetX, py - trackY + 2 + offsetY, pz, '✨ FIRST MERGE! +50 XP', 'gift');
                 audio.gift(); } if (nv === 8 && !giftAt8Done) { giftAt8Done = true;
                 freeBomb += 1;
                 updateBoosterBadges();
-                floatText(px - trackY, py - trackY + 2, pz, '🎁 +1 BOMB!', 'gift');
+                floatText(px + offsetX, py - trackY + 2 + offsetY, pz, '🎁 +1 BOMB!', 'gift');
                 audio.gift(); } if (nv >= 16 && !firstTimeAt16) { firstTimeAt16 = true;
                 document.getElementById('btn-rank').classList.add('glow'); } const now = performance.now(); if (now - lastMergeTime < 3000) { comboStreak++; } else { comboStreak = 1; }
             lastMergeTime = now; if (comboStreak > maxComboThisRound) maxComboThisRound = comboStreak;
             totalMergesThisRound++;
             missionProgress('merge', 1);
             missionProgress('combo', comboStreak); let bonusXP = 0; if (comboStreak >= 3) { bonusXP = Math.floor(nv * 0.5);
-                floatText(px - trackY, py - trackY + 2, pz, '🔥 COMBO x2 XP!', 'points-big');
+                floatText(px + offsetX, py - trackY + 2 + offsetY, pz, '🔥 COMBO x2 XP!', 'points-big');
                 audio.milestone(); } const pts = nv;
             addScore(pts);
             addXP(pts + bonusXP);
             addCoins(Math.max(1, Math.floor(nv / 10)));
             shakeAmt = Math.min(.65, .1 + Math.log2(nv) * .04); const lt = nv >= 64 ? 'points-mega' : nv >= 16 ? 'points-big' : 'points';
-            floatText(px - trackY, py - trackY + .6, pz, `+${pts}${bonusXP > 0 ? ' (+'+bonusXP+' XP)' : ''}`, lt); if (SEQ.includes(nv) && !seenMS.has(nv)) { seenMS.add(nv);
+            floatText(px + offsetX, py - trackY + .6 + offsetY, pz, `+${pts}${bonusXP > 0 ? ' (+'+bonusXP+' XP)' : ''}`, lt); if (SEQ.includes(nv) && !seenMS.has(nv)) { seenMS.add(nv);
                 floatText(0, trackY + 3, 0, `✦ ${nv} REACHED! ✦`, 'milestone');
                 audio.milestone(); }
             audio.mergeBoom();
-            spawnParticles(px - trackY, py - trackY, pz, 0xffaa00, 30, 9); return nc; }
+            spawnParticles(px, py - trackY, pz, 0xffaa00, 30, 9); return nc; }
 
         function sweepMerges() { let iter = 0; const MERGE_THRESHOLD = (CUBE_SZ * 1.55) * (CUBE_SZ * 1.55); while (iter < 16) { iter++; let merged = false;
             outer: for (let i = 0; i < cubes.length; i++) { for (let j = i + 1; j < cubes.length; j++) { const a = cubes[i],
@@ -2300,7 +2307,10 @@
             if (gentleShield > 0) {
                 gentleShield--;
                 crossedCube.body.position.z = Z_BACK + 2;
+                // ΔΙΟΡΘΩΣΗ: Προστέθηκε ύψος και ταχύτητα για αποφυγή physics explosion
+                crossedCube.body.position.y += 2;
                 crossedCube.body.velocity.z = 0;
+                crossedCube.body.velocity.y = -1;
                 crossedCube.body.velocity.x *= 0.5;
                 floatText(0, trackY + 2, DANGER_Z - 2, '🛡️ OOPS! Shield used! (-10 pts)', 'points');
                 addScore(-10);
@@ -2315,7 +2325,7 @@
             if (reviveCount < MAX_REVIVES) {
                 badCubeToRemove = crossedCube;
                 paused = true;
-                document.body.classList.add('paused'); // Πάγωμα του παιχνιδιού
+                document.body.classList.add('paused');
                 document.getElementById('revive-current-score').textContent = 'Score: ' + score.toLocaleString();
                 document.getElementById('revive-remaining').textContent = (MAX_REVIVES - reviveCount);
                 document.getElementById('revive-modal').classList.add('active');
@@ -2333,7 +2343,6 @@
                 badCubeToRemove = null;
             }
 
-            // Καθαρισμός κύβων κοντά στην κόκκινη γραμμή
             const CLEAR_DEPTH = 4.8;
             const dangerZ = DANGER_Z;
             
@@ -2360,6 +2369,9 @@
             reviveCount++;
             paused = false;
             gameOn = true;
+            // ΔΙΟΡΘΩΣΗ: Επανεκκίνηση του game loop
+            lastT = performance.now();
+            if (_rafU === null) _rafU = requestAnimationFrame(update);
             document.getElementById('hud').classList.add('active');
             document.getElementById('boosters').classList.add('active');
             document.getElementById('red-vignette').classList.remove('active');
@@ -2479,16 +2491,16 @@
                     shakeAmt *= .86; if (shakeAmt < .005) { shakeAmt = 0;
                         camera.position.set(0, 32, 28);
                         camera.lookAt(0, trackY, 1); } }
-                // Έλεγχος επαφής με την κόκκινη γραμμή (ακριβώς πάνω ή ελάχιστα πριν)
+                // ΔΙΟΡΘΩΣΗ: Χρήση continue αντί για return για να συνεχίσει το loop
                 let nearMissDetected = false;
                 if (gameStarted && rampState === 'idle') {
                     for (const c of cubes) {
                         if (c.isShot || c.isNewRow) continue;
                         const settled = Math.abs(c.body.velocity.z) < 0.8 && Math.abs(c.body.velocity.x) < 0.8 && c.body.position.y < trackY + CUBE_SZ + 0.5;
-                        // Μόλις ακουμπήσει ή περάσει ελάχιστα τη γραμμή (>= DANGER_Z - 0.05)
                         if (c.body.position.z >= DANGER_Z - 0.05 && settled) {
                             handleDeath(c);
-                            return;
+                            if (paused || !gameOn) return;
+                            continue;
                         }
                         if (c.body.position.z > DANGER_Z - 2.8 && c.body.position.z <= DANGER_Z && settled) {
                             nearMissDetected = true;
