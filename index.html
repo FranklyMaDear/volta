@@ -1412,24 +1412,37 @@
             let mem = {};
             const useYT = !!(YT && YT.game && typeof YT.game.loadData === 'function');
             let saveTimer = null;
+            let cloudUnlocked = false; // ΝΕΟ: Κλειδωμένο στο boot
+
             async function hydrate() {
                 if (useYT) {
                     try { const d = await YT.game.loadData(); if (d) mem = JSON.parse(d) || {}; } catch (e) { mem = {}; }
                 } else {
                     try { for (let i = 0; i < localStorage.length; i++) { const k = localStorage.key(i);
-                            mem[k] = localStorage.getItem(k); } } catch (e) {}
+                    mem[k] = localStorage.getItem(k); } } catch (e) {}
                 }
             }
+
             function persist() {
-                if (!useYT) return;
+                // ΝΕΟ: Αν δεν έχει κάνει κλικ ο παίκτης (cloudUnlocked = false), ΜΗΝ καλείς το SDK!
+                if (!useYT || !cloudUnlocked) return; 
                 if (saveTimer) clearTimeout(saveTimer);
                 saveTimer = setTimeout(() => { try { YT.game.saveData(JSON.stringify(mem)); } catch (e) {} }, 400);
             }
+
             return {
                 hydrate,
                 get(k) { return (k in mem) ? mem[k] : null; },
-                set(k, v) { v = String(v);
-                    mem[k] = v; try { localStorage.setItem(k, v); } catch (e) {} persist(); },
+                set(k, v) { v = String(v); mem[k] = v;
+                    try { localStorage.setItem(k, v); } catch (e) {} 
+                    persist(); 
+                },
+                unlockCloud() { // ΝΕΟ: Η μέθοδος που το ξεκλειδώνει
+                    if (!cloudUnlocked) {
+                        cloudUnlocked = true;
+                        persist(); // Συγχρονίζει ό,τι μαζεύτηκε στη μνήμη
+                    }
+                }
             };
         })();
         await store.hydrate();
@@ -1512,7 +1525,6 @@
         let playerXP = parseInt(store.get(LS_XP) || '0', 10);
         let coins = parseInt(store.get(LS_COINS) || '0', 10);
         let highScore = parseInt(store.get(LS_HIGHSCORE) || '0', 10);
-        store.set('FRANKLY_CUBE_WINS', playerLevel);
         let upgradeSlow = parseInt(store.get(UPGRADE_SLOW) || '0', 10);
         let upgradePower = parseInt(store.get(UPGRADE_POWER) || '0', 10);
         let upgradeLives = parseInt(store.get(UPGRADE_LIVES) || '0', 10);
@@ -1527,7 +1539,6 @@
             store.set(LS_XP, playerXP);
             store.set(LS_COINS, coins);
             store.set(LS_HIGHSCORE, highScore);
-            store.set('FRANKLY_CUBE_WINS', playerLevel);
             store.set(UPGRADE_SLOW, upgradeSlow);
             store.set(UPGRADE_POWER, upgradePower);
             store.set(UPGRADE_LIVES, upgradeLives);
@@ -2757,6 +2768,16 @@
         document.addEventListener('keydown', () => showInputFeedback(null, null));
         document.addEventListener('keydown', e => { if (_sdkPaused) return; if ((e.key === 'Enter' || e.key === ' ') && isOverlayVisible && !document.getElementById('overlay').classList.contains('hidden')) { const btn = document.getElementById('startBtn'); if (btn) { e.preventDefault();
                     startGame(); } } });
+
+        // ΝΕΟ: Ξεκλείδωμα του Cloud Save με το πρώτο input
+        ['click', 'pointerdown', 'touchstart', 'keydown'].forEach(evt => {
+            document.addEventListener(evt, () => {
+                if (typeof store !== 'undefined' && store.unlockCloud) {
+                    store.unlockCloud();
+                }
+            }, { once: true, passive: true });
+        });
+
         function initSystemHandlers() { if (!YT || !YT.system) return; try { if (typeof YT.system.onPause === 'function') YT.system.onPause(() => handlePause()); } catch (e) {} try { if (typeof YT.system.onResume === 'function') YT.system.onResume(() => handleResume()); } catch (e) {} try { if (typeof YT.system.onAudioEnabledChange === 'function') { YT.system.onAudioEnabledChange(en => { audio.setEnabled(!!en); try { document.getElementById('btn-sound').textContent = en ? '🔊' : '🔇'; } catch (err) {} }); } } catch (e) {} try { if (typeof YT.system.isAudioEnabled === 'function' && !YT.system.isAudioEnabled()) { audio.setEnabled(false); try { document.getElementById('btn-sound').textContent = '🔇'; } catch (err) {} } } catch (e) {} }
         function waitFrames(n) { return new Promise(resolve => { let done = false;
                 function finish() { if (!done) { done = true;
