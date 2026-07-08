@@ -963,6 +963,7 @@
             transform: scale(.94);
             background: #eeeeee;
         }
+        /* REVIVE MODAL FIX */
         #revive-modal {
             position: absolute;
             inset: 0;
@@ -975,7 +976,8 @@
             gap: 20px
         }
         #revive-modal.active {
-            display: flex
+            display: flex;
+            pointer-events: auto;
         }
         #revive-modal h1 {
             font-size: 42px;
@@ -2293,7 +2295,7 @@
         document.getElementById('booster-close-btn').addEventListener('click', () => { document.getElementById('booster-modal').classList.remove('active');
             pendingBoosterType = null; });
 
-        // ========== REVIVE SYSTEM ==========
+        // ========== REVIVE SYSTEM (TOUCH THE LINE) ==========
         function handleDeath(crossedCube) {
             if (gentleShield > 0) {
                 gentleShield--;
@@ -2313,6 +2315,7 @@
             if (reviveCount < MAX_REVIVES) {
                 badCubeToRemove = crossedCube;
                 paused = true;
+                document.body.classList.add('paused'); // Πάγωμα του παιχνιδιού
                 document.getElementById('revive-current-score').textContent = 'Score: ' + score.toLocaleString();
                 document.getElementById('revive-remaining').textContent = (MAX_REVIVES - reviveCount);
                 document.getElementById('revive-modal').classList.add('active');
@@ -2323,13 +2326,14 @@
 
         function reviveGame() {
             document.getElementById('revive-modal').classList.remove('active');
+            document.body.classList.remove('paused');
             
             if (badCubeToRemove) {
                 removeCube(badCubeToRemove);
                 badCubeToRemove = null;
             }
 
-            // ΚΑΘΑΡΙΣΜΟΣ ΚΥΒΩΝ ΚΟΝΤΑ ΣΤΗΝ ΚΟΚΚΙΝΗ ΓΡΑΜΜΗ
+            // Καθαρισμός κύβων κοντά στην κόκκινη γραμμή
             const CLEAR_DEPTH = 4.8;
             const dangerZ = DANGER_Z;
             
@@ -2367,6 +2371,7 @@
             if (YT && YT.game && typeof YT.game.showRewardedAd === 'function') { 
                 YT.game.showRewardedAd().then(() => { reviveGame(); }).catch(() => { 
                     document.getElementById('revive-modal').classList.remove('active');
+                    document.body.classList.remove('paused');
                     triggerGameOver(); 
                 }); 
             } else { 
@@ -2375,6 +2380,7 @@
         });
         document.getElementById('revive-skip-btn').addEventListener('click', () => { 
             document.getElementById('revive-modal').classList.remove('active');
+            document.body.classList.remove('paused');
             triggerGameOver(); 
         });
 
@@ -2473,12 +2479,14 @@
                     shakeAmt *= .86; if (shakeAmt < .005) { shakeAmt = 0;
                         camera.position.set(0, 32, 28);
                         camera.lookAt(0, trackY, 1); } }
+                // Έλεγχος επαφής με την κόκκινη γραμμή (ακριβώς πάνω ή ελάχιστα πριν)
                 let nearMissDetected = false;
                 if (gameStarted && rampState === 'idle') {
                     for (const c of cubes) {
                         if (c.isShot || c.isNewRow) continue;
                         const settled = Math.abs(c.body.velocity.z) < 0.8 && Math.abs(c.body.velocity.x) < 0.8 && c.body.position.y < trackY + CUBE_SZ + 0.5;
-                        if (c.body.position.z > DANGER_Z && settled) {
+                        // Μόλις ακουμπήσει ή περάσει ελάχιστα τη γραμμή (>= DANGER_Z - 0.05)
+                        if (c.body.position.z >= DANGER_Z - 0.05 && settled) {
                             handleDeath(c);
                             return;
                         }
