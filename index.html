@@ -819,6 +819,7 @@
         #rank-close-btn:active {
             transform: scale(.94)
         }
+        /* SHOP SCROLL FIX */
         #shop-modal {
             position: absolute;
             inset: 0;
@@ -843,7 +844,14 @@
             overflow-y: auto;
             box-shadow: 0 0 40px rgba(120, 90, 220, .25), inset 0 1px 0 rgba(255, 255, 255, .05);
             scrollbar-width: thin;
-            scrollbar-color: #7d4bdd #111
+            scrollbar-color: #7d4bdd #111;
+            display: flex;
+            flex-direction: column;
+        }
+        #shop-scroll-inner {
+            flex: 1;
+            overflow-y: auto;
+            min-height: 0;
         }
         #shop-box h2 {
             color: #c0aaff;
@@ -1354,7 +1362,9 @@
                 <h2>🛒 eShop</h2>
                 <div class="shop-subtitle">Spend coins on permanent upgrades</div>
                 <div id="shop-coins-display">🪙 <span id="shop-coins-val">0</span></div>
-                <div id="shop-items-list"></div>
+                <div id="shop-scroll-inner">
+                    <div id="shop-items-list"></div>
+                </div>
                 <button id="shop-close-btn">CLOSE</button>
             </div>
         </div>
@@ -1814,7 +1824,6 @@
                 .body === targetBody && !c.isShot && !c.isNewRow); if (!tc) return; const shotVel = shotCube.body
                 .velocity; const speed = Math.sqrt(shotVel.x * shotVel.x + shotVel.z * shotVel.z); const angle = Math
                 .random() * Math.PI * 2; 
-            // Αυξημένη δύναμη χτυπήματος και ώθησης
             const pushX = Math.cos(angle) * 4.5 + shotVel.x * 0.5; 
             const pushY = Math.abs(shotVel.y) * 0.8 + 3.5; 
             const pushZ = Math.sin(angle) * 4.5 + shotVel.z * 0.5 + 2.8;
@@ -2453,73 +2462,88 @@
                 'booster-modal').classList.remove('active');
             pendingBoosterType = null; });
 
-        function handleDeath(crossedCube) { if (gentleShield > 0) { gentleShield--;
+        function handleDeath(crossedCube) {
+            if (gentleShield > 0) {
+                gentleShield--;
                 crossedCube.body.position.z = Z_BACK + 2;
                 crossedCube.body.velocity.z = 0;
                 crossedCube.body.velocity.x *= 0.5;
                 floatText(0, trackY + 2, DANGER_Z - 2, '🛡️ OOPS! Shield used! (-10 pts)', 'points');
-                addScore(-10); return; } if (extraLives > 0) { extraLives--;
+                addScore(-10);
+                return;
+            }
+            if (extraLives > 0) {
+                extraLives--;
                 removeCube(crossedCube);
-                floatText(0, trackY + 2, DANGER_Z - 2, '💔 Extra Life Used!', 'points'); return; } if (reviveCount <
-                MAX_REVIVES) { badCubeToRemove = crossedCube;
+                floatText(0, trackY + 2, DANGER_Z - 2, '💔 Extra Life Used!', 'points');
+                return;
+            }
+            if (reviveCount < MAX_REVIVES) {
+                badCubeToRemove = crossedCube;
                 paused = true;
                 document.getElementById('revive-current-score').textContent = 'Score: ' + score.toLocaleString();
                 document.getElementById('revive-remaining').textContent = (MAX_REVIVES - reviveCount);
-                document.getElementById('revive-modal').classList.add('active'); return; }
-            triggerGameOver(); }
-
-        function reviveGame() { 
-            document.getElementById('revive-modal').classList.remove('active'); 
-            // Αφαίρεση του κύβου που πέρασε τη γραμμή
-            if (badCubeToRemove) { 
-                removeCube(badCubeToRemove); 
-                badCubeToRemove = null; 
+                document.getElementById('revive-modal').classList.add('active');
+                return;
             }
-            // --- ΝΕΟ: ΚΑΘΑΡΙΣΜΟΣ ΚΥΒΩΝ ΚΟΝΤΑ ΣΤΗ ΓΡΑΜΜΗ ΚΙΝΔΥΝΟΥ (ΣΑΝ ΒΟΜΒΑ) ---
-            const CLEAR_DEPTH = 4.5; // Απόσταση από την κόκκινη γραμμή προς τα πίσω
-            const dangerX = 0;       // Κέντρο του track
+            triggerGameOver();
+        }
+
+        function reviveGame() {
+            document.getElementById('revive-modal').classList.remove('active');
+            
+            if (badCubeToRemove) {
+                removeCube(badCubeToRemove);
+                badCubeToRemove = null;
+            }
+
+            const CLEAR_DEPTH = 4.8;
             const dangerZ = DANGER_Z;
             
-            // Βρίσκουμε όλους τους "επικίνδυνους" κύβους (που δεν είναι βολές ή νέες σειρές)
             const victims = cubes.filter(c => {
                 if (c.isShot || c.isNewRow) return false;
                 const dz = c.body.position.z - dangerZ;
-                // Επιλέγουμε κύβους που βρίσκονται μπροστά από τη γραμμή ή πολύ κοντά της
-                return dz > -CLEAR_DEPTH && dz < 1.5; 
+                return dz > -CLEAR_DEPTH && dz < 1.8;
             });
 
             if (victims.length > 0) {
                 victims.forEach(c => {
-                    // Εφέ θραυσμάτων για κάθε κύβο που καταστρέφεται
-                    spawnShards(c.body.position.x, c.body.position.y - trackY, c.body.position.z, gp(c.value).hex, 12);
-                    // Προσθήκη σκορ και XP (χωρίς να τιμωρείται ο παίκτης)
+                    spawnShards(c.body.position.x, c.body.position.y - trackY, c.body.position.z, gp(c.value).hex, 14);
                     addScore(c.value);
                     addXP(c.value);
                     removeCube(c);
                 });
-                // Κεντρικό εφέ έκρηξης
-                spawnParticles(0, trackY + 1.2, dangerZ, 0xff3300, 30, 14);
+                spawnParticles(0, trackY + 1.2, dangerZ, 0xff3300, 35, 16);
                 spawnFlashSphere(0, trackY + 1.2, dangerZ, 0xff8800);
-                floatText(0, trackY + 3, dangerZ, '💥 CLEARED! 💥', 'points-mega');
+                floatText(0, trackY + 3, dangerZ, '💥 DANGER ZONE CLEARED! 💥', 'points-mega');
                 audio.boom();
-                shakeAmt = 0.5;
+                shakeAmt = 0.7;
             }
-            // -------------------------------------------------------------
+            
             reviveCount++;
             paused = false;
             gameOn = true;
             document.getElementById('hud').classList.add('active');
             document.getElementById('boosters').classList.add('active');
+            document.getElementById('red-vignette').classList.remove('active');
             audio.resume();
-            showToast(`⚡ Revived! (${reviveCount}/${MAX_REVIVES}) - Danger zone cleared!`); 
+            showToast(`⚡ Revived! (${reviveCount}/${MAX_REVIVES}) - Danger zone cleared!`);
         }
-        document.getElementById('revive-ad-btn').addEventListener('click', () => { if (YT && YT.game && typeof YT.game
-                .showRewardedAd === 'function') { YT.game.showRewardedAd().then(() => { reviveGame(); }).catch(
-            () => { document.getElementById('revive-modal').classList.remove('active');
-                triggerGameOver(); }); } else { reviveGame(); } });
-        document.getElementById('revive-skip-btn').addEventListener('click', () => { document.getElementById(
-                'revive-modal').classList.remove('active');
-            triggerGameOver(); });
+
+        document.getElementById('revive-ad-btn').addEventListener('click', () => { 
+            if (YT && YT.game && typeof YT.game.showRewardedAd === 'function') { 
+                YT.game.showRewardedAd().then(() => { reviveGame(); }).catch(() => { 
+                    document.getElementById('revive-modal').classList.remove('active');
+                    triggerGameOver(); 
+                }); 
+            } else { 
+                reviveGame(); 
+            } 
+        });
+        document.getElementById('revive-skip-btn').addEventListener('click', () => { 
+            document.getElementById('revive-modal').classList.remove('active');
+            triggerGameOver(); 
+        });
 
         function triggerGameOver() { gameOn = false;
             gameStarted = false; if (shotCube) { shotCube.isShot = false;
@@ -2542,6 +2566,7 @@
             missionProgress('play_game', 1);
             checkAllMissionsComplete();
             showLostModal(); }
+
         let lastT = performance.now();
         let _rafU = null;
 
@@ -2552,7 +2577,6 @@
             spaceStars.rotation.y += dt * 0.008; 
             
             if (gameOn && !paused) {
-                // Η κρίσιμη γραμμή που έλειπε! Προχωράει τη φυσική.
                 world.step(1 / 60, dt, 3);
 
                 for (const c of cubes) { if (c.mergeCooldown > 0) c.mergeCooldown -= dt; }
@@ -2659,29 +2683,27 @@
                     shakeAmt *= .86; if (shakeAmt < .005) { shakeAmt = 0;
                         camera.position.set(0, 32, 28);
                         camera.lookAt(0, trackY, 1); } }
-                // --- Enhanced Near Miss Detection ---
                 let nearMissDetected = false;
-                if (gameStarted && rampState === 'idle') { 
-                    for (const c of cubes) { 
-                        if (c.isShot || c.isNewRow) continue; 
+                if (gameStarted && rampState === 'idle') {
+                    for (const c of cubes) {
+                        if (c.isShot || c.isNewRow) continue;
                         const settled = Math.abs(c.body.velocity.z) < 0.8 && Math.abs(c.body.velocity.x) < 0.8 && c.body.position.y < trackY + CUBE_SZ + 0.5;
-                        if (c.body.position.z > DANGER_Z && settled) { 
-                            handleDeath(c); 
-                            return; 
-                        } 
-                        if (c.body.position.z > DANGER_Z - 3.0 && c.body.position.z <= DANGER_Z && settled) {
+                        if (c.body.position.z > DANGER_Z && settled) {
+                            handleDeath(c);
+                            return;
+                        }
+                        if (c.body.position.z > DANGER_Z - 2.8 && c.body.position.z <= DANGER_Z && settled) {
                             nearMissDetected = true;
                         }
-                    } 
+                    }
                 }
                 const vignette = document.getElementById('red-vignette');
                 if (nearMissDetected && gameOn && !paused) {
-                    vignette.classList.add('active'); 
-                    if (shakeAmt < 0.25) shakeAmt = 0.25; // Εντονότερο τρέμουλο
-                } else { 
-                    vignette.classList.remove('active'); 
+                    vignette.classList.add('active');
+                    if (shakeAmt < 0.3) shakeAmt = 0.3;
+                } else {
+                    vignette.classList.remove('active');
                 }
-                // ---------------------------------
                 if (gameStarted && gameOn && !paused) { surviveSeconds += dt;
                     missionProgress('survive', Math.floor(surviveSeconds)); }
             }
@@ -3028,6 +3050,7 @@
                     'Aim and release!', 'points');
                 setTimeout(() => { if (gameOn) floatText(0, trackY + 0.5, DANGER_Z - 2,
                         "Don't cross the line!", 'points'); }, 1500); } }
+                        
         const shopItems = [{ id: 'slow', icon: '🐢', name: 'Slow Waves',
                 desc: 'Slows down incoming waves by 10% per level', maxLv: 3, costs: [300, 500, 800], getLv: () =>
                 upgradeSlow, setLv: (v) => { upgradeSlow = v;
