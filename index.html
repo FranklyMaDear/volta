@@ -2,7 +2,7 @@
 <html lang="el">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <title>Drop 2048 · Starfield Pure</title>
   <style>
     :root {
@@ -427,13 +427,13 @@
 
       async function loadSave() {
         try {
-          const r = localStorage.getItem("drop2048-save-v6");
+          const r = localStorage.getItem("drop2048-save-v7");
           if (r) { const parsed = JSON.parse(r); save = Object.assign({}, DEFAULT_SAVE, parsed); }
         } catch (e) {}
       }
 
       function persist() {
-        try { localStorage.setItem("drop2048-save-v6", JSON.stringify(save)); } catch (e) {}
+        try { localStorage.setItem("drop2048-save-v7", JSON.stringify(save)); } catch (e) {}
       }
 
       const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -519,12 +519,12 @@
         starField.geometry.attributes.position.needsUpdate = true;
       }
 
-      /* ----- AZIRAM PET SYSTEM (FIXED VISIBILITY) ----- */
+      /* ----- AZIRAM PET SYSTEM (ΣΤΑΘΕΡΗ ΘΕΣΗ ΚΑΤΩ ΔΕΞΙΑ ΑΠΟ ΤΑ ΚΟΥΜΠΙΑ) ----- */
       let aziramPet, sockets = {};
       let aziramReactionTime = 0;
       let aziramWinTime = 0;
-      // Σταθερή θέση μπροστά από την κάμερα (κάτω δεξιά)
-      let aziramBasePosition = new THREE.Vector3(2.5, -3.0, -2.0);
+      // Η θέση θα οριστεί δυναμικά με βάση την οθόνη μετά τη δημιουργία της κάμερας
+      let aziramBasePosition = new THREE.Vector3(1.8, -3.5, -2.5);
 
       function createAziram() {
         const petGroup = new THREE.Group();
@@ -557,6 +557,20 @@
         return petGroup;
       }
 
+      // Προσαρμογή θέσης ώστε να είναι κάτω δεξιά, δεξιά από τα κουμπιά
+      function updateAziramScreenPosition() {
+        if (!aziramPet || !camera) return;
+        // Συντεταγμένες NDC: x=0.55 (δεξιά από το κέντρο), y=-0.75 (κάτω)
+        const ndc = new THREE.Vector3(0.55, -0.75, 0.5);
+        ndc.unproject(camera);
+        // Υπολογισμός κατεύθυνσης από την κάμερα προς το σημείο
+        const dir = ndc.clone().sub(camera.position).normalize();
+        // Τοποθέτηση σε απόσταση 6 μονάδων μπροστά από την κάμερα
+        const pos = camera.position.clone().add(dir.multiplyScalar(6.0));
+        aziramBasePosition.copy(pos);
+        aziramPet.position.copy(aziramBasePosition);
+      }
+
       function triggerAziramCelebration() {
         aziramWinTime = 3.0;
       }
@@ -586,7 +600,7 @@
           sockets.handL.position.y = Math.sin(t * 0.08) * 0.6;
           sockets.handR.position.y = Math.cos(t * 0.08) * 0.6;
         } else {
-          // Idle: επαναφορά στη βάση
+          // Επαναφορά στη βάση
           aziramPet.position.copy(aziramBasePosition);
           aziramPet.rotation.x = 0.2;
           aziramPet.rotation.y += (-0.3 - aziramPet.rotation.y) * 0.1;
@@ -813,9 +827,11 @@
         updateBoardColorsLive();
         initStarfield();
 
-        // Δημιουργία AZIRAM με σταθερή θέση
+        // Δημιουργία AZIRAM
         aziramPet = createAziram();
         scene.add(aziramPet);
+        // Αρχική τοποθέτηση
+        updateAziramScreenPosition();
 
         raycaster = new THREE.Raycaster();
         pointer = new THREE.Vector2();
@@ -837,7 +853,8 @@
         camera.position.set(0, -1.8, dist + 1.5);
         camera.lookAt(0, -1.2, 0);
         camera.updateProjectionMatrix();
-        // Δεν χρειάζεται να αλλάξουμε τη θέση του AZIRAM – μένει σταθερή μπροστά από την κάμερα
+        // Ενημέρωση θέσης AZIRAM για τη νέα ανάλυση
+        updateAziramScreenPosition();
       }
 
       function cellPos(c, r) {
