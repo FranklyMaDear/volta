@@ -37,7 +37,7 @@
   }
   #missionBar b{color:#C2542F}
   
-  /* Κουμπιά μεταφερμένα αριστερά */
+  /* Κουμπιά Αριστερά */
   .powerbar{position:fixed;bottom:18px;left:14px;display:flex;justify-content:flex-start;gap:10px;z-index:5}
   .pbtn{
     pointer-events:auto;border:none;cursor:pointer;width:66px;height:66px;border-radius:18px;
@@ -98,7 +98,6 @@
 </div>
 <div id="missionBar">🎯 Αποστολή: <b id="missionText"></b></div>
 
-<!-- Κουμπιά Αριστερά -->
 <div class="powerbar">
   <button class="pbtn" id="btnMagnet">🧲<span class="cost">Δωρεάν</span></button>
   <button class="pbtn" id="btnHammer">🔨<span class="cost">Δωρεάν</span></button>
@@ -184,18 +183,18 @@ const SHOP = {
   pet_face: [
     { id: 'face_none', name: 'Κανονικά Μάτια', price: 0, icon: '👁️' },
     { id: 'face_pixel', name: 'Deal With It', price: 0, icon: '🕶️' },
-    { id: 'face_cybermask', name: 'Cyber Μάσκα', price: 0, icon: '🥷' },
+    { id: 'face_scouter', name: 'Ανιχνευτής', price: 0, icon: '📟' }, // Νέο
     { id: 'face_laser', name: 'Laser Μάτια', price: 0, icon: '🔴' }
   ],
   pet_body: [
     { id: 'body_none', name: 'Απλό Σώμα', price: 0, icon: '🚫' },
-    { id: 'body_holobelt', name: 'Holo-Ζώνη', price: 0, icon: '💫' },
+    { id: 'body_orbits', name: 'Δακτύλιοι Πλάσματος', price: 0, icon: '🪐' }, // Νέο
     { id: 'body_cape', name: 'Κόκκινη Κάπα', price: 0, icon: '🦸' }
   ],
   pet_hands: [
     { id: 'hands_none', name: 'Jelly Χέρια', price: 0, icon: '👋' },
-    { id: 'hands_boxing', name: 'Γάντια Μποξ', price: 0, icon: '🥊' },
-    { id: 'hands_robo', name: 'Ρομποτικά Χέρια', price: 0, icon: '🤖' }
+    { id: 'hands_energy', name: 'Σφαίρες Ενέργειας', price: 0, icon: '🔵' }, // Νέο
+    { id: 'hands_boxing', name: 'Γάντια Μποξ', price: 0, icon: '🥊' }
   ],
   pet_feet: [
     { id: 'feet_none', name: 'Jelly Πόδια', price: 0, icon: '🦶' },
@@ -220,9 +219,9 @@ const DEFAULT_SAVE = {
 let save = { ...DEFAULT_SAVE };
 
 async function loadSave(){
-  try{ const r = localStorage.getItem("drop2048-save-v2"); if(r) { const parsed = JSON.parse(r); save = Object.assign({}, DEFAULT_SAVE, parsed); } }catch(e){ }
+  try{ const r = localStorage.getItem("drop2048-save-v3"); if(r) { const parsed = JSON.parse(r); save = Object.assign({}, DEFAULT_SAVE, parsed); } }catch(e){ }
 }
-function persist(){ try{ localStorage.setItem("drop2048-save-v2", JSON.stringify(save)); }catch(e){ } }
+function persist(){ try{ localStorage.setItem("drop2048-save-v3", JSON.stringify(save)); }catch(e){ } }
 
 const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 
@@ -273,19 +272,19 @@ function updateStarfield(speed) {
 /* ----- AZIRAM MULTI-SLOT SYSTEM ----- */
 let aziramPet, sockets = {};
 let aziramReactionTime = 0; 
-// ΘΕΣΗ: Κάτω δεξιά. Τα κουμπιά είναι αριστερά, οπότε δεν συγκρούονται.
-let aziramTargetPos = new THREE.Vector3(2.5, -4.0, 0.5); 
+let aziramWinTime = 0; // Χρόνος για το celebration του επιπέδου
+// ΝΕΑ ΘΕΣΗ: Ακριβώς όπως στο image_3.png, κάτω δεξιά.
+let aziramTargetPos = new THREE.Vector3(3.2, -3.6, 0.5); 
 
 function createAziram() {
     const petGroup = new THREE.Group();
     const jellyCore = new THREE.Group(); 
 
-    // Βασικό Σώμα (Jelly Sphere)
+    // Βασικό Σώμα 
     const bodyMat = new THREE.MeshPhongMaterial({ color: 0x33ffaa, shininess: 120, transparent: true, opacity: 0.85 });
     const body = new THREE.Mesh(new THREE.SphereGeometry(0.7, 32, 32), bodyMat);
     jellyCore.add(body);
 
-    // Δημιουργία των Sockets για το σύστημα πολλαπλού εξοπλισμού
     sockets.head = new THREE.Group(); sockets.head.position.set(0, 0.65, 0); jellyCore.add(sockets.head);
     sockets.face = new THREE.Group(); jellyCore.add(sockets.face);
     sockets.body = new THREE.Group(); jellyCore.add(sockets.body);
@@ -311,7 +310,7 @@ function createAziram() {
 function equipPetSlot(slotCategory, itemId) {
     if (!aziramPet) return;
     
-    // Καθαρισμός του συγκεκριμένου Socket
+    // Καθαρισμός
     if(slotCategory === 'pet_hands') {
         while(sockets.handL.children.length > 0) sockets.handL.remove(sockets.handL.children[0]);
         while(sockets.handR.children.length > 0) sockets.handR.remove(sockets.handR.children[0]);
@@ -325,8 +324,7 @@ function equipPetSlot(slotCategory, itemId) {
 
     // --- FACE ---
     if(slotCategory === 'pet_face') {
-        if(itemId === 'face_none' || itemId === 'face_cybermask' || itemId === 'face_pixel') {
-            // Αντικείμενα που διατηρούν τα βασικά μάτια
+        if(itemId === 'face_none' || itemId === 'face_pixel' || itemId === 'face_scouter') {
             const eyeGeo = new THREE.SphereGeometry(0.12, 16, 16);
             const eyeMat = new THREE.MeshBasicMaterial({ color: 0x111111 });
             const eyeL = new THREE.Mesh(eyeGeo, eyeMat); eyeL.position.set(-0.25, 0.15, 0.6);
@@ -334,15 +332,22 @@ function equipPetSlot(slotCategory, itemId) {
             sockets.face.add(eyeL, eyeR);
         }
         if(itemId === 'face_pixel') {
+            // ΜΕΓΑΛΥΤΕΡΑ ΓΥΑΛΙΑ
             const glasses = new THREE.Group();
-            const bar = new THREE.Mesh(new THREE.BoxGeometry(0.8, 0.08, 0.05), new THREE.MeshBasicMaterial({color: 0x111})); bar.position.set(0, 0.15, 0.65);
-            const glassL = new THREE.Mesh(new THREE.BoxGeometry(0.25, 0.15, 0.05), new THREE.MeshBasicMaterial({color: 0x111})); glassL.position.set(-0.2, 0.12, 0.66);
-            const glassR = new THREE.Mesh(new THREE.BoxGeometry(0.25, 0.15, 0.05), new THREE.MeshBasicMaterial({color: 0x111})); glassR.position.set(0.2, 0.12, 0.66);
+            const bar = new THREE.Mesh(new THREE.BoxGeometry(1.2, 0.15, 0.05), new THREE.MeshBasicMaterial({color: 0x111})); bar.position.set(0, 0.15, 0.68);
+            const glassL = new THREE.Mesh(new THREE.BoxGeometry(0.4, 0.3, 0.05), new THREE.MeshBasicMaterial({color: 0x111})); glassL.position.set(-0.25, 0.1, 0.69);
+            const glassR = new THREE.Mesh(new THREE.BoxGeometry(0.4, 0.3, 0.05), new THREE.MeshBasicMaterial({color: 0x111})); glassR.position.set(0.25, 0.1, 0.69);
             glasses.add(bar, glassL, glassR); sockets.face.add(glasses);
         }
-        if(itemId === 'face_cybermask') {
-            const mask = new THREE.Mesh(new THREE.CylinderGeometry(0.72, 0.72, 0.3, 16, 1, false, Math.PI/4, Math.PI/2), new THREE.MeshPhongMaterial({color: 0x555555}));
-            mask.rotation.y = Math.PI/2; mask.position.y = -0.1; sockets.face.add(mask);
+        if(itemId === 'face_scouter') {
+            // ΝΕΟ: Ανιχνευτής (Scouter)
+            const scouter = new THREE.Group();
+            const lens = new THREE.Mesh(new THREE.BoxGeometry(0.35, 0.25, 0.05), new THREE.MeshBasicMaterial({color: 0x00ff00, transparent: true, opacity: 0.7}));
+            lens.position.set(-0.28, 0.15, 0.7);
+            const antenna = new THREE.Mesh(new THREE.CylinderGeometry(0.02, 0.02, 0.2), new THREE.MeshBasicMaterial({color: 0x888}));
+            antenna.position.set(-0.45, 0.25, 0.6);
+            scouter.add(lens, antenna);
+            sockets.face.add(scouter);
         }
         if(itemId === 'face_laser') {
             const laserMat = new THREE.MeshBasicMaterial({ color: 0xff0000 });
@@ -386,9 +391,14 @@ function equipPetSlot(slotCategory, itemId) {
     // --- BODY ---
     if(slotCategory === 'pet_body') {
         const bGroup = new THREE.Group();
-        if(itemId === 'body_holobelt') {
-            const belt = new THREE.Mesh(new THREE.TorusGeometry(0.72, 0.05, 16, 32), new THREE.MeshBasicMaterial({color: 0x00ffff})); belt.rotation.x = Math.PI/2; bGroup.add(belt);
-            bGroup.userData.onUpdate = (t) => { belt.rotation.z -= 0.02; };
+        if(itemId === 'body_orbits') {
+            // ΝΕΟ: Δακτύλιοι Πλάσματος
+            const rMat = new THREE.MeshBasicMaterial({color: 0x00ffff, wireframe: true, transparent: true, opacity: 0.6});
+            const ring1 = new THREE.Mesh(new THREE.TorusGeometry(0.9, 0.02, 8, 32), rMat);
+            const ring2 = new THREE.Mesh(new THREE.TorusGeometry(0.9, 0.02, 8, 32), rMat);
+            ring1.rotation.x = Math.PI/3; ring2.rotation.x = -Math.PI/3;
+            bGroup.add(ring1, ring2);
+            bGroup.userData.onUpdate = (t) => { ring1.rotation.y += 0.02; ring2.rotation.y -= 0.02; };
         }
         if(itemId === 'body_cape') {
             const cape = new THREE.Mesh(new THREE.BoxGeometry(0.8, 1.0, 0.05), new THREE.MeshPhongMaterial({color: 0xdd0000})); cape.position.set(0, -0.2, -0.7); cape.rotation.x = -0.2; bGroup.add(cape);
@@ -404,15 +414,16 @@ function equipPetSlot(slotCategory, itemId) {
             sockets.handL.add(new THREE.Mesh(new THREE.SphereGeometry(0.18, 16, 16), hMat));
             sockets.handR.add(new THREE.Mesh(new THREE.SphereGeometry(0.18, 16, 16), hMat));
         }
+        if(itemId === 'hands_energy') {
+            // ΝΕΟ: Σφαίρες Ενέργειας
+            const eMat = new THREE.MeshBasicMaterial({ color: 0x00ffff });
+            sockets.handL.add(new THREE.Mesh(new THREE.SphereGeometry(0.2, 16, 16), eMat));
+            sockets.handR.add(new THREE.Mesh(new THREE.SphereGeometry(0.2, 16, 16), eMat));
+        }
         if(itemId === 'hands_boxing') {
             const bMat = new THREE.MeshPhongMaterial({ color: 0xdd0000 });
             sockets.handL.add(new THREE.Mesh(new THREE.SphereGeometry(0.28, 16, 16), bMat));
             sockets.handR.add(new THREE.Mesh(new THREE.SphereGeometry(0.28, 16, 16), bMat));
-        }
-        if(itemId === 'hands_robo') {
-            const rMat = new THREE.MeshPhongMaterial({ color: 0x888888 });
-            sockets.handL.add(new THREE.Mesh(new THREE.BoxGeometry(0.3, 0.3, 0.3), rMat));
-            sockets.handR.add(new THREE.Mesh(new THREE.BoxGeometry(0.3, 0.3, 0.3), rMat));
         }
     }
 
@@ -481,7 +492,22 @@ function launch(){ if(busy || !currentCube) return; const c = aimCol; const h = 
 function isBoardFull() { for(let c=0;c<COLS;c++) for(let r=0;r<ROWS;r++) if(!grid[c][r]) return false; return true; }
 async function resolveMerges(queue){ while(queue.length){ const {c,r} = queue.shift(); const cell = grid[c][r]; if(!cell) continue; const same = [{c:c-1,r},{c:c+1,r},{c,r:r-1},{c,r:r+1}].filter(n => n.c>=0&&n.c<COLS&&n.r>=0&&n.r<ROWS&&grid[n.c][n.r]&&grid[n.c][n.r].value===cell.value); if(!same.length) continue; const newVal = cell.value * Math.pow(2, same.length); score += newVal; save.score = score; coins += 1; save.coins = coins; updateHUD(); await new Promise(res=>{ let left = same.length; const tp = cellPos(c,r); same.forEach(n=>{ const m = grid[n.c][n.r].mesh; grid[n.c][n.r] = null; tween(m.position, {x:tp.x, y:tp.y}, 0.14, null, ()=>{ boardGroup.remove(m); if(--left===0) res(); }); tween(m.scale, {x:.5,y:.5,z:.5}, 0.14); }); }); playSound('merge'); boardGroup.remove(cell.mesh); grid[c][r] = null; const up = placeCube(c, r, newVal); up.mesh.scale.set(1.35,1.35,1.35); tween(up.mesh.scale, {x:1,y:1,z:1}, 0.22); const moved = []; for(let xc=0;xc<COLS;xc++){ let write=0; for(let xr=0;xr<ROWS;xr++){ if(grid[xc][xr]){ if(xr!==write){ grid[xc][write]=grid[xc][xr]; grid[xc][xr]=null; tween(grid[xc][write].mesh.position, {y:cellPos(xc, write).y}, 0.15); moved.push({c:xc, r:write}); } write++; } } } queue.push({c,r}, ...moved); await new Promise(r=>setTimeout(r,120)); } persist(); }
 let winTimer = null;
-function checkWin(){ const t = LEVELS[Math.min(level, LEVELS.length-1)].target; let win = false; for(let c=0;c<COLS;c++) for(let r=0;r<ROWS;r++) if(grid[c][r] && grid[c][r].value >= t){ win = true; break; } if(!win) return false; busy = true; coins += 25; save.coins = coins; best = Math.max(best, score); save.best = best; save.level = Math.min(level+1, LEVELS.length-1); persist(); updateHUD(); document.getElementById("winText").innerHTML = `Έφτιαξες ${t}!<br>+25 🪙`; if(winTimer) clearTimeout(winTimer); winTimer = setTimeout(() => { document.getElementById("winModal").classList.remove("hidden"); winTimer = null; }, 3000); return true; }
+function checkWin(){ 
+  const t = LEVELS[Math.min(level, LEVELS.length-1)].target; 
+  let win = false; 
+  for(let c=0;c<COLS;c++) for(let r=0;r<ROWS;r++) if(grid[c][r] && grid[c][r].value >= t){ win = true; break; } 
+  if(!win) return false; 
+  
+  busy = true; coins += 25; save.coins = coins; best = Math.max(best, score); save.best = best; save.level = Math.min(level+1, LEVELS.length-1); persist(); updateHUD(); 
+  document.getElementById("winText").innerHTML = `Έφτιαξες ${t}!<br>+25 🪙`; 
+  
+  // ΕΝΕΡΓΟΠΟΙΗΣΗ CELEBRATION!
+  aziramWinTime = 3.0; // Ο AZIRAM χορεύει για 3 δευτερόλεπτα
+  
+  if(winTimer) clearTimeout(winTimer); 
+  winTimer = setTimeout(() => { document.getElementById("winModal").classList.remove("hidden"); winTimer = null; }, 3000); 
+  return true; 
+}
 function gameOver(){ busy = true; best = Math.max(best, score); save.best = best; save.score = 0; persist(); document.getElementById("loseText").innerHTML = `Σκορ: <b>${score}</b>`; document.getElementById("loseModal").classList.remove("hidden"); }
 
 function onTap(e){ 
@@ -492,7 +518,7 @@ function onTap(e){
   
   if (aziramPet) {
       const hits = raycaster.intersectObject(aziramPet, true);
-      if (hits.length > 0) {
+      if (hits.length > 0 && aziramWinTime <= 0) { // Δεν τον πατάμε αν ήδη πανηγυρίζει
           aziramReactionTime = 1.2; 
           if(audioCtx.state !== 'suspended') playDropDefault(audioCtx); 
           return; 
@@ -552,8 +578,26 @@ function loop(t){
   if(aziramPet) {
       const core = aziramPet.children[0];
 
-      if (aziramReactionTime > 0) {
+      if (aziramWinTime > 0) {
+          // ΛΟΓΙΚΗ ΓΙΟΡΤΗΣ (Win Celebration!)
+          aziramWinTime -= dt;
+          
+          // Αναπηδά ψηλά 
+          core.position.y = Math.abs(Math.sin(t * 8)) * 1.2;
+          
+          // Κάνει Backflips
+          aziramPet.rotation.x -= 0.15;
+          aziramPet.rotation.y += 0.1;
+
+          // Σηκώνει τα χέρια ψηλά
+          sockets.handL.position.y = 0.8 + Math.sin(t*10)*0.2;
+          sockets.handR.position.y = 0.8 + Math.cos(t*10)*0.2;
+          
+      } else if (aziramReactionTime > 0) {
+          // ΛΟΓΙΚΗ ΑΝΤΙΔΡΑΣΗΣ (Όταν τον πατάς)
           aziramReactionTime -= dt;
+          aziramPet.rotation.x = 0.2; // Επαναφορά της κλίσης (αν έκανε flip)
+          
           core.position.x = (Math.random() - 0.5) * 0.15;
           core.position.y = (Math.random() - 0.5) * 0.15;
           aziramPet.rotation.y += 0.4;
@@ -563,8 +607,11 @@ function loop(t){
           sockets.handL.position.y = Math.sin(t*0.05) * 0.5;
           sockets.handR.position.y = Math.cos(t*0.05) * 0.5;
       } else {
+          // ΗΡΕΜΙΑ (Idle)
           core.position.x = 0;
+          aziramPet.rotation.x = 0.2; // Επαναφορά της κλίσης
           aziramPet.rotation.y += (-0.3 - aziramPet.rotation.y) * 0.1;
+          
           core.scale.y = 1 + Math.sin(t * 0.004) * 0.04;
           core.scale.x = 1 + Math.cos(t * 0.004) * 0.04;
           core.position.y = Math.sin(t * 0.002) * 0.15;
@@ -576,7 +623,7 @@ function loop(t){
           sockets.footR.position.y = -0.8 + Math.sin(t*0.004) * 0.05;
       }
       
-      // Update custom animations (e.g. propeller, halo)
+      // Update custom animations (e.g. propeller, halo, orbits)
       core.traverse(child => { if(child.userData && child.userData.onUpdate) child.userData.onUpdate(t); });
   }
 
@@ -590,7 +637,6 @@ function loop(t){
   await loadSave(); coins = save.coins; level = save.level; best = save.best;
   initThree(); if(!renderer) return; newBoard(); updateHUD();
   
-  // Φόρτωση του Pet (ΟΛΑ τα slots)
   equipPetSlot('pet_head', save.equippedPetHead);
   equipPetSlot('pet_face', save.equippedPetFace);
   equipPetSlot('pet_body', save.equippedPetBody);
