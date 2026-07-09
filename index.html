@@ -50,7 +50,7 @@
   .pbtn .cost{font-size:11px;font-weight:800;background:rgba(0,0,0,.22);border-radius:8px;padding:1px 7px}
   .pbtn.armed{outline:4px solid var(--accent);background:#C2542F;box-shadow:0 4px 0 #8f3c20}
   
-  /* ---------- Shop ---------- */
+  /* ---------- Shop (ΧΩΡΙΣ ΑΡΙΘΜΟΥΣ 10) ---------- */
   .shop-tabs { display:flex; gap:5px; margin-bottom:10px; border-bottom:2px solid rgba(0,0,0,0.1); padding-bottom:10px;}
   .shop-tab { flex:1; padding:8px 5px; font-weight:800; font-size:13px; border-radius:10px; background:#E4D7BC; color:#8C6A4F; border:none; cursor:pointer;}
   .shop-tab.active { background:var(--accent); color:#fff; box-shadow:0 3px 0 #b8742a; transform:translateY(-2px);}
@@ -87,6 +87,8 @@
     background:var(--panel-deep);color:var(--cream);font-weight:700;font-size:14px;border-radius:14px;
     padding:8px 16px;opacity:0;transition:opacity .25s;white-space:nowrap;
   }
+  /* Μήνυμα σφάλματος */
+  #webgl-error { position:fixed; inset:0; display:flex; align-items:center; justify-content:center; z-index:99; background:#0B0C10; color:#fff; font-family:inherit; padding:20px; text-align:center; font-size:18px; font-weight:bold;}
 </style>
 </head>
 <body>
@@ -145,9 +147,8 @@
 <script>
 /* =====================================================
    Drop 2048 · Deep Space & Full Customization
-   - 10 κύβοι, 10 ταμπλό, 10 εφέ, 10 ήχοι
-   - Starfield (αστέρια που ταξιδεύουν)!
-   - Όλα ΔΩΡΕΑΝ
+   - Διορθωμένο Starfield (Πίσω)
+   - Καθαρισμένες καρτέλες shop (χωρίς αριθμούς)
 ===================================================== */
 
 const COLS = 5, ROWS = 6, CELL = 1.0, GAP = 0.12; 
@@ -163,7 +164,7 @@ const LEVELS = [
   { target: 1024, preset: 12, text: "Φτιάξε κύβο 1024" },
 ];
 
-/* ---------------- Shop Data (10 items each, ALL FREE) ---------------- */
+/* ---------------- Shop Data (ALL FREE) ---------------- */
 const SHOP = {
   cubes: [
     { id: 'wood', name: 'Ξύλο', price: 0, icon: '🪵' },
@@ -230,7 +231,7 @@ let save = { ...DEFAULT_SAVE };
 
 async function loadSave(){
   try{
-    const r = localStorage.getItem("drop2048-save-v5");
+    const r = localStorage.getItem("drop2048-save-v6");
     if(r) {
       const parsed = JSON.parse(r);
       save = Object.assign({}, DEFAULT_SAVE, parsed);
@@ -238,7 +239,7 @@ async function loadSave(){
   }catch(e){ }
 }
 function persist(){
-  try{ localStorage.setItem("drop2048-save-v5", JSON.stringify(save)); }catch(e){ }
+  try{ localStorage.setItem("drop2048-save-v6", JSON.stringify(save)); }catch(e){ }
 }
 
 /* ---------------- Audio (10 Different Sounds) ---------------- */
@@ -382,7 +383,7 @@ function playSoundMerge(id, ctx) {
   osc.start(); osc.stop(ctx.currentTime + 0.4);
 }
 
-/* ---------------- Particles Engine (10 Effects) ---------------- */
+/* ---------------- Particles Engine ---------------- */
 const particles = [];
 const pGeo = new THREE.BoxGeometry(0.12, 0.12, 0.12);
 const pMats = {
@@ -433,16 +434,16 @@ function updateParticles(dt) {
   }
 }
 
-/* ---------------- STARFIELD (Αστέρια ταξιδιού) ---------------- */
+/* ---------------- STARFIELD (Αστέρια, πίσω πλέον) ---------------- */
 let starField;
 function initStarfield() {
-  const starCount = 1500;
+  const starCount = 1000; // Μείωσα λίγο για κινητά
   const starGeo = new THREE.BufferGeometry();
   const starPos = new Float32Array(starCount * 3);
   for (let i = 0; i < starCount * 3; i += 3) {
     starPos[i] = (Math.random() - 0.5) * 200;     
     starPos[i+1] = (Math.random() - 0.5) * 200;   
-    starPos[i+2] = (Math.random() - 0.5) * 100;   // Τυχαίο βάθος
+    starPos[i+2] = (Math.random() - 0.5) * 100;   
   }
   starGeo.setAttribute('position', new THREE.BufferAttribute(starPos, 3));
   
@@ -454,7 +455,7 @@ function initStarfield() {
     blending: THREE.AdditiveBlending
   });
   starField = new THREE.Points(starGeo, starMat);
-  starField.position.z = 0; // Τοποθετούμε στο κέντρο
+  starField.position.z = -30; // ΣΗΜΑΝΤΙΚΟ: Το βάζουμε ΠΙΣΩ
   scene.add(starField);
 }
 
@@ -462,11 +463,11 @@ function updateStarfield(speed) {
   if (!starField) return;
   const positions = starField.geometry.attributes.position.array;
   for (let i = 2; i < positions.length; i += 3) {
-    positions[i] += speed; // Κίνηση στον άξονα Z
-    if (positions[i] > 40) { // Αν περάσει μπροστά από την κάμερα
-      positions[i] = -60;   // Το πάμε πίσω
-      positions[i-2] = (Math.random() - 0.5) * 200; // Νέο X
-      positions[i-1] = (Math.random() - 0.5) * 200; // Νέο Y
+    positions[i] += speed; 
+    if (positions[i] > 20) { 
+      positions[i] = -80;   
+      positions[i-2] = (Math.random() - 0.5) * 200; 
+      positions[i-1] = (Math.random() - 0.5) * 200; 
     }
   }
   starField.geometry.attributes.position.needsUpdate = true;
@@ -484,36 +485,50 @@ function createEmojiTexture(emoji) {
   return new THREE.CanvasTexture(cv);
 }
 
-/* ---------------- three.js setup (Χωρίς Σκιές) ---------------- */
+/* ---------------- three.js setup (ΒΕΛΤΙΩΜΕΝΟ) ---------------- */
+let scene, camera, renderer, boardGroup, raycaster, pointer, bgElements = [];
+let backMesh, cellMat; 
+let grid = [];
+let currentCube = null;
+let aimCol = 2, busy = false, hammerMode = false, isLaunching = false;
+let score = 0, coins = 500, level = 0, best = 0;
+let anims = [];
+let matCache = {};
+
 function initThree(){
   const canvas = document.getElementById("game");
-  renderer = new THREE.WebGLRenderer({canvas, antialias:true});
-  renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
-  renderer.setClearColor(0x0B0C10, 1); // Σωστό σκούρο background
-
-  scene = new THREE.Scene();
-  // Αφαιρέσαμε το fog για να μην κρύβει τα αντικείμενα
-
-  // Background Emojis
-  const bgEmojis = ['🌟', '⚡️', '⭐️'];
+  if(!canvas) return;
   
+  try {
+    renderer = new THREE.WebGLRenderer({canvas, antialias:true});
+  } catch(e) {
+    document.getElementById('game').style.display = 'none';
+    const errDiv = document.createElement('div');
+    errDiv.id = 'webgl-error';
+    errDiv.innerHTML = 'Η συσκευή σας δεν υποστηρίζει WebGL. Δοκιμάστε σε άλλο πρόγραμμα περιήγησης.';
+    document.body.appendChild(errDiv);
+    return;
+  }
+  
+  renderer.setPixelRatio(Math.min(devicePixelRatio, 1.5));
+  scene = new THREE.Scene();
+  scene.background = new THREE.Color(0x0B0C10); // Το σωστό φόντο
+
+  // Emojis Background
+  const bgEmojis = ['🌟', '⚡️', '⭐️'];
   bgEmojis.forEach(emoji => {
     for(let i=0; i<2; i++) {
       const tex = createEmojiTexture(emoji);
       const mat = new THREE.SpriteMaterial({ map: tex, transparent: true });
       const sprite = new THREE.Sprite(mat);
-      
       const size = Math.random() * 1.5 + 1;
       sprite.scale.set(size, size, 1);
-      
       let dirY = -0.3;
       let isStar = false;
-
       if (['🌟', '⭐️', '⚡️'].includes(emoji)) {
          dirY = -0.1; isStar = true;
          sprite.position.set((Math.random()-0.5)*30, Math.random()*40, -6 - Math.random()*15);
       } 
-      
       sprite.userData = { 
         speed: Math.random()*1 + 0.5, 
         wobbleSpeed: Math.random()*2,
@@ -524,7 +539,6 @@ function initThree(){
         baseSize: size,
         timeOffset: Math.random() * 100
       };
-      
       scene.add(sprite);
       bgElements.push(sprite);
     }
@@ -555,7 +569,7 @@ function initThree(){
 
   updateBoardColorsLive();
 
-  // Προσθήκη των αστεριών (Starfield) - Τώρα πιο μακριά και σωστά
+  // Προσθήκη Starfield
   initStarfield();
 
   raycaster = new THREE.Raycaster(); pointer = new THREE.Vector2();
@@ -573,18 +587,18 @@ function onResize(){
   camera.aspect = innerWidth/innerHeight;
   const dist = (BOARD_H/2 + 2.5) / Math.tan(THREE.MathUtils.degToRad(camera.fov/2));
   camera.position.set(0, -1.8, dist + 1.5);
-  camera.lookAt(0, -1.2, 0); camera.updateProjectionMatrix();
+  camera.lookAt(0, -1.2, 0); 
+  camera.updateProjectionMatrix();
 }
 
 function cellPos(c, r){ return { x: -BOARD_W/2 + CELL/2 + c*(CELL+GAP), y: BOARD_H/2 - CELL/2 - r*(CELL+GAP) }; }
 
-/* ---------------- Custom Cube Texture Generator (Improved Visibility) ---------------- */
+/* ---------------- Custom Cube Texture Generator ---------------- */
 function numberTexture(value){
   const cv = document.createElement("canvas"); cv.width = cv.height = 128;
   const g = cv.getContext("2d");
   const skin = save.equippedCube;
 
-  // Σχεδίαση φόντου
   if(skin === 'wood') {
     g.fillStyle = value >= 128 ? "#8B4513" : "#D2B48C"; roundRect(g,4,4,120,120,22); g.fill();
     g.strokeStyle="rgba(0,0,0,0.1)"; g.lineWidth=2;
@@ -633,7 +647,6 @@ function numberTexture(value){
     g.fillStyle = grad; roundRect(g,4,4,120,120,22); g.fill();
   }
 
-  // Σχεδίαση αριθμού ΜΕΣΑ σε στρογγυλό πλαίσιο
   let txtCol = (skin==='wood'&&value<128)||skin==='whitered'||skin==='whitegreen'||skin==='zebra' ? "#111" : "#FFF";
   if(skin==='gold') txtCol = "#3E2723";
   if(skin==='neon') txtCol = `hsl(${(Math.log2(value)*30)%360}, 100%, 65%)`;
@@ -796,7 +809,7 @@ async function resolveMerges(queue){
   persist();
 }
 
-/* ---------------- levels / win / lose (Bounce on Win) ---------------- */
+/* ---------------- levels / win / lose ---------------- */
 function checkWin(){
   const t = LEVELS[Math.min(level, LEVELS.length-1)].target;
   let win = false;
@@ -881,10 +894,9 @@ function finMagnet(mg){
   setTimeout(()=>{ resolveMerges([]).then(()=>{ busy=false; updateHUD(); persist(); }); }, 250);
 }
 
-/* ---------------- Shop System (ΔΩΡΕΑΝ & ΔΙΟΡΘΩΜΕΝΟ) ---------------- */
+/* ---------------- Shop System (ΧΩΡΙΣ ΑΡΙΘΜΟΥΣ) ---------------- */
 function renderShop() {
   const container = document.getElementById('shopContainer'); container.innerHTML = '';
-  
   const arr = SHOP[currentShopTab] || [];
   
   arr.forEach(item => {
@@ -938,22 +950,18 @@ let lastT = 0;
 function loop(t){
   const dt = Math.min(0.05, (t-lastT)/1000); lastT = t; stepAnims(dt); updateParticles(dt);
   
-  // Ενημέρωση Starfield (Ταχύτητα 0.8)
   updateStarfield(0.8);
 
   bgElements.forEach(el => {
     const u = el.userData;
     el.position.y += u.dirY * u.speed * dt * 3; 
-
     if(u.wobbleSpeed) {
        el.position.x += Math.sin(t * 0.001 * u.wobbleSpeed + u.timeOffset) * u.wobbleAmp;
     }
-
     if(u.isStar) {
        const s = u.baseSize + Math.sin(t * 0.003 + u.timeOffset) * 0.4;
        el.scale.set(s, s, 1);
     }
-
     if(u.dirY < 0 && el.position.y < -20) { 
        el.position.y = 30 + Math.random()*10; 
        el.position.x = (Math.random()-0.5)*30; 
@@ -976,7 +984,8 @@ function loop(t){
     }
   }
   
-  renderer.render(scene, camera); requestAnimationFrame(loop);
+  if(renderer) renderer.render(scene, camera); 
+  requestAnimationFrame(loop);
 }
 
 /* ---------------- boot ---------------- */
@@ -986,7 +995,10 @@ function loop(t){
   document.addEventListener('pointerdown', ()=> { if(audioCtx.state === 'suspended') audioCtx.resume(); }, {once:true});
 
   await loadSave(); coins = save.coins; level = save.level; best = save.best;
-  initThree(); newBoard(); updateHUD();
+  initThree(); 
+  // Αν το initThree απέτυχε (WebGL), σταματάμε εδώ
+  if(!renderer) return; 
+  newBoard(); updateHUD();
   
   const cvs = document.getElementById("game");
   cvs.addEventListener("pointermove", (e)=>{if(!busy)setAim((e.touches?e.touches[0].clientX:e.clientX)/innerWidth*2-1)});
