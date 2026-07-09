@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Drop 2048 · Starfield Deluxe</title>
+<title>Drop 2048 · Starfield Pure</title>
 <style>
   :root{
     --bg:#0B0C10; --panel:#8C6A4F; --panel-deep:#4A3423;
@@ -83,20 +83,6 @@
     background:var(--panel-deep);color:var(--cream);font-weight:700;font-size:14px;border-radius:14px;
     padding:8px 16px;opacity:0;transition:opacity .25s;white-space:nowrap;
   }
-  #webgl-error { position:fixed; inset:0; display:flex; align-items:center; justify-content:center; z-index:99; background:#0B0C10; color:#fff; font-family:inherit; padding:20px; text-align:center; font-size:18px; font-weight:bold;}
-
-  #winModal .card { padding:0; overflow:hidden; background:rgba(0,0,0,0.5); border:none; box-shadow:none; width:min(420px,92vw); }
-  .win-ribbon { background:#E63946; color:#fff; font-size:28px; font-weight:800; padding:10px 40px; position:relative; margin-top:20px; display:inline-block; border-radius:8px; box-shadow:0 4px 0 #9e2a2b; transform:rotate(-2deg); z-index:2; }
-  .win-ribbon::before, .win-ribbon::after { content:''; position:absolute; top:0; width:20px; height:100%; background:inherit; z-index:-1; }
-  .win-ribbon::before { left:-15px; transform:skewX(-20deg); border-radius:8px 0 0 8px; }
-  .win-ribbon::after { right:-15px; transform:skewX(20deg); border-radius:0 8px 8px 0; }
-  .win-subtitle { font-size:22px; font-weight:800; color:#FFD700; text-shadow:2px 2px 0 #b8742a; margin-top:5px; }
-  .win-subtitle small { font-size:16px; color:#fff; text-shadow:1px 1px 0 #000; }
-  .win-glow-box { margin:10px auto; width:130px; height:130px; background:#3F51B5; border-radius:16px; display:flex; align-items:center; justify-content:center; font-size:48px; font-weight:800; color:#fff; box-shadow:0 0 40px rgba(255,215,0,0.8), inset 0 0 20px rgba(255,255,255,0.5); animation:pulseGlow 1s infinite alternate; }
-  @keyframes pulseGlow { 0% { box-shadow:0 0 20px rgba(255,215,0,0.6); } 100% { box-shadow:0 0 60px rgba(255,215,0,1); } }
-  #winPetContainer { margin:10px auto; width:120px; height:120px; border-radius:50%; background:#fff; display:flex; align-items:center; justify-content:center; box-shadow:inset 0 0 20px rgba(0,0,0,0.2); }
-  #winPetCanvas { width:100%; height:100%; }
-  .win-btn { background:#4CAF50; box-shadow:0 4px 0 #2E7D32; margin-bottom:20px; width:auto; padding:12px 30px; }
 </style>
 </head>
 <body>
@@ -127,7 +113,6 @@
       <button class="shop-tab" data-tab="boards">Ταμπλό</button>
       <button class="shop-tab" data-tab="effects">Εφέ</button>
       <button class="shop-tab" data-tab="sounds">Ήχοι</button>
-      <button class="shop-tab" data-tab="pets">Avatar (UI)</button>
     </div>
     <div class="shop-items" id="shopContainer"></div>
     <button class="btn" id="btnCloseShop">Κλείσιμο</button>
@@ -136,13 +121,10 @@
 
 <div class="overlay hidden" id="winModal">
   <div class="card">
-    <div class="win-ribbon">🎉 ΜΠΡΑΒΟ!</div>
-    <div class="win-subtitle">Νέος Κύβος<br><small>Ξεκλείδωσε!</small></div>
-    <div class="win-glow-box" id="winNumberBox">256</div>
-    <div id="winPetContainer">
-      <canvas id="winPetCanvas" width="120" height="120"></canvas>
-    </div>
-    <button class="btn win-btn" id="btnNext">Συνέχεια ➜</button>
+    <div style="font-size:40px; margin-bottom:10px;">🎉</div>
+    <h2>Επίπεδο Ολοκληρώθηκε!</h2>
+    <p id="winText"></p>
+    <button class="btn" id="btnNext">Επόμενο επίπεδο ➜</button>
   </div>
 </div>
 
@@ -158,10 +140,9 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script>
 /* =====================================================
-   Drop 2048 · Deep Space Edition
-   - Αφαιρέθηκε το 3D Pet (Ανθρωπάκι) τελείως
-   - Το Avatar πλέον είναι σύστημα UI
-   - Το Background έχει μόνο Emojis στο βάθος
+   Drop 2048 · Starfield Pure
+   - Μηδέν Emojis / Pet.
+   - Μόνο 6.000 έντονα αστέρια.
 ===================================================== */
 
 const COLS = 5, ROWS = 6, CELL = 1.0, GAP = 0.12; 
@@ -177,7 +158,6 @@ const LEVELS = [
   { target: 1024, preset: 12, text: "Φτιάξε κύβο 1024" },
 ];
 
-/* ---------------- Shop Data (31 Avatar Items) ---------------- */
 const SHOP = {
   cubes: [
     { id: 'wood', name: 'Ξύλο', price: 0, icon: '🪵' },
@@ -225,45 +205,6 @@ const SHOP = {
     { id: 'snd_dolby', name: 'Dolby Surge', price: 0, icon: '🌊' },
     { id: 'snd_choir', name: 'Choir', price: 0, icon: '🎤' },
     { id: 'snd_echo', name: 'Echo', price: 0, icon: '🌌' }
-  ],
-  pets: [
-    // Base (5)
-    { id: 'base_planet', name: 'Βασικός Πλανήτης', price: 0, icon: '🌕', cat: 'base' },
-    { id: 'base_lava', name: 'Πύρινος Πλανήτης', price: 0, icon: '🌋', cat: 'base' },
-    { id: 'base_ice', name: 'Παγωμένος Πλανήτης', price: 0, icon: '🧊', cat: 'base' },
-    { id: 'base_space', name: 'Πλανήτης Διαστήματος', price: 0, icon: '🪐', cat: 'base' },
-    { id: 'base_forest', name: 'Πλανήτης Δάσους', price: 0, icon: '🌲', cat: 'base' },
-    // Eyes (5)
-    { id: 'eyes_normal', name: 'Κανονικά Μάτια', price: 0, icon: '👀', cat: 'eyes' },
-    { id: 'eyes_heart', name: 'Μάτια Καρδούλες', price: 0, icon: '❤️', cat: 'eyes' },
-    { id: 'eyes_cyclops', name: 'Ένα Μάτι (Κύκλωπας)', price: 0, icon: '👁️', cat: 'eyes' },
-    { id: 'eyes_angry', name: 'Θυμωμένα Μάτια', price: 0, icon: '😠', cat: 'eyes' },
-    { id: 'eyes_happy', name: 'Χαρούμενα Κλειστά', price: 0, icon: '😆', cat: 'eyes' },
-    // Mouth (5)
-    { id: 'mouth_smile', name: 'Απλό Χαμόγελο', price: 0, icon: '😊', cat: 'mouth' },
-    { id: 'mouth_lipstick', name: 'Κοκκινόχειλα', price: 0, icon: '💋', cat: 'mouth' },
-    { id: 'mouth_tongue', name: 'Γλώσσα Έξω', price: 0, icon: '😛', cat: 'mouth' },
-    { id: 'mouth_o', name: 'Στόμα Έκπληξης', price: 0, icon: '😮', cat: 'mouth' },
-    { id: 'mouth_smirk', name: 'Πονηρό Χαμόγελο', price: 0, icon: '😏', cat: 'mouth' },
-    // Nose / Face (5)
-    { id: 'nose_classic', name: 'Κλασική Μύτη', price: 0, icon: '👃', cat: 'nose' },
-    { id: 'nose_freckles', name: 'Φακίδες', price: 0, icon: '🔴', cat: 'nose' },
-    { id: 'nose_blush', name: 'Ροζ Μαγουλάκια', price: 0, icon: '🌸', cat: 'nose' },
-    { id: 'nose_sunglasses', name: 'Γυαλιά Ηλίου', price: 0, icon: '😎', cat: 'nose' },
-    { id: 'nose_glasses', name: 'Γυαλιά Μυωπίας', price: 0, icon: '👓', cat: 'nose' },
-    // Hats (5)
-    { id: 'hat_top', name: 'Κλασικό Καπέλο', price: 0, icon: '🎩', cat: 'hat' },
-    { id: 'hat_bow', name: 'Φιόγκος (Girl)', price: 0, icon: '🎀', cat: 'hat' },
-    { id: 'hat_fro', name: 'Αφροί (Fro)', price: 0, icon: '💥', cat: 'hat' },
-    { id: 'hat_helmet', name: 'Κράνος Αστροναύτη', price: 0, icon: '⛑️', cat: 'hat' },
-    { id: 'hat_crown', name: 'Στεφάνι', price: 0, icon: '👑', cat: 'hat' },
-    // Arms & Legs (6)
-    { id: 'arm_hands', name: 'Κανονικά Χέρια', price: 0, icon: '✋', cat: 'arms' },
-    { id: 'arm_flower', name: 'Λουλούδι (Girl)', price: 0, icon: '🌻', cat: 'arms' },
-    { id: 'arm_sword', name: 'Σπαθάκι', price: 0, icon: '⚔️', cat: 'arms' },
-    { id: 'arm_muscle', name: 'Μπράτσα', price: 0, icon: '💪', cat: 'arms' },
-    { id: 'leg_feet', name: 'Ποδάκια', price: 0, icon: '🦶', cat: 'legs' },
-    { id: 'leg_slippers', name: 'Παντόφλες', price: 0, icon: '🩴', cat: 'legs' }
   ]
 };
 
@@ -274,36 +215,27 @@ const DEFAULT_SAVE = {
   ownedCubes: ['wood'], equippedCube: 'wood',
   ownedBoards: ['board_wood'], equippedBoard: 'board_wood',
   ownedEffects: ['eff_none'], equippedEffect: 'eff_none',
-  ownedSounds: ['snd_default'], equippedSound: 'snd_default',
-  ownedPets: ['base_planet'], equippedPets: ['base_planet']
+  ownedSounds: ['snd_default'], equippedSound: 'snd_default'
 };
 
 let save = { ...DEFAULT_SAVE };
 
 async function loadSave(){
   try{
-    const r = localStorage.getItem("drop2048-save-v12");
-    if(r) {
-      const parsed = JSON.parse(r);
-      save = Object.assign({}, DEFAULT_SAVE, parsed);
-    }
+    const r = localStorage.getItem("drop2048-save-pure");
+    if(r) { const parsed = JSON.parse(r); save = Object.assign({}, DEFAULT_SAVE, parsed); }
   }catch(e){ }
 }
-function persist(){
-  try{ localStorage.setItem("drop2048-save-v12", JSON.stringify(save)); }catch(e){ }
-}
+function persist(){ try{ localStorage.setItem("drop2048-save-pure", JSON.stringify(save)); }catch(e){ } }
 
-/* ---------------- Audio (Joyful Win Sound!) ---------------- */
 const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 
 function playSound(type) {
   if(audioCtx.state === 'suspended') audioCtx.resume();
-  if(type === 'win') playWinSound(audioCtx);
-  else {
-    const soundId = save.equippedSound || 'snd_default';
-    if(type === 'drop') playSoundDrop(soundId, audioCtx);
-    else if(type === 'merge') playSoundMerge(soundId, audioCtx);
-  }
+  if(type === 'win') { playWinSound(audioCtx); return; }
+  const soundId = save.equippedSound || 'snd_default';
+  if(type === 'drop') playSoundDrop(soundId, audioCtx);
+  else if(type === 'merge') playSoundMerge(soundId, audioCtx);
 }
 
 function playDropDefault(ctx) {
@@ -331,8 +263,7 @@ function playWinSound(ctx) {
     setTimeout(() => {
       const osc = ctx.createOscillator(); const gain = ctx.createGain();
       osc.connect(gain); gain.connect(ctx.destination);
-      osc.type = 'sine'; 
-      osc.frequency.setValueAtTime(600 + (i*250), ctx.currentTime);
+      osc.type = 'sine'; osc.frequency.setValueAtTime(600 + (i*250), ctx.currentTime);
       gain.gain.setValueAtTime(0.15, ctx.currentTime);
       gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.2);
       osc.start(); osc.stop(ctx.currentTime + 0.2);
@@ -357,32 +288,16 @@ function playSoundDrop(id, ctx) {
   const osc = ctx.createOscillator(); const gain = ctx.createGain();
   osc.connect(gain); gain.connect(ctx.destination);
   switch(id) {
-    case 'snd_bass': osc.type = 'square'; osc.frequency.setValueAtTime(150, ctx.currentTime); osc.frequency.exponentialRampToValueAtTime(80, ctx.currentTime + 0.15);
-      gain.gain.setValueAtTime(0.15, ctx.currentTime); gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.15); break;
-    case 'snd_drum': osc.type = 'square'; osc.frequency.setValueAtTime(100, ctx.currentTime); osc.frequency.exponentialRampToValueAtTime(50, ctx.currentTime + 0.05);
-      gain.gain.setValueAtTime(0.2, ctx.currentTime); gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.05); break;
-    case 'snd_bell': osc.type = 'sine'; osc.frequency.setValueAtTime(1200, ctx.currentTime);
-      gain.gain.setValueAtTime(0.2, ctx.currentTime); gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.3); break;
-    case 'snd_swish': osc.type = 'sine'; osc.frequency.setValueAtTime(2000, ctx.currentTime); osc.frequency.exponentialRampToValueAtTime(400, ctx.currentTime + 0.1);
-      gain.gain.setValueAtTime(0.05, ctx.currentTime); gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.1); break;
-    case 'snd_cymbal': osc.type = 'square'; osc.frequency.setValueAtTime(3000, ctx.currentTime); osc.frequency.exponentialRampToValueAtTime(1500, ctx.currentTime + 0.02);
-      gain.gain.setValueAtTime(0.1, ctx.currentTime); gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.02); break;
-    case 'snd_dolby': osc.type = 'sine'; osc.frequency.setValueAtTime(500, ctx.currentTime); 
-      gain.gain.setValueAtTime(0.25, ctx.currentTime); gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.2);
-      const osc2 = ctx.createOscillator(); const gain2 = ctx.createGain();
-      osc2.connect(gain2); gain2.connect(ctx.destination);
-      osc2.type = 'sine'; osc2.frequency.setValueAtTime(300, ctx.currentTime);
-      gain2.gain.setValueAtTime(0.15, ctx.currentTime); gain2.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.2);
-      osc2.start(); osc2.stop(ctx.currentTime + 0.2); break;
-    case 'snd_choir': osc.type = 'sine'; osc.frequency.setValueAtTime(400, ctx.currentTime);
-      gain.gain.setValueAtTime(0.1, ctx.currentTime); gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.3); break;
-    case 'snd_echo': osc.type = 'sine'; osc.frequency.setValueAtTime(600, ctx.currentTime); 
-      gain.gain.setValueAtTime(0.25, ctx.currentTime); gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.3);
-      const oscE = ctx.createOscillator(); const gainE = ctx.createGain();
-      oscE.connect(gainE); gainE.connect(ctx.destination);
-      oscE.type = 'sine'; oscE.frequency.setValueAtTime(800, ctx.currentTime + 0.1);
-      gainE.gain.setValueAtTime(0.15, ctx.currentTime + 0.1); gainE.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.4);
-      oscE.start(ctx.currentTime + 0.1); oscE.stop(ctx.currentTime + 0.4); break;
+    case 'snd_bass': osc.type = 'square'; osc.frequency.setValueAtTime(150, ctx.currentTime); osc.frequency.exponentialRampToValueAtTime(80, ctx.currentTime + 0.15); gain.gain.setValueAtTime(0.15, ctx.currentTime); gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.15); break;
+    case 'snd_drum': osc.type = 'square'; osc.frequency.setValueAtTime(100, ctx.currentTime); osc.frequency.exponentialRampToValueAtTime(50, ctx.currentTime + 0.05); gain.gain.setValueAtTime(0.2, ctx.currentTime); gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.05); break;
+    case 'snd_bell': osc.type = 'sine'; osc.frequency.setValueAtTime(1200, ctx.currentTime); gain.gain.setValueAtTime(0.2, ctx.currentTime); gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.3); break;
+    case 'snd_swish': osc.type = 'sine'; osc.frequency.setValueAtTime(2000, ctx.currentTime); osc.frequency.exponentialRampToValueAtTime(400, ctx.currentTime + 0.1); gain.gain.setValueAtTime(0.05, ctx.currentTime); gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.1); break;
+    case 'snd_cymbal': osc.type = 'square'; osc.frequency.setValueAtTime(3000, ctx.currentTime); osc.frequency.exponentialRampToValueAtTime(1500, ctx.currentTime + 0.02); gain.gain.setValueAtTime(0.1, ctx.currentTime); gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.02); break;
+    case 'snd_dolby': osc.type = 'sine'; osc.frequency.setValueAtTime(500, ctx.currentTime); gain.gain.setValueAtTime(0.25, ctx.currentTime); gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.2);
+      const osc2 = ctx.createOscillator(); const gain2 = ctx.createGain(); osc2.connect(gain2); gain2.connect(ctx.destination); osc2.type = 'sine'; osc2.frequency.setValueAtTime(300, ctx.currentTime); gain2.gain.setValueAtTime(0.15, ctx.currentTime); gain2.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.2); osc2.start(); osc2.stop(ctx.currentTime + 0.2); break;
+    case 'snd_choir': osc.type = 'sine'; osc.frequency.setValueAtTime(400, ctx.currentTime); gain.gain.setValueAtTime(0.1, ctx.currentTime); gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.3); break;
+    case 'snd_echo': osc.type = 'sine'; osc.frequency.setValueAtTime(600, ctx.currentTime); gain.gain.setValueAtTime(0.25, ctx.currentTime); gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.3);
+      const oscE = ctx.createOscillator(); const gainE = ctx.createGain(); oscE.connect(gainE); gainE.connect(ctx.destination); oscE.type = 'sine'; oscE.frequency.setValueAtTime(800, ctx.currentTime + 0.1); gainE.gain.setValueAtTime(0.15, ctx.currentTime + 0.1); gainE.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.4); oscE.start(ctx.currentTime + 0.1); oscE.stop(ctx.currentTime + 0.4); break;
     default: playDropDefault(ctx); return;
   }
   osc.start(); osc.stop(ctx.currentTime + 0.4);
@@ -392,38 +307,22 @@ function playSoundMerge(id, ctx) {
   const osc = ctx.createOscillator(); const gain = ctx.createGain();
   osc.connect(gain); gain.connect(ctx.destination);
   switch(id) {
-    case 'snd_bass': osc.type = 'square'; osc.frequency.setValueAtTime(300, ctx.currentTime); osc.frequency.exponentialRampToValueAtTime(600, ctx.currentTime + 0.2);
-      gain.gain.setValueAtTime(0.2, ctx.currentTime); gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.2); break;
-    case 'snd_drum': osc.type = 'square'; osc.frequency.setValueAtTime(80, ctx.currentTime); osc.frequency.exponentialRampToValueAtTime(40, ctx.currentTime + 0.08);
-      gain.gain.setValueAtTime(0.2, ctx.currentTime); gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.08); break;
-    case 'snd_bell': osc.type = 'sine'; osc.frequency.setValueAtTime(800, ctx.currentTime); osc.frequency.linearRampToValueAtTime(1600, ctx.currentTime + 0.3);
-      gain.gain.setValueAtTime(0.2, ctx.currentTime); gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.3); break;
-    case 'snd_swish': osc.type = 'sine'; osc.frequency.setValueAtTime(300, ctx.currentTime); osc.frequency.exponentialRampToValueAtTime(1800, ctx.currentTime + 0.15);
-      gain.gain.setValueAtTime(0.1, ctx.currentTime); gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.15); break;
-    case 'snd_cymbal': osc.type = 'square'; osc.frequency.setValueAtTime(2000, ctx.currentTime); osc.frequency.exponentialRampToValueAtTime(1000, ctx.currentTime + 0.05);
-      gain.gain.setValueAtTime(0.15, ctx.currentTime); gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.05); break;
-    case 'snd_dolby': osc.type = 'sine'; osc.frequency.setValueAtTime(600, ctx.currentTime); osc.frequency.exponentialRampToValueAtTime(900, ctx.currentTime + 0.15);
-      gain.gain.setValueAtTime(0.2, ctx.currentTime); gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.15);
-      const osc2 = ctx.createOscillator(); const gain2 = ctx.createGain();
-      osc2.connect(gain2); gain2.connect(ctx.destination);
-      osc2.type = 'sine'; osc2.frequency.setValueAtTime(400, ctx.currentTime); osc2.frequency.exponentialRampToValueAtTime(600, ctx.currentTime + 0.15);
-      gain2.gain.setValueAtTime(0.1, ctx.currentTime); gain2.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.15);
-      osc2.start(); osc2.stop(ctx.currentTime + 0.15); break;
-    case 'snd_choir': osc.type = 'sine'; osc.frequency.setValueAtTime(500, ctx.currentTime); osc.frequency.linearRampToValueAtTime(1000, ctx.currentTime + 0.4);
-      gain.gain.setValueAtTime(0.1, ctx.currentTime); gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.4); break;
-    case 'snd_echo': osc.type = 'sine'; osc.frequency.setValueAtTime(400, ctx.currentTime); osc.frequency.linearRampToValueAtTime(1000, ctx.currentTime + 0.3);
-      gain.gain.setValueAtTime(0.2, ctx.currentTime); gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.3);
-      const oscE = ctx.createOscillator(); const gainE = ctx.createGain();
-      oscE.connect(gainE); gainE.connect(ctx.destination);
-      oscE.type = 'sine'; oscE.frequency.setValueAtTime(200, ctx.currentTime + 0.15);
-      gainE.gain.setValueAtTime(0.15, ctx.currentTime + 0.15); gainE.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.4);
-      oscE.start(ctx.currentTime + 0.15); oscE.stop(ctx.currentTime + 0.4); break;
+    case 'snd_bass': osc.type = 'square'; osc.frequency.setValueAtTime(300, ctx.currentTime); osc.frequency.exponentialRampToValueAtTime(600, ctx.currentTime + 0.2); gain.gain.setValueAtTime(0.2, ctx.currentTime); gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.2); break;
+    case 'snd_drum': osc.type = 'square'; osc.frequency.setValueAtTime(80, ctx.currentTime); osc.frequency.exponentialRampToValueAtTime(40, ctx.currentTime + 0.08); gain.gain.setValueAtTime(0.2, ctx.currentTime); gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.08); break;
+    case 'snd_bell': osc.type = 'sine'; osc.frequency.setValueAtTime(800, ctx.currentTime); osc.frequency.linearRampToValueAtTime(1600, ctx.currentTime + 0.3); gain.gain.setValueAtTime(0.2, ctx.currentTime); gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.3); break;
+    case 'snd_swish': osc.type = 'sine'; osc.frequency.setValueAtTime(300, ctx.currentTime); osc.frequency.exponentialRampToValueAtTime(1800, ctx.currentTime + 0.15); gain.gain.setValueAtTime(0.1, ctx.currentTime); gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.15); break;
+    case 'snd_cymbal': osc.type = 'square'; osc.frequency.setValueAtTime(2000, ctx.currentTime); osc.frequency.exponentialRampToValueAtTime(1000, ctx.currentTime + 0.05); gain.gain.setValueAtTime(0.15, ctx.currentTime); gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.05); break;
+    case 'snd_dolby': osc.type = 'sine'; osc.frequency.setValueAtTime(600, ctx.currentTime); osc.frequency.exponentialRampToValueAtTime(900, ctx.currentTime + 0.15); gain.gain.setValueAtTime(0.2, ctx.currentTime); gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.15);
+      const osc2 = ctx.createOscillator(); const gain2 = ctx.createGain(); osc2.connect(gain2); gain2.connect(ctx.destination); osc2.type = 'sine'; osc2.frequency.setValueAtTime(400, ctx.currentTime); osc2.frequency.exponentialRampToValueAtTime(600, ctx.currentTime + 0.15); gain2.gain.setValueAtTime(0.1, ctx.currentTime); gain2.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.15); osc2.start(); osc2.stop(ctx.currentTime + 0.15); break;
+    case 'snd_choir': osc.type = 'sine'; osc.frequency.setValueAtTime(500, ctx.currentTime); osc.frequency.linearRampToValueAtTime(1000, ctx.currentTime + 0.4); gain.gain.setValueAtTime(0.1, ctx.currentTime); gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.4); break;
+    case 'snd_echo': osc.type = 'sine'; osc.frequency.setValueAtTime(400, ctx.currentTime); osc.frequency.linearRampToValueAtTime(1000, ctx.currentTime + 0.3); gain.gain.setValueAtTime(0.2, ctx.currentTime); gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.3);
+      const oscE = ctx.createOscillator(); const gainE = ctx.createGain(); oscE.connect(gainE); gainE.connect(ctx.destination); oscE.type = 'sine'; oscE.frequency.setValueAtTime(200, ctx.currentTime + 0.15); gainE.gain.setValueAtTime(0.15, ctx.currentTime + 0.15); gainE.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.4); oscE.start(ctx.currentTime + 0.15); oscE.stop(ctx.currentTime + 0.4); break;
     default: playMergeDefault(ctx); return;
   }
   osc.start(); osc.stop(ctx.currentTime + 0.4);
 }
 
-/* ---------------- Particles Engine ---------------- */
+/* ----- Particles ----- */
 const particles = [];
 const pGeo = new THREE.BoxGeometry(0.08, 0.08, 0.08);
 const pMats = {
@@ -461,7 +360,7 @@ function updateParticles(dt) {
   }
 }
 
-/* ---------------- STARFIELD (6000+ Stars) ---------------- */
+/* ----- STARFIELD (6000+, Intense) ----- */
 let starField;
 function initStarfield() {
   const starCount = 6000;
@@ -471,13 +370,13 @@ function initStarfield() {
   for (let i = 0; i < starCount * 3; i += 3) {
     starPos[i] = (Math.random() - 0.5) * 500;     starPos[i+1] = (Math.random() - 0.5) * 500;     starPos[i+2] = (Math.random() - 0.5) * 300;   
     const col = Math.random();
-    if(col < 0.6) { starColors[i] = 1; starColors[i+1] = 1; starColors[i+2] = 1; }
-    else if(col < 0.8) { starColors[i] = 1; starColors[i+1] = 0.8; starColors[i+2] = 0.6; }
-    else { starColors[i] = 0.6; starColors[i+1] = 0.8; starColors[i+2] = 1; }
+    if(col < 0.5) { starColors[i] = 1; starColors[i+1] = 1; starColors[i+2] = 1; }
+    else if(col < 0.75) { starColors[i] = 1; starColors[i+1] = 0.8; starColors[i+2] = 0.4; }
+    else { starColors[i] = 0.4; starColors[i+1] = 0.8; starColors[i+2] = 1; }
   }
   starGeo.setAttribute('position', new THREE.BufferAttribute(starPos, 3));
   starGeo.setAttribute('color', new THREE.BufferAttribute(starColors, 3));
-  const starMat = new THREE.PointsMaterial({ size: 0.25, vertexColors: true, blending: THREE.AdditiveBlending, depthWrite: false });
+  const starMat = new THREE.PointsMaterial({ size: 0.35, vertexColors: true, blending: THREE.AdditiveBlending, depthWrite: false });
   starField = new THREE.Points(starGeo, starMat); starField.position.z = -50; scene.add(starField);
 }
 function updateStarfield(speed) {
@@ -490,127 +389,8 @@ function updateStarfield(speed) {
   starField.geometry.attributes.position.needsUpdate = true;
 }
 
-/* ---------------- Emoji Background (Z-Axis Only, Behind Board) ---------------- */
-function createEmojiTexture(emoji) {
-  const cv = document.createElement("canvas"); cv.width = cv.height = 128;
-  const ctx = cv.getContext("2d"); ctx.font = "80px Arial"; ctx.textAlign = "center"; ctx.textBaseline = "middle";
-  ctx.fillText(emoji, 64, 68); return new THREE.CanvasTexture(cv);
-}
-
-/* ---------------- UI AVATAR ENGINE (No 3D Pet) ---------------- */
-function createAvatarTexture(isVictory = false, victoryTime = 0) {
-  const cv = document.createElement("canvas"); cv.width = cv.height = 256;
-  const g = cv.getContext("2d");
-  const cx = 128, cy = 128, rad = 90;
-  
-  const parts = save.equippedPets || ['base_planet'];
-
-  // 1. Base
-  let baseColor = "#FFD700"; let baseColor2 = "#FF8C00";
-  if(parts.includes('base_lava')) { baseColor = "#FF4500"; baseColor2 = "#8B0000"; }
-  else if(parts.includes('base_ice')) { baseColor = "#00FFFF"; baseColor2 = "#0000FF"; }
-  else if(parts.includes('base_space')) { baseColor = "#4B0082"; baseColor2 = "#00008B"; }
-  else if(parts.includes('base_forest')) { baseColor = "#32CD32"; baseColor2 = "#006400"; }
-  
-  const grad = g.createRadialGradient(cx-20, cy-20, 20, cx, cy, rad);
-  grad.addColorStop(0, baseColor); grad.addColorStop(0.7, baseColor2); grad.addColorStop(1, "#000000");
-  g.fillStyle = grad; g.beginPath(); g.arc(cx, cy, rad, 0, Math.PI*2); g.fill();
-
-  // Victory Animation Effect
-  let yOff = 0, mouthHappy = false;
-  if(isVictory) {
-    yOff = Math.sin(victoryTime * 8) * 5; // Bounce
-    mouthHappy = Math.sin(victoryTime * 10) > 0.2; // Laughing
-  }
-
-  // 2. Hats (Top)
-  if(parts.includes('hat_top')) { g.fillStyle = "#000"; g.fillRect(cx-40, cy-110+yOff, 80, 10); g.fillRect(cx-25, cy-140+yOff, 50, 35); g.fillStyle = "#FF0000"; g.fillRect(cx-5, cy-105+yOff, 10, 5); }
-  else if(parts.includes('hat_bow')) { g.fillStyle = "#FF1493"; g.beginPath(); g.arc(cx-40, cy-110+yOff, 20, 0, Math.PI*2); g.fill(); g.beginPath(); g.arc(cx+40, cy-110+yOff, 20, 0, Math.PI*2); g.fill(); g.fillStyle = "#FF69B4"; g.beginPath(); g.arc(cx, cy-105+yOff, 15, 0, Math.PI*2); g.fill(); }
-  else if(parts.includes('hat_fro')) { g.fillStyle = "#A0522D"; g.beginPath(); g.arc(cx, cy-100+yOff, 65, 0, Math.PI*2); g.fill(); }
-  else if(parts.includes('hat_helmet')) { g.fillStyle = "#FFA500"; g.beginPath(); g.arc(cx, cy-10+yOff, 85, Math.PI, 2*Math.PI); g.fill(); g.fillStyle = "#FFF"; g.fillRect(cx-10, cy-95+yOff, 20, 5); }
-  else if(parts.includes('hat_crown')) { g.fillStyle = "#FFD700"; g.beginPath(); g.moveTo(cx-50, cy-90+yOff); g.lineTo(cx-30, cy-140+yOff); g.lineTo(cx, cy-110+yOff); g.lineTo(cx+30, cy-140+yOff); g.lineTo(cx+50, cy-90+yOff); g.closePath(); g.fill(); g.fillStyle = "#FF0000"; g.beginPath(); g.arc(cx, cy-110+yOff, 10, 0, Math.PI*2); g.fill(); }
-
-  // 3. Eyes (Top Half)
-  if(parts.includes('eyes_normal') || parts.includes('eyes_heart') || parts.includes('eyes_angry') || parts.includes('eyes_happy')) {
-    let eyeY = -40 + yOff;
-    if(parts.includes('eyes_happy')) { eyeY = -35 + yOff; }
-    if(parts.includes('eyes_normal')) {
-      g.fillStyle = "#FFF"; g.beginPath(); g.arc(cx-35, cy+eyeY, 25, 0, Math.PI*2); g.fill(); g.beginPath(); g.arc(cx+35, cy+eyeY, 25, 0, Math.PI*2); g.fill();
-      g.fillStyle = "#000"; g.beginPath(); g.arc(cx-35, cy+eyeY+5, 10, 0, Math.PI*2); g.fill(); g.beginPath(); g.arc(cx+35, cy+eyeY+5, 10, 0, Math.PI*2); g.fill();
-      g.fillStyle = "#FFF"; g.beginPath(); g.arc(cx-45, cy+eyeY-5, 4, 0, Math.PI*2); g.fill(); g.beginPath(); g.arc(cx+25, cy+eyeY-5, 4, 0, Math.PI*2); g.fill();
-    } else if(parts.includes('eyes_heart')) {
-      g.fillStyle = "#FF1493"; g.font = "60px Arial"; g.textAlign="center"; g.textBaseline="middle"; g.fillText("❤️", cx-35, cy+eyeY+5); g.fillText("❤️", cx+35, cy+eyeY+5);
-    } else if(parts.includes('eyes_angry')) {
-      g.fillStyle = "#FFF"; g.beginPath(); g.arc(cx-35, cy+eyeY, 25, 0, Math.PI*2); g.fill(); g.beginPath(); g.arc(cx+35, cy+eyeY, 25, 0, Math.PI*2); g.fill();
-      g.fillStyle = "#FF0000"; g.beginPath(); g.arc(cx-35, cy+eyeY+5, 12, 0, Math.PI*2); g.fill(); g.beginPath(); g.arc(cx+35, cy+eyeY+5, 12, 0, Math.PI*2); g.fill();
-      g.fillStyle = "#000"; g.beginPath(); g.arc(cx-35, cy+eyeY, 6, 0, Math.PI*2); g.fill(); g.beginPath(); g.arc(cx+35, cy+eyeY, 6, 0, Math.PI*2); g.fill();
-      g.strokeStyle = "#000"; g.lineWidth = 6; g.beginPath(); g.moveTo(cx-55, cy+eyeY-15); g.lineTo(cx-20, cy+eyeY-5); g.stroke(); g.beginPath(); g.moveTo(cx+55, cy+eyeY-15); g.lineTo(cx+20, cy+eyeY-5); g.stroke();
-    } else if(parts.includes('eyes_happy')) {
-      g.fillStyle = "#000"; g.lineWidth = 4; g.beginPath(); g.arc(cx-35, cy+eyeY, 15, Math.PI, 2*Math.PI); g.stroke(); g.beginPath(); g.arc(cx+35, cy+eyeY, 15, Math.PI, 2*Math.PI); g.stroke();
-    }
-  } else if(parts.includes('eyes_cyclops')) {
-    g.fillStyle = "#FFF"; g.beginPath(); g.arc(cx, cy-30+yOff, 35, 0, Math.PI*2); g.fill();
-    g.fillStyle = "#00BFFF"; g.beginPath(); g.arc(cx, cy-20+yOff, 15, 0, Math.PI*2); g.fill();
-    g.fillStyle = "#000"; g.beginPath(); g.arc(cx, cy-20+yOff, 6, 0, Math.PI*2); g.fill();
-    g.fillStyle = "#FFF"; g.beginPath(); g.arc(cx-10, cy-25+yOff, 3, 0, Math.PI*2); g.fill();
-  }
-
-  // 4. Nose (Center)
-  if(parts.includes('nose_classic')) { g.fillStyle = "#D2B48C"; g.beginPath(); g.ellipse(cx, cy-15+yOff, 12, 18, 0, 0, Math.PI*2); g.fill(); }
-  else if(parts.includes('nose_freckles')) { g.fillStyle = "#8B4513"; for(let i=0; i<20; i++) g.beginPath(); g.arc(cx-40 + Math.random()*80, cy+10 + Math.random()*30, 4, 0, Math.PI*2); g.fill(); }
-  else if(parts.includes('nose_blush')) { g.fillStyle = "rgba(255, 105, 180, 0.5)"; g.beginPath(); g.arc(cx-45, cy+20, 25, 0, Math.PI*2); g.fill(); g.beginPath(); g.arc(cx+45, cy+20, 25, 0, Math.PI*2); g.fill(); }
-  else if(parts.includes('nose_sunglasses')) { g.fillStyle = "#000"; g.fillRect(cx-45, cy-30, 30, 20); g.fillRect(cx+15, cy-30, 30, 20); g.fillRect(cx-10, cy-20, 20, 6); g.fillRect(cx-45, cy-20, 6, 20); g.fillRect(cx+39, cy-20, 6, 20); }
-  else if(parts.includes('nose_glasses')) { g.strokeStyle = "#000"; g.lineWidth = 6; g.beginPath(); g.arc(cx-35, cy-20, 30, 0, Math.PI*2); g.stroke(); g.beginPath(); g.arc(cx+35, cy-20, 30, 0, Math.PI*2); g.stroke(); g.beginPath(); g.moveTo(cx-5, cy-20); g.lineTo(cx+5, cy-20); g.stroke(); }
-
-  // 5. Mouth (Bottom Half)
-  let mouthY = 30 + yOff;
-  if(parts.includes('mouth_smile') || (isVictory && !parts.some(p => ['mouth_o','mouth_tongue','mouth_smirk'].includes(p)))) {
-    if(isVictory && mouthHappy) { g.fillStyle = "#800000"; g.beginPath(); g.arc(cx, cy+mouthY, 30, 0, Math.PI); g.fill(); } 
-    else { g.fillStyle = "#800000"; g.beginPath(); g.arc(cx, cy+mouthY, 25, 0, Math.PI); g.fill(); }
-  } else if(parts.includes('mouth_lipstick')) {
-    g.fillStyle = "#DC143C"; g.beginPath(); g.arc(cx, cy+mouthY-5, 25, 0, Math.PI); g.fill();
-    g.fillStyle = "#8B0000"; g.beginPath(); g.arc(cx, cy+mouthY+5, 20, 0, Math.PI); g.fill();
-  } else if(parts.includes('mouth_tongue')) {
-    g.fillStyle = "#800000"; g.beginPath(); g.arc(cx, cy+mouthY, 30, 0, Math.PI); g.fill();
-    g.fillStyle = "#FF69B4"; g.beginPath(); g.ellipse(cx, cy+mouthY+15, 20, 25, 0, 0, Math.PI*2); g.fill();
-  } else if(parts.includes('mouth_o')) {
-    g.fillStyle = "#000"; g.beginPath(); g.arc(cx, cy+mouthY, 15, 0, Math.PI*2); g.fill();
-  } else if(parts.includes('mouth_smirk')) {
-    g.fillStyle = "#800000"; g.beginPath(); g.arc(cx+10, cy+mouthY, 25, 0, Math.PI); g.fill();
-  }
-
-  // 6. Arms & Legs (Sides & Bottom)
-  if(parts.includes('arm_hands')) { g.fillStyle = "#D2B48C"; g.save(); g.translate(cx-110, cy+20+yOff); g.rotate(-0.3); g.fillRect(0, 0, 30, 15); g.restore(); g.save(); g.translate(cx+80, cy+20+yOff); g.rotate(0.3); g.fillRect(0, 0, 30, 15); g.restore(); }
-  else if(parts.includes('arm_flower')) { g.fillStyle = "#D2B48C"; g.fillRect(cx-110, cy+20+yOff, 20, 10); g.fillStyle = "#FF69B4"; g.beginPath(); g.arc(cx-120, cy+10+yOff, 15, 0, Math.PI*2); g.fill(); g.fillStyle = "#FFD700"; g.beginPath(); g.arc(cx-120, cy+10+yOff, 6, 0, Math.PI*2); g.fill(); }
-  else if(parts.includes('arm_sword')) { g.fillStyle = "#C0C0C0"; g.fillRect(cx-120, cy-10+yOff, 10, 40); g.fillRect(cx-115, cy+20+yOff, 30, 10); }
-  else if(parts.includes('arm_muscle')) { g.fillStyle = "#8B4513"; g.save(); g.translate(cx-115, cy+10+yOff); g.rotate(-0.3); g.beginPath(); g.arc(0, 0, 25, 0, Math.PI*2); g.fill(); g.restore(); g.save(); g.translate(cx+115, cy+10+yOff); g.rotate(0.3); g.beginPath(); g.arc(0, 0, 25, 0, Math.PI*2); g.fill(); g.restore(); }
-
-  if(parts.includes('leg_feet')) { g.fillStyle = "#D2B48C"; g.fillRect(cx-35, cy+85+yOff, 20, 25); g.fillRect(cx+15, cy+85+yOff, 20, 25); }
-  else if(parts.includes('leg_slippers')) { g.fillStyle = "#87CEEB"; g.beginPath(); g.ellipse(cx-30, cy+95+yOff, 25, 10, 0, 0, Math.PI*2); g.fill(); g.beginPath(); g.ellipse(cx+30, cy+95+yOff, 25, 10, 0, 0, Math.PI*2); g.fill(); g.fillStyle = "#FFD700"; g.fillRect(cx-35, cy+85+yOff, 10, 10); g.fillRect(cx+25, cy+85+yOff, 10, 10); }
-
-  return new THREE.CanvasTexture(cv);
-}
-
-/* ---------------- WIN PET HANDLER (Only in UI) ---------------- */
-let winPetAnimId = null;
-function animateWinPet() {
-  const canvas = document.getElementById('winPetCanvas');
-  const ctx = canvas.getContext('2d');
-  let startTime = Date.now();
-  if(winPetAnimId) cancelAnimationFrame(winPetAnimId);
-  
-  function draw() {
-    const elapsed = (Date.now() - startTime) / 1000;
-    ctx.clearRect(0, 0, 120, 120);
-    const tex = createAvatarTexture(true, elapsed);
-    ctx.drawImage(tex.image, 0, 0, 120, 120);
-    winPetAnimId = requestAnimationFrame(draw);
-  }
-  draw();
-}
-
-/* ---------------- three.js setup ---------------- */
-let scene, camera, renderer, boardGroup, raycaster, pointer, bgElements = [];
+/* ----- three.js setup ----- */
+let scene, camera, renderer, boardGroup, raycaster, pointer;
 let backMesh, cellMat; 
 let grid = [];
 let currentCube = null;
@@ -621,19 +401,8 @@ let matCache = {};
 
 function initThree(){
   const canvas = document.getElementById("game"); if(!canvas) return;
-  try { renderer = new THREE.WebGLRenderer({canvas, antialias:true}); } catch(e) { document.getElementById('game').style.display = 'none'; const errDiv = document.createElement('div'); errDiv.id = 'webgl-error'; errDiv.innerHTML = 'Η συσκευή σας δεν υποστηρίζει WebGL.'; document.body.appendChild(errDiv); return; }
+  try { renderer = new THREE.WebGLRenderer({canvas, antialias:true}); } catch(e) { return; }
   renderer.setPixelRatio(Math.min(devicePixelRatio, 2)); scene = new THREE.Scene(); scene.background = new THREE.Color(0x0B0C10); 
-
-  const bgEmojis = ['✨', '💫', '🪐', '🚀', '🛸', '🌍', '☄️'];
-  bgEmojis.forEach(emoji => {
-    for(let i=0; i<5; i++) {
-      const tex = createEmojiTexture(emoji); const mat = new THREE.SpriteMaterial({ map: tex, transparent: true }); const sprite = new THREE.Sprite(mat);
-      const size = Math.random() * 2 + 1.5; sprite.scale.set(size, size, 1);
-      sprite.position.set((Math.random()-0.5)*60, (Math.random()-0.5)*60, -5 - Math.random()*20);
-      sprite.userData = { speed: Math.random()*2 + 1, dirZ: -Math.random()*3 - 1.5 };
-      scene.add(sprite); bgElements.push(sprite);
-    }
-  });
 
   camera = new THREE.PerspectiveCamera(42, innerWidth/innerHeight, 0.1, 60);
   scene.add(new THREE.AmbientLight(0xffffff, 0.7)); const sun = new THREE.DirectionalLight(0xffffff, 0.8); sun.position.set(4, 8, 7); scene.add(sun);
@@ -683,7 +452,7 @@ function isBoardFull() { for(let c=0;c<COLS;c++) for(let r=0;r<ROWS;r++) if(!gri
 async function resolveMerges(queue){ while(queue.length){ const {c,r} = queue.shift(); const cell = grid[c][r]; if(!cell) continue; const same = [{c:c-1,r},{c:c+1,r},{c,r:r-1},{c,r:r+1}].filter(n => n.c>=0&&n.c<COLS&&n.r>=0&&n.r<ROWS&&grid[n.c][n.r]&&grid[n.c][n.r].value===cell.value); if(!same.length) continue; const newVal = cell.value * Math.pow(2, same.length); score += newVal; save.score = score; coins += 1; save.coins = coins; updateHUD(); await new Promise(res=>{ let left = same.length; const tp = cellPos(c,r); same.forEach(n=>{ const m = grid[n.c][n.r].mesh; grid[n.c][n.r] = null; tween(m.position, {x:tp.x, y:tp.y}, 0.14, null, ()=>{ boardGroup.remove(m); if(--left===0) res(); }); tween(m.scale, {x:.5,y:.5,z:.5}, 0.14); }); }); playSound('merge'); const eff = save.equippedEffect; if(eff !== 'eff_none' && eff !== 'eff_flame' && eff !== 'eff_sparkle' && eff !== 'eff_smoke') { const wp = new THREE.Vector3(); cell.mesh.getWorldPosition(wp); spawnBurst(wp.x, wp.y, wp.z, eff.replace('eff_',''), 15); } boardGroup.remove(cell.mesh); grid[c][r] = null; const up = placeCube(c, r, newVal); up.mesh.scale.set(1.35,1.35,1.35); tween(up.mesh.scale, {x:1,y:1,z:1}, 0.22); const moved = []; for(let xc=0;xc<COLS;xc++){ let write=0; for(let xr=0;xr<ROWS;xr++){ if(grid[xc][xr]){ if(xr!==write){ grid[xc][write]=grid[xc][xr]; grid[xc][xr]=null; tween(grid[xc][write].mesh.position, {y:cellPos(xc, write).y}, 0.15); moved.push({c:xc, r:write}); } write++; } } } queue.push({c,r}, ...moved); await new Promise(r=>setTimeout(r,120)); } persist(); }
 
 let winTimer = null;
-function checkWin(){ const t = LEVELS[Math.min(level, LEVELS.length-1)].target; let win = false; for(let c=0;c<COLS;c++) for(let r=0;r<ROWS;r++) if(grid[c][r] && grid[c][r].value >= t){ win = true; break; } if(!win) return false; busy = true; coins += 25; save.coins = coins; best = Math.max(best, score); save.best = best; save.level = Math.min(level+1, LEVELS.length-1); persist(); updateHUD(); document.getElementById("winNumberBox").textContent = t; for(let c=0;c<COLS;c++) for(let r=0;r<ROWS;r++) { if(grid[c][r]) { const mesh = grid[c][r].mesh; const origY = mesh.position.y; let delay = (c + r) * 50; setTimeout(() => { tween(mesh.position, {y: origY + 0.3}, 0.15, null, () => { tween(mesh.position, {y: origY - 0.15}, 0.15, null, () => { tween(mesh.position, {y: origY}, 0.15); }); }); }, delay); } } if(winTimer) clearTimeout(winTimer); winTimer = setTimeout(() => { playSound('win'); document.getElementById("winModal").classList.remove("hidden"); animateWinPet(); for(let i=0; i<5; i++) { setTimeout(() => { spawnBurst((Math.random()-0.5)*10, Math.random()*5, (Math.random()-0.5)*5, 'confetti', 30); }, i * 300); } winTimer = null; }, 3000); return true; }
+function checkWin(){ const t = LEVELS[Math.min(level, LEVELS.length-1)].target; let win = false; for(let c=0;c<COLS;c++) for(let r=0;r<ROWS;r++) if(grid[c][r] && grid[c][r].value >= t){ win = true; break; } if(!win) return false; busy = true; coins += 25; save.coins = coins; best = Math.max(best, score); save.best = best; save.level = Math.min(level+1, LEVELS.length-1); persist(); updateHUD(); document.getElementById("winText").innerHTML = `Έφτιαξες ${t}!<br>+25 🪙`; for(let c=0;c<COLS;c++) for(let r=0;r<ROWS;r++) { if(grid[c][r]) { const mesh = grid[c][r].mesh; const origY = mesh.position.y; let delay = (c + r) * 50; setTimeout(() => { tween(mesh.position, {y: origY + 0.3}, 0.15, null, () => { tween(mesh.position, {y: origY - 0.15}, 0.15, null, () => { tween(mesh.position, {y: origY}, 0.15); }); }); }, delay); } } if(winTimer) clearTimeout(winTimer); winTimer = setTimeout(() => { playSound('win'); document.getElementById("winModal").classList.remove("hidden"); for(let i=0; i<5; i++) { setTimeout(() => { spawnBurst((Math.random()-0.5)*10, Math.random()*5, (Math.random()-0.5)*5, 'confetti', 30); }, i * 300); } winTimer = null; }, 3000); return true; }
 function gameOver(){ busy = true; best = Math.max(best, score); save.best = best; save.score = 0; persist(); document.getElementById("loseText").innerHTML = `Σκορ: <b>${score}</b>`; document.getElementById("loseModal").classList.remove("hidden"); }
 
 function onTap(e){ if(document.querySelector(".overlay:not(.hidden)")) return; const x = (e.touches ? e.touches[0].clientX : e.clientX) / innerWidth * 2 - 1; const y = -((e.touches ? e.touches[0].clientY : e.clientY) / innerHeight * 2 - 1); pointer.set(x,y); raycaster.setFromCamera(pointer, camera); const hit = new THREE.Vector3(); raycaster.ray.intersectPlane(new THREE.Plane(new THREE.Vector3(0,0,1).applyQuaternion(boardGroup.quaternion), 0), hit); boardGroup.worldToLocal(hit); const c = Math.max(0,Math.min(COLS-1, Math.round((hit.x + BOARD_W/2 - CELL/2) / (CELL+GAP)))); const r = Math.round((BOARD_H/2 - CELL/2 - hit.y) / (CELL+GAP)); if(hammerMode){ if(r>=0 && r<ROWS && grid[c][r]){ hammerMode=false; const m = grid[c][r].mesh; grid[c][r]=null; tween(m.scale, {x:.01,y:.01,z:.01}, 0.18, null, ()=> boardGroup.remove(m)); busy=true; setTimeout(()=>{ resolveMerges([]).then(()=>{ busy=false; updateHUD(); persist(); }); }, 180); } else { hammerMode=false; updateHUD(); } return; } setAim(c, true); launch(); }
@@ -692,15 +461,15 @@ document.getElementById("btnShuffle").onclick = ()=>{ if(busy||!currentCube)retu
 document.getElementById("btnMagnet").onclick = ()=>{ if(busy)return; let tilesByVal = {}; for(let c=0;c<COLS;c++) for(let r=0;r<ROWS;r++) if(grid[c][r]) { let v=grid[c][r].value; if(!tilesByVal[v])tilesByVal[v]=[]; tilesByVal[v].push({c,r,cell:grid[c][r]}); } let mg = Object.values(tilesByVal).filter(g=>g.length>1); if(!mg.length)return toast("Κανένα ζευγάρι!"); busy=true; let animsP=0; mg.forEach(group=>{ const trg = group[0]; trg.newVal = trg.cell.value * Math.pow(2, group.length-1); group.slice(1).forEach(t=>{ const m = t.cell.mesh; grid[t.c][t.r]=null; const tp=cellPos(trg.c,trg.r); animsP++; tween(m.position, {x:tp.x, y:tp.y, z:1.0}, 0.35, null, ()=>{ boardGroup.remove(m); if(--animsP===0) finMagnet(mg); }); tween(m.scale, {x:0.3,y:0.3,z:0.3}, 0.35); }); }); }
 function finMagnet(mg){ playSound('merge'); mg.forEach(g=>{ const trg=g[0]; boardGroup.remove(trg.cell.mesh); grid[trg.c][trg.r]=null; score+=trg.newVal; save.score=score; const up=placeCube(trg.c,trg.r,trg.newVal); up.mesh.scale.set(1.5,1.5,1.5); tween(up.mesh.scale,{x:1,y:1,z:1},0.25); }); setTimeout(()=>{ resolveMerges([]).then(()=>{ busy=false; updateHUD(); persist(); }); }, 250); }
 
-function renderShop() { const container = document.getElementById('shopContainer'); container.innerHTML = ''; const arr = SHOP[currentShopTab] || []; arr.forEach(item => { let propOwned = currentShopTab === 'cubes' ? 'ownedCubes' : currentShopTab === 'boards' ? 'ownedBoards' : currentShopTab === 'effects' ? 'ownedEffects' : currentShopTab === 'sounds' ? 'ownedSounds' : 'ownedPets'; let propEquip = currentShopTab === 'cubes' ? 'equippedCube' : currentShopTab === 'boards' ? 'equippedBoard' : currentShopTab === 'effects' ? 'equippedEffect' : currentShopTab === 'sounds' ? 'equippedSound' : 'equippedPets'; const isOwned = save[propOwned] && save[propOwned].includes(item.id); const isEquipped = save[propEquip] && save[propEquip].includes(item.id); const el = document.createElement('div'); el.className = `shop-item ${isOwned?'owned':''} ${isEquipped?'equipped':''}`; el.innerHTML = `<div style="font-size:36px; margin-bottom:5px;">${item.icon}</div><h3>${item.name}</h3><div class="price">${isEquipped?'ΦΟΡΕΜΕΝΟ':isOwned?'ΕΠΙΛΟΓΗ':'Δωρεάν'}</div>`; el.onclick = () => { if (currentShopTab === 'pets') { if (isEquipped) { save[propEquip] = save[propEquip].filter(id => id !== item.id); persist(); renderShop(); applyShopChanges(); toast("Αφαίρεσες το " + item.name); } else { if (!isOwned) { save[propOwned].push(item.id); } save[propEquip].push(item.id); persist(); renderShop(); applyShopChanges(); toast("Φόρεσες το " + item.name + "!"); } } else { if (isOwned) { save[propEquip] = item.id; persist(); renderShop(); applyShopChanges(); } else { save[propOwned].push(item.id); save[propEquip] = item.id; persist(); updateHUD(); renderShop(); applyShopChanges(); toast("Αγόρασες το " + item.name + "!"); } } }; container.appendChild(el); }); }
-function applyShopChanges() { if(currentShopTab === 'boards') updateBoardColorsLive(); if(currentShopTab === 'cubes') { matCache = {}; toast("Η εμφάνιση κύβου άλλαξε!"); } if(currentShopTab === 'sounds') toast("Ο ήχος άλλαξε!"); if(currentShopTab === 'pets') { toast("Το Avatar σου ενημερώθηκε!"); } }
+function renderShop() { const container = document.getElementById('shopContainer'); container.innerHTML = ''; const arr = SHOP[currentShopTab] || []; arr.forEach(item => { let propOwned = currentShopTab === 'cubes' ? 'ownedCubes' : currentShopTab === 'boards' ? 'ownedBoards' : currentShopTab === 'effects' ? 'ownedEffects' : 'ownedSounds'; let propEquip = currentShopTab === 'cubes' ? 'equippedCube' : currentShopTab === 'boards' ? 'equippedBoard' : currentShopTab === 'effects' ? 'equippedEffect' : 'equippedSound'; const isOwned = save[propOwned] && save[propOwned].includes(item.id); const isEquipped = save[propEquip] === item.id; const el = document.createElement('div'); el.className = `shop-item ${isOwned?'owned':''} ${isEquipped?'equipped':''}`; el.innerHTML = `<div style="font-size:36px; margin-bottom:5px;">${item.icon}</div><h3>${item.name}</h3><div class="price">${isEquipped?'ΕΠΙΛΕΓΜΕΝΟ':isOwned?'ΕΠΙΛΟΓΗ':'Δωρεάν'}</div>`; el.onclick = () => { if (isOwned) { save[propEquip] = item.id; persist(); renderShop(); applyShopChanges(); } else { save[propOwned].push(item.id); save[propEquip] = item.id; persist(); updateHUD(); renderShop(); applyShopChanges(); toast("Αγόρασες το " + item.name + "!"); } }; container.appendChild(el); }); }
+function applyShopChanges() { if(currentShopTab === 'boards') updateBoardColorsLive(); if(currentShopTab === 'cubes') { matCache = {}; toast("Η εμφάνιση κύβου άλλαξε!"); } if(currentShopTab === 'sounds') toast("Ο ήχος άλλαξε!"); }
 document.querySelectorAll('.shop-tab').forEach(btn => { btn.onclick = (e) => { document.querySelectorAll('.shop-tab').forEach(b => b.classList.remove('active')); e.target.classList.add('active'); currentShopTab = e.target.dataset.tab; renderShop(); } });
 
 function updateHUD(){ document.getElementById("hudLevel").textContent = level+1; document.getElementById("hudScore").textContent = score; document.getElementById("hudCoins").textContent = coins; document.getElementById("missionText").textContent = LEVELS[Math.min(level, LEVELS.length-1)].text; document.getElementById("btnHammer").classList.toggle("armed", hammerMode); }
 let toastTimer; function toast(msg){ const t=document.getElementById("toast"); t.textContent=msg; t.style.opacity=1; clearTimeout(toastTimer); toastTimer=setTimeout(()=>t.style.opacity=0, 1800); }
 
 let lastT = 0;
-function loop(t){ const dt = Math.min(0.05, (t-lastT)/1000); lastT = t; stepAnims(dt); updateParticles(dt); updateStarfield(2.0); bgElements.forEach(el => { const u = el.userData; el.position.z += u.dirZ * u.speed * dt * 3; if(el.position.z < -30) { el.position.z = 5 + Math.random()*10; el.position.x = (Math.random()-0.5)*60; el.position.y = (Math.random()-0.5)*60; u.dirZ = -Math.random()*3 - 1.5; u.speed = Math.random()*2 + 1; } }); if(currentCube && !busy) currentCube.rotation.y = Math.sin(t*0.002)*0.12; if(renderer) renderer.render(scene, camera); requestAnimationFrame(loop); }
+function loop(t){ const dt = Math.min(0.05, (t-lastT)/1000); lastT = t; stepAnims(dt); updateParticles(dt); updateStarfield(2.5); if(currentCube && !busy) currentCube.rotation.y = Math.sin(t*0.002)*0.12; if(renderer) renderer.render(scene, camera); requestAnimationFrame(loop); }
 
 (async function(){
   document.getElementById('btnShop').onclick = () => { renderShop(); document.getElementById('shopModal').classList.remove('hidden'); };
@@ -709,7 +478,7 @@ function loop(t){ const dt = Math.min(0.05, (t-lastT)/1000); lastT = t; stepAnim
   await loadSave(); coins = save.coins; level = save.level; best = save.best;
   initThree(); if(!renderer) return; newBoard(); updateHUD();
   const cvs = document.getElementById("game"); cvs.addEventListener("pointermove", (e)=>{if(!busy)setAim((e.touches?e.touches[0].clientX:e.clientX)/innerWidth*2-1)}); cvs.addEventListener("pointerdown", onTap);
-  document.getElementById("btnNext").onclick = ()=>{ document.getElementById("winModal").classList.add("hidden"); if(winPetAnimId) cancelAnimationFrame(winPetAnimId); level=Math.min(level+1,LEVELS.length-1); busy=false; newBoard(); };
+  document.getElementById("btnNext").onclick = ()=>{ document.getElementById("winModal").classList.add("hidden"); level=Math.min(level+1,LEVELS.length-1); busy=false; newBoard(); };
   document.getElementById("btnRetry").onclick = ()=>{ document.getElementById("loseModal").classList.add("hidden"); busy=false; newBoard(); };
 })();
 </script>
