@@ -102,9 +102,9 @@
 <div id="missionBar">🎯 Αποστολή: <b id="missionText"></b></div>
 
 <div class="powerbar">
-  <button class="pbtn" id="btnMagnet">🧲<span class="cost">20 🪙</span></button>
-  <button class="pbtn" id="btnHammer">🔨<span class="cost">15 🪙</span></button>
-  <button class="pbtn" id="btnShuffle">🔄<span class="cost">5 🪙</span></button>
+  <button class="pbtn" id="btnMagnet">🧲<span class="cost">Δωρεάν</span></button>
+  <button class="pbtn" id="btnHammer">🔨<span class="cost">Δωρεάν</span></button>
+  <button class="pbtn" id="btnShuffle">🔄<span class="cost">Δωρεάν</span></button>
 </div>
 
 <div id="toast"></div>
@@ -143,7 +143,8 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script>
 /* =====================================================
-   Drop 2048 · Deep Space & Full Customization + Emojis
+   Drop 2048 · Deep Space & Full Customization
+   - ΔΩΡΕΑΝ ΚΑΤΑΣΤΗΜΑ & ΒΟΗΘΕΙΕΣ
 ===================================================== */
 
 const COLS = 5, ROWS = 6, CELL = 1.0, GAP = 0.12; 
@@ -159,31 +160,31 @@ const LEVELS = [
   { target: 1024, preset: 12, text: "Φτιάξε κύβο 1024" },
 ];
 
-/* ---------------- Shop Data ---------------- */
+/* ---------------- Shop Data (ΟΛΑ ΔΩΡΕΑΝ) ---------------- */
 const SHOP = {
   cubes: [
     { id: 'wood', name: 'Ξύλο', price: 0, icon: '🪵' },
-    { id: 'whitered', name: 'Άσπρο-Κόκκινο', price: 100, icon: '🍬' },
-    { id: 'whitegreen', name: 'Άσπρο-Πράσινο', price: 100, icon: '🍵' },
-    { id: 'zebra', name: 'Ζέβρα', price: 200, icon: '🦓' },
-    { id: 'neon', name: 'Cyber Neon', price: 250, icon: '⚡' },
-    { id: 'rainbow', name: 'Ουράνιο Τόξο', price: 350, icon: '🌈' },
-    { id: 'gold', name: 'Καθαρός Χρυσός', price: 500, icon: '🏆' },
-    { id: 'galaxy', name: 'Γαλαξίας', price: 800, icon: '🌌' }
+    { id: 'whitered', name: 'Άσπρο-Κόκκινο', price: 0, icon: '🍬' },
+    { id: 'whitegreen', name: 'Άσπρο-Πράσινο', price: 0, icon: '🍵' },
+    { id: 'zebra', name: 'Ζέβρα', price: 0, icon: '🦓' },
+    { id: 'neon', name: 'Cyber Neon', price: 0, icon: '⚡' },
+    { id: 'rainbow', name: 'Ουράνιο Τόξο', price: 0, icon: '🌈' },
+    { id: 'gold', name: 'Καθαρός Χρυσός', price: 0, icon: '🏆' },
+    { id: 'galaxy', name: 'Γαλαξίας', price: 0, icon: '🌌' }
   ],
   boards: [
     { id: 'board_wood', name: 'Ξύλινο', price: 0, icon: '🟫', back: '#4A3423', cell: '#2F1B0D' },
-    { id: 'board_space', name: 'Βαθύ Διάστημα', price: 150, icon: '🟦', back: '#0B132B', cell: '#1C2541' },
-    { id: 'board_crimson', name: 'Πορφυρό', price: 150, icon: '🟥', back: '#3A0CA3', cell: '#7209B7' },
-    { id: 'board_emerald', name: 'Σμαράγδι', price: 150, icon: '🟩', back: '#004B23', cell: '#007200' }
+    { id: 'board_space', name: 'Βαθύ Διάστημα', price: 0, icon: '🟦', back: '#0B132B', cell: '#1C2541' },
+    { id: 'board_crimson', name: 'Πορφυρό', price: 0, icon: '🟥', back: '#3A0CA3', cell: '#7209B7' },
+    { id: 'board_emerald', name: 'Σμαράγδι', price: 0, icon: '🟩', back: '#004B23', cell: '#007200' }
   ],
   effects: [
     { id: 'eff_none', name: 'Χωρίς Εφέ', price: 0, icon: '✖️' },
-    { id: 'eff_flame', name: 'Φλόγα (Βολή)', price: 200, icon: '🔥' },
-    { id: 'eff_sparkle', name: 'Αστερόσκονη (Βολή)', price: 200, icon: '✨' },
-    { id: 'eff_explode', name: 'Έκρηξη (Συγχώνευση)', price: 300, icon: '💥' },
-    { id: 'eff_confetti', name: 'Κομφετί (Συγχώνευση)', price: 350, icon: '🎊' },
-    { id: 'eff_plasma', name: 'Πλάσμα (Συγχώνευση)', price: 500, icon: '🔮' }
+    { id: 'eff_flame', name: 'Φλόγα (Βολή)', price: 0, icon: '🔥' },
+    { id: 'eff_sparkle', name: 'Αστερόσκονη (Βολή)', price: 0, icon: '✨' },
+    { id: 'eff_explode', name: 'Έκρηξη (Συγχώνευση)', price: 0, icon: '💥' },
+    { id: 'eff_confetti', name: 'Κομφετί (Συγχώνευση)', price: 0, icon: '🎊' },
+    { id: 'eff_plasma', name: 'Πλάσμα (Συγχώνευση)', price: 0, icon: '🔮' }
   ]
 };
 
@@ -293,15 +294,14 @@ function initThree(){
   const canvas = document.getElementById("game");
   renderer = new THREE.WebGLRenderer({canvas, antialias:true});
   renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
-  renderer.shadowMap.enabled = true;
 
   scene = new THREE.Scene();
   scene.fog = new THREE.Fog("#0B0C10", 15, 30);
 
-  // Background Emojis 🌟 ⚡️🌟⭐️🌟🪐🌎🌙 🚀🛸🛰️🗼🛩️
+  // Background Emojis
   const bgEmojis = ['🌟', '⚡️', '⭐️', '🪐', '🌎', '🌙', '🚀', '🛸', '🛰️', '🗼', '🛩️'];
+  
   bgEmojis.forEach(emoji => {
-    // 3 copies of each emoji floating around
     for(let i=0; i<3; i++) {
       const tex = createEmojiTexture(emoji);
       const mat = new THREE.SpriteMaterial({ map: tex, transparent: true });
@@ -309,13 +309,35 @@ function initThree(){
       
       const size = Math.random() * 2 + 1.5;
       sprite.scale.set(size, size, 1);
-      sprite.position.set((Math.random()-0.5)*30, Math.random()*40, -6 - Math.random()*15);
       
-      // Give each sprite some unique movement variables
+      let dirY = -1; 
+      let dirX = 0;
+      let isRocket = false;
+      let isStar = false;
+
+      if (['🚀', '🛸', '🛩️'].includes(emoji)) {
+         dirY = 1.2;
+         dirX = (Math.random() - 0.5) * 0.5;
+         isRocket = true;
+         sprite.position.set((Math.random()-0.5)*30, -20 - Math.random()*20, -6 - Math.random()*15);
+      } else if (['🌟', '⭐️', '⚡️'].includes(emoji)) {
+         dirY = -0.15;
+         isStar = true;
+         sprite.position.set((Math.random()-0.5)*30, Math.random()*40, -6 - Math.random()*15);
+      } else {
+         dirY = -0.5;
+         sprite.position.set((Math.random()-0.5)*30, Math.random()*40, -6 - Math.random()*15);
+      }
+      
       sprite.userData = { 
         speed: Math.random()*2 + 1, 
         wobbleSpeed: Math.random()*2,
-        wobbleAmp: Math.random()*0.05
+        wobbleAmp: Math.random()*0.05,
+        dirY: dirY,
+        dirX: dirX,
+        isStar: isStar,
+        baseSize: size,
+        timeOffset: Math.random() * 100
       };
       
       scene.add(sprite);
@@ -326,7 +348,7 @@ function initThree(){
   camera = new THREE.PerspectiveCamera(42, innerWidth/innerHeight, 0.1, 60);
   scene.add(new THREE.AmbientLight(0xffffff, 0.7));
   const sun = new THREE.DirectionalLight(0xffffff, 0.8);
-  sun.position.set(4, 8, 7); sun.castShadow = true;
+  sun.position.set(4, 8, 7); 
   scene.add(sun);
 
   boardGroup = new THREE.Group();
@@ -334,7 +356,7 @@ function initThree(){
   scene.add(boardGroup);
   
   backMesh = new THREE.Mesh(new THREE.BoxGeometry(BOARD_W + 0.7, BOARD_H + 0.7, 0.3), new THREE.MeshLambertMaterial());
-  backMesh.position.z = -0.65; backMesh.receiveShadow = true;
+  backMesh.position.z = -0.65;
   boardGroup.add(backMesh);
 
   cellMat = new THREE.MeshLambertMaterial();
@@ -374,7 +396,6 @@ function numberTexture(value){
   const g = cv.getContext("2d");
   const skin = save.equippedCube;
 
-  // Base Logic per skin
   if(skin === 'wood') {
     g.fillStyle = value >= 128 ? "#8B4513" : "#D2B48C"; roundRect(g,4,4,120,120,22); g.fill();
     g.strokeStyle="rgba(0,0,0,0.1)"; g.lineWidth=2;
@@ -413,14 +434,22 @@ function numberTexture(value){
     for(let i=0; i<30; i++) { g.beginPath(); g.arc(Math.random()*128, Math.random()*128, Math.random()*2, 0, 7); g.fill(); }
   }
 
-  // Common Shadow & Text
   let txtCol = (skin==='wood'&&value<128)||skin==='whitered'||skin==='whitegreen'||skin==='zebra' ? "#111" : "#FFF";
   if(skin==='gold') txtCol = "#3E2723";
   if(skin==='neon') txtCol = `hsl(${(Math.log2(value)*30)%360}, 100%, 65%)`;
 
   g.fillStyle = txtCol; g.font = `800 ${value>=1024?42:value>=128?50:60}px 'Baloo 2', sans-serif`;
   g.textAlign="center"; g.textBaseline="middle";
-  g.shadowColor = skin==='neon' ? txtCol : "rgba(0,0,0,0.5)"; g.shadowBlur=4; g.fillText(value, 64, 68);
+
+  if (['whitered', 'whitegreen', 'zebra'].includes(skin)) {
+      g.lineWidth = 5;
+      g.strokeStyle = "#FFFFFF";
+      g.strokeText(value, 64, 68);
+  }
+
+  g.shadowColor = skin==='neon' ? txtCol : "rgba(0,0,0,0.5)"; 
+  g.shadowBlur = 4; 
+  g.fillText(value, 64, 68);
   
   const t = new THREE.CanvasTexture(cv); t.anisotropy = 4; return t;
 }
@@ -430,7 +459,7 @@ function roundRect(g,x,y,w,h,r){ g.beginPath(); g.moveTo(x+r,y); g.arcTo(x+w,y,x
 function makeCube(value){
   const tex = numberTexture(value);
   const m = new THREE.Mesh(new THREE.BoxGeometry(CELL*0.92, CELL*0.92, CELL*0.92), new THREE.MeshLambertMaterial({map: tex, color:0xdddddd}));
-  m.castShadow = true; m.userData.value = value; return m;
+  m.userData.value = value; return m;
 }
 
 /* ---------------- tweens ---------------- */
@@ -451,7 +480,7 @@ function newBoard(){
   for(let c=0;c<COLS;c++) for(let r=0;r<ROWS;r++){ if(grid[c] && grid[c][r]) boardGroup.remove(grid[c][r].mesh); }
   grid = Array.from({length:COLS},()=>Array(ROWS).fill(null));
   score = save.score || 0; updateHUD();
-  matCache = {}; // clear cache so newly bought skins apply
+  matCache = {}; 
 
   for(let i=0;i<LEVELS[Math.min(level, LEVELS.length-1)].preset;i++){
     const c = Math.floor(Math.random()*COLS); const r = colHeight(c);
@@ -530,7 +559,6 @@ async function resolveMerges(queue){
     });
     
     playSound('merge');
-    // Spawn Effect
     const eff = save.equippedEffect;
     if(eff !== 'eff_none' && eff !== 'eff_flame' && eff !== 'eff_sparkle') { 
       const wp = new THREE.Vector3(); cell.mesh.getWorldPosition(wp);
@@ -576,7 +604,7 @@ function gameOver(){
   document.getElementById("loseModal").classList.remove("hidden");
 }
 
-/* ---------------- input & powerups ---------------- */
+/* ---------------- input & powerups (ΔΩΡΕΑΝ) ---------------- */
 function onTap(e){
   if(document.querySelector(".overlay:not(.hidden)")) return;
   const x = (e.touches ? e.touches[0].clientX : e.clientX) / innerWidth * 2 - 1;
@@ -589,7 +617,8 @@ function onTap(e){
   
   if(hammerMode){
     if(r>=0 && r<ROWS && grid[c][r]){
-      coins-=15; save.coins=coins; hammerMode=false;
+      // ΔΩΡΕΑΝ: Αφαιρέθηκε το coins-=15
+      hammerMode=false;
       const m = grid[c][r].mesh; grid[c][r]=null; tween(m.scale, {x:.01,y:.01,z:.01}, 0.18, null, ()=> boardGroup.remove(m));
       busy=true; setTimeout(()=>{ resolveMerges([]).then(()=>{ busy=false; updateHUD(); persist(); }); }, 180);
     } else { hammerMode=false; updateHUD(); }
@@ -597,14 +626,15 @@ function onTap(e){
   }
   setAim(c, true); launch();
 }
-document.getElementById("btnHammer").onclick = ()=>{ if(busy)return; if(coins<15)return toast("Χρειάζεσαι 15🪙"); hammerMode=true; updateHUD(); toast("🔨 Επίλεξε κύβο"); }
-document.getElementById("btnShuffle").onclick = ()=>{ if(busy||!currentCube||coins<5)return; coins-=5; save.coins=coins; persist(); boardGroup.remove(currentCube); currentCube=null; spawnCurrent(); setAim(aimCol); updateHUD(); }
+
+document.getElementById("btnHammer").onclick = ()=>{ if(busy)return; hammerMode=true; updateHUD(); toast("🔨 Επίλεξε κύβο"); }
+document.getElementById("btnShuffle").onclick = ()=>{ if(busy||!currentCube)return; boardGroup.remove(currentCube); currentCube=null; spawnCurrent(); setAim(aimCol); updateHUD(); }
 document.getElementById("btnMagnet").onclick = ()=>{
-  if(busy||coins<20)return;
+  if(busy)return;
   let tilesByVal = {};
   for(let c=0;c<COLS;c++) for(let r=0;r<ROWS;r++) if(grid[c][r]) { let v=grid[c][r].value; if(!tilesByVal[v])tilesByVal[v]=[]; tilesByVal[v].push({c,r,cell:grid[c][r]}); }
   let mg = Object.values(tilesByVal).filter(g=>g.length>1); if(!mg.length)return toast("Κανένα ζευγάρι!");
-  coins-=20; save.coins=coins; persist(); updateHUD(); busy=true; let animsP=0;
+  busy=true; let animsP=0;
   mg.forEach(group=>{
     const trg = group[0]; trg.newVal = trg.cell.value * Math.pow(2, group.length-1);
     group.slice(1).forEach(t=>{
@@ -623,7 +653,7 @@ function finMagnet(mg){
   setTimeout(()=>{ resolveMerges([]).then(()=>{ busy=false; updateHUD(); persist(); }); }, 250);
 }
 
-/* ---------------- Shop System ---------------- */
+/* ---------------- Shop System (ΔΩΡΕΑΝ) ---------------- */
 function renderShop() {
   const container = document.getElementById('shopContainer'); container.innerHTML = '';
   const arr = SHOP[currentShopTab];
@@ -636,14 +666,16 @@ function renderShop() {
     const isEquipped = save[propEquip] === item.id;
     
     const el = document.createElement('div'); el.className = `shop-item ${isOwned?'owned':''} ${isEquipped?'equipped':''}`;
-    el.innerHTML = `<div style="font-size:36px; margin-bottom:5px;">${item.icon}</div><h3>${item.name}</h3><div class="price">${isEquipped?'ΕΠΙΛΕΓΜΕΝΟ':isOwned?'ΕΠΙΛΟΓΗ':item.price+' 🪙'}</div>`;
+    // Εμφάνιση "Δωρεάν" αντί για 0 νομίσματα
+    el.innerHTML = `<div style="font-size:36px; margin-bottom:5px;">${item.icon}</div><h3>${item.name}</h3><div class="price">${isEquipped?'ΕΠΙΛΕΓΜΕΝΟ':isOwned?'ΕΠΙΛΟΓΗ':'Δωρεάν'}</div>`;
     
     el.onclick = () => {
       if (isOwned) { save[propEquip] = item.id; persist(); renderShop(); applyShopChanges(); }
-      else if (coins >= item.price) {
-        coins -= item.price; save.coins = coins; save[propOwned].push(item.id); save[propEquip] = item.id;
-        persist(); updateHUD(); renderShop(); applyShopChanges(); toast("Αγόρασες το " + item.name + "!");
-      } else toast("Δεν έχεις αρκετά 🪙");
+      else if (coins >= item.price) { // 0 >= 0 είναι πάντα αληθές
+        // ΔΩΡΕΑΝ: coins -= item.price; (αφαιρώ την αφαίρεση για να μην χαλάσουν τα coins)
+        save[propOwned].push(item.id); save[propEquip] = item.id;
+        persist(); updateHUD(); renderShop(); applyShopChanges(); toast("Αγόρασες το " + item.name + "!"); 
+      } else toast("Δεν έχεις αρκετά 🪙"); // Δεν θα εμφανιστεί ποτέ αφού είναι δωρεάν
     };
     container.appendChild(el);
   });
@@ -676,25 +708,31 @@ let lastT = 0;
 function loop(t){
   const dt = Math.min(0.05, (t-lastT)/1000); lastT = t; stepAnims(dt); updateParticles(dt);
   
-  // Animate Background Emojis
   bgElements.forEach(el => {
-    el.position.y -= el.userData.speed * dt * 5; 
-    
-    // Slight side-to-side wobble
-    if(el.userData.wobbleSpeed) {
-       el.position.x += Math.sin(t * 0.001 * el.userData.wobbleSpeed) * el.userData.wobbleAmp;
+    const u = el.userData;
+    el.position.y += u.dirY * u.speed * dt * 3; 
+    el.position.x += u.dirX * u.speed * dt * 3;
+
+    if(u.wobbleSpeed) {
+       el.position.x += Math.sin(t * 0.001 * u.wobbleSpeed + u.timeOffset) * u.wobbleAmp;
     }
 
-    // Reset position when they fly past the camera
-    if(el.position.y < -20) { 
+    if(u.isStar) {
+       const s = u.baseSize + Math.sin(t * 0.003 + u.timeOffset) * 0.4;
+       el.scale.set(s, s, 1);
+    }
+
+    if(u.dirY < 0 && el.position.y < -20) { 
        el.position.y = 30 + Math.random()*10; 
        el.position.x = (Math.random()-0.5)*30; 
+    } else if (u.dirY > 0 && el.position.y > 30) {
+       el.position.y = -20 - Math.random()*10; 
+       el.position.x = (Math.random()-0.5)*30;
     }
   });
 
   if(currentCube && !busy) currentCube.rotation.y = Math.sin(t*0.002)*0.12;
   
-  // Launch Particles Trail
   if(isLaunching && currentCube && (save.equippedEffect==='eff_flame' || save.equippedEffect==='eff_sparkle')) {
     const wp = new THREE.Vector3(); currentCube.getWorldPosition(wp);
     spawnParticle(wp.x, wp.y - 0.2, wp.z, save.equippedEffect.replace('eff_',''));
