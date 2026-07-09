@@ -141,8 +141,8 @@
 <script>
 /* =====================================================
    Drop 2048 · Starfield Pure
-   - Μηδέν Emojis / Pet.
-   - Μόνο 6.000 έντονα αστέρια.
+   - 8000 αστέρια (πιο πολλά)
+   - Ταχύτητα 0.8 (φυσιολογική, πιο αργή)
 ===================================================== */
 
 const COLS = 5, ROWS = 6, CELL = 1.0, GAP = 0.12; 
@@ -360,10 +360,10 @@ function updateParticles(dt) {
   }
 }
 
-/* ----- STARFIELD (6000+, Intense) ----- */
+/* ----- STARFIELD (8000+, slower speed) ----- */
 let starField;
 function initStarfield() {
-  const starCount = 6000;
+  const starCount = 8000;
   const starGeo = new THREE.BufferGeometry();
   const starPos = new Float32Array(starCount * 3);
   const starColors = new Float32Array(starCount * 3);
@@ -376,7 +376,7 @@ function initStarfield() {
   }
   starGeo.setAttribute('position', new THREE.BufferAttribute(starPos, 3));
   starGeo.setAttribute('color', new THREE.BufferAttribute(starColors, 3));
-  const starMat = new THREE.PointsMaterial({ size: 0.35, vertexColors: true, blending: THREE.AdditiveBlending, depthWrite: false });
+  const starMat = new THREE.PointsMaterial({ size: 0.25, vertexColors: true, blending: THREE.AdditiveBlending, depthWrite: false });
   starField = new THREE.Points(starGeo, starMat); starField.position.z = -50; scene.add(starField);
 }
 function updateStarfield(speed) {
@@ -469,7 +469,8 @@ function updateHUD(){ document.getElementById("hudLevel").textContent = level+1;
 let toastTimer; function toast(msg){ const t=document.getElementById("toast"); t.textContent=msg; t.style.opacity=1; clearTimeout(toastTimer); toastTimer=setTimeout(()=>t.style.opacity=0, 1800); }
 
 let lastT = 0;
-function loop(t){ const dt = Math.min(0.05, (t-lastT)/1000); lastT = t; stepAnims(dt); updateParticles(dt); updateStarfield(2.5); if(currentCube && !busy) currentCube.rotation.y = Math.sin(t*0.002)*0.12; if(renderer) renderer.render(scene, camera); requestAnimationFrame(loop); }
+function loop(t){ const dt = Math.min(0.05, (t-lastT)/1000); lastT = t; stepAnims(dt); updateParticles(dt); updateStarfield(0.8); // <--- Χαμηλή, φυσιολογική ταχύτητα
+  if(currentCube && !busy) currentCube.rotation.y = Math.sin(t*0.002)*0.12; if(renderer) renderer.render(scene, camera); requestAnimationFrame(loop); }
 
 (async function(){
   document.getElementById('btnShop').onclick = () => { renderShop(); document.getElementById('shopModal').classList.remove('hidden'); };
