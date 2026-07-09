@@ -3,12 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Drop 2048 · Starfield Edition</title>
+<title>Drop 2048 · Starfield Deluxe</title>
 <style>
   :root{
     --bg:#0B0C10; --panel:#8C6A4F; --panel-deep:#4A3423;
     --cream:#F7EFDC;
     --ink:#2F1B0D; --accent:#F2A03D; --good:#7FA653; --coin:#F5C542;
+    --danger:#E63946;
   }
   *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
   html,body{height:100%;overflow:hidden}
@@ -21,7 +22,6 @@
   
   #game{position:fixed;inset:0;display:block; z-index:0;}
   
-  /* ---------- HUD ---------- */
   .hud{position:fixed;left:0;right:0;top:0;padding:10px 12px;display:flex;gap:8px;align-items:center;pointer-events:none;z-index:5}
   .chip{
     background:var(--panel-deep);color:var(--cream);border-radius:14px;padding:6px 12px;
@@ -38,7 +38,6 @@
   }
   #missionBar b{color:#C2542F}
   
-  /* ---------- power-ups ---------- */
   .powerbar{position:fixed;bottom:14px;left:0;right:0;display:flex;justify-content:center;gap:10px;z-index:5}
   .pbtn{
     pointer-events:auto;border:none;cursor:pointer;width:66px;height:66px;border-radius:18px;
@@ -50,7 +49,6 @@
   .pbtn .cost{font-size:11px;font-weight:800;background:rgba(0,0,0,.22);border-radius:8px;padding:1px 7px}
   .pbtn.armed{outline:4px solid var(--accent);background:#C2542F;box-shadow:0 4px 0 #8f3c20}
   
-  /* ---------- Shop (ΧΩΡΙΣ ΑΡΙΘΜΟΥΣ 10) ---------- */
   .shop-tabs { display:flex; gap:5px; margin-bottom:10px; border-bottom:2px solid rgba(0,0,0,0.1); padding-bottom:10px;}
   .shop-tab { flex:1; padding:8px 5px; font-weight:800; font-size:13px; border-radius:10px; background:#E4D7BC; color:#8C6A4F; border:none; cursor:pointer;}
   .shop-tab.active { background:var(--accent); color:#fff; box-shadow:0 3px 0 #b8742a; transform:translateY(-2px);}
@@ -66,7 +64,6 @@
   .shop-item.owned .price { color: var(--good); }
   .shop-item.equipped { border-color: var(--accent); background: #FFF5E1; box-shadow:0 0 10px rgba(242,160,61,0.5);}
 
-  /* ---------- modals ---------- */
   .overlay{position:fixed;inset:0;background:rgba(11,12,16,.85);display:flex;align-items:center;justify-content:center;z-index:20;backdrop-filter:blur(4px)}
   .card{
     background:var(--cream);border:4px solid var(--panel-deep);border-radius:26px;padding:22px 20px;
@@ -87,7 +84,6 @@
     background:var(--panel-deep);color:var(--cream);font-weight:700;font-size:14px;border-radius:14px;
     padding:8px 16px;opacity:0;transition:opacity .25s;white-space:nowrap;
   }
-  /* Μήνυμα σφάλματος */
   #webgl-error { position:fixed; inset:0; display:flex; align-items:center; justify-content:center; z-index:99; background:#0B0C10; color:#fff; font-family:inherit; padding:20px; text-align:center; font-size:18px; font-weight:bold;}
 </style>
 </head>
@@ -147,8 +143,10 @@
 <script>
 /* =====================================================
    Drop 2048 · Deep Space & Full Customization
-   - Διορθωμένο Starfield (Πίσω)
-   - Καθαρισμένες καρτέλες shop (χωρίς αριθμούς)
+   - 10 κύβοι, 10 ταμπλό, 10 εφέ, 10 ήχοι
+   - Game Over Red Blink
+   - Win Delay (3 sec)
+   - Ενισχυμένο Starfield
 ===================================================== */
 
 const COLS = 5, ROWS = 6, CELL = 1.0, GAP = 0.12; 
@@ -205,20 +203,20 @@ const SHOP = {
   sounds: [
     { id: 'snd_default', name: 'Default', price: 0, icon: '🔊' },
     { id: 'snd_bass', name: 'Bass Drop', price: 0, icon: '🔊' },
-    { id: 'snd_sci', name: 'Sci-Fi', price: 0, icon: '🤖' },
     { id: 'snd_drum', name: 'Drums', price: 0, icon: '🥁' },
     { id: 'snd_bell', name: 'Καμπάνα', price: 0, icon: '🔔' },
-    { id: 'snd_glitch', name: 'Glitch', price: 0, icon: '📟' },
     { id: 'snd_swish', name: 'Swish', price: 0, icon: '🧹' },
     { id: 'snd_cymbal', name: 'Cymbal', price: 0, icon: '🪘' },
     { id: 'snd_dolby', name: 'Dolby Surge', price: 0, icon: '🌊' },
-    { id: 'snd_choir', name: 'Choir', price: 0, icon: '🎤' }
+    { id: 'snd_choir', name: 'Choir', price: 0, icon: '🎤' },
+    { id: 'snd_echo', name: 'Echo', price: 0, icon: '🌌' },
+    { id: 'snd_synth', name: 'Synth', price: 0, icon: '🎹' }
   ]
 };
 
 let currentShopTab = 'cubes';
 
-/* ---------------- DEFAULT SAVE (Διορθωμένο) ---------------- */
+/* ---------------- DEFAULT SAVE ---------------- */
 const DEFAULT_SAVE = { 
   coins: 50, level: 0, best: 0, score: 0, 
   ownedCubes: ['wood'], equippedCube: 'wood',
@@ -231,7 +229,7 @@ let save = { ...DEFAULT_SAVE };
 
 async function loadSave(){
   try{
-    const r = localStorage.getItem("drop2048-save-v6");
+    const r = localStorage.getItem("drop2048-save-v7");
     if(r) {
       const parsed = JSON.parse(r);
       save = Object.assign({}, DEFAULT_SAVE, parsed);
@@ -239,7 +237,7 @@ async function loadSave(){
   }catch(e){ }
 }
 function persist(){
-  try{ localStorage.setItem("drop2048-save-v6", JSON.stringify(save)); }catch(e){ }
+  try{ localStorage.setItem("drop2048-save-v7", JSON.stringify(save)); }catch(e){ }
 }
 
 /* ---------------- Audio (10 Different Sounds) ---------------- */
@@ -290,10 +288,6 @@ function playSoundDrop(id, ctx) {
       osc.type = 'square'; osc.frequency.setValueAtTime(150, ctx.currentTime); osc.frequency.exponentialRampToValueAtTime(80, ctx.currentTime + 0.15);
       gain.gain.setValueAtTime(0.15, ctx.currentTime); gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.15);
       break;
-    case 'snd_sci':
-      osc.type = 'sawtooth'; osc.frequency.setValueAtTime(600, ctx.currentTime); osc.frequency.exponentialRampToValueAtTime(1200, ctx.currentTime + 0.08);
-      gain.gain.setValueAtTime(0.1, ctx.currentTime); gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.08);
-      break;
     case 'snd_drum':
       osc.type = 'square'; osc.frequency.setValueAtTime(100, ctx.currentTime); osc.frequency.exponentialRampToValueAtTime(50, ctx.currentTime + 0.05);
       gain.gain.setValueAtTime(0.2, ctx.currentTime); gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.05);
@@ -301,10 +295,6 @@ function playSoundDrop(id, ctx) {
     case 'snd_bell':
       osc.type = 'sine'; osc.frequency.setValueAtTime(1200, ctx.currentTime);
       gain.gain.setValueAtTime(0.2, ctx.currentTime); gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.3);
-      break;
-    case 'snd_glitch':
-      osc.type = 'sawtooth'; osc.frequency.setValueAtTime(400, ctx.currentTime); osc.frequency.linearRampToValueAtTime(200, ctx.currentTime + 0.1);
-      gain.gain.setValueAtTime(0.1, ctx.currentTime); gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.1);
       break;
     case 'snd_swish':
       osc.type = 'sine'; osc.frequency.setValueAtTime(2000, ctx.currentTime); osc.frequency.exponentialRampToValueAtTime(400, ctx.currentTime + 0.1);
@@ -327,9 +317,22 @@ function playSoundDrop(id, ctx) {
       osc.type = 'sine'; osc.frequency.setValueAtTime(400, ctx.currentTime);
       gain.gain.setValueAtTime(0.1, ctx.currentTime); gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.3);
       break;
+    case 'snd_echo':
+      osc.type = 'sine'; osc.frequency.setValueAtTime(600, ctx.currentTime); 
+      gain.gain.setValueAtTime(0.25, ctx.currentTime); gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.3);
+      const oscE = ctx.createOscillator(); const gainE = ctx.createGain();
+      oscE.connect(gainE); gainE.connect(ctx.destination);
+      oscE.type = 'sine'; oscE.frequency.setValueAtTime(800, ctx.currentTime + 0.1);
+      gainE.gain.setValueAtTime(0.15, ctx.currentTime + 0.1); gainE.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.4);
+      oscE.start(ctx.currentTime + 0.1); oscE.stop(ctx.currentTime + 0.4);
+      break;
+    case 'snd_synth':
+      osc.type = 'sawtooth'; osc.frequency.setValueAtTime(200, ctx.currentTime); osc.frequency.linearRampToValueAtTime(1000, ctx.currentTime + 0.1);
+      gain.gain.setValueAtTime(0.15, ctx.currentTime); gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.1);
+      break;
     default: playDropDefault(ctx); return;
   }
-  osc.start(); osc.stop(ctx.currentTime + 0.3);
+  osc.start(); osc.stop(ctx.currentTime + 0.4);
 }
 
 function playSoundMerge(id, ctx) {
@@ -341,10 +344,6 @@ function playSoundMerge(id, ctx) {
       osc.type = 'square'; osc.frequency.setValueAtTime(300, ctx.currentTime); osc.frequency.exponentialRampToValueAtTime(600, ctx.currentTime + 0.2);
       gain.gain.setValueAtTime(0.2, ctx.currentTime); gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.2);
       break;
-    case 'snd_sci':
-      osc.type = 'sawtooth'; osc.frequency.setValueAtTime(200, ctx.currentTime); osc.frequency.exponentialRampToValueAtTime(1000, ctx.currentTime + 0.1);
-      gain.gain.setValueAtTime(0.15, ctx.currentTime); gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.1);
-      break;
     case 'snd_drum':
       osc.type = 'square'; osc.frequency.setValueAtTime(80, ctx.currentTime); osc.frequency.exponentialRampToValueAtTime(40, ctx.currentTime + 0.08);
       gain.gain.setValueAtTime(0.2, ctx.currentTime); gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.08);
@@ -352,10 +351,6 @@ function playSoundMerge(id, ctx) {
     case 'snd_bell':
       osc.type = 'sine'; osc.frequency.setValueAtTime(800, ctx.currentTime); osc.frequency.linearRampToValueAtTime(1600, ctx.currentTime + 0.3);
       gain.gain.setValueAtTime(0.2, ctx.currentTime); gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.3);
-      break;
-    case 'snd_glitch':
-      osc.type = 'sawtooth'; osc.frequency.setValueAtTime(200, ctx.currentTime); osc.frequency.linearRampToValueAtTime(800, ctx.currentTime + 0.1);
-      gain.gain.setValueAtTime(0.15, ctx.currentTime); gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.1);
       break;
     case 'snd_swish':
       osc.type = 'sine'; osc.frequency.setValueAtTime(300, ctx.currentTime); osc.frequency.exponentialRampToValueAtTime(1800, ctx.currentTime + 0.15);
@@ -378,14 +373,27 @@ function playSoundMerge(id, ctx) {
       osc.type = 'sine'; osc.frequency.setValueAtTime(500, ctx.currentTime); osc.frequency.linearRampToValueAtTime(1000, ctx.currentTime + 0.4);
       gain.gain.setValueAtTime(0.1, ctx.currentTime); gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.4);
       break;
+    case 'snd_echo':
+      osc.type = 'sine'; osc.frequency.setValueAtTime(400, ctx.currentTime); osc.frequency.linearRampToValueAtTime(1000, ctx.currentTime + 0.3);
+      gain.gain.setValueAtTime(0.2, ctx.currentTime); gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.3);
+      const oscE = ctx.createOscillator(); const gainE = ctx.createGain();
+      oscE.connect(gainE); gainE.connect(ctx.destination);
+      oscE.type = 'sine'; oscE.frequency.setValueAtTime(200, ctx.currentTime + 0.15);
+      gainE.gain.setValueAtTime(0.15, ctx.currentTime + 0.15); gainE.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.4);
+      oscE.start(ctx.currentTime + 0.15); oscE.stop(ctx.currentTime + 0.4);
+      break;
+    case 'snd_synth':
+      osc.type = 'sawtooth'; osc.frequency.setValueAtTime(150, ctx.currentTime); osc.frequency.linearRampToValueAtTime(800, ctx.currentTime + 0.15);
+      gain.gain.setValueAtTime(0.2, ctx.currentTime); gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.15);
+      break;
     default: playMergeDefault(ctx); return;
   }
   osc.start(); osc.stop(ctx.currentTime + 0.4);
 }
 
-/* ---------------- Particles Engine ---------------- */
+/* ---------------- Particles Engine (10 Effects) ---------------- */
 const particles = [];
-const pGeo = new THREE.BoxGeometry(0.12, 0.12, 0.12);
+const pGeo = new THREE.BoxGeometry(0.08, 0.08, 0.08);
 const pMats = {
   'flame': new THREE.MeshBasicMaterial({color: 0xff4500}),
   'sparkle': new THREE.MeshBasicMaterial({color: 0xffffff}),
@@ -405,7 +413,7 @@ function spawnParticle(x, y, z, type) {
   p.position.set(x + (Math.random()-0.5)*0.5, y + (Math.random()-0.5)*0.5, z + (Math.random()-0.5)*0.2);
   
   let vx = (Math.random()-0.5)*3, vy = (Math.random()-0.5)*3, vz = Math.random()*2;
-  if(type === 'flame' || type === 'sparkle' || type === 'smoke') { vx *= 0.2; vy = -Math.random()*2; vz = 0; } 
+  if(type === 'flame' || type === 'sparkle' || type === 'smoke') { vx *= 0.2; vy = -Math.random()*2 - 0.5; vz = 0; } 
   if(type === 'smoke') { p.scale.set(1.5,1.5,1.5); vy = Math.random()*1; }
   if(type === 'lightning') { vx = (Math.random()-0.5)*8; vy = (Math.random()-0.5)*8; }
   
@@ -434,16 +442,16 @@ function updateParticles(dt) {
   }
 }
 
-/* ---------------- STARFIELD (Αστέρια, πίσω πλέον) ---------------- */
+/* ---------------- STARFIELD (Αστέρια ταξιδιού, 3000) ---------------- */
 let starField;
 function initStarfield() {
-  const starCount = 1000; // Μείωσα λίγο για κινητά
+  const starCount = 3000;
   const starGeo = new THREE.BufferGeometry();
   const starPos = new Float32Array(starCount * 3);
   for (let i = 0; i < starCount * 3; i += 3) {
-    starPos[i] = (Math.random() - 0.5) * 200;     
-    starPos[i+1] = (Math.random() - 0.5) * 200;   
-    starPos[i+2] = (Math.random() - 0.5) * 100;   
+    starPos[i] = (Math.random() - 0.5) * 300;     
+    starPos[i+1] = (Math.random() - 0.5) * 300;   
+    starPos[i+2] = (Math.random() - 0.5) * 200;   
   }
   starGeo.setAttribute('position', new THREE.BufferAttribute(starPos, 3));
   
@@ -451,11 +459,11 @@ function initStarfield() {
     color: 0xffffff,
     size: 0.15,
     transparent: true,
-    opacity: 0.8,
+    opacity: 0.9,
     blending: THREE.AdditiveBlending
   });
   starField = new THREE.Points(starGeo, starMat);
-  starField.position.z = -30; // ΣΗΜΑΝΤΙΚΟ: Το βάζουμε ΠΙΣΩ
+  starField.position.z = -30; 
   scene.add(starField);
 }
 
@@ -464,10 +472,10 @@ function updateStarfield(speed) {
   const positions = starField.geometry.attributes.position.array;
   for (let i = 2; i < positions.length; i += 3) {
     positions[i] += speed; 
-    if (positions[i] > 20) { 
-      positions[i] = -80;   
-      positions[i-2] = (Math.random() - 0.5) * 200; 
-      positions[i-1] = (Math.random() - 0.5) * 200; 
+    if (positions[i] > 30) { 
+      positions[i] = -100;   
+      positions[i-2] = (Math.random() - 0.5) * 300; 
+      positions[i-1] = (Math.random() - 0.5) * 300; 
     }
   }
   starField.geometry.attributes.position.needsUpdate = true;
@@ -478,22 +486,24 @@ function createEmojiTexture(emoji) {
   const cv = document.createElement("canvas");
   cv.width = cv.height = 128;
   const ctx = cv.getContext("2d");
-  ctx.font = "90px Arial";
+  ctx.font = "80px Arial";
   ctx.textAlign = "center";
   ctx.textBaseline = "middle";
   ctx.fillText(emoji, 64, 68);
   return new THREE.CanvasTexture(cv);
 }
 
-/* ---------------- three.js setup (ΒΕΛΤΙΩΜΕΝΟ) ---------------- */
+/* ---------------- three.js setup ---------------- */
 let scene, camera, renderer, boardGroup, raycaster, pointer, bgElements = [];
-let backMesh, cellMat; 
+let backMesh, cellMat, borderMesh; 
 let grid = [];
 let currentCube = null;
 let aimCol = 2, busy = false, hammerMode = false, isLaunching = false;
 let score = 0, coins = 500, level = 0, best = 0;
 let anims = [];
 let matCache = {};
+let isGameOverFlash = false;
+let flashTimer = 0;
 
 function initThree(){
   const canvas = document.getElementById("game");
@@ -510,25 +520,23 @@ function initThree(){
     return;
   }
   
-  renderer.setPixelRatio(Math.min(devicePixelRatio, 1.5));
+  renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
   scene = new THREE.Scene();
-  scene.background = new THREE.Color(0x0B0C10); // Το σωστό φόντο
+  scene.background = new THREE.Color(0x0B0C10); 
 
-  // Emojis Background
-  const bgEmojis = ['🌟', '⚡️', '⭐️'];
+  // BACKGROUND EMOJIS (NEW SET: ⚡️⭐️🌟🌎🛰️🚀🪐🛸)
+  const bgEmojis = ['⚡️', '⭐️', '🌟', '🌎', '🛰️', '🚀', '🪐', '🛸'];
   bgEmojis.forEach(emoji => {
-    for(let i=0; i<2; i++) {
+    for(let i=0; i<3; i++) {
       const tex = createEmojiTexture(emoji);
       const mat = new THREE.SpriteMaterial({ map: tex, transparent: true });
       const sprite = new THREE.Sprite(mat);
-      const size = Math.random() * 1.5 + 1;
+      const size = Math.random() * 2 + 1.5;
       sprite.scale.set(size, size, 1);
       let dirY = -0.3;
       let isStar = false;
-      if (['🌟', '⭐️', '⚡️'].includes(emoji)) {
-         dirY = -0.1; isStar = true;
-         sprite.position.set((Math.random()-0.5)*30, Math.random()*40, -6 - Math.random()*15);
-      } 
+      if (['⭐️', '🌟', '⚡️'].includes(emoji)) { dirY = -0.1; isStar = true; }
+      sprite.position.set((Math.random()-0.5)*40, Math.random()*40 + 10, -10 - Math.random()*20);
       sprite.userData = { 
         speed: Math.random()*1 + 0.5, 
         wobbleSpeed: Math.random()*2,
@@ -558,6 +566,12 @@ function initThree(){
   backMesh.position.z = -0.65;
   boardGroup.add(backMesh);
 
+  // Κόκκινο πλαίσιο για το Game Over
+  borderMesh = new THREE.Mesh(new THREE.BoxGeometry(BOARD_W + 1.0, BOARD_H + 1.0, 0.2), new THREE.MeshBasicMaterial({color: 0xE63946, transparent: true, opacity: 0, depthWrite: false, side: THREE.DoubleSide}));
+  borderMesh.position.z = -0.75;
+  borderMesh.rotation.x = 0.10; // Inverse
+  boardGroup.add(borderMesh);
+
   cellMat = new THREE.MeshLambertMaterial();
   const cellGeo = new THREE.BoxGeometry(CELL*0.96, CELL*0.96, 0.12);
   for(let c=0;c<COLS;c++) for(let r=0;r<ROWS;r++){
@@ -568,8 +582,6 @@ function initThree(){
   }
 
   updateBoardColorsLive();
-
-  // Προσθήκη Starfield
   initStarfield();
 
   raycaster = new THREE.Raycaster(); pointer = new THREE.Vector2();
@@ -599,10 +611,17 @@ function numberTexture(value){
   const g = cv.getContext("2d");
   const skin = save.equippedCube;
 
+  // Σχεδίαση φόντου (Wood enhanced)
   if(skin === 'wood') {
-    g.fillStyle = value >= 128 ? "#8B4513" : "#D2B48C"; roundRect(g,4,4,120,120,22); g.fill();
-    g.strokeStyle="rgba(0,0,0,0.1)"; g.lineWidth=2;
-    for(let i=0;i<15;i++){ g.beginPath(); g.moveTo(4,Math.random()*128); g.bezierCurveTo(40,Math.random()*128,80,Math.random()*128,124,Math.random()*128); g.stroke(); }
+    g.fillStyle = value >= 128 ? "#8B5A2B" : "#DEB887"; roundRect(g,4,4,120,120,22); g.fill();
+    g.strokeStyle="rgba(0,0,0,0.2)"; g.lineWidth=3;
+    for(let i=0;i<25;i++){ 
+      g.beginPath(); 
+      const x1 = 4 + Math.random()*120; const y1 = 4 + Math.random()*120;
+      const x2 = x1 + (Math.random()-0.5)*40; const y2 = y1 + (Math.random()-0.5)*40;
+      g.moveTo(x1,y1); g.quadraticCurveTo((x1+x2)/2 + (Math.random()-0.5)*20, (y1+y2)/2 + (Math.random()-0.5)*20, x2, y2); 
+      g.stroke(); 
+    }
   } 
   else if (skin === 'whitered' || skin === 'whitegreen') {
     g.fillStyle = "white"; roundRect(g,4,4,120,120,22); g.fill();
@@ -634,7 +653,7 @@ function numberTexture(value){
   else if (skin === 'galaxy') {
     g.fillStyle = "#1A0B2E"; roundRect(g,4,4,120,120,22); g.fill();
     g.fillStyle = "white";
-    for(let i=0; i<30; i++) { g.beginPath(); g.arc(Math.random()*128, Math.random()*128, Math.random()*2, 0, 7); g.fill(); }
+    for(let i=0; i=30; i++) { g.beginPath(); g.arc(Math.random()*128, Math.random()*128, Math.random()*2, 0, 7); g.fill(); }
   }
   else if (skin === 'ice') {
     let grad = g.createLinearGradient(0,0,128,128);
@@ -647,22 +666,21 @@ function numberTexture(value){
     g.fillStyle = grad; roundRect(g,4,4,120,120,22); g.fill();
   }
 
-  let txtCol = (skin==='wood'&&value<128)||skin==='whitered'||skin==='whitegreen'||skin==='zebra' ? "#111" : "#FFF";
-  if(skin==='gold') txtCol = "#3E2723";
-  if(skin==='neon') txtCol = `hsl(${(Math.log2(value)*30)%360}, 100%, 65%)`;
-  if(skin==='ice') txtCol = "#01579B";
-  if(skin==='lava') txtCol = "#4E1500";
-
-  if (['whitered', 'whitegreen', 'zebra'].includes(skin)) {
+  // Βελτιωμένη ορατότητα αριθμών: Λευκός κύκλος για Rainbow, Ice, Lava, Galaxy, Neon
+  if (['whitered', 'whitegreen', 'zebra', 'rainbow', 'ice', 'lava', 'galaxy', 'neon'].includes(skin)) {
       g.beginPath(); g.arc(64, 64, 40, 0, Math.PI * 2);
       g.fillStyle = "rgba(255, 255, 255, 0.85)"; g.fill();
       g.strokeStyle = "#333"; g.lineWidth = 3; g.stroke();
-      txtCol = "#000";
   }
+
+  let txtCol = "#000";
+  if(skin === 'wood') {
+     txtCol = value >= 128 ? "#FFF" : "#000";
+  }
+  if(skin === 'gold') txtCol = "#3E2723";
 
   g.font = `800 ${value>=1024?42:value>=128?50:60}px 'Baloo 2', sans-serif`;
   g.textAlign="center"; g.textBaseline="middle";
-
   g.shadowColor = "rgba(0,0,0,0.8)"; g.shadowBlur = 10; 
   
   g.fillStyle = txtCol;
@@ -698,6 +716,7 @@ function newBoard(){
   grid = Array.from({length:COLS},()=>Array(ROWS).fill(null));
   score = save.score || 0; updateHUD();
   matCache = {}; 
+  isGameOverFlash = false; borderMesh.material.opacity = 0;
 
   for(let i=0;i<LEVELS[Math.min(level, LEVELS.length-1)].preset;i++){
     const c = Math.floor(Math.random()*COLS); const r = colHeight(c);
@@ -743,6 +762,19 @@ function launch(){
   
   playSound('drop');
 
+  // Διορθωμένο εφέ πτώσης (Φλόγα, Σπινθήρες, Καπνός)
+  const eff = save.equippedEffect;
+  if(eff === 'eff_flame') {
+     const wp = new THREE.Vector3(); currentCube.getWorldPosition(wp);
+     spawnBurst(wp.x, wp.y - 0.3, wp.z, 'flame', 8);
+  } else if (eff === 'eff_sparkle') {
+     const wp = new THREE.Vector3(); currentCube.getWorldPosition(wp);
+     spawnBurst(wp.x, wp.y - 0.3, wp.z, 'sparkle', 12);
+  } else if (eff === 'eff_smoke') {
+     const wp = new THREE.Vector3(); currentCube.getWorldPosition(wp);
+     spawnBurst(wp.x, wp.y - 0.3, wp.z, 'smoke', 10);
+  }
+
   const targetR = h; const p = cellPos(c, targetR);
   const cube = currentCube; currentCube = null;
   
@@ -782,9 +814,6 @@ async function resolveMerges(queue){
     if(eff !== 'eff_none' && eff !== 'eff_flame' && eff !== 'eff_sparkle' && eff !== 'eff_smoke') { 
       const wp = new THREE.Vector3(); cell.mesh.getWorldPosition(wp);
       spawnBurst(wp.x, wp.y, wp.z, eff.replace('eff_',''), 15);
-    } else if (eff === 'eff_smoke') {
-      const wp = new THREE.Vector3(); cell.mesh.getWorldPosition(wp);
-      spawnBurst(wp.x, wp.y, wp.z, 'smoke', 20);
     }
 
     boardGroup.remove(cell.mesh); grid[c][r] = null;
@@ -809,7 +838,9 @@ async function resolveMerges(queue){
   persist();
 }
 
-/* ---------------- levels / win / lose ---------------- */
+/* ---------------- levels / win / lose (3 δευτερόλεπτα χοροπηδητό) ---------------- */
+let winTimer = null;
+
 function checkWin(){
   const t = LEVELS[Math.min(level, LEVELS.length-1)].target;
   let win = false;
@@ -818,11 +849,13 @@ function checkWin(){
   }
   if(!win) return false;
   
-  busy = true; coins += 25; save.coins = coins; best = Math.max(best, score); save.best = best;
+  busy = true; 
+  coins += 25; save.coins = coins; best = Math.max(best, score); save.best = best;
   save.level = Math.min(level+1, LEVELS.length-1); persist(); updateHUD();
   document.getElementById("winText").innerHTML = `Έφτιαξες ${t}!<br>+25 🪙`;
-  document.getElementById("winModal").classList.remove("hidden");
   
+  // Ξεκινάμε τα bounce animations για 3 δευτερόλεπτα
+  const bounceDuration = 3000;
   for(let c=0;c<COLS;c++) for(let r=0;r<ROWS;r++) {
     if(grid[c][r]) {
       const mesh = grid[c][r].mesh;
@@ -837,13 +870,31 @@ function checkWin(){
       }, delay);
     }
   }
+  
+  // Καθυστέρηση 3 δευτερολέπτων πριν βγει το modal
+  if(winTimer) clearTimeout(winTimer);
+  winTimer = setTimeout(() => {
+    document.getElementById("winModal").classList.remove("hidden");
+    winTimer = null;
+  }, bounceDuration);
+  
   return true;
 }
 
 function gameOver(){
-  busy = true; best = Math.max(best, score); save.best = best; save.score = 0; persist();
-  document.getElementById("loseText").innerHTML = `Σκορ: <b>${score}</b>`;
-  document.getElementById("loseModal").classList.remove("hidden");
+  busy = true; 
+  best = Math.max(best, score); save.best = best; save.score = 0; persist();
+  isGameOverFlash = true;
+  flashTimer = 0;
+  borderMesh.material.opacity = 1;
+  
+  // Τρεμόσβημα για 3 δευτερόλεπτα, μετά εμφάνιση modal
+  setTimeout(() => {
+    isGameOverFlash = false;
+    borderMesh.material.opacity = 0;
+    document.getElementById("loseText").innerHTML = `Σκορ: <b>${score}</b>`;
+    document.getElementById("loseModal").classList.remove("hidden");
+  }, 3000);
 }
 
 /* ---------------- input & powerups (ΔΩΡΕΑΝ) ---------------- */
@@ -894,7 +945,7 @@ function finMagnet(mg){
   setTimeout(()=>{ resolveMerges([]).then(()=>{ busy=false; updateHUD(); persist(); }); }, 250);
 }
 
-/* ---------------- Shop System (ΧΩΡΙΣ ΑΡΙΘΜΟΥΣ) ---------------- */
+/* ---------------- Shop System ---------------- */
 function renderShop() {
   const container = document.getElementById('shopContainer'); container.innerHTML = '';
   const arr = SHOP[currentShopTab] || [];
@@ -950,7 +1001,7 @@ let lastT = 0;
 function loop(t){
   const dt = Math.min(0.05, (t-lastT)/1000); lastT = t; stepAnims(dt); updateParticles(dt);
   
-  updateStarfield(0.8);
+  updateStarfield(1.2); // Πιο γρήγορο ταξίδι
 
   bgElements.forEach(el => {
     const u = el.userData;
@@ -970,17 +1021,12 @@ function loop(t){
 
   if(currentCube && !busy) currentCube.rotation.y = Math.sin(t*0.002)*0.12;
   
-  if(isLaunching && currentCube) {
-    const eff = save.equippedEffect;
-    if(eff === 'eff_flame') {
-      const wp = new THREE.Vector3(); currentCube.getWorldPosition(wp);
-      spawnParticle(wp.x, wp.y - 0.2, wp.z, 'flame');
-    } else if (eff === 'eff_sparkle') {
-      const wp = new THREE.Vector3(); currentCube.getWorldPosition(wp);
-      spawnParticle(wp.x, wp.y - 0.2, wp.z, 'sparkle');
-    } else if (eff === 'eff_smoke') {
-      const wp = new THREE.Vector3(); currentCube.getWorldPosition(wp);
-      spawnParticle(wp.x, wp.y - 0.2, wp.z, 'smoke');
+  // Game Over Blink Logic
+  if(isGameOverFlash) {
+    flashTimer += dt;
+    if(flashTimer > 0.2) {
+      flashTimer = 0;
+      borderMesh.material.opacity = borderMesh.material.opacity === 1 ? 0 : 1;
     }
   }
   
@@ -996,7 +1042,6 @@ function loop(t){
 
   await loadSave(); coins = save.coins; level = save.level; best = save.best;
   initThree(); 
-  // Αν το initThree απέτυχε (WebGL), σταματάμε εδώ
   if(!renderer) return; 
   newBoard(); updateHUD();
   
