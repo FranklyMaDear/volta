@@ -1,4 +1,4 @@
-<!DOCTYPE html> 
+<!DOCTYPE html>
 <html lang="el">
 <head>
 <meta charset="UTF-8">
@@ -113,10 +113,10 @@
   <div class="card">
     <h2 style="margin-bottom:15px;">🛍️ Εξατομίκευση</h2>
     <div class="shop-tabs">
-      <button class="shop-tab active" data-tab="cubes">Κύβοι (10)</button>
-      <button class="shop-tab" data-tab="boards">Ταμπλό (10)</button>
-      <button class="shop-tab" data-tab="effects">Εφέ (10)</button>
-      <button class="shop-tab" data-tab="sounds">Ήχοι (10)</button>
+      <button class="shop-tab active" data-tab="cubes">Κύβοι</button>
+      <button class="shop-tab" data-tab="boards">Ταμπλό</button>
+      <button class="shop-tab" data-tab="effects">Εφέ</button>
+      <button class="shop-tab" data-tab="sounds">Ήχοι</button>
     </div>
     <div class="shop-items" id="shopContainer"></div>
     <button class="btn" id="btnCloseShop">Κλείσιμο</button>
@@ -436,25 +436,25 @@ function updateParticles(dt) {
 /* ---------------- STARFIELD (Αστέρια ταξιδιού) ---------------- */
 let starField;
 function initStarfield() {
-  const starCount = 2000;
+  const starCount = 1500;
   const starGeo = new THREE.BufferGeometry();
   const starPos = new Float32Array(starCount * 3);
   for (let i = 0; i < starCount * 3; i += 3) {
-    starPos[i] = (Math.random() - 0.5) * 200;     // X
-    starPos[i+1] = (Math.random() - 0.5) * 200;   // Y
-    starPos[i+2] = (Math.random() - 0.5) * 200 - 50; // Z (μακριά)
+    starPos[i] = (Math.random() - 0.5) * 200;     
+    starPos[i+1] = (Math.random() - 0.5) * 200;   
+    starPos[i+2] = (Math.random() - 0.5) * 100;   // Τυχαίο βάθος
   }
   starGeo.setAttribute('position', new THREE.BufferAttribute(starPos, 3));
   
   const starMat = new THREE.PointsMaterial({
     color: 0xffffff,
-    size: 0.2,
+    size: 0.15,
     transparent: true,
     opacity: 0.8,
     blending: THREE.AdditiveBlending
   });
   starField = new THREE.Points(starGeo, starMat);
-  starField.position.z = -20; // Τοποθετούμε το σύστημα λίγο πίσω
+  starField.position.z = 0; // Τοποθετούμε στο κέντρο
   scene.add(starField);
 }
 
@@ -462,9 +462,9 @@ function updateStarfield(speed) {
   if (!starField) return;
   const positions = starField.geometry.attributes.position.array;
   for (let i = 2; i < positions.length; i += 3) {
-    positions[i] += speed; // Κίνηση στον άξονα Z (προς την κάμερα)
-    if (positions[i] > 50) { // Αν περάσει μπροστά
-      positions[i] = -150; // Επαναφορά πίσω
+    positions[i] += speed; // Κίνηση στον άξονα Z
+    if (positions[i] > 40) { // Αν περάσει μπροστά από την κάμερα
+      positions[i] = -60;   // Το πάμε πίσω
       positions[i-2] = (Math.random() - 0.5) * 200; // Νέο X
       positions[i-1] = (Math.random() - 0.5) * 200; // Νέο Y
     }
@@ -489,11 +489,12 @@ function initThree(){
   const canvas = document.getElementById("game");
   renderer = new THREE.WebGLRenderer({canvas, antialias:true});
   renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+  renderer.setClearColor(0x0B0C10, 1); // Σωστό σκούρο background
 
   scene = new THREE.Scene();
-  scene.fog = new THREE.Fog("#0B0C10", 15, 30);
+  // Αφαιρέσαμε το fog για να μην κρύβει τα αντικείμενα
 
-  // Background Emojis (Μικρότερα τώρα που έχουμε αστέρια)
+  // Background Emojis
   const bgEmojis = ['🌟', '⚡️', '⭐️'];
   
   bgEmojis.forEach(emoji => {
@@ -554,7 +555,7 @@ function initThree(){
 
   updateBoardColorsLive();
 
-  // Προσθήκη των αστεριών (Starfield)
+  // Προσθήκη των αστεριών (Starfield) - Τώρα πιο μακριά και σωστά
   initStarfield();
 
   raycaster = new THREE.Raycaster(); pointer = new THREE.Vector2();
@@ -884,7 +885,6 @@ function finMagnet(mg){
 function renderShop() {
   const container = document.getElementById('shopContainer'); container.innerHTML = '';
   
-  // Βεβαιωνόμαστε ότι η κατηγορία υπάρχει
   const arr = SHOP[currentShopTab] || [];
   
   arr.forEach(item => {
