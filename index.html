@@ -21,8 +21,7 @@
       box-sizing: border-box;
       -webkit-tap-highlight-color: transparent;
     }
-    html,
-    body {
+    html, body {
       height: 100%;
       overflow: hidden;
     }
@@ -236,10 +235,7 @@
       animation: pop .25s cubic-bezier(.34, 1.56, .64, 1);
     }
     @keyframes pop {
-      from {
-        transform: scale(.7);
-        opacity: 0;
-      }
+      from { transform: scale(.7); opacity: 0; }
     }
     .card h2 {
       font-size: 22px;
@@ -292,12 +288,8 @@
   <canvas id="game"></canvas>
 
   <div class="hud">
-    <div class="chip">
-      <div><small>ΕΠΙΠΕΔΟ</small><span class="big" id="hudLevel">1</span></div>
-    </div>
-    <div class="chip">
-      <div><small>ΣΚΟΡ</small><span class="big" id="hudScore">0</span></div>
-    </div>
+    <div class="chip"><div><small>ΕΠΙΠΕΔΟ</small><span class="big" id="hudLevel">1</span></div></div>
+    <div class="chip"><div><small>ΣΚΟΡ</small><span class="big" id="hudScore">0</span></div></div>
     <div class="spacer"></div>
     <button class="chip" id="btnShop" style="cursor:pointer; border:none; outline:none; background:var(--accent); pointer-events:auto;">🛒 Κατάστημα</button>
     <div class="chip">🪙 <span class="big" id="hudCoins">0</span></div>
@@ -348,43 +340,25 @@
     </div>
   </div>
 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js">
-  </script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
   <script>
     (function() {
       /* =====================================================
          Drop 2048 · Starfield Pure
       ===================================================== */
 
-      const COLS = 5,
-        ROWS = 6,
-        CELL = 1.0,
-        GAP = 0.12;
+      const COLS = 5, ROWS = 6, CELL = 1.0, GAP = 0.12;
       const BOARD_W = COLS * (CELL + GAP) - GAP;
       const BOARD_H = ROWS * (CELL + GAP) - GAP;
       const launchY = -BOARD_H / 2 - 1.9;
 
-      const LEVELS = [{
-        target: 64,
-        preset: 0,
-        text: "Φτιάξε κύβο 64"
-      }, {
-        target: 128,
-        preset: 4,
-        text: "Φτιάξε κύβο 128"
-      }, {
-        target: 256,
-        preset: 7,
-        text: "Φτιάξε κύβο 256"
-      }, {
-        target: 512,
-        preset: 9,
-        text: "Φτιάξε κύβο 512"
-      }, {
-        target: 1024,
-        preset: 12,
-        text: "Φτιάξε κύβο 1024"
-      }, ];
+      const LEVELS = [
+        { target: 64, preset: 0, text: "Φτιάξε κύβο 64" },
+        { target: 128, preset: 4, text: "Φτιάξε κύβο 128" },
+        { target: 256, preset: 7, text: "Φτιάξε κύβο 256" },
+        { target: 512, preset: 9, text: "Φτιάξε κύβο 512" },
+        { target: 1024, preset: 12, text: "Φτιάξε κύβο 1024" },
+      ];
 
       const SHOP = {
         cubes: [
@@ -438,102 +412,42 @@
       let currentShopTab = 'cubes';
 
       const DEFAULT_SAVE = {
-        coins: 5000,
-        level: 0,
-        best: 0,
-        score: 0,
-        ownedCubes: ['wood'],
-        equippedCube: 'wood',
-        ownedBoards: ['board_wood'],
-        equippedBoard: 'board_wood',
-        ownedPetHead: ['head_none'],
-        equippedPetHead: 'head_none',
-        ownedPetFace: ['face_none'],
-        equippedPetFace: 'face_none',
-        ownedPetBody: ['body_none'],
-        equippedPetBody: 'body_none',
-        ownedPetHands: ['hands_none'],
-        equippedPetHands: 'hands_none',
-        ownedPetFeet: ['feet_none'],
-        equippedPetFeet: 'feet_none',
-        ownedProps: ['prop_none'],
-        equippedProp: 'prop_none'
+        coins: 5000, level: 0, best: 0, score: 0,
+        ownedCubes: ['wood'], equippedCube: 'wood',
+        ownedBoards: ['board_wood'], equippedBoard: 'board_wood',
+        ownedPetHead: ['head_none'], equippedPetHead: 'head_none',
+        ownedPetFace: ['face_none'], equippedPetFace: 'face_none',
+        ownedPetBody: ['body_none'], equippedPetBody: 'body_none',
+        ownedPetHands: ['hands_none'], equippedPetHands: 'hands_none',
+        ownedPetFeet: ['feet_none'], equippedPetFeet: 'feet_none',
+        ownedProps: ['prop_none'], equippedProp: 'prop_none'
       };
 
       let save = { ...DEFAULT_SAVE };
 
       async function loadSave() {
         try {
-          const r = localStorage.getItem("drop2048-save-v4");
-          if (r) {
-            const parsed = JSON.parse(r);
-            save = Object.assign({}, DEFAULT_SAVE, parsed);
-          }
+          const r = localStorage.getItem("drop2048-save-v5");
+          if (r) { const parsed = JSON.parse(r); save = Object.assign({}, DEFAULT_SAVE, parsed); }
         } catch (e) {}
       }
 
       function persist() {
-        try {
-          localStorage.setItem("drop2048-save-v4", JSON.stringify(save));
-        } catch (e) {}
+        try { localStorage.setItem("drop2048-save-v5", JSON.stringify(save)); } catch (e) {}
       }
 
-      const audioCtx = new(window.AudioContext || window.webkitAudioContext)();
+      const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 
       function playSound(type) {
         if (audioCtx.state === 'suspended') audioCtx.resume();
-        if (type === 'win') {
-          playWinSound(audioCtx);
-          return;
-        }
+        if (type === 'win') { playWinSound(audioCtx); return; }
         if (type === 'drop') playDropDefault(audioCtx);
         else if (type === 'merge') playMergeDefault(audioCtx);
       }
 
-      function playDropDefault(ctx) {
-        const osc = ctx.createOscillator();
-        const gain = ctx.createGain();
-        osc.connect(gain);
-        gain.connect(ctx.destination);
-        osc.type = 'sine';
-        osc.frequency.setValueAtTime(800, ctx.currentTime);
-        osc.frequency.exponentialRampToValueAtTime(400, ctx.currentTime + 0.1);
-        gain.gain.setValueAtTime(0.2, ctx.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.1);
-        osc.start();
-        osc.stop(ctx.currentTime + 0.1);
-      }
-
-      function playMergeDefault(ctx) {
-        const osc = ctx.createOscillator();
-        const gain = ctx.createGain();
-        osc.connect(gain);
-        gain.connect(ctx.destination);
-        osc.type = 'sine';
-        osc.frequency.setValueAtTime(300, ctx.currentTime);
-        osc.frequency.exponentialRampToValueAtTime(800, ctx.currentTime + 0.1);
-        gain.gain.setValueAtTime(0.3, ctx.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.1);
-        osc.start();
-        osc.stop(ctx.currentTime + 0.1);
-      }
-
-      function playWinSound(ctx) {
-        for (let i = 0; i < 4; i++) {
-          setTimeout(() => {
-            const osc = ctx.createOscillator();
-            const gain = ctx.createGain();
-            osc.connect(gain);
-            gain.connect(ctx.destination);
-            osc.type = 'sine';
-            osc.frequency.setValueAtTime(600 + (i * 250), ctx.currentTime);
-            gain.gain.setValueAtTime(0.15, ctx.currentTime);
-            gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.2);
-            osc.start();
-            osc.stop(ctx.currentTime + 0.2);
-          }, i * 100);
-        }
-      }
+      function playDropDefault(ctx) { const osc = ctx.createOscillator(); const gain = ctx.createGain(); osc.connect(gain); gain.connect(ctx.destination); osc.type = 'sine'; osc.frequency.setValueAtTime(800, ctx.currentTime); osc.frequency.exponentialRampToValueAtTime(400, ctx.currentTime + 0.1); gain.gain.setValueAtTime(0.2, ctx.currentTime); gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.1); osc.start(); osc.stop(ctx.currentTime + 0.1); }
+      function playMergeDefault(ctx) { const osc = ctx.createOscillator(); const gain = ctx.createGain(); osc.connect(gain); gain.connect(ctx.destination); osc.type = 'sine'; osc.frequency.setValueAtTime(300, ctx.currentTime); osc.frequency.exponentialRampToValueAtTime(800, ctx.currentTime + 0.1); gain.gain.setValueAtTime(0.3, ctx.currentTime); gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.1); osc.start(); osc.stop(ctx.currentTime + 0.1); }
+      function playWinSound(ctx) { for(let i=0; i<4; i++) { setTimeout(() => { const osc = ctx.createOscillator(); const gain = ctx.createGain(); osc.connect(gain); gain.connect(ctx.destination); osc.type = 'sine'; osc.frequency.setValueAtTime(600 + (i*250), ctx.currentTime); gain.gain.setValueAtTime(0.15, ctx.currentTime); gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.2); osc.start(); osc.stop(ctx.currentTime + 0.2); }, i * 100); } }
 
       /* ----- Particles & Background ----- */
       const particles = [];
@@ -541,8 +455,7 @@
       const pMats = {
         'flame': new THREE.MeshBasicMaterial({ color: 0xff4500 }),
         'explode': new THREE.MeshBasicMaterial({ color: 0xffa500 }),
-        'confetti': [0xff0000, 0x00ff00, 0x0000ff, 0xffff00, 0xff00ff, 0x00ffff].map(c => new THREE
-          .MeshBasicMaterial({ color: c })),
+        'confetti': [0xff0000, 0x00ff00, 0x0000ff, 0xffff00, 0xff00ff, 0x00ffff].map(c => new THREE.MeshBasicMaterial({ color: c })),
         'stardust': new THREE.MeshBasicMaterial({ color: 0xffd700 }),
         'smoke': new THREE.MeshBasicMaterial({ color: 0xaaaaaa, transparent: true, opacity: 0.5 })
       };
@@ -552,21 +465,11 @@
         if (Array.isArray(mat)) mat = mat[Math.floor(Math.random() * mat.length)];
         const p = new THREE.Mesh(pGeo, mat);
         p.position.set(x, y, z);
-        let vx = (Math.random() - 0.5) * 6,
-          vy = (Math.random() - 0.5) * 6,
-          vz = (Math.random() - 0.5) * 6;
-        if (type === 'flame') { vx *= 0.2;
-          vy = -Math.random() * 2 - 0.5;
-          vz = 0; }
-        if (type === 'smoke') { vy = Math.random() * 2 + 0.5;
-          vx *= 0.3;
-          vz *= 0.3; }
-        if (type === 'stardust') { vx *= 0.5;
-          vy *= 0.5;
-          vz *= 0.5; }
-        if (type === 'confetti') { p.scale.set(0.15, 0.15, 0.15);
-          vy = Math.random() * 3 + 1;
-          vx = (Math.random() - 0.5) * 2; }
+        let vx = (Math.random() - 0.5) * 6, vy = (Math.random() - 0.5) * 6, vz = (Math.random() - 0.5) * 6;
+        if (type === 'flame') { vx *= 0.2; vy = -Math.random() * 2 - 0.5; vz = 0; }
+        if (type === 'smoke') { vy = Math.random() * 2 + 0.5; vx *= 0.3; vz *= 0.3; }
+        if (type === 'stardust') { vx *= 0.5; vy *= 0.5; vz *= 0.5; }
+        if (type === 'confetti') { p.scale.set(0.15, 0.15, 0.15); vy = Math.random() * 3 + 1; vx = (Math.random() - 0.5) * 2; }
         scene.add(p);
         particles.push({ mesh: p, life: 1.0, vx, vy, vz, type });
       }
@@ -579,10 +482,8 @@
         for (let i = particles.length - 1; i >= 0; i--) {
           const p = particles[i];
           p.life -= dt * 2.5;
-          if (p.life <= 0) {
-            scene.remove(p.mesh);
-            particles.splice(i, 1);
-          } else {
+          if (p.life <= 0) { scene.remove(p.mesh); particles.splice(i, 1); }
+          else {
             p.mesh.position.x += p.vx * dt;
             p.mesh.position.y += p.vy * dt;
             p.mesh.position.z += p.vz * dt;
@@ -594,81 +495,58 @@
       }
 
       let starField;
-
       function initStarfield() {
         const starCount = 8000;
         const starGeo = new THREE.BufferGeometry();
         const starPos = new Float32Array(starCount * 3);
         for (let i = 0; i < starCount * 3; i += 3) {
           starPos[i] = (Math.random() - 0.5) * 500;
-          starPos[i + 1] = (Math.random() - 0.5) * 500;
-          starPos[i + 2] = (Math.random() - 0.5) * 300;
+          starPos[i+1] = (Math.random() - 0.5) * 500;
+          starPos[i+2] = (Math.random() - 0.5) * 300;
         }
         starGeo.setAttribute('position', new THREE.BufferAttribute(starPos, 3));
-        starField = new THREE.Points(starGeo, new THREE.PointsMaterial({ color: 0xffffff, size: 0.25,
-          blending: THREE.AdditiveBlending, depthWrite: false }));
+        starField = new THREE.Points(starGeo, new THREE.PointsMaterial({ color: 0xffffff, size: 0.25, blending: THREE.AdditiveBlending, depthWrite: false }));
         starField.position.z = -50;
         scene.add(starField);
       }
-
       function updateStarfield(speed) {
         if (!starField) return;
         const positions = starField.geometry.attributes.position.array;
         for (let i = 2; i < positions.length; i += 3) {
           positions[i] += speed;
-          if (positions[i] > 40) {
-            positions[i] = -120;
-            positions[i - 2] = (Math.random() - 0.5) * 500;
-            positions[i - 1] = (Math.random() - 0.5) * 500;
-          }
+          if (positions[i] > 40) { positions[i] = -120; positions[i-2] = (Math.random() - 0.5) * 500; positions[i-1] = (Math.random() - 0.5) * 500; }
         }
         starField.geometry.attributes.position.needsUpdate = true;
       }
 
-      /* ----- AZIRAM MULTI-SLOT SYSTEM ----- */
+      /* ----- AZIRAM PET SYSTEM (ΟΛΟΚΛΗΡΩΜΕΝΟΣ) ----- */
       let aziramPet, sockets = {};
       let aziramReactionTime = 0;
       let aziramWinTime = 0;
-      let aziramTargetPos = new THREE.Vector3();
+      let aziramTargetPos = new THREE.Vector3(2.5, -3.8, 0.5);
 
       function createAziram() {
         const petGroup = new THREE.Group();
         const jellyCore = new THREE.Group();
 
-        const bodyMat = new THREE.MeshPhongMaterial({ color: 0x33ffaa, shininess: 120, transparent: true,
-          opacity: 0.85 });
+        const bodyMat = new THREE.MeshPhongMaterial({ color: 0x33ffaa, shininess: 120, transparent: true, opacity: 0.85 });
         const body = new THREE.Mesh(new THREE.SphereGeometry(0.7, 32, 32), bodyMat);
         jellyCore.add(body);
 
-        sockets.head = new THREE.Group();
-        sockets.head.position.set(0, 0.65, 0);
-        jellyCore.add(sockets.head);
-        sockets.face = new THREE.Group();
-        jellyCore.add(sockets.face);
-        sockets.body = new THREE.Group();
-        jellyCore.add(sockets.body);
+        sockets.head = new THREE.Group(); sockets.head.position.set(0, 0.65, 0); jellyCore.add(sockets.head);
+        sockets.face = new THREE.Group(); jellyCore.add(sockets.face);
+        sockets.body = new THREE.Group(); jellyCore.add(sockets.body);
 
         sockets.hands = new THREE.Group();
-        sockets.handL = new THREE.Group();
-        sockets.handL.position.set(-1.0, 0, 0);
-        sockets.hands.add(sockets.handL);
-        sockets.handR = new THREE.Group();
-        sockets.handR.position.set(1.0, 0, 0);
-        sockets.hands.add(sockets.handR);
+        sockets.handL = new THREE.Group(); sockets.handL.position.set(-1.0, 0, 0); sockets.hands.add(sockets.handL);
+        sockets.handR = new THREE.Group(); sockets.handR.position.set(1.0, 0, 0); sockets.hands.add(sockets.handR);
+        sockets.prop = new THREE.Group(); sockets.prop.position.set(0, 0.2, 0.4); sockets.handR.add(sockets.prop);
         jellyCore.add(sockets.hands);
 
         sockets.feet = new THREE.Group();
-        sockets.footL = new THREE.Group();
-        sockets.footL.position.set(-0.4, -0.8, 0);
-        sockets.feet.add(sockets.footL);
-        sockets.footR = new THREE.Group();
-        sockets.footR.position.set(0.4, -0.8, 0);
-        sockets.feet.add(sockets.footR);
+        sockets.footL = new THREE.Group(); sockets.footL.position.set(-0.4, -0.8, 0); sockets.feet.add(sockets.footL);
+        sockets.footR = new THREE.Group(); sockets.footR.position.set(0.4, -0.8, 0); sockets.feet.add(sockets.footR);
         jellyCore.add(sockets.feet);
-
-        sockets.prop = new THREE.Group();
-        sockets.prop.position.set(1.3, -0.1, 0);
-        jellyCore.add(sockets.prop);
 
         petGroup.add(jellyCore);
         petGroup.position.copy(aziramTargetPos);
@@ -678,42 +556,74 @@
         return petGroup;
       }
 
-      function equipProp(itemId) {
-        if (!aziramPet || !sockets.prop) return;
-        while (sockets.prop.children.length > 0) sockets.prop.remove(sockets.prop.children[0]);
+      function triggerAziramCelebration() {
+        aziramWinTime = 3.0;
+      }
 
+      function updateAziram(t, dt) {
+        if (!aziramPet) return;
+        const core = aziramPet.children[0];
+
+        if (aziramWinTime > 0) {
+          aziramWinTime -= dt;
+          core.position.y = Math.abs(Math.sin(t * 8)) * 1.2;
+          aziramPet.rotation.x -= 0.15;
+          aziramPet.rotation.y += 0.1;
+          if (Math.random() < 0.2) {
+            const worldPos = new THREE.Vector3();
+            aziramPet.getWorldPosition(worldPos);
+            spawnBurst(worldPos.x, worldPos.y + 1, worldPos.z, 'confetti', 5);
+            if (Math.random() < 0.3) spawnBurst(worldPos.x, worldPos.y + 1, worldPos.z, 'stardust', 3);
+            if (Math.random() < 0.2) spawnBurst(worldPos.x, worldPos.y - 0.2, worldPos.z, 'smoke', 2);
+          }
+        } else if (aziramReactionTime > 0) {
+          aziramReactionTime -= dt;
+          core.position.x = (Math.random() - 0.5) * 0.25;
+          core.position.y = (Math.random() - 0.5) * 0.25;
+          aziramPet.rotation.y += 0.5;
+          core.scale.set(1.2, 0.8, 1.2);
+          sockets.handL.position.y = Math.sin(t * 0.08) * 0.6;
+          sockets.handR.position.y = Math.cos(t * 0.08) * 0.6;
+        } else {
+          aziramPet.rotation.x = 0.2;
+          aziramPet.rotation.y += (-0.3 - aziramPet.rotation.y) * 0.1;
+          core.scale.set(1, 1, 1);
+          core.position.y = Math.sin(t * 0.002) * 0.15;
+          sockets.handL.position.y = Math.sin(t * 0.003) * 0.1;
+          sockets.handR.position.y = Math.cos(t * 0.003) * 0.1;
+          sockets.footL.position.y = -0.8 + Math.cos(t * 0.004) * 0.05;
+          sockets.footR.position.y = -0.8 + Math.sin(t * 0.004) * 0.05;
+        }
+
+        core.traverse(child => { if (child.userData && child.userData.onUpdate) child.userData.onUpdate(t); });
+      }
+
+      function equipProp(itemId) {
+        if (!sockets.prop) return;
+        while (sockets.prop.children.length > 0) sockets.prop.remove(sockets.prop.children[0]);
         if (itemId === 'prop_lollipop') {
-          const stick = new THREE.Mesh(new THREE.CylinderGeometry(0.04, 0.04, 0.6), new THREE.MeshPhongMaterial({
-            color: 0xffffff }));
+          const stick = new THREE.Mesh(new THREE.CylinderGeometry(0.04, 0.04, 0.6), new THREE.MeshPhongMaterial({ color: 0xffffff }));
           stick.position.y = 0.2;
-          const candy = new THREE.Mesh(new THREE.SphereGeometry(0.18, 16, 16), new THREE.MeshPhongMaterial({
-            color: 0xff69b4, shininess: 80 }));
+          const candy = new THREE.Mesh(new THREE.SphereGeometry(0.18, 16, 16), new THREE.MeshPhongMaterial({ color: 0xff69b4, shininess: 80 }));
           candy.position.y = 0.55;
-          const spiral = new THREE.Mesh(new THREE.TorusGeometry(0.14, 0.03, 8, 16), new THREE
-        .MeshBasicMaterial({ color: 0xff1493 }));
-          spiral.position.y = 0.55;
-          spiral.rotation.x = Math.PI / 2;
+          const spiral = new THREE.Mesh(new THREE.TorusGeometry(0.14, 0.03, 8, 16), new THREE.MeshBasicMaterial({ color: 0xff1493 }));
+          spiral.position.y = 0.55; spiral.rotation.x = Math.PI / 2;
           sockets.prop.add(stick, candy, spiral);
           sockets.prop.userData.onUpdate = (t) => { spiral.rotation.z += 0.05; };
         } else if (itemId === 'prop_icecream') {
           const cone = new THREE.Mesh(new THREE.ConeGeometry(0.14, 0.35, 8), new THREE.MeshPhongMaterial({ color: 0xd2a679 }));
           cone.position.y = 0.1;
-          const scoop1 = new THREE.Mesh(new THREE.SphereGeometry(0.15, 16, 16), new THREE.MeshPhongMaterial({ color: 0xffb6c1,
-            shininess: 90 }));
+          const scoop1 = new THREE.Mesh(new THREE.SphereGeometry(0.15, 16, 16), new THREE.MeshPhongMaterial({ color: 0xffb6c1, shininess: 90 }));
           scoop1.position.y = 0.35;
-          const scoop2 = new THREE.Mesh(new THREE.SphereGeometry(0.12, 16, 16), new THREE.MeshPhongMaterial({ color: 0x98fb98,
-            shininess: 90 }));
+          const scoop2 = new THREE.Mesh(new THREE.SphereGeometry(0.12, 16, 16), new THREE.MeshPhongMaterial({ color: 0x98fb98, shininess: 90 }));
           scoop2.position.y = 0.52;
           sockets.prop.add(cone, scoop1, scoop2);
         } else if (itemId === 'prop_lasersword') {
-          const hilt = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.08, 0.3), new THREE.MeshPhongMaterial({ color: 0x888888,
-            shininess: 100 }));
+          const hilt = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.08, 0.3), new THREE.MeshPhongMaterial({ color: 0x888888, shininess: 100 }));
           hilt.position.y = 0.05;
-          const blade = new THREE.Mesh(new THREE.CylinderGeometry(0.03, 0.03, 0.9), new THREE.MeshBasicMaterial({ color: 0x00ffff,
-            transparent: true, opacity: 0.8 }));
+          const blade = new THREE.Mesh(new THREE.CylinderGeometry(0.03, 0.03, 0.9), new THREE.MeshBasicMaterial({ color: 0x00ffff, transparent: true, opacity: 0.8 }));
           blade.position.y = 0.55;
-          const glow = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.06, 0.9), new THREE.MeshBasicMaterial({ color: 0x00ffff,
-            transparent: true, opacity: 0.2 }));
+          const glow = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.06, 0.9), new THREE.MeshBasicMaterial({ color: 0x00ffff, transparent: true, opacity: 0.2 }));
           glow.position.y = 0.55;
           sockets.prop.add(hilt, blade, glow);
           sockets.prop.userData.onUpdate = (t) => { blade.material.opacity = 0.6 + Math.sin(t * 0.02) * 0.3; };
@@ -722,7 +632,6 @@
 
       function equipPetSlot(slotCategory, itemId) {
         if (!aziramPet) return;
-
         if (slotCategory === 'pet_hands') {
           while (sockets.handL.children.length > 0) sockets.handL.remove(sockets.handL.children[0]);
           while (sockets.handR.children.length > 0) sockets.handR.remove(sockets.handR.children[0]);
@@ -733,8 +642,7 @@
           equipProp(itemId);
           return;
         } else {
-          const socket = slotCategory === 'pet_head' ? sockets.head : slotCategory === 'pet_face' ? sockets.face :
-            sockets.body;
+          const socket = slotCategory === 'pet_head' ? sockets.head : slotCategory === 'pet_face' ? sockets.face : sockets.body;
           while (socket.children.length > 0) socket.remove(socket.children[0]);
         }
 
@@ -742,10 +650,8 @@
           if (itemId === 'face_none' || itemId === 'face_pixel' || itemId === 'face_scouter') {
             const eyeGeo = new THREE.SphereGeometry(0.12, 16, 16);
             const eyeMat = new THREE.MeshBasicMaterial({ color: 0x111111 });
-            const eyeL = new THREE.Mesh(eyeGeo, eyeMat);
-            eyeL.position.set(-0.25, 0.15, 0.6);
-            const eyeR = new THREE.Mesh(eyeGeo, eyeMat);
-            eyeR.position.set(0.25, 0.15, 0.6);
+            const eyeL = new THREE.Mesh(eyeGeo, eyeMat); eyeL.position.set(-0.25, 0.15, 0.6);
+            const eyeR = new THREE.Mesh(eyeGeo, eyeMat); eyeR.position.set(0.25, 0.15, 0.6);
             sockets.face.add(eyeL, eyeR);
           }
           if (itemId === 'face_pixel') {
@@ -761,8 +667,7 @@
           }
           if (itemId === 'face_scouter') {
             const scouter = new THREE.Group();
-            const lens = new THREE.Mesh(new THREE.BoxGeometry(0.35, 0.25, 0.05), new THREE.MeshBasicMaterial({ color: 0x00ff00,
-              transparent: true, opacity: 0.7 }));
+            const lens = new THREE.Mesh(new THREE.BoxGeometry(0.35, 0.25, 0.05), new THREE.MeshBasicMaterial({ color: 0x00ff00, transparent: true, opacity: 0.7 }));
             lens.position.set(-0.28, 0.15, 0.7);
             const antenna = new THREE.Mesh(new THREE.CylinderGeometry(0.02, 0.02, 0.2), new THREE.MeshBasicMaterial({ color: 0x888 }));
             antenna.position.set(-0.45, 0.25, 0.6);
@@ -771,10 +676,8 @@
           }
           if (itemId === 'face_laser') {
             const laserMat = new THREE.MeshBasicMaterial({ color: 0xff0000 });
-            const eyeL = new THREE.Mesh(new THREE.SphereGeometry(0.14, 16, 16), laserMat);
-            eyeL.position.set(-0.25, 0.15, 0.6);
-            const eyeR = new THREE.Mesh(new THREE.SphereGeometry(0.14, 16, 16), laserMat);
-            eyeR.position.set(0.25, 0.15, 0.6);
+            const eyeL = new THREE.Mesh(new THREE.SphereGeometry(0.14, 16, 16), laserMat); eyeL.position.set(-0.25, 0.15, 0.6);
+            const eyeR = new THREE.Mesh(new THREE.SphereGeometry(0.14, 16, 16), laserMat); eyeR.position.set(0.25, 0.15, 0.6);
             sockets.face.add(eyeL, eyeR);
           }
         }
@@ -782,44 +685,33 @@
         if (slotCategory === 'pet_head') {
           const hGroup = new THREE.Group();
           if (itemId === 'head_antenna') {
-            const stick = new THREE.Mesh(new THREE.CylinderGeometry(0.02, 0.02, 0.4), new THREE.MeshBasicMaterial({ color: 0x555 }));
-            stick.position.y = 0.2;
-            const bulb = new THREE.Mesh(new THREE.SphereGeometry(0.1), new THREE.MeshBasicMaterial({ color: 0x00ff00 }));
-            bulb.position.y = 0.4;
+            const stick = new THREE.Mesh(new THREE.CylinderGeometry(0.02, 0.02, 0.4), new THREE.MeshBasicMaterial({ color: 0x555 })); stick.position.y = 0.2;
+            const bulb = new THREE.Mesh(new THREE.SphereGeometry(0.1), new THREE.MeshBasicMaterial({ color: 0x00ff00 })); bulb.position.y = 0.4;
             hGroup.add(stick, bulb);
           }
           if (itemId === 'head_halo') {
             const halo = new THREE.Mesh(new THREE.TorusGeometry(0.4, 0.05, 16, 32), new THREE.MeshBasicMaterial({ color: 0xffff00 }));
-            halo.rotation.x = Math.PI / 2;
-            halo.position.y = 0.3;
+            halo.rotation.x = Math.PI / 2; halo.position.y = 0.3;
             hGroup.add(halo);
             hGroup.userData.onUpdate = (t) => { halo.position.y = 0.3 + Math.sin(t * 0.005) * 0.05; };
           }
           if (itemId === 'head_propeller') {
             const base = new THREE.Mesh(new THREE.CylinderGeometry(0.3, 0.3, 0.2), new THREE.MeshPhongMaterial({ color: 0xff0000 }));
-            const prop = new THREE.Mesh(new THREE.BoxGeometry(0.8, 0.02, 0.1), new THREE.MeshBasicMaterial({ color: 0x0000ff }));
-            prop.position.y = 0.15;
+            const prop = new THREE.Mesh(new THREE.BoxGeometry(0.8, 0.02, 0.1), new THREE.MeshBasicMaterial({ color: 0x0000ff })); prop.position.y = 0.15;
             hGroup.add(base, prop);
             hGroup.userData.onUpdate = (t) => { prop.rotation.y += 0.2; };
           }
           if (itemId === 'head_mohawk') {
-            const mohawk = new THREE.Mesh(new THREE.BoxGeometry(0.1, 0.4, 0.8), new THREE.MeshBasicMaterial({ color: 0xff00ff }));
-            mohawk.position.y = 0.1;
+            const mohawk = new THREE.Mesh(new THREE.BoxGeometry(0.1, 0.4, 0.8), new THREE.MeshBasicMaterial({ color: 0xff00ff })); mohawk.position.y = 0.1;
             hGroup.add(mohawk);
           }
           if (itemId === 'head_horns') {
-            const hornL = new THREE.Mesh(new THREE.ConeGeometry(0.1, 0.4, 16), new THREE.MeshPhongMaterial({ color: 0xaa0000 }));
-            hornL.position.set(-0.3, 0.1, 0);
-            hornL.rotation.z = 0.3;
-            const hornR = new THREE.Mesh(new THREE.ConeGeometry(0.1, 0.4, 16), new THREE.MeshPhongMaterial({ color: 0xaa0000 }));
-            hornR.position.set(0.3, 0.1, 0);
-            hornR.rotation.z = -0.3;
+            const hornL = new THREE.Mesh(new THREE.ConeGeometry(0.1, 0.4, 16), new THREE.MeshPhongMaterial({ color: 0xaa0000 })); hornL.position.set(-0.3, 0.1, 0); hornL.rotation.z = 0.3;
+            const hornR = new THREE.Mesh(new THREE.ConeGeometry(0.1, 0.4, 16), new THREE.MeshPhongMaterial({ color: 0xaa0000 })); hornR.position.set(0.3, 0.1, 0); hornR.rotation.z = -0.3;
             hGroup.add(hornL, hornR);
           }
           if (itemId === 'head_crown') {
-            const crown = new THREE.Mesh(new THREE.CylinderGeometry(0.4, 0.3, 0.5, 8, 1, true), new THREE.MeshPhongMaterial({ color: 0xffd700,
-              side: THREE.DoubleSide }));
-            crown.position.y = 0.2;
+            const crown = new THREE.Mesh(new THREE.CylinderGeometry(0.4, 0.3, 0.5, 8, 1, true), new THREE.MeshPhongMaterial({ color: 0xffd700, side: THREE.DoubleSide })); crown.position.y = 0.2;
             hGroup.add(crown);
           }
           sockets.head.add(hGroup);
@@ -831,16 +723,13 @@
             const rMat = new THREE.MeshBasicMaterial({ color: 0x00ffff, wireframe: true, transparent: true, opacity: 0.6 });
             const ring1 = new THREE.Mesh(new THREE.TorusGeometry(0.9, 0.02, 8, 32), rMat);
             const ring2 = new THREE.Mesh(new THREE.TorusGeometry(0.9, 0.02, 8, 32), rMat);
-            ring1.rotation.x = Math.PI / 3;
-            ring2.rotation.x = -Math.PI / 3;
+            ring1.rotation.x = Math.PI / 3; ring2.rotation.x = -Math.PI / 3;
             bGroup.add(ring1, ring2);
-            bGroup.userData.onUpdate = (t) => { ring1.rotation.y += 0.02;
-              ring2.rotation.y -= 0.02; };
+            bGroup.userData.onUpdate = (t) => { ring1.rotation.y += 0.02; ring2.rotation.y -= 0.02; };
           }
           if (itemId === 'body_cape') {
             const cape = new THREE.Mesh(new THREE.BoxGeometry(0.8, 1.0, 0.05), new THREE.MeshPhongMaterial({ color: 0xdd0000 }));
-            cape.position.set(0, -0.2, -0.7);
-            cape.rotation.x = -0.2;
+            cape.position.set(0, -0.2, -0.7); cape.rotation.x = -0.2;
             bGroup.add(cape);
             bGroup.userData.onUpdate = (t) => { cape.rotation.x = -0.2 + Math.sin(t * 0.005) * 0.1; };
           }
@@ -868,42 +757,26 @@
         if (slotCategory === 'pet_feet') {
           if (itemId === 'feet_none') {
             const fMat = new THREE.MeshPhongMaterial({ color: 0x33ffaa, shininess: 120 });
-            const footL = new THREE.Mesh(new THREE.SphereGeometry(0.2, 16, 16), fMat);
-            footL.scale.y = 0.5;
-            sockets.footL.add(footL);
-            const footR = new THREE.Mesh(new THREE.SphereGeometry(0.2, 16, 16), fMat);
-            footR.scale.y = 0.5;
-            sockets.footR.add(footR);
+            const footL = new THREE.Mesh(new THREE.SphereGeometry(0.2, 16, 16), fMat); footL.scale.y = 0.5; sockets.footL.add(footL);
+            const footR = new THREE.Mesh(new THREE.SphereGeometry(0.2, 16, 16), fMat); footR.scale.y = 0.5; sockets.footR.add(footR);
           }
           if (itemId === 'feet_moonboots') {
             const mMat = new THREE.MeshPhongMaterial({ color: 0xffffff });
-            const bootL = new THREE.Mesh(new THREE.CylinderGeometry(0.2, 0.25, 0.4), mMat);
-            sockets.footL.add(bootL);
-            const bootR = new THREE.Mesh(new THREE.CylinderGeometry(0.2, 0.25, 0.4), mMat);
-            sockets.footR.add(bootR);
+            sockets.footL.add(new THREE.Mesh(new THREE.CylinderGeometry(0.2, 0.25, 0.4), mMat));
+            sockets.footR.add(new THREE.Mesh(new THREE.CylinderGeometry(0.2, 0.25, 0.4), mMat));
           }
           if (itemId === 'feet_hover') {
             const hMat = new THREE.MeshBasicMaterial({ color: 0x00ffff });
-            const hL = new THREE.Mesh(new THREE.BoxGeometry(0.3, 0.1, 0.5), hMat);
-            sockets.footL.add(hL);
-            const hR = new THREE.Mesh(new THREE.BoxGeometry(0.3, 0.1, 0.5), hMat);
-            sockets.footR.add(hR);
+            sockets.footL.add(new THREE.Mesh(new THREE.BoxGeometry(0.3, 0.1, 0.5), hMat));
+            sockets.footR.add(new THREE.Mesh(new THREE.BoxGeometry(0.3, 0.1, 0.5), hMat));
           }
         }
       }
 
       /* ----- three.js setup ----- */
       let scene, camera, renderer, boardGroup, raycaster, pointer;
-      let backMesh, cellMat, grid = [],
-        currentCube = null,
-        aimCol = 2,
-        busy = false,
-        hammerMode = false;
-      let score = 0,
-        coins = 50,
-        level = 0,
-        best = 0,
-        anims = [];
+      let backMesh, cellMat, grid = [], currentCube = null, aimCol = 2, busy = false, hammerMode = false;
+      let score = 0, coins = 50, level = 0, best = 0, anims = [];
 
       function initThree() {
         const canvas = document.getElementById("game");
@@ -921,8 +794,7 @@
         boardGroup = new THREE.Group();
         boardGroup.rotation.x = -0.10;
         scene.add(boardGroup);
-        backMesh = new THREE.Mesh(new THREE.BoxGeometry(BOARD_W + 0.7, BOARD_H + 0.7, 0.3), new THREE
-      .MeshLambertMaterial());
+        backMesh = new THREE.Mesh(new THREE.BoxGeometry(BOARD_W + 0.7, BOARD_H + 0.7, 0.3), new THREE.MeshLambertMaterial());
         backMesh.position.z = -0.65;
         boardGroup.add(backMesh);
         cellMat = new THREE.MeshLambertMaterial();
@@ -937,6 +809,8 @@
 
         updateBoardColorsLive();
         initStarfield();
+
+        // Δημιουργία AZIRAM
         aziramPet = createAziram();
         scene.add(aziramPet);
         updateAziramScreenPosition();
@@ -1014,8 +888,7 @@
 
       function makeCube(value) {
         const tex = numberTexture(value);
-        const m = new THREE.Mesh(new THREE.BoxGeometry(CELL * 0.92, CELL * 0.92, CELL * 0.92), new THREE
-      .MeshLambertMaterial({ map: tex, color: 0xdddddd }));
+        const m = new THREE.Mesh(new THREE.BoxGeometry(CELL * 0.92, CELL * 0.92, CELL * 0.92), new THREE.MeshLambertMaterial({ map: tex, color: 0xdddddd }));
         m.userData.value = value;
         return m;
       }
@@ -1032,8 +905,7 @@
           a.t += dt / a.dur;
           const k = a.t >= 1 ? 1 : a.ease(a.t);
           for (const p in a.to) a.obj[p] = a.from[p] + (a.to[p] - a.from[p]) * k;
-          if (a.t >= 1) { anims.splice(i, 1);
-            a.done && a.done(); }
+          if (a.t >= 1) { anims.splice(i, 1); a.done && a.done(); }
         }
       }
 
@@ -1059,8 +931,7 @@
         cube.position.set(p.x, p.y, 0.1);
         boardGroup.add(cube);
         grid[c][r] = { value, mesh: cube };
-        if (!instant) { cube.scale.set(.4, .4, .4);
-          tween(cube.scale, { x: 1, y: 1, z: 1 }, 0.22); }
+        if (!instant) { cube.scale.set(.4, .4, .4); tween(cube.scale, { x: 1, y: 1, z: 1 }, 0.22); }
         return grid[c][r];
       }
 
@@ -1114,16 +985,14 @@
         });
       }
 
-      function isBoardFull() { for (let c = 0; c < COLS; c++)
-          for (let r = 0; r < ROWS; r++) if (!grid[c][r]) return false; return true; }
+      function isBoardFull() { for (let c = 0; c < COLS; c++) for (let r = 0; r < ROWS; r++) if (!grid[c][r]) return false; return true; }
 
       async function resolveMerges(queue) {
         while (queue.length) {
           const { c, r } = queue.shift();
           const cell = grid[c][r];
           if (!cell) continue;
-          const same = [{ c: c - 1, r }, { c: c + 1, r }, { c, r: r - 1 }, { c, r: r + 1 }].filter(n => n.c >= 0 && n.c <
-            COLS && n.r >= 0 && n.r < ROWS && grid[n.c][n.r] && grid[n.c][n.r].value === cell.value);
+          const same = [{ c: c - 1, r }, { c: c + 1, r }, { c, r: r - 1 }, { c, r: r + 1 }].filter(n => n.c >= 0 && n.c < COLS && n.r >= 0 && n.r < ROWS && grid[n.c][n.r] && grid[n.c][n.r].value === cell.value);
           if (!same.length) continue;
           const newVal = cell.value * Math.pow(2, same.length);
           score += newVal;
@@ -1190,11 +1059,12 @@
         persist();
         updateHUD();
         document.getElementById("winText").innerHTML = `Έφτιαξες ${t}!<br>+25 🪙`;
-        aziramWinTime = 3.0;
+
+        // Ενεργοποίηση celebration
+        triggerAziramCelebration();
 
         if (winTimer) clearTimeout(winTimer);
-        winTimer = setTimeout(() => { document.getElementById("winModal").classList.remove("hidden");
-          winTimer = null; }, 3000);
+        winTimer = setTimeout(() => { document.getElementById("winModal").classList.remove("hidden"); winTimer = null; }, 3000);
         return true;
       }
 
@@ -1225,8 +1095,7 @@
         }
 
         const hit = new THREE.Vector3();
-        raycaster.ray.intersectPlane(new THREE.Plane(new THREE.Vector3(0, 0, 1).applyQuaternion(boardGroup.quaternion), 0),
-          hit);
+        raycaster.ray.intersectPlane(new THREE.Plane(new THREE.Vector3(0, 0, 1).applyQuaternion(boardGroup.quaternion), 0), hit);
         boardGroup.worldToLocal(hit);
         const c = Math.max(0, Math.min(COLS - 1, Math.round((hit.x + BOARD_W / 2 - CELL / 2) / (CELL + GAP))));
         const r = Math.round((BOARD_H / 2 - CELL / 2 - hit.y) / (CELL + GAP));
@@ -1237,11 +1106,8 @@
             grid[c][r] = null;
             tween(m.scale, { x: .01, y: .01, z: .01 }, 0.18, null, () => boardGroup.remove(m));
             busy = true;
-            setTimeout(() => { resolveMerges([]).then(() => { busy = false;
-                updateHUD();
-                persist(); }); }, 180);
-          } else { hammerMode = false;
-            updateHUD(); }
+            setTimeout(() => { resolveMerges([]).then(() => { busy = false; updateHUD(); persist(); }); }, 180);
+          } else { hammerMode = false; updateHUD(); }
           return;
         }
         setAim(c, true);
@@ -1271,25 +1137,11 @@
           const isEquipped = save[props.equip] === item.id;
           const el = document.createElement('div');
           el.className = `shop-item ${isOwned?'owned':''} ${isEquipped?'equipped':''}`;
-          el.innerHTML =
-            `<div style="font-size:36px; margin-bottom:5px;">${item.icon}</div><h3>${item.name}</h3><div class="price">${isEquipped?'ΕΠΙΛΕΓΜΕΝΟ':isOwned?'ΕΠΙΛΟΓΗ':item.price===0?'Δωρεάν':item.price+' 🪙'}</div>`;
+          el.innerHTML = `<div style="font-size:36px; margin-bottom:5px;">${item.icon}</div><h3>${item.name}</h3><div class="price">${isEquipped?'ΕΠΙΛΕΓΜΕΝΟ':isOwned?'ΕΠΙΛΟΓΗ':item.price===0?'Δωρεάν':item.price+' 🪙'}</div>`;
           el.onclick = () => {
-            if (isOwned) {
-              save[props.equip] = item.id;
-              persist();
-              renderShop();
-              applyShopChanges();
-            } else if (coins >= item.price) {
-              coins -= item.price;
-              save.coins = coins;
-              save[props.owned].push(item.id);
-              save[props.equip] = item.id;
-              persist();
-              updateHUD();
-              renderShop();
-              applyShopChanges();
-              toast("Αγόρασες το " + item.name + "!");
-            } else { toast("Δεν έχεις αρκετά νομίσματα!"); }
+            if (isOwned) { save[props.equip] = item.id; persist(); renderShop(); applyShopChanges(); }
+            else if (coins >= item.price) { coins -= item.price; save.coins = coins; save[props.owned].push(item.id); save[props.equip] = item.id; persist(); updateHUD(); renderShop(); applyShopChanges(); toast("Αγόρασες το " + item.name + "!"); }
+            else { toast("Δεν έχεις αρκετά νομίσματα!"); }
           };
           container.appendChild(el);
         });
@@ -1319,17 +1171,9 @@
       }
 
       let toastTimer;
-
-      function toast(msg) {
-        const t = document.getElementById("toast");
-        t.textContent = msg;
-        t.style.opacity = 1;
-        clearTimeout(toastTimer);
-        toastTimer = setTimeout(() => t.style.opacity = 0, 1800);
-      }
+      function toast(msg) { const t = document.getElementById("toast"); t.textContent = msg; t.style.opacity = 1; clearTimeout(toastTimer); toastTimer = setTimeout(() => t.style.opacity = 0, 1800); }
 
       let lastT = 0;
-
       function loop(t) {
         const dt = Math.min(0.05, (t - lastT) / 1000);
         lastT = t;
@@ -1337,51 +1181,8 @@
         updateParticles(dt);
         updateStarfield(0.8);
 
-        if (aziramPet) {
-          const core = aziramPet.children[0];
-
-          if (aziramWinTime > 0) {
-            aziramWinTime -= dt;
-            core.position.y = Math.abs(Math.sin(t * 8)) * 1.2;
-            aziramPet.rotation.x -= 0.15;
-            aziramPet.rotation.y += 0.1;
-            sockets.handL.position.y = 0.8 + Math.sin(t * 10) * 0.2;
-            sockets.handR.position.y = 0.8 + Math.cos(t * 10) * 0.2;
-
-            if (Math.random() < 0.4) {
-              const worldPos = new THREE.Vector3();
-              aziramPet.getWorldPosition(worldPos);
-              spawnParticle(worldPos.x + (Math.random() - 0.5) * 1.5, worldPos.y + Math.random() * 2, worldPos.z, 'confetti');
-              if (Math.random() < 0.3) spawnParticle(worldPos.x + (Math.random() - 0.5) * 1.5, worldPos.y + Math.random() *
-                1.5, worldPos.z, 'stardust');
-              if (Math.random() < 0.2) spawnParticle(worldPos.x + (Math.random() - 0.5) * 1.5, worldPos.y - 0.5, worldPos.z,
-                'smoke');
-            }
-          } else if (aziramReactionTime > 0) {
-            aziramReactionTime -= dt;
-            aziramPet.rotation.x = 0.2;
-            core.position.x = (Math.random() - 0.5) * 0.25;
-            core.position.y = (Math.random() - 0.5) * 0.25;
-            aziramPet.rotation.y += 0.5;
-            core.scale.y = 1 + Math.sin(t * 0.08) * 0.4;
-            core.scale.x = 1 + Math.cos(t * 0.08) * 0.4;
-            sockets.handL.position.y = Math.sin(t * 0.08) * 0.6;
-            sockets.handR.position.y = Math.cos(t * 0.08) * 0.6;
-          } else {
-            core.position.x = 0;
-            aziramPet.rotation.x = 0.2;
-            aziramPet.rotation.y += (-0.3 - aziramPet.rotation.y) * 0.1;
-            core.scale.y = 1 + Math.sin(t * 0.004) * 0.04;
-            core.scale.x = 1 + Math.cos(t * 0.004) * 0.04;
-            core.position.y = Math.sin(t * 0.002) * 0.15;
-            sockets.handL.position.y = Math.sin(t * 0.003) * 0.1;
-            sockets.handR.position.y = Math.cos(t * 0.003) * 0.1;
-            sockets.footL.position.y = -0.8 + Math.cos(t * 0.004) * 0.05;
-            sockets.footR.position.y = -0.8 + Math.sin(t * 0.004) * 0.05;
-          }
-
-          core.traverse(child => { if (child.userData && child.userData.onUpdate) child.userData.onUpdate(t); });
-        }
+        // Update AZIRAM
+        updateAziram(t, dt);
 
         if (currentCube && !busy) currentCube.rotation.y = Math.sin(t * 0.002) * 0.12;
         if (renderer) renderer.render(scene, camera);
@@ -1389,10 +1190,8 @@
       }
 
       (async function() {
-        document.getElementById('btnShop').onclick = () => { renderShop();
-          document.getElementById('shopModal').classList.remove('hidden'); };
-        document.getElementById('btnCloseShop').onclick = () => { document.getElementById('shopModal').classList.add(
-          'hidden'); };
+        document.getElementById('btnShop').onclick = () => { renderShop(); document.getElementById('shopModal').classList.remove('hidden'); };
+        document.getElementById('btnCloseShop').onclick = () => { document.getElementById('shopModal').classList.add('hidden'); };
         document.addEventListener('pointerdown', () => { if (audioCtx.state === 'suspended') audioCtx.resume(); }, { once: true });
         await loadSave();
         coins = save.coins;
@@ -1411,16 +1210,10 @@
         equipPetSlot('props', save.equippedProp);
 
         const cvs = document.getElementById("game");
-        cvs.addEventListener("pointermove", (e) => { if (!busy) setAim((e.touches ? e.touches[0].clientX : e.clientX) /
-            innerWidth * 2 - 1) });
+        cvs.addEventListener("pointermove", (e) => { if (!busy) setAim((e.touches ? e.touches[0].clientX : e.clientX) / innerWidth * 2 - 1) });
         cvs.addEventListener("pointerdown", onTap);
-        document.getElementById("btnNext").onclick = () => { document.getElementById("winModal").classList.add("hidden");
-          level = Math.min(level + 1, LEVELS.length - 1);
-          busy = false;
-          newBoard(); };
-        document.getElementById("btnRetry").onclick = () => { document.getElementById("loseModal").classList.add("hidden");
-          busy = false;
-          newBoard(); };
+        document.getElementById("btnNext").onclick = () => { document.getElementById("winModal").classList.add("hidden"); level = Math.min(level + 1, LEVELS.length - 1); busy = false; newBoard(); };
+        document.getElementById("btnRetry").onclick = () => { document.getElementById("loseModal").classList.add("hidden"); busy = false; newBoard(); };
       })();
     })();
   </script>
