@@ -143,7 +143,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script>
 /* =====================================================
-   Drop 2048 · Deep Space & Full Customization
+   Drop 2048 · Deep Space & Full Customization + Emojis
 ===================================================== */
 
 const COLS = 5, ROWS = 6, CELL = 1.0, GAP = 0.12; 
@@ -195,9 +195,9 @@ let backMesh, cellMat;
 let grid = [];
 let currentCube = null;
 let aimCol = 2, busy = false, hammerMode = false, isLaunching = false;
-let score = 0, coins = 500, level = 0, best = 0; // Starting with 500 for testing
+let score = 0, coins = 500, level = 0, best = 0;
 let anims = [];
-const matCache = {};
+let matCache = {};
 
 let save = { 
   coins: 50, level: 0, best: 0, score: 0, 
@@ -208,12 +208,12 @@ let save = {
 
 async function loadSave(){
   try{
-    const r = localStorage.getItem("drop2048-save-v2");
+    const r = localStorage.getItem("drop2048-save-v3");
     if(r) save = Object.assign(save, JSON.parse(r));
   }catch(e){ }
 }
 function persist(){
-  try{ localStorage.setItem("drop2048-save-v2", JSON.stringify(save)); }catch(e){ }
+  try{ localStorage.setItem("drop2048-save-v3", JSON.stringify(save)); }catch(e){ }
 }
 
 /* ---------------- Audio ---------------- */
@@ -250,7 +250,7 @@ function spawnParticle(x, y, z, type) {
   p.position.set(x + (Math.random()-0.5)*0.5, y + (Math.random()-0.5)*0.5, z + (Math.random()-0.5)*0.2);
   
   let vx = (Math.random()-0.5)*3, vy = (Math.random()-0.5)*3, vz = Math.random()*2;
-  if(type === 'flame' || type === 'sparkle') { vx *= 0.2; vy = -Math.random()*2; vz = 0; } // Trails go down
+  if(type === 'flame' || type === 'sparkle') { vx *= 0.2; vy = -Math.random()*2; vz = 0; } 
   
   scene.add(p);
   particles.push({ mesh: p, life: 1.0, vx, vy, vz, type });
@@ -263,7 +263,7 @@ function spawnBurst(x, y, z, type, count) {
 function updateParticles(dt) {
   for(let i=particles.length-1; i>=0; i--) {
     const p = particles[i];
-    p.life -= dt * 2.5; // lifespan
+    p.life -= dt * 2.5; 
     if(p.life <= 0) {
       scene.remove(p.mesh); particles.splice(i, 1);
     } else {
@@ -276,6 +276,18 @@ function updateParticles(dt) {
   }
 }
 
+/* ---------------- Emoji Background Generator ---------------- */
+function createEmojiTexture(emoji) {
+  const cv = document.createElement("canvas");
+  cv.width = cv.height = 128;
+  const ctx = cv.getContext("2d");
+  ctx.font = "90px Arial";
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+  ctx.fillText(emoji, 64, 68);
+  return new THREE.CanvasTexture(cv);
+}
+
 /* ---------------- three.js setup ---------------- */
 function initThree(){
   const canvas = document.getElementById("game");
@@ -286,18 +298,30 @@ function initThree(){
   scene = new THREE.Scene();
   scene.fog = new THREE.Fog("#0B0C10", 15, 30);
 
-  // Dynamic Space Background (Planets & Asteroids)
-  const geom = new THREE.IcosahedronGeometry(1, 1);
-  for(let i=0; i<12; i++) {
-    const mat = new THREE.MeshLambertMaterial({ color: Math.random() * 0xffffff, wireframe: Math.random()>0.5 });
-    const mesh = new THREE.Mesh(geom, mat);
-    const size = Math.random() * 2 + 0.5;
-    mesh.scale.setScalar(size);
-    mesh.position.set((Math.random()-0.5)*30, Math.random()*40, -5 - Math.random()*15);
-    mesh.userData = { speed: Math.random()*2 + 1, rotSpeed: Math.random()*2 };
-    scene.add(mesh);
-    bgElements.push(mesh);
-  }
+  // Background Emojis 🌟 ⚡️🌟⭐️🌟🪐🌎🌙 🚀🛸🛰️🗼🛩️
+  const bgEmojis = ['🌟', '⚡️', '⭐️', '🪐', '🌎', '🌙', '🚀', '🛸', '🛰️', '🗼', '🛩️'];
+  bgEmojis.forEach(emoji => {
+    // 3 copies of each emoji floating around
+    for(let i=0; i<3; i++) {
+      const tex = createEmojiTexture(emoji);
+      const mat = new THREE.SpriteMaterial({ map: tex, transparent: true });
+      const sprite = new THREE.Sprite(mat);
+      
+      const size = Math.random() * 2 + 1.5;
+      sprite.scale.set(size, size, 1);
+      sprite.position.set((Math.random()-0.5)*30, Math.random()*40, -6 - Math.random()*15);
+      
+      // Give each sprite some unique movement variables
+      sprite.userData = { 
+        speed: Math.random()*2 + 1, 
+        wobbleSpeed: Math.random()*2,
+        wobbleAmp: Math.random()*0.05
+      };
+      
+      scene.add(sprite);
+      bgElements.push(sprite);
+    }
+  });
 
   camera = new THREE.PerspectiveCamera(42, innerWidth/innerHeight, 0.1, 60);
   scene.add(new THREE.AmbientLight(0xffffff, 0.7));
@@ -344,7 +368,7 @@ function onResize(){
 
 function cellPos(c, r){ return { x: -BOARD_W/2 + CELL/2 + c*(CELL+GAP), y: BOARD_H/2 - CELL/2 - r*(CELL+GAP) }; }
 
-/* ---------------- Custom Texture Generator ---------------- */
+/* ---------------- Custom Cube Texture Generator ---------------- */
 function numberTexture(value){
   const cv = document.createElement("canvas"); cv.width = cv.height = 128;
   const g = cv.getContext("2d");
@@ -359,7 +383,7 @@ function numberTexture(value){
   else if (skin === 'whitered' || skin === 'whitegreen') {
     g.fillStyle = "white"; roundRect(g,4,4,120,120,22); g.fill();
     g.fillStyle = skin === 'whitered' ? "#D32F2F" : "#388E3C";
-    g.save(); g.clip(); // clip to rounded rect
+    g.save(); g.clip(); 
     for(let i=-128; i<256; i+=32) { g.beginPath(); g.moveTo(i, 0); g.lineTo(i+20, 0); g.lineTo(i-108, 128); g.lineTo(i-128, 128); g.fill(); }
     g.restore();
   }
@@ -427,7 +451,7 @@ function newBoard(){
   for(let c=0;c<COLS;c++) for(let r=0;r<ROWS;r++){ if(grid[c] && grid[c][r]) boardGroup.remove(grid[c][r].mesh); }
   grid = Array.from({length:COLS},()=>Array(ROWS).fill(null));
   score = save.score || 0; updateHUD();
-  matCache = {}; // clear cache for skins
+  matCache = {}; // clear cache so newly bought skins apply
 
   for(let i=0;i<LEVELS[Math.min(level, LEVELS.length-1)].preset;i++){
     const c = Math.floor(Math.random()*COLS); const r = colHeight(c);
@@ -508,7 +532,7 @@ async function resolveMerges(queue){
     playSound('merge');
     // Spawn Effect
     const eff = save.equippedEffect;
-    if(eff !== 'eff_none' && eff !== 'eff_flame' && eff !== 'eff_sparkle') { // Burst effects
+    if(eff !== 'eff_none' && eff !== 'eff_flame' && eff !== 'eff_sparkle') { 
       const wp = new THREE.Vector3(); cell.mesh.getWorldPosition(wp);
       spawnBurst(wp.x, wp.y, wp.z, eff.replace('eff_',''), 15);
     }
@@ -626,7 +650,10 @@ function renderShop() {
 }
 function applyShopChanges() {
   if(currentShopTab === 'boards') updateBoardColorsLive();
-  if(currentShopTab === 'cubes') toast("Η εμφάνιση κύβου άλλαξε!"); // Applied on next spawn/merge
+  if(currentShopTab === 'cubes') {
+    matCache = {}; 
+    toast("Η εμφάνιση κύβου άλλαξε!"); 
+  }
 }
 
 document.querySelectorAll('.shop-tab').forEach(btn => {
@@ -649,10 +676,20 @@ let lastT = 0;
 function loop(t){
   const dt = Math.min(0.05, (t-lastT)/1000); lastT = t; stepAnims(dt); updateParticles(dt);
   
-  // Background Animation (Deep Space passing by)
+  // Animate Background Emojis
   bgElements.forEach(el => {
-    el.position.y -= el.userData.speed * dt * 5; el.rotation.x += el.userData.rotSpeed * dt; el.rotation.y += el.userData.rotSpeed * dt;
-    if(el.position.y < -20) { el.position.y = 30 + Math.random()*10; el.position.x = (Math.random()-0.5)*30; }
+    el.position.y -= el.userData.speed * dt * 5; 
+    
+    // Slight side-to-side wobble
+    if(el.userData.wobbleSpeed) {
+       el.position.x += Math.sin(t * 0.001 * el.userData.wobbleSpeed) * el.userData.wobbleAmp;
+    }
+
+    // Reset position when they fly past the camera
+    if(el.position.y < -20) { 
+       el.position.y = 30 + Math.random()*10; 
+       el.position.x = (Math.random()-0.5)*30; 
+    }
   });
 
   if(currentCube && !busy) currentCube.rotation.y = Math.sin(t*0.002)*0.12;
