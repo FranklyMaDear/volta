@@ -50,7 +50,7 @@
   .pbtn.armed{outline:4px solid var(--accent);background:#C2542F;box-shadow:0 4px 0 #8f3c20}
   
   .shop-tabs { display:flex; flex-wrap:wrap; gap:5px; margin-bottom:10px; border-bottom:2px solid rgba(0,0,0,0.1); padding-bottom:10px;}
-  .shop-tab { padding:8px 10px; font-weight:800; font-size:13px; border-radius:10px; background:#E4D7BC; color:#8C6A4F; border:none; cursor:pointer; flex: 1 1 auto; text-align:center;}
+  .shop-tab { padding:8px 6px; font-weight:800; font-size:12px; border-radius:10px; background:#E4D7BC; color:#8C6A4F; border:none; cursor:pointer; flex: 1 1 auto; text-align:center;}
   .shop-tab.active { background:var(--accent); color:#fff; box-shadow:0 3px 0 #b8742a; transform:translateY(-2px);}
   
   .shop-items { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; max-height: 45vh; overflow-y: auto; padding-bottom: 10px; padding-right:5px;}
@@ -110,12 +110,12 @@
   <div class="card">
     <h2 style="margin-bottom:15px;">🛍️ Εξατομίκευση</h2>
     <div class="shop-tabs">
-      <button class="shop-tab active" data-tab="cubes">Κύβοι</button>
-      <button class="shop-tab" data-tab="boards">Ταμπλό</button>
+      <button class="shop-tab active" data-tab="pet_color">Χρώμα</button>
       <button class="shop-tab" data-tab="pet_head">Κεφάλι</button>
       <button class="shop-tab" data-tab="pet_face">Πρόσωπο</button>
       <button class="shop-tab" data-tab="pet_body">Σώμα</button>
       <button class="shop-tab" data-tab="pet_hands">Χέρια</button>
+      <button class="shop-tab" data-tab="pet_props">Αντικείμενο</button>
       <button class="shop-tab" data-tab="pet_feet">Πόδια</button>
     </div>
     <div class="shop-items" id="shopContainer"></div>
@@ -157,19 +157,16 @@ const LEVELS = [
   { target: 128,  preset: 4, text: "Φτιάξε κύβο 128" },
   { target: 256,  preset: 7, text: "Φτιάξε κύβο 256" },
   { target: 512,  preset: 9, text: "Φτιάξε κύβο 512" },
-  { target: 1024, preset: 12, text: "Φτιάξε κύβο 1024" },
+  { target: 1024, preset: 12, text: "Φτιάξε κύβο 1024" }
 ];
 
 const SHOP = {
-  cubes: [
-    { id: 'wood', name: 'Ξύλο', price: 0, icon: '🪵' },
-    { id: 'neon', name: 'Cyber Neon', price: 0, icon: '⚡' },
-    { id: 'rainbow', name: 'Ουράνιο Τόξο', price: 0, icon: '🌈' },
-    { id: 'gold', name: 'Καθαρός Χρυσός', price: 0, icon: '🏆' }
-  ],
-  boards: [
-    { id: 'board_wood', name: 'Ξύλινο', price: 0, icon: '🟫', back: '#4A3423', cell: '#2F1B0D' },
-    { id: 'board_space', name: 'Βαθύ Διάστημα', price: 0, icon: '🟦', back: '#0B132B', cell: '#4A5A8A' }
+  pet_color: [
+    { id: 'color_green', name: 'Jelly Πράσινο', price: 0, icon: '🟢' },
+    { id: 'color_blue', name: 'Διαστημικό Μπλε', price: 0, icon: '🔵' },
+    { id: 'color_pink', name: 'Neon Ροζ', price: 0, icon: '🌸' },
+    { id: 'color_gold', name: 'Καθαρός Χρυσός', price: 0, icon: '🟡' },
+    { id: 'color_rainbow', name: 'Ουράνιο Τόξο (RGB)', price: 0, icon: '🌈' }
   ],
   pet_head: [
     { id: 'head_none', name: 'Χωρίς Καπέλο', price: 0, icon: '🚫' },
@@ -183,18 +180,24 @@ const SHOP = {
   pet_face: [
     { id: 'face_none', name: 'Κανονικά Μάτια', price: 0, icon: '👁️' },
     { id: 'face_pixel', name: 'Deal With It', price: 0, icon: '🕶️' },
-    { id: 'face_scouter', name: 'Ανιχνευτής', price: 0, icon: '📟' }, // Νέο
+    { id: 'face_scouter', name: 'Ανιχνευτής', price: 0, icon: '📟' }, 
     { id: 'face_laser', name: 'Laser Μάτια', price: 0, icon: '🔴' }
   ],
   pet_body: [
     { id: 'body_none', name: 'Απλό Σώμα', price: 0, icon: '🚫' },
-    { id: 'body_orbits', name: 'Δακτύλιοι Πλάσματος', price: 0, icon: '🪐' }, // Νέο
+    { id: 'body_orbits', name: 'Δακτύλιοι Πλάσματος', price: 0, icon: '🪐' },
     { id: 'body_cape', name: 'Κόκκινη Κάπα', price: 0, icon: '🦸' }
   ],
   pet_hands: [
     { id: 'hands_none', name: 'Jelly Χέρια', price: 0, icon: '👋' },
-    { id: 'hands_energy', name: 'Σφαίρες Ενέργειας', price: 0, icon: '🔵' }, // Νέο
+    { id: 'hands_energy', name: 'Σφαίρες Ενέργειας', price: 0, icon: '🔵' }, 
     { id: 'hands_boxing', name: 'Γάντια Μποξ', price: 0, icon: '🥊' }
+  ],
+  pet_props: [
+    { id: 'prop_none', name: 'Άδεια Χέρια', price: 0, icon: '🚫' },
+    { id: 'prop_lollipop', name: 'Γλειφιτζούρι', price: 0, icon: '🍭' },
+    { id: 'prop_icecream', name: 'Παγωτό', price: 0, icon: '🍦' },
+    { id: 'prop_lightsaber', name: 'Laser Σπαθί', price: 0, icon: '🗡️' }
   ],
   pet_feet: [
     { id: 'feet_none', name: 'Jelly Πόδια', price: 0, icon: '🦶' },
@@ -203,25 +206,25 @@ const SHOP = {
   ]
 };
 
-let currentShopTab = 'cubes';
+let currentShopTab = 'pet_color';
 
 const DEFAULT_SAVE = { 
   coins: 5000, level: 0, best: 0, score: 0, 
-  ownedCubes: ['wood'], equippedCube: 'wood',
-  ownedBoards: ['board_wood'], equippedBoard: 'board_wood',
+  ownedPetColor: ['color_green'], equippedPetColor: 'color_green',
   ownedPetHead: ['head_none'], equippedPetHead: 'head_none',
   ownedPetFace: ['face_none'], equippedPetFace: 'face_none',
   ownedPetBody: ['body_none'], equippedPetBody: 'body_none',
   ownedPetHands: ['hands_none'], equippedPetHands: 'hands_none',
+  ownedPetProps: ['prop_none'], equippedPetProps: 'prop_none',
   ownedPetFeet: ['feet_none'], equippedPetFeet: 'feet_none'
 };
 
 let save = { ...DEFAULT_SAVE };
 
 async function loadSave(){
-  try{ const r = localStorage.getItem("drop2048-save-v3"); if(r) { const parsed = JSON.parse(r); save = Object.assign({}, DEFAULT_SAVE, parsed); } }catch(e){ }
+  try{ const r = localStorage.getItem("drop2048-save-v4"); if(r) { const parsed = JSON.parse(r); save = Object.assign({}, DEFAULT_SAVE, parsed); } }catch(e){ }
 }
-function persist(){ try{ localStorage.setItem("drop2048-save-v3", JSON.stringify(save)); }catch(e){ } }
+function persist(){ try{ localStorage.setItem("drop2048-save-v4", JSON.stringify(save)); }catch(e){ } }
 
 const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 
@@ -236,26 +239,44 @@ function playDropDefault(ctx) { const osc = ctx.createOscillator(); const gain =
 function playMergeDefault(ctx) { const osc = ctx.createOscillator(); const gain = ctx.createGain(); osc.connect(gain); gain.connect(ctx.destination); osc.type = 'sine'; osc.frequency.setValueAtTime(300, ctx.currentTime); osc.frequency.exponentialRampToValueAtTime(800, ctx.currentTime + 0.1); gain.gain.setValueAtTime(0.3, ctx.currentTime); gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.1); osc.start(); osc.stop(ctx.currentTime + 0.1); }
 function playWinSound(ctx) { for(let i=0; i<4; i++) { setTimeout(() => { const osc = ctx.createOscillator(); const gain = ctx.createGain(); osc.connect(gain); gain.connect(ctx.destination); osc.type = 'sine'; osc.frequency.setValueAtTime(600 + (i*250), ctx.currentTime); gain.gain.setValueAtTime(0.15, ctx.currentTime); gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.2); osc.start(); osc.stop(ctx.currentTime + 0.2); }, i * 100); } }
 
-/* ----- Particles & Background ----- */
+/* ----- Particles (Now with Stars & Smoke) ----- */
 const particles = [];
 const pGeo = new THREE.BoxGeometry(0.08, 0.08, 0.08);
-const pMats = { 'flame': new THREE.MeshBasicMaterial({color: 0xff4500}), 'explode': new THREE.MeshBasicMaterial({color: 0xffa500}), 'confetti': [0xff0000, 0x00ff00, 0x0000ff, 0xffff00].map(c => new THREE.MeshBasicMaterial({color: c})) };
+const pMats = { 
+    'flame': new THREE.MeshBasicMaterial({color: 0xff4500}), 
+    'smoke': new THREE.MeshBasicMaterial({color: 0x888888, transparent:true, opacity:0.6}),
+    'sparkle': new THREE.MeshBasicMaterial({color: 0xffffff}),
+    'confetti': [0xff0000, 0x00ff00, 0x0000ff, 0xffff00, 0xff00ff, 0x00ffff].map(c => new THREE.MeshBasicMaterial({color: c})) 
+};
+
 function spawnParticle(x, y, z, type) {
   let mat = pMats[type]; if(Array.isArray(mat)) mat = mat[Math.floor(Math.random()*mat.length)];
   const p = new THREE.Mesh(pGeo, mat); p.position.set(x, y, z);
-  let vx = (Math.random()-0.5)*6, vy = (Math.random()-0.5)*6, vz = (Math.random()-0.5)*6;
-  if(type === 'flame') { vx *= 0.2; vy = -Math.random()*2 - 0.5; vz = 0; } 
-  if(type === 'confetti') { p.scale.set(0.15,0.15,0.15); }
+  let vx = (Math.random()-0.5)*8, vy = Math.random()*8, vz = (Math.random()-0.5)*8;
+  
+  if(type === 'smoke') { vx *= 0.3; vy = Math.random()*3; p.scale.set(1.5,1.5,1.5); } 
+  if(type === 'confetti') { p.scale.set(0.2,0.2,0.2); }
+  if(type === 'sparkle') { p.scale.set(0.1,0.1,0.1); }
+  
   scene.add(p); particles.push({ mesh: p, life: 1.0, vx, vy, vz, type });
 }
 function spawnBurst(x, y, z, type, count) { for(let i=0; i<count; i++) spawnParticle(x, y, z, type); }
 function updateParticles(dt) {
   for(let i=particles.length-1; i>=0; i--) {
-    const p = particles[i]; p.life -= dt * 2.5; 
+    const p = particles[i]; p.life -= dt * 1.5; // Πιο αργό σβήσιμο
     if(p.life <= 0) { scene.remove(p.mesh); particles.splice(i, 1); }
-    else { p.mesh.position.x += p.vx * dt; p.mesh.position.y += p.vy * dt; p.mesh.position.z += p.vz * dt; p.mesh.scale.setScalar(p.life); if(p.type === 'flame' || p.type === 'explode') p.mesh.material.color.setHSL(0.1*p.life, 1, 0.5); }
+    else { 
+        p.mesh.position.x += p.vx * dt; p.mesh.position.y += p.vy * dt; p.mesh.position.z += p.vz * dt; 
+        
+        // Βαρύτητα για τα κομφετί
+        if(p.type === 'confetti') p.vy -= dt * 15; 
+        
+        p.mesh.scale.setScalar(p.life * (p.type==='smoke'?2:1)); 
+        if(p.type === 'smoke') p.mesh.material.opacity = p.life * 0.6; 
+    }
   }
 }
+
 let starField;
 function initStarfield() {
   const starCount = 8000; const starGeo = new THREE.BufferGeometry(); const starPos = new Float32Array(starCount * 3);
@@ -270,11 +291,12 @@ function updateStarfield(speed) {
 }
 
 /* ----- AZIRAM MULTI-SLOT SYSTEM ----- */
-let aziramPet, sockets = {};
+let aziramPet, aziramBodyMesh, sockets = {};
 let aziramReactionTime = 0; 
-let aziramWinTime = 0; // Χρόνος για το celebration του επιπέδου
-// ΝΕΑ ΘΕΣΗ: Ακριβώς όπως στο image_3.png, κάτω δεξιά.
-let aziramTargetPos = new THREE.Vector3(3.2, -3.6, 0.5); 
+let aziramWinTime = 0; 
+
+// ΝΕΑ ΘΕΣΗ: Αρκετά πιο αριστερά και κεντρικά ώστε να είναι ΠΑΝΤΑ μέσα στην οθόνη δίπλα στα κουμπιά!
+let aziramTargetPos = new THREE.Vector3(1.6, -3.8, 0.5); 
 
 function createAziram() {
     const petGroup = new THREE.Group();
@@ -282,8 +304,8 @@ function createAziram() {
 
     // Βασικό Σώμα 
     const bodyMat = new THREE.MeshPhongMaterial({ color: 0x33ffaa, shininess: 120, transparent: true, opacity: 0.85 });
-    const body = new THREE.Mesh(new THREE.SphereGeometry(0.7, 32, 32), bodyMat);
-    jellyCore.add(body);
+    aziramBodyMesh = new THREE.Mesh(new THREE.SphereGeometry(0.7, 32, 32), bodyMat);
+    jellyCore.add(aziramBodyMesh);
 
     sockets.head = new THREE.Group(); sockets.head.position.set(0, 0.65, 0); jellyCore.add(sockets.head);
     sockets.face = new THREE.Group(); jellyCore.add(sockets.face);
@@ -293,6 +315,11 @@ function createAziram() {
     sockets.handL = new THREE.Group(); sockets.handL.position.set(-1.0, 0, 0); sockets.hands.add(sockets.handL);
     sockets.handR = new THREE.Group(); sockets.handR.position.set(1.0, 0, 0); sockets.hands.add(sockets.handR);
     jellyCore.add(sockets.hands);
+    
+    // Νέο Socket για τα Props στο δεξί χέρι
+    sockets.prop = new THREE.Group(); 
+    sockets.prop.position.set(0, 0.2, 0.4); 
+    sockets.handR.add(sockets.prop);
     
     sockets.feet = new THREE.Group();
     sockets.footL = new THREE.Group(); sockets.footL.position.set(-0.4, -0.8, 0); sockets.feet.add(sockets.footL);
@@ -310,16 +337,52 @@ function createAziram() {
 function equipPetSlot(slotCategory, itemId) {
     if (!aziramPet) return;
     
+    // --- COLOR ---
+    if(slotCategory === 'pet_color') {
+        aziramBodyMesh.userData.isRainbow = false;
+        if(itemId === 'color_green') aziramBodyMesh.material.color.setHex(0x33ffaa);
+        if(itemId === 'color_blue') aziramBodyMesh.material.color.setHex(0x00aaff);
+        if(itemId === 'color_pink') aziramBodyMesh.material.color.setHex(0xff00ff);
+        if(itemId === 'color_gold') aziramBodyMesh.material.color.setHex(0xffd700);
+        if(itemId === 'color_rainbow') aziramBodyMesh.userData.isRainbow = true;
+        return;
+    }
+
     // Καθαρισμός
     if(slotCategory === 'pet_hands') {
         while(sockets.handL.children.length > 0) sockets.handL.remove(sockets.handL.children[0]);
         while(sockets.handR.children.length > 0) sockets.handR.remove(sockets.handR.children[0]);
+        sockets.handR.add(sockets.prop); // Κρατάμε το prop socket!
     } else if(slotCategory === 'pet_feet') {
         while(sockets.footL.children.length > 0) sockets.footL.remove(sockets.footL.children[0]);
         while(sockets.footR.children.length > 0) sockets.footR.remove(sockets.footR.children[0]);
+    } else if (slotCategory === 'pet_props') {
+        while(sockets.prop.children.length > 0) sockets.prop.remove(sockets.prop.children[0]);
     } else {
         const socket = slotCategory === 'pet_head' ? sockets.head : slotCategory === 'pet_face' ? sockets.face : sockets.body;
         while(socket.children.length > 0) socket.remove(socket.children[0]);
+    }
+
+    // --- PROPS ---
+    if(slotCategory === 'pet_props') {
+        if(itemId === 'prop_lollipop') {
+            const stick = new THREE.Mesh(new THREE.CylinderGeometry(0.02, 0.02, 0.6), new THREE.MeshBasicMaterial({color: 0xffffff}));
+            const candy = new THREE.Mesh(new THREE.SphereGeometry(0.25, 32, 16), new THREE.MeshPhongMaterial({color: 0xff0055}));
+            candy.position.y = 0.3; candy.scale.z = 0.4; // Πεπλατυσμένο
+            sockets.prop.add(stick, candy);
+        }
+        if(itemId === 'prop_icecream') {
+            const cone = new THREE.Mesh(new THREE.ConeGeometry(0.15, 0.4, 16), new THREE.MeshPhongMaterial({color: 0xcd853f}));
+            const scoop = new THREE.Mesh(new THREE.SphereGeometry(0.16, 16, 16), new THREE.MeshPhongMaterial({color: 0xffaaaa}));
+            cone.rotation.x = Math.PI; scoop.position.y = 0.2;
+            sockets.prop.add(cone, scoop);
+        }
+        if(itemId === 'prop_lightsaber') {
+            const handle = new THREE.Mesh(new THREE.CylinderGeometry(0.04, 0.04, 0.2), new THREE.MeshBasicMaterial({color: 0x888888}));
+            const blade = new THREE.Mesh(new THREE.CylinderGeometry(0.03, 0.03, 0.9), new THREE.MeshBasicMaterial({color: 0x00ff00, transparent:true, opacity:0.8}));
+            blade.position.y = 0.55;
+            sockets.prop.add(handle, blade);
+        }
     }
 
     // --- FACE ---
@@ -332,7 +395,6 @@ function equipPetSlot(slotCategory, itemId) {
             sockets.face.add(eyeL, eyeR);
         }
         if(itemId === 'face_pixel') {
-            // ΜΕΓΑΛΥΤΕΡΑ ΓΥΑΛΙΑ
             const glasses = new THREE.Group();
             const bar = new THREE.Mesh(new THREE.BoxGeometry(1.2, 0.15, 0.05), new THREE.MeshBasicMaterial({color: 0x111})); bar.position.set(0, 0.15, 0.68);
             const glassL = new THREE.Mesh(new THREE.BoxGeometry(0.4, 0.3, 0.05), new THREE.MeshBasicMaterial({color: 0x111})); glassL.position.set(-0.25, 0.1, 0.69);
@@ -340,7 +402,6 @@ function equipPetSlot(slotCategory, itemId) {
             glasses.add(bar, glassL, glassR); sockets.face.add(glasses);
         }
         if(itemId === 'face_scouter') {
-            // ΝΕΟ: Ανιχνευτής (Scouter)
             const scouter = new THREE.Group();
             const lens = new THREE.Mesh(new THREE.BoxGeometry(0.35, 0.25, 0.05), new THREE.MeshBasicMaterial({color: 0x00ff00, transparent: true, opacity: 0.7}));
             lens.position.set(-0.28, 0.15, 0.7);
@@ -392,7 +453,6 @@ function equipPetSlot(slotCategory, itemId) {
     if(slotCategory === 'pet_body') {
         const bGroup = new THREE.Group();
         if(itemId === 'body_orbits') {
-            // ΝΕΟ: Δακτύλιοι Πλάσματος
             const rMat = new THREE.MeshBasicMaterial({color: 0x00ffff, wireframe: true, transparent: true, opacity: 0.6});
             const ring1 = new THREE.Mesh(new THREE.TorusGeometry(0.9, 0.02, 8, 32), rMat);
             const ring2 = new THREE.Mesh(new THREE.TorusGeometry(0.9, 0.02, 8, 32), rMat);
@@ -415,7 +475,6 @@ function equipPetSlot(slotCategory, itemId) {
             sockets.handR.add(new THREE.Mesh(new THREE.SphereGeometry(0.18, 16, 16), hMat));
         }
         if(itemId === 'hands_energy') {
-            // ΝΕΟ: Σφαίρες Ενέργειας
             const eMat = new THREE.MeshBasicMaterial({ color: 0x00ffff });
             sockets.handL.add(new THREE.Mesh(new THREE.SphereGeometry(0.2, 16, 16), eMat));
             sockets.handR.add(new THREE.Mesh(new THREE.SphereGeometry(0.2, 16, 16), eMat));
@@ -470,7 +529,11 @@ function initThree(){
   raycaster = new THREE.Raycaster(); pointer = new THREE.Vector2(); onResize(); addEventListener("resize", onResize); requestAnimationFrame(loop);
 }
 
-function updateBoardColorsLive() { const bData = SHOP.boards.find(b => b.id === save.equippedBoard) || SHOP.boards[0]; backMesh.material.color.set(bData.back); cellMat.color.set(bData.cell); }
+function updateBoardColorsLive() { 
+  if(!backMesh) return; // safeguard
+  const bData = SHOP.boards.find(b => b.id === save.equippedBoard) || SHOP.boards[0]; 
+  backMesh.material.color.set(bData.back); cellMat.color.set(bData.cell); 
+}
 function onResize(){ renderer.setSize(innerWidth, innerHeight); camera.aspect = innerWidth/innerHeight; const dist = (BOARD_H/2 + 2.5) / Math.tan(THREE.MathUtils.degToRad(camera.fov/2)); camera.position.set(0, -1.8, dist + 1.5); camera.lookAt(0, -1.2, 0); camera.updateProjectionMatrix(); }
 function cellPos(c, r){ return { x: -BOARD_W/2 + CELL/2 + c*(CELL+GAP), y: BOARD_H/2 - CELL/2 - r*(CELL+GAP) }; }
 function numberTexture(value){ const cv = document.createElement("canvas"); cv.width = cv.height = 128; const g = cv.getContext("2d"); const skin = save.equippedCube;
@@ -491,6 +554,7 @@ function setAim(c, instant = false){ aimCol = Math.max(0, Math.min(COLS-1, c)); 
 function launch(){ if(busy || !currentCube) return; const c = aimCol; const h = colHeight(c); if(h >= ROWS){ gameOver(); return; } busy = true; playSound('drop'); const targetR = h; const p = cellPos(c, targetR); const cube = currentCube; currentCube = null; tween(cube.position, {y:p.y}, Math.max(0.13, Math.abs(cube.position.y - p.y)*0.045), null, ()=>{ boardGroup.remove(cube); const cell = placeCube(c, targetR, cube.userData.value, true); cell.mesh.scale.set(1.15,0.85,1.15); tween(cell.mesh.scale, {x:1,y:1,z:1}, 0.18); resolveMerges([{c, r:targetR}]).then(()=>{ if(checkWin()) return; if(isBoardFull()){ gameOver(); return; } busy = false; spawnCurrent(); setAim(aimCol); }); }); }
 function isBoardFull() { for(let c=0;c<COLS;c++) for(let r=0;r<ROWS;r++) if(!grid[c][r]) return false; return true; }
 async function resolveMerges(queue){ while(queue.length){ const {c,r} = queue.shift(); const cell = grid[c][r]; if(!cell) continue; const same = [{c:c-1,r},{c:c+1,r},{c,r:r-1},{c,r:r+1}].filter(n => n.c>=0&&n.c<COLS&&n.r>=0&&n.r<ROWS&&grid[n.c][n.r]&&grid[n.c][n.r].value===cell.value); if(!same.length) continue; const newVal = cell.value * Math.pow(2, same.length); score += newVal; save.score = score; coins += 1; save.coins = coins; updateHUD(); await new Promise(res=>{ let left = same.length; const tp = cellPos(c,r); same.forEach(n=>{ const m = grid[n.c][n.r].mesh; grid[n.c][n.r] = null; tween(m.position, {x:tp.x, y:tp.y}, 0.14, null, ()=>{ boardGroup.remove(m); if(--left===0) res(); }); tween(m.scale, {x:.5,y:.5,z:.5}, 0.14); }); }); playSound('merge'); boardGroup.remove(cell.mesh); grid[c][r] = null; const up = placeCube(c, r, newVal); up.mesh.scale.set(1.35,1.35,1.35); tween(up.mesh.scale, {x:1,y:1,z:1}, 0.22); const moved = []; for(let xc=0;xc<COLS;xc++){ let write=0; for(let xr=0;xr<ROWS;xr++){ if(grid[xc][xr]){ if(xr!==write){ grid[xc][write]=grid[xc][xr]; grid[xc][xr]=null; tween(grid[xc][write].mesh.position, {y:cellPos(xc, write).y}, 0.15); moved.push({c:xc, r:write}); } write++; } } } queue.push({c,r}, ...moved); await new Promise(r=>setTimeout(r,120)); } persist(); }
+
 let winTimer = null;
 function checkWin(){ 
   const t = LEVELS[Math.min(level, LEVELS.length-1)].target; 
@@ -502,7 +566,7 @@ function checkWin(){
   document.getElementById("winText").innerHTML = `Έφτιαξες ${t}!<br>+25 🪙`; 
   
   // ΕΝΕΡΓΟΠΟΙΗΣΗ CELEBRATION!
-  aziramWinTime = 3.0; // Ο AZIRAM χορεύει για 3 δευτερόλεπτα
+  aziramWinTime = 3.0; // 3 δευτερόλεπτα χορός και κομφετί
   
   if(winTimer) clearTimeout(winTimer); 
   winTimer = setTimeout(() => { document.getElementById("winModal").classList.remove("hidden"); winTimer = null; }, 3000); 
@@ -518,7 +582,7 @@ function onTap(e){
   
   if (aziramPet) {
       const hits = raycaster.intersectObject(aziramPet, true);
-      if (hits.length > 0 && aziramWinTime <= 0) { // Δεν τον πατάμε αν ήδη πανηγυρίζει
+      if (hits.length > 0 && aziramWinTime <= 0) {
           aziramReactionTime = 1.2; 
           if(audioCtx.state !== 'suspended') playDropDefault(audioCtx); 
           return; 
@@ -532,12 +596,12 @@ function onTap(e){
 }
 
 function getShopProperties(tab) {
-    if(tab === 'cubes') return { owned: 'ownedCubes', equip: 'equippedCube' };
-    if(tab === 'boards') return { owned: 'ownedBoards', equip: 'equippedBoard' };
+    if(tab === 'pet_color') return { owned: 'ownedPetColor', equip: 'equippedPetColor' };
     if(tab === 'pet_head') return { owned: 'ownedPetHead', equip: 'equippedPetHead' };
     if(tab === 'pet_face') return { owned: 'ownedPetFace', equip: 'equippedPetFace' };
     if(tab === 'pet_body') return { owned: 'ownedPetBody', equip: 'equippedPetBody' };
     if(tab === 'pet_hands') return { owned: 'ownedPetHands', equip: 'equippedPetHands' };
+    if(tab === 'pet_props') return { owned: 'ownedPetProps', equip: 'equippedPetProps' };
     if(tab === 'pet_feet') return { owned: 'ownedPetFeet', equip: 'equippedPetFeet' };
     return { owned: '', equip: '' };
 }
@@ -563,7 +627,6 @@ function renderShop() {
 }
 
 function applyShopChanges() { 
-  if(currentShopTab === 'boards') updateBoardColorsLive(); 
   if(currentShopTab.startsWith('pet_')) equipPetSlot(currentShopTab, save[getShopProperties(currentShopTab).equip]);
 }
 
@@ -578,52 +641,52 @@ function loop(t){
   if(aziramPet) {
       const core = aziramPet.children[0];
 
+      // Αλλαγή χρώματος Ουράνιο Τόξο
+      if (aziramBodyMesh.userData.isRainbow) {
+          aziramBodyMesh.material.color.setHSL((t * 0.5) % 1, 1, 0.5);
+      }
+
       if (aziramWinTime > 0) {
-          // ΛΟΓΙΚΗ ΓΙΟΡΤΗΣ (Win Celebration!)
+          // EXTREME CELEBRATION!
           aziramWinTime -= dt;
-          
-          // Αναπηδά ψηλά 
           core.position.y = Math.abs(Math.sin(t * 8)) * 1.2;
-          
-          // Κάνει Backflips
           aziramPet.rotation.x -= 0.15;
           aziramPet.rotation.y += 0.1;
-
-          // Σηκώνει τα χέρια ψηλά
           sockets.handL.position.y = 0.8 + Math.sin(t*10)*0.2;
           sockets.handR.position.y = 0.8 + Math.cos(t*10)*0.2;
           
-      } else if (aziramReactionTime > 0) {
-          // ΛΟΓΙΚΗ ΑΝΤΙΔΡΑΣΗΣ (Όταν τον πατάς)
-          aziramReactionTime -= dt;
-          aziramPet.rotation.x = 0.2; // Επαναφορά της κλίσης (αν έκανε flip)
+          // Σωματίδια Κομφετί & Αστερόσκονη γύρω του!
+          if (Math.random() < 0.25) {
+              let wp = new THREE.Vector3();
+              core.getWorldPosition(wp);
+              spawnBurst(wp.x + (Math.random()-0.5)*2, wp.y + 1, wp.z, 'confetti', 4);
+              spawnBurst(wp.x + (Math.random()-0.5)*2, wp.y, wp.z, 'sparkle', 2);
+              if (Math.random() < 0.1) spawnBurst(wp.x, wp.y - 1, wp.z, 'smoke', 2); // Λίγος καπνός!
+          }
           
+      } else if (aziramReactionTime > 0) {
+          aziramReactionTime -= dt;
+          aziramPet.rotation.x = 0.2; 
           core.position.x = (Math.random() - 0.5) * 0.15;
           core.position.y = (Math.random() - 0.5) * 0.15;
           aziramPet.rotation.y += 0.4;
           core.scale.y = 1 + Math.sin(t * 0.05) * 0.3;
           core.scale.x = 1 + Math.cos(t * 0.05) * 0.3;
-          
           sockets.handL.position.y = Math.sin(t*0.05) * 0.5;
           sockets.handR.position.y = Math.cos(t*0.05) * 0.5;
       } else {
-          // ΗΡΕΜΙΑ (Idle)
           core.position.x = 0;
-          aziramPet.rotation.x = 0.2; // Επαναφορά της κλίσης
+          aziramPet.rotation.x = 0.2;
           aziramPet.rotation.y += (-0.3 - aziramPet.rotation.y) * 0.1;
-          
           core.scale.y = 1 + Math.sin(t * 0.004) * 0.04;
           core.scale.x = 1 + Math.cos(t * 0.004) * 0.04;
           core.position.y = Math.sin(t * 0.002) * 0.15;
-          
-          // Rayman effect (Αιωρούμενα μέλη)
           sockets.handL.position.y = Math.sin(t*0.003) * 0.1;
           sockets.handR.position.y = Math.cos(t*0.003) * 0.1;
           sockets.footL.position.y = -0.8 + Math.cos(t*0.004) * 0.05;
           sockets.footR.position.y = -0.8 + Math.sin(t*0.004) * 0.05;
       }
       
-      // Update custom animations (e.g. propeller, halo, orbits)
       core.traverse(child => { if(child.userData && child.userData.onUpdate) child.userData.onUpdate(t); });
   }
 
@@ -637,10 +700,13 @@ function loop(t){
   await loadSave(); coins = save.coins; level = save.level; best = save.best;
   initThree(); if(!renderer) return; newBoard(); updateHUD();
   
+  // Φόρτωση Όλων των Slots
+  equipPetSlot('pet_color', save.equippedPetColor);
   equipPetSlot('pet_head', save.equippedPetHead);
   equipPetSlot('pet_face', save.equippedPetFace);
   equipPetSlot('pet_body', save.equippedPetBody);
   equipPetSlot('pet_hands', save.equippedPetHands);
+  equipPetSlot('pet_props', save.equippedPetProps);
   equipPetSlot('pet_feet', save.equippedPetFeet);
   
   const cvs = document.getElementById("game"); cvs.addEventListener("pointermove", (e)=>{if(!busy)setAim((e.touches?e.touches[0].clientX:e.clientX)/innerWidth*2-1)}); cvs.addEventListener("pointerdown", onTap);
