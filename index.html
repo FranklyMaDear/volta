@@ -85,6 +85,83 @@
     padding:8px 16px;opacity:0;transition:opacity .25s;white-space:nowrap;
   }
   #webgl-error { position:fixed; inset:0; display:flex; align-items:center; justify-content:center; z-index:99; background:#0B0C10; color:#fff; font-family:inherit; padding:20px; text-align:center; font-size:18px; font-weight:bold;}
+
+  /* ---------- Εντυπωσιακό Win Modal σαν τη φωτογραφία ---------- */
+  #winModal .card {
+    padding: 0;
+    overflow: hidden;
+    background: transparent;
+    border: none;
+    box-shadow: none;
+    width: min(400px, 92vw);
+  }
+  
+  .win-ribbon {
+    background: #E63946;
+    color: #fff;
+    font-size: 28px;
+    font-weight: 800;
+    padding: 10px 40px;
+    position: relative;
+    margin-top: 20px;
+    display: inline-block;
+    border-radius: 8px;
+    box-shadow: 0 4px 0 #9e2a2b;
+    transform: rotate(-2deg);
+    z-index: 2;
+  }
+  .win-ribbon::before, .win-ribbon::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    width: 20px;
+    height: 100%;
+    background: inherit;
+    z-index: -1;
+  }
+  .win-ribbon::before { left: -15px; transform: skewX(-20deg); border-radius: 8px 0 0 8px; }
+  .win-ribbon::after { right: -15px; transform: skewX(20deg); border-radius: 0 8px 8px 0; }
+  
+  .win-subtitle {
+    font-size: 22px;
+    font-weight: 800;
+    color: #FFD700;
+    text-shadow: 2px 2px 0 #b8742a;
+    margin-top: 5px;
+  }
+  .win-subtitle small {
+    font-size: 16px;
+    color: #fff;
+    text-shadow: 1px 1px 0 #000;
+  }
+
+  .win-glow-box {
+    margin: 15px auto;
+    width: 130px;
+    height: 130px;
+    background: #3F51B5;
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 48px;
+    font-weight: 800;
+    color: #fff;
+    box-shadow: 0 0 40px rgba(255, 215, 0, 0.8), inset 0 0 20px rgba(255,255,255,0.5);
+    animation: pulseGlow 1s infinite alternate;
+  }
+  @keyframes pulseGlow {
+    0% { box-shadow: 0 0 20px rgba(255, 215, 0, 0.6); }
+    100% { box-shadow: 0 0 60px rgba(255, 215, 0, 1); }
+  }
+  
+  .win-btn {
+    background: #4CAF50;
+    box-shadow: 0 4px 0 #2E7D32;
+    margin-bottom: 20px;
+    width: auto;
+    padding: 12px 30px;
+  }
 </style>
 </head>
 <body>
@@ -137,11 +214,11 @@
 </div>
 
 <div class="overlay hidden" id="winModal">
-  <div class="card">
-    <div style="font-size:40px; margin-bottom:10px;">🎉</div>
-    <h2>Επίπεδο Ολοκληρώθηκε!</h2>
-    <p id="winText"></p>
-    <button class="btn" id="btnNext">Επόμενο επίπεδο ➜</button>
+  <div class="card" style="background: rgba(0,0,0,0.5);">
+    <div class="win-ribbon">🎉 ΜΠΡΑΒΟ!</div>
+    <div class="win-subtitle">Νέος Κύβος<br><small>Ξεκλείδωσε!</small></div>
+    <div class="win-glow-box" id="winNumberBox">256</div>
+    <button class="btn win-btn" id="btnNext">Συνέχεια ➜</button>
   </div>
 </div>
 
@@ -158,9 +235,9 @@
 <script>
 /* =====================================================
    Drop 2048 · Deep Space & Full Customization
-   - Pet System (Multi-part & Uniform Placement)
-   - Pet Stats Popup
-   - Enhanced Starfield
+   - Enhanced Win Modal (Ribbon & Glow)
+   - Girl Pet Accessories
+   - Deep Space Background Movement
 ===================================================== */
 
 const COLS = 5, ROWS = 6, CELL = 1.0, GAP = 0.12; 
@@ -228,14 +305,14 @@ const SHOP = {
   pets: [
     { id: 'pet_base', name: 'Βασικός Πλανήτης', price: 0, icon: '🌕', type: 'base' },
     { id: 'pet_eyes', name: 'Μάτια', price: 0, icon: '👀', type: 'eyes' },
-    { id: 'pet_eye', name: 'Ένα Μάτι (Κύκλωπας)', price: 0, icon: '👁️', type: 'eyes' },
+    { id: 'pet_lashes', name: 'Βλεφαρίδες (Girl)', price: 0, icon: '👁️', type: 'eyes' }, // NEW GIRL
     { id: 'pet_mouth', name: 'Στόμα', price: 0, icon: '👄', type: 'mouth' },
-    { id: 'pet_tongue', name: 'Γλώσσα', price: 0, icon: '👅', type: 'mouth' },
+    { id: 'pet_lipstick', name: 'Κοκκινόχειλα (Girl)', price: 0, icon: '💋', type: 'mouth' }, // NEW GIRL
     { id: 'pet_nose', name: 'Μύτη', price: 0, icon: '👃', type: 'nose' },
+    { id: 'pet_bow', name: 'Φιόγκος (Girl)', price: 0, icon: '🎀', type: 'hat' }, // NEW GIRL
     { id: 'pet_hat', name: 'Καπέλο', price: 0, icon: '🎩', type: 'hat' },
-    { id: 'pet_helmet', name: 'Κράνος', price: 0, icon: '⛑️', type: 'hat' },
     { id: 'pet_arm', name: 'Χέρια', price: 0, icon: '💪', type: 'arms' },
-    { id: 'pet_leg', name: 'Πόδια', price: 0, icon: '🦵', type: 'legs' }
+    { id: 'pet_flower', name: 'Λουλούδι (Girl)', price: 0, icon: '🌸', type: 'arms' } // NEW GIRL
   ]
 };
 
@@ -255,7 +332,7 @@ let save = { ...DEFAULT_SAVE };
 
 async function loadSave(){
   try{
-    const r = localStorage.getItem("drop2048-save-v9");
+    const r = localStorage.getItem("drop2048-save-v10");
     if(r) {
       const parsed = JSON.parse(r);
       save = Object.assign({}, DEFAULT_SAVE, parsed);
@@ -263,10 +340,10 @@ async function loadSave(){
   }catch(e){ }
 }
 function persist(){
-  try{ localStorage.setItem("drop2048-save-v9", JSON.stringify(save)); }catch(e){ }
+  try{ localStorage.setItem("drop2048-save-v10", JSON.stringify(save)); }catch(e){ }
 }
 
-/* ---------------- Audio (9 Different Sounds) ---------------- */
+/* ---------------- Audio (New Win Sound!) ---------------- */
 const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 
 function playSound(type) {
@@ -278,11 +355,13 @@ function playSound(type) {
   if(!soundData) {
     if(type === 'drop') playDropDefault(audioCtx);
     else if(type === 'merge') playMergeDefault(audioCtx);
+    else if(type === 'win') playWinSound(audioCtx);
     return;
   }
 
   if(type === 'drop') playSoundDrop(soundId, audioCtx);
   else if(type === 'merge') playSoundMerge(soundId, audioCtx);
+  else if(type === 'win') playWinSound(audioCtx); // Always play win sound
 }
 
 function playDropDefault(ctx) {
@@ -303,6 +382,37 @@ function playMergeDefault(ctx) {
   gain.gain.setValueAtTime(0.3, ctx.currentTime);
   gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.1);
   osc.start(); osc.stop(ctx.currentTime + 0.1);
+}
+
+// New Winning Sound (Bells & Claps!)
+function playWinSound(ctx) {
+  // Ding Ding (Bells)
+  for(let i=0; i<3; i++) {
+    setTimeout(() => {
+      const osc = ctx.createOscillator(); const gain = ctx.createGain();
+      osc.connect(gain); gain.connect(ctx.destination);
+      osc.type = 'sine'; 
+      osc.frequency.setValueAtTime(800 + (i*200), ctx.currentTime);
+      gain.gain.setValueAtTime(0.15, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.3);
+      osc.start(); osc.stop(ctx.currentTime + 0.3);
+    }, i * 150);
+  }
+  
+  // Claps (White noise bursts)
+  for(let i=0; i<2; i++) {
+    setTimeout(() => {
+      const bufferSize = ctx.sampleRate * 0.05;
+      const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+      const data = buffer.getChannelData(0);
+      for(let j=0; j<bufferSize; j++) data[j] = (Math.random()*2-1) * Math.exp(-j/bufferSize);
+      const noise = ctx.createBufferSource(); noise.buffer = buffer;
+      const gain = ctx.createGain(); gain.gain.setValueAtTime(0.2, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.1);
+      noise.connect(gain); gain.connect(ctx.destination);
+      noise.start();
+    }, i * 250);
+  }
 }
 
 function playSoundDrop(id, ctx) {
@@ -430,10 +540,11 @@ function spawnParticle(x, y, z, type) {
   const p = new THREE.Mesh(pGeo, mat);
   p.position.set(x + (Math.random()-0.5)*0.5, y + (Math.random()-0.5)*0.5, z + (Math.random()-0.5)*0.2);
   
-  let vx = (Math.random()-0.5)*3, vy = (Math.random()-0.5)*3, vz = Math.random()*2;
+  let vx = (Math.random()-0.5)*6, vy = (Math.random()-0.5)*6, vz = (Math.random()-0.5)*6;
   if(type === 'flame' || type === 'sparkle' || type === 'smoke') { vx *= 0.2; vy = -Math.random()*2 - 0.5; vz = 0; } 
   if(type === 'smoke') { p.scale.set(1.5,1.5,1.5); vy = Math.random()*1; }
   if(type === 'lightning') { vx = (Math.random()-0.5)*8; vy = (Math.random()-0.5)*8; }
+  if(type === 'confetti') { p.scale.set(0.15,0.15,0.15); }
   
   scene.add(p);
   particles.push({ mesh: p, life: 1.0, vx, vy, vz, type });
@@ -460,7 +571,7 @@ function updateParticles(dt) {
   }
 }
 
-/* ---------------- STARFIELD (Brighter & More Intense) ---------------- */
+/* ---------------- STARFIELD (Intense & Clean) ---------------- */
 let starField;
 function initStarfield() {
   const starCount = 4000;
@@ -481,7 +592,7 @@ function initStarfield() {
   starGeo.setAttribute('color', new THREE.BufferAttribute(starColors, 3));
   
   const starMat = new THREE.PointsMaterial({
-    size: 0.3,
+    size: 0.25,
     transparent: false,
     opacity: 1.0,
     vertexColors: true,
@@ -489,7 +600,7 @@ function initStarfield() {
     depthWrite: false
   });
   starField = new THREE.Points(starGeo, starMat);
-  starField.position.z = -30; 
+  starField.position.z = -50; 
   scene.add(starField);
 }
 
@@ -507,19 +618,19 @@ function updateStarfield(speed) {
   starField.geometry.attributes.position.needsUpdate = true;
 }
 
-/* ---------------- Emoji Background Generator (3D Movement) ---------------- */
+/* ---------------- Emoji Background Generator (Deep Space Z-Motion) ---------------- */
 function createEmojiTexture(emoji) {
   const cv = document.createElement("canvas");
-  cv.width = cv.height = 128;
+  cv.width = cv.height = 192; // Μεγαλύτερο canvas για να μην κόβεται
   const ctx = cv.getContext("2d");
-  ctx.font = "80px Arial";
+  ctx.font = "120px Arial"; // Πιο μικρή γραμματοσειρά για να χωράει
   ctx.textAlign = "center";
   ctx.textBaseline = "middle";
-  ctx.fillText(emoji, 64, 68);
+  ctx.fillText(emoji, 96, 100);
   return new THREE.CanvasTexture(cv);
 }
 
-/* ---------------- PET Engine (Multi-part & Uniform Placement) ---------------- */
+/* ---------------- PET Engine (Girl Power!) ---------------- */
 let petMesh = null;
 function createPetTexture() {
   const cv = document.createElement("canvas");
@@ -537,29 +648,45 @@ function createPetTexture() {
   g.fillStyle = grad;
   g.beginPath(); g.arc(cx, cy, rad, 0, Math.PI*2); g.fill();
 
-  // Φόρτωση των επιλεγμένων μερών
   const parts = save.equippedPets || ['pet_base'];
 
-  // 2. Μάτια
-  if(parts.includes('pet_eyes')) {
-    g.fillStyle = "#FFF"; g.beginPath(); g.arc(cx-35, cy-30, 25, 0, Math.PI*2); g.fill();
-    g.beginPath(); g.arc(cx+35, cy-30, 25, 0, Math.PI*2); g.fill();
-    g.fillStyle = "#000"; g.beginPath(); g.arc(cx-35, cy-25, 8, 0, Math.PI*2); g.fill();
-    g.beginPath(); g.arc(cx+35, cy-25, 8, 0, Math.PI*2); g.fill();
-    g.fillStyle = "#FFF"; g.beginPath(); g.arc(cx-45, cy-35, 3, 0, Math.PI*2); g.fill();
-    g.beginPath(); g.arc(cx+25, cy-35, 3, 0, Math.PI*2); g.fill();
+  // 2. Μάτια & Βλεφαρίδες
+  if(parts.includes('pet_eyes') || parts.includes('pet_lashes')) {
+    let eyeY = -30;
+    g.fillStyle = "#FFF"; g.beginPath(); g.arc(cx-35, cy+eyeY, 25, 0, Math.PI*2); g.fill();
+    g.beginPath(); g.arc(cx+35, cy+eyeY, 25, 0, Math.PI*2); g.fill();
+    g.fillStyle = "#000"; g.beginPath(); g.arc(cx-35, cy+eyeY+5, 8, 0, Math.PI*2); g.fill();
+    g.beginPath(); g.arc(cx+35, cy+eyeY+5, 8, 0, Math.PI*2); g.fill();
+    g.fillStyle = "#FFF"; g.beginPath(); g.arc(cx-45, cy+eyeY-5, 3, 0, Math.PI*2); g.fill();
+    g.beginPath(); g.arc(cx+25, cy+eyeY-5, 3, 0, Math.PI*2); g.fill();
+    
+    // Βλεφαρίδες (Girl)
+    if(parts.includes('pet_lashes')) {
+       g.strokeStyle = "#000"; g.lineWidth = 3;
+       for(let lx of [-45, -25, 45, 25]) {
+          g.beginPath(); g.moveTo(lx, cy+eyeY+20); g.lineTo(lx-10, cy+eyeY+35); g.stroke();
+          g.beginPath(); g.moveTo(lx+5, cy+eyeY+20); g.lineTo(lx-5, cy+eyeY+38); g.stroke();
+       }
+    }
   }
-  else if(parts.includes('pet_eye')) { // Ένα Μάτι
+  else if(parts.includes('pet_eye')) {
     g.fillStyle = "#FFF"; g.beginPath(); g.arc(cx, cy-30, 35, 0, Math.PI*2); g.fill();
     g.fillStyle = "#00BFFF"; g.beginPath(); g.arc(cx, cy-20, 15, 0, Math.PI*2); g.fill();
     g.fillStyle = "#000"; g.beginPath(); g.arc(cx, cy-20, 6, 0, Math.PI*2); g.fill();
     g.fillStyle = "#FFF"; g.beginPath(); g.arc(cx-10, cy-25, 3, 0, Math.PI*2); g.fill();
   }
 
-  // 3. Στόμα
-  if(parts.includes('pet_mouth')) {
-    g.fillStyle = "#800000"; g.beginPath(); g.arc(cx, cy+10, 30, 0, Math.PI); g.fill();
-    g.fillStyle = "#FF69B4"; g.beginPath(); g.arc(cx, cy+10, 15, 0, Math.PI); g.fill();
+  // 3. Στόμα & Κοκκινόχειλα
+  if(parts.includes('pet_mouth') || parts.includes('pet_lipstick')) {
+    let mouthY = 10;
+    if(parts.includes('pet_lipstick')) {
+       g.fillStyle = "#DC143C"; // Κόκκινο χείλος
+       g.beginPath(); g.arc(cx, cy+mouthY-5, 20, 0, Math.PI); g.fill();
+       g.fillStyle = "#8B0000"; g.beginPath(); g.arc(cx, cy+mouthY+5, 15, 0, Math.PI); g.fill();
+    } else {
+       g.fillStyle = "#800000"; g.beginPath(); g.arc(cx, cy+mouthY, 30, 0, Math.PI); g.fill();
+       g.fillStyle = "#FF69B4"; g.beginPath(); g.arc(cx, cy+mouthY, 15, 0, Math.PI); g.fill();
+    }
   }
   else if(parts.includes('pet_tongue')) {
     g.fillStyle = "#FF69B4"; g.beginPath(); g.ellipse(cx, cy+40, 25, 40, 0, 0, Math.PI*2); g.fill();
@@ -573,25 +700,27 @@ function createPetTexture() {
     g.beginPath(); g.arc(cx+6, cy, 3, 0, Math.PI*2); g.fill(); 
   }
 
-  // 5. Χέρια (Συμμετρικά)
+  // 5. Χέρια & Λουλούδι
   if(parts.includes('pet_arm')) {
     g.fillStyle = "#8B4513"; g.save(); g.translate(cx-110, cy+20); g.rotate(-0.3); g.fillRect(0, 0, 30, 15); g.restore();
     g.fillStyle = "#D2B48C"; g.save(); g.translate(cx+80, cy+20); g.rotate(0.3); g.fillRect(0, 0, 30, 15); g.restore();
   }
-
-  // 6. Πόδια (Συμμετρικά)
-  if(parts.includes('pet_leg')) {
-    g.fillStyle = "#D2B48C"; g.fillRect(cx-25, cy+85, 15, 30); 
-    g.fillRect(cx+10, cy+85, 15, 30);
+  if(parts.includes('pet_flower')) { // Λουλούδι (Girl)
+     g.fillStyle = "#FF69B4"; g.beginPath(); g.arc(cx-90, cy-20, 15, 0, Math.PI*2); g.fill();
+     g.fillStyle = "#FFD700"; g.beginPath(); g.arc(cx-90, cy-20, 6, 0, Math.PI*2); g.fill();
   }
 
-  // 7. Καπέλο
+  // 6. Καπέλο & Φιόγκος
   if(parts.includes('pet_hat')) {
     g.fillStyle = "#000"; g.fillRect(cx-40, cy-110, 80, 10);
     g.fillRect(cx-25, cy-140, 50, 35);
     g.fillStyle = "#FF0000"; g.fillRect(cx-5, cy-105, 10, 5);
   }
-  // 8. Κράνος
+  if(parts.includes('pet_bow')) { // Φιόγκος (Girl)
+     g.fillStyle = "#FF1493"; g.beginPath(); g.arc(cx-35, cy-110, 18, 0, Math.PI*2); g.fill();
+     g.beginPath(); g.arc(cx+35, cy-110, 18, 0, Math.PI*2); g.fill();
+     g.fillStyle = "#FF69B4"; g.beginPath(); g.arc(cx, cy-105, 12, 0, Math.PI*2); g.fill();
+  }
   else if(parts.includes('pet_helmet')) {
     g.fillStyle = "#FFA500"; g.beginPath(); g.arc(cx, cy-10, 85, Math.PI, 2*Math.PI); g.fill();
     g.fillStyle = "#FFF"; g.fillRect(cx-10, cy-95, 20, 5);
@@ -609,7 +738,6 @@ function updatePetVisual() {
   petMesh.position.set(0, -BOARD_H/2 - 1.5, 0.1);
   petMesh.scale.set(1.8, 1.8, 1);
   
-  // Προσθήκη αλληλεπίδρασης κλικ
   petMesh.userData.isPet = true;
   scene.add(petMesh);
 }
@@ -643,29 +771,28 @@ function initThree(){
   scene = new THREE.Scene();
   scene.background = new THREE.Color(0x0B0C10); 
 
-  // BACKGROUND EMOJIS (3D Movement)
-  const bgEmojis = ['⚡️', '⭐️', '🌟', '🌎', '🛰️', '🚀', '🪐', '🛸'];
+  // BACKGROUND EMOJIS (Moving towards depth Z)
+  const bgEmojis = ['✨', '💫', '🪐', '🚀', '🛸', '🌍', '☄️']; // Removed broken stars
   bgEmojis.forEach(emoji => {
-    for(let i=0; i<4; i++) {
+    for(let i=0; i<5; i++) {
       const tex = createEmojiTexture(emoji);
       const mat = new THREE.SpriteMaterial({ map: tex, transparent: true });
       const sprite = new THREE.Sprite(mat);
       const size = Math.random() * 2 + 1.5;
       sprite.scale.set(size, size, 1);
       
+      // Place them deep and moving towards Z
       sprite.position.set(
-        (Math.random()-0.5)*50, 
-        (Math.random()-0.5)*50, 
-        -10 - Math.random()*50
+        (Math.random()-0.5)*60, 
+        (Math.random()-0.5)*60, 
+        10 + Math.random()*20 // Starting close, moving back
       );
       
       sprite.userData = { 
-        speed: Math.random()*1 + 0.5, 
-        wobbleAmpX: Math.random()*0.05,
-        wobbleAmpY: Math.random()*0.05,
-        dirX: (Math.random() - 0.5) * 3,
-        dirY: (Math.random() - 0.5) * 3,
-        dirZ: -0.8 - Math.random()*2,
+        speed: Math.random()*2 + 1, 
+        dirX: (Math.random() - 0.5) * 2,
+        dirY: (Math.random() - 0.5) * 2,
+        dirZ: -Math.random()*3 - 1.5, // Moving away towards -Z
         timeOffset: Math.random() * 100
       };
       scene.add(sprite);
@@ -969,8 +1096,11 @@ function checkWin(){
   busy = true; 
   coins += 25; save.coins = coins; best = Math.max(best, score); save.best = best;
   save.level = Math.min(level+1, LEVELS.length-1); persist(); updateHUD();
-  document.getElementById("winText").innerHTML = `Έφτιαξες ${t}!<br>+25 🪙`;
   
+  // Update Win Modal UI
+  document.getElementById("winNumberBox").textContent = t;
+  
+  // Bounce Cubes
   for(let c=0;c<COLS;c++) for(let r=0;r<ROWS;r++) {
     if(grid[c][r]) {
       const mesh = grid[c][r].mesh;
@@ -988,7 +1118,14 @@ function checkWin(){
   
   if(winTimer) clearTimeout(winTimer);
   winTimer = setTimeout(() => {
+    playSound('win'); // Win Sound & Claps!
     document.getElementById("winModal").classList.remove("hidden");
+    // Fireworks!
+    for(let i=0; i<5; i++) {
+       setTimeout(() => {
+          spawnBurst((Math.random()-0.5)*10, Math.random()*5, (Math.random()-0.5)*5, 'confetti', 30);
+       }, i * 300);
+    }
     winTimer = null;
   }, 3000);
   
@@ -1011,13 +1148,11 @@ function onTap(e){
   const hit = new THREE.Vector3(); raycaster.ray.intersectPlane(new THREE.Plane(new THREE.Vector3(0,0,1).applyQuaternion(boardGroup.quaternion), 0), hit);
   boardGroup.worldToLocal(hit);
   
-  // Έλεγχος αν πατήθηκε το Pet
   if(petMesh) {
       const petPos = new THREE.Vector3();
       petMesh.getWorldPosition(petPos);
       const dist = hit.distanceTo(petPos);
-      if(dist < 0.8) {
-          // Άνοιγμα modal pet
+      if(dist < 1.0) {
           document.getElementById('petBest').textContent = save.best;
           document.getElementById('petScore').textContent = score;
           document.getElementById('petLevel').textContent = level+1;
@@ -1067,7 +1202,7 @@ function finMagnet(mg){
   setTimeout(()=>{ resolveMerges([]).then(()=>{ busy=false; updateHUD(); persist(); }); }, 250);
 }
 
-/* ---------------- Shop System (Pet Included) ---------------- */
+/* ---------------- Shop System (Pet Multi-Part) ---------------- */
 function renderShop() {
   const container = document.getElementById('shopContainer'); container.innerHTML = '';
   const arr = SHOP[currentShopTab] || [];
@@ -1090,13 +1225,10 @@ function renderShop() {
     
     el.onclick = () => {
       if (currentShopTab === 'pets') {
-          // Pet System Logic (Toggle parts)
           if (isEquipped) {
-              // Remove part
               save[propEquip] = save[propEquip].filter(id => id !== item.id);
               persist(); renderShop(); applyShopChanges(); toast("Αφαίρεσες το " + item.name);
           } else {
-              // Add part (if owned)
               if (!isOwned) {
                   save[propOwned].push(item.id);
               }
@@ -1104,7 +1236,6 @@ function renderShop() {
               persist(); renderShop(); applyShopChanges(); toast("Φόρεσες το " + item.name + "!");
           }
       } else {
-          // Standard Shop Logic
           if (isOwned) { save[propEquip] = item.id; persist(); renderShop(); applyShopChanges(); }
           else {
             save[propOwned].push(item.id); save[propEquip] = item.id;
@@ -1147,14 +1278,19 @@ function loop(t){
 
   bgElements.forEach(el => {
     const u = el.userData;
+    // Movement towards Z (Deep Space)
+    el.position.z += u.dirZ * u.speed * dt * 3;
+    el.position.x += u.dirX * u.speed * dt * 0.5;
+    el.position.y += u.dirY * u.speed * dt * 0.5;
     
-    el.position.x += u.dirX * u.speed * dt * 2;
-    el.position.y += u.dirY * u.speed * dt * 2;
-    el.position.z += u.dirZ * u.speed * dt * 2;
-
-    if (el.position.z < -40) { el.position.z = 30; el.position.x = (Math.random()-0.5)*40; el.position.y = (Math.random()-0.5)*40; }
-    if (el.position.x < -25 || el.position.x > 25) { u.dirX *= -1; }
-    if (el.position.y < -25 || el.position.y > 25) { u.dirY *= -1; }
+    // If passed far away (z < -30), respawn close to camera (z = 20)
+    if (el.position.z < -30) { 
+       el.position.z = 20 + Math.random()*10; 
+       el.position.x = (Math.random()-0.5)*60; 
+       el.position.y = (Math.random()-0.5)*60; 
+       u.dirZ = -Math.random()*3 - 1.5; // New random speed
+       u.speed = Math.random()*2 + 1;
+    }
   });
 
   if(currentCube && !busy) currentCube.rotation.y = Math.sin(t*0.002)*0.12;
