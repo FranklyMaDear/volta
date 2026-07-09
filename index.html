@@ -1,9 +1,9 @@
-<!DOCTYPE html> 
+<!DOCTYPE html>
 <html lang="el">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Drop 2048 · Deep Space Custom Edition</title>
+<title>Drop 2048 · Starfield Edition</title>
 <style>
   :root{
     --bg:#0B0C10; --panel:#8C6A4F; --panel-deep:#4A3423;
@@ -146,9 +146,8 @@
 /* =====================================================
    Drop 2048 · Deep Space & Full Customization
    - 10 κύβοι, 10 ταμπλό, 10 εφέ, 10 ήχοι
+   - Starfield (αστέρια που ταξιδεύουν)!
    - Όλα ΔΩΡΕΑΝ
-   - Βελτιωμένη ορατότητα αριθμών
-   - Animation χοροπηδητού στη νίκη
 ===================================================== */
 
 const COLS = 5, ROWS = 6, CELL = 1.0, GAP = 0.12; 
@@ -180,7 +179,7 @@ const SHOP = {
   ],
   boards: [
     { id: 'board_wood', name: 'Ξύλινο', price: 0, icon: '🟫', back: '#4A3423', cell: '#2F1B0D' },
-    { id: 'board_space', name: 'Βαθύ Διάστημα', price: 0, icon: '🟦', back: '#0B132B', cell: '#4A5A8A' }, // Adjusted for contrast
+    { id: 'board_space', name: 'Βαθύ Διάστημα', price: 0, icon: '🟦', back: '#0B132B', cell: '#4A5A8A' },
     { id: 'board_crimson', name: 'Πορφυρό', price: 0, icon: '🟥', back: '#3A0CA3', cell: '#A47CFF' },
     { id: 'board_emerald', name: 'Σμαράγδι', price: 0, icon: '🟩', back: '#004B23', cell: '#7BDF4B' },
     { id: 'board_white', name: 'Λευκός Καμβάς', price: 0, icon: '⬜', back: '#F5F5F5', cell: '#E0E0E0' },
@@ -218,17 +217,8 @@ const SHOP = {
 
 let currentShopTab = 'cubes';
 
-/* ---------------- state ---------------- */
-let scene, camera, renderer, boardGroup, raycaster, pointer, bgElements = [];
-let backMesh, cellMat; 
-let grid = [];
-let currentCube = null;
-let aimCol = 2, busy = false, hammerMode = false, isLaunching = false;
-let score = 0, coins = 500, level = 0, best = 0;
-let anims = [];
-let matCache = {};
-
-let save = { 
+/* ---------------- DEFAULT SAVE (Διορθωμένο) ---------------- */
+const DEFAULT_SAVE = { 
   coins: 50, level: 0, best: 0, score: 0, 
   ownedCubes: ['wood'], equippedCube: 'wood',
   ownedBoards: ['board_wood'], equippedBoard: 'board_wood',
@@ -236,14 +226,19 @@ let save = {
   ownedSounds: ['snd_default'], equippedSound: 'snd_default'
 };
 
+let save = { ...DEFAULT_SAVE };
+
 async function loadSave(){
   try{
-    const r = localStorage.getItem("drop2048-save-v4");
-    if(r) save = Object.assign(save, JSON.parse(r));
+    const r = localStorage.getItem("drop2048-save-v5");
+    if(r) {
+      const parsed = JSON.parse(r);
+      save = Object.assign({}, DEFAULT_SAVE, parsed);
+    }
   }catch(e){ }
 }
 function persist(){
-  try{ localStorage.setItem("drop2048-save-v4", JSON.stringify(save)); }catch(e){ }
+  try{ localStorage.setItem("drop2048-save-v5", JSON.stringify(save)); }catch(e){ }
 }
 
 /* ---------------- Audio (10 Different Sounds) ---------------- */
@@ -255,19 +250,16 @@ function playSound(type) {
   const soundId = save.equippedSound || 'snd_default';
   const soundData = SHOP.sounds.find(s => s.id === soundId);
   
-  // Αν δεν βρεθεί, χρησιμοποιούμε default
   if(!soundData) {
     if(type === 'drop') playDropDefault(audioCtx);
     else if(type === 'merge') playMergeDefault(audioCtx);
     return;
   }
 
-  // Καλούμε τη συνάρτηση αναλόγως
   if(type === 'drop') playSoundDrop(soundId, audioCtx);
   else if(type === 'merge') playSoundMerge(soundId, audioCtx);
 }
 
-// ---------- Sound Generators ----------
 function playDropDefault(ctx) {
   const osc = ctx.createOscillator(); const gain = ctx.createGain();
   osc.connect(gain); gain.connect(ctx.destination);
@@ -324,7 +316,6 @@ function playSoundDrop(id, ctx) {
     case 'snd_dolby':
       osc.type = 'sine'; osc.frequency.setValueAtTime(500, ctx.currentTime); 
       gain.gain.setValueAtTime(0.25, ctx.currentTime); gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.2);
-      // Δημιουργία εφέ surround με δημιουργία 2ου ταλαντωτή (panning)
       const osc2 = ctx.createOscillator(); const gain2 = ctx.createGain();
       osc2.connect(gain2); gain2.connect(ctx.destination);
       osc2.type = 'sine'; osc2.frequency.setValueAtTime(300, ctx.currentTime);
@@ -442,6 +433,45 @@ function updateParticles(dt) {
   }
 }
 
+/* ---------------- STARFIELD (Αστέρια ταξιδιού) ---------------- */
+let starField;
+function initStarfield() {
+  const starCount = 2000;
+  const starGeo = new THREE.BufferGeometry();
+  const starPos = new Float32Array(starCount * 3);
+  for (let i = 0; i < starCount * 3; i += 3) {
+    starPos[i] = (Math.random() - 0.5) * 200;     // X
+    starPos[i+1] = (Math.random() - 0.5) * 200;   // Y
+    starPos[i+2] = (Math.random() - 0.5) * 200 - 50; // Z (μακριά)
+  }
+  starGeo.setAttribute('position', new THREE.BufferAttribute(starPos, 3));
+  
+  const starMat = new THREE.PointsMaterial({
+    color: 0xffffff,
+    size: 0.2,
+    transparent: true,
+    opacity: 0.8,
+    blending: THREE.AdditiveBlending
+  });
+  starField = new THREE.Points(starGeo, starMat);
+  starField.position.z = -20; // Τοποθετούμε το σύστημα λίγο πίσω
+  scene.add(starField);
+}
+
+function updateStarfield(speed) {
+  if (!starField) return;
+  const positions = starField.geometry.attributes.position.array;
+  for (let i = 2; i < positions.length; i += 3) {
+    positions[i] += speed; // Κίνηση στον άξονα Z (προς την κάμερα)
+    if (positions[i] > 50) { // Αν περάσει μπροστά
+      positions[i] = -150; // Επαναφορά πίσω
+      positions[i-2] = (Math.random() - 0.5) * 200; // Νέο X
+      positions[i-1] = (Math.random() - 0.5) * 200; // Νέο Y
+    }
+  }
+  starField.geometry.attributes.position.needsUpdate = true;
+}
+
 /* ---------------- Emoji Background Generator ---------------- */
 function createEmojiTexture(emoji) {
   const cv = document.createElement("canvas");
@@ -463,38 +493,32 @@ function initThree(){
   scene = new THREE.Scene();
   scene.fog = new THREE.Fog("#0B0C10", 15, 30);
 
-  const bgEmojis = ['🌟', '⚡️', '⭐️', '🪐', '🌎', '🌙', '🚀', '🛸', '🛰️', '🗼', '🛩️'];
+  // Background Emojis (Μικρότερα τώρα που έχουμε αστέρια)
+  const bgEmojis = ['🌟', '⚡️', '⭐️'];
   
   bgEmojis.forEach(emoji => {
-    for(let i=0; i<3; i++) {
+    for(let i=0; i<2; i++) {
       const tex = createEmojiTexture(emoji);
       const mat = new THREE.SpriteMaterial({ map: tex, transparent: true });
       const sprite = new THREE.Sprite(mat);
       
-      const size = Math.random() * 2 + 1.5;
+      const size = Math.random() * 1.5 + 1;
       sprite.scale.set(size, size, 1);
       
-      let dirY = -1; 
-      let dirX = 0;
+      let dirY = -0.3;
       let isStar = false;
 
-      if (['🚀', '🛸', '🛩️'].includes(emoji)) {
-         dirY = 1.2; dirX = (Math.random() - 0.5) * 0.5;
-         sprite.position.set((Math.random()-0.5)*30, -20 - Math.random()*20, -6 - Math.random()*15);
-      } else if (['🌟', '⭐️', '⚡️'].includes(emoji)) {
-         dirY = -0.15; isStar = true;
+      if (['🌟', '⭐️', '⚡️'].includes(emoji)) {
+         dirY = -0.1; isStar = true;
          sprite.position.set((Math.random()-0.5)*30, Math.random()*40, -6 - Math.random()*15);
-      } else {
-         dirY = -0.5;
-         sprite.position.set((Math.random()-0.5)*30, Math.random()*40, -6 - Math.random()*15);
-      }
+      } 
       
       sprite.userData = { 
-        speed: Math.random()*2 + 1, 
+        speed: Math.random()*1 + 0.5, 
         wobbleSpeed: Math.random()*2,
         wobbleAmp: Math.random()*0.05,
         dirY: dirY,
-        dirX: dirX,
+        dirX: 0,
         isStar: isStar,
         baseSize: size,
         timeOffset: Math.random() * 100
@@ -529,6 +553,9 @@ function initThree(){
   }
 
   updateBoardColorsLive();
+
+  // Προσθήκη των αστεριών (Starfield)
+  initStarfield();
 
   raycaster = new THREE.Raycaster(); pointer = new THREE.Vector2();
   onResize(); addEventListener("resize", onResize); requestAnimationFrame(loop);
@@ -605,25 +632,23 @@ function numberTexture(value){
     g.fillStyle = grad; roundRect(g,4,4,120,120,22); g.fill();
   }
 
-  // Σχεδίαση αριθμού ΜΕΣΑ σε στρογγυλό πλαίσιο για συγκεκριμένα χρώματα
+  // Σχεδίαση αριθμού ΜΕΣΑ σε στρογγυλό πλαίσιο
   let txtCol = (skin==='wood'&&value<128)||skin==='whitered'||skin==='whitegreen'||skin==='zebra' ? "#111" : "#FFF";
   if(skin==='gold') txtCol = "#3E2723";
   if(skin==='neon') txtCol = `hsl(${(Math.log2(value)*30)%360}, 100%, 65%)`;
   if(skin==='ice') txtCol = "#01579B";
   if(skin==='lava') txtCol = "#4E1500";
 
-  // Αν ο κύβος είναι δίχρωμος ή ζέβρα, βάζουμε τον αριθμό σε κύκλο
   if (['whitered', 'whitegreen', 'zebra'].includes(skin)) {
       g.beginPath(); g.arc(64, 64, 40, 0, Math.PI * 2);
       g.fillStyle = "rgba(255, 255, 255, 0.85)"; g.fill();
       g.strokeStyle = "#333"; g.lineWidth = 3; g.stroke();
-      txtCol = "#000"; // Σίγουρα μαύρο για αντίθεση
+      txtCol = "#000";
   }
 
   g.font = `800 ${value>=1024?42:value>=128?50:60}px 'Baloo 2', sans-serif`;
   g.textAlign="center"; g.textBaseline="middle";
 
-  // Πρόσθετο λευκό περίγραμμα για όλους τους αριθμούς ώστε να φαίνονται παντού
   g.shadowColor = "rgba(0,0,0,0.8)"; g.shadowBlur = 10; 
   
   g.fillStyle = txtCol;
@@ -702,7 +727,7 @@ function launch(){
   if(h >= ROWS){ gameOver(); return; }
   busy = true; isLaunching = true;
   
-  playSound('drop'); // Ήχος πτώσης
+  playSound('drop');
 
   const targetR = h; const p = cellPos(c, targetR);
   const cube = currentCube; currentCube = null;
@@ -738,7 +763,7 @@ async function resolveMerges(queue){
       });
     });
     
-    playSound('merge'); // Ήχος συγχώνευσης
+    playSound('merge');
     const eff = save.equippedEffect;
     if(eff !== 'eff_none' && eff !== 'eff_flame' && eff !== 'eff_sparkle' && eff !== 'eff_smoke') { 
       const wp = new THREE.Vector3(); cell.mesh.getWorldPosition(wp);
@@ -784,13 +809,11 @@ function checkWin(){
   document.getElementById("winText").innerHTML = `Έφτιαξες ${t}!<br>+25 🪙`;
   document.getElementById("winModal").classList.remove("hidden");
   
-  // Χοροπηδητό (Bounce) όλων των κύβων
   for(let c=0;c<COLS;c++) for(let r=0;r<ROWS;r++) {
     if(grid[c][r]) {
       const mesh = grid[c][r].mesh;
       const origY = mesh.position.y;
-      // Δημιουργία αλυσίδας από tweens για bounce
-      let delay = (c + r) * 50; // Καθυστέρηση για εφέ κύματος
+      let delay = (c + r) * 50;
       setTimeout(() => {
         tween(mesh.position, {y: origY + 0.3}, 0.15, null, () => {
           tween(mesh.position, {y: origY - 0.15}, 0.15, null, () => {
@@ -857,10 +880,12 @@ function finMagnet(mg){
   setTimeout(()=>{ resolveMerges([]).then(()=>{ busy=false; updateHUD(); persist(); }); }, 250);
 }
 
-/* ---------------- Shop System (ALL FREE) ---------------- */
+/* ---------------- Shop System (ΔΩΡΕΑΝ & ΔΙΟΡΘΩΜΕΝΟ) ---------------- */
 function renderShop() {
   const container = document.getElementById('shopContainer'); container.innerHTML = '';
-  const arr = SHOP[currentShopTab];
+  
+  // Βεβαιωνόμαστε ότι η κατηγορία υπάρχει
+  const arr = SHOP[currentShopTab] || [];
   
   arr.forEach(item => {
     let propOwned = currentShopTab === 'cubes' ? 'ownedCubes' : 
@@ -870,7 +895,7 @@ function renderShop() {
                     currentShopTab === 'boards' ? 'equippedBoard' : 
                     currentShopTab === 'effects' ? 'equippedEffect' : 'equippedSound';
     
-    const isOwned = save[propOwned].includes(item.id);
+    const isOwned = save[propOwned] && save[propOwned].includes(item.id);
     const isEquipped = save[propEquip] === item.id;
     
     const el = document.createElement('div'); el.className = `shop-item ${isOwned?'owned':''} ${isEquipped?'equipped':''}`;
@@ -886,6 +911,7 @@ function renderShop() {
     container.appendChild(el);
   });
 }
+
 function applyShopChanges() {
   if(currentShopTab === 'boards') updateBoardColorsLive();
   if(currentShopTab === 'cubes') { matCache = {}; toast("Η εμφάνιση κύβου άλλαξε!"); }
@@ -912,10 +938,12 @@ let lastT = 0;
 function loop(t){
   const dt = Math.min(0.05, (t-lastT)/1000); lastT = t; stepAnims(dt); updateParticles(dt);
   
+  // Ενημέρωση Starfield (Ταχύτητα 0.8)
+  updateStarfield(0.8);
+
   bgElements.forEach(el => {
     const u = el.userData;
     el.position.y += u.dirY * u.speed * dt * 3; 
-    el.position.x += u.dirX * u.speed * dt * 3;
 
     if(u.wobbleSpeed) {
        el.position.x += Math.sin(t * 0.001 * u.wobbleSpeed + u.timeOffset) * u.wobbleAmp;
@@ -929,15 +957,11 @@ function loop(t){
     if(u.dirY < 0 && el.position.y < -20) { 
        el.position.y = 30 + Math.random()*10; 
        el.position.x = (Math.random()-0.5)*30; 
-    } else if (u.dirY > 0 && el.position.y > 30) {
-       el.position.y = -20 - Math.random()*10; 
-       el.position.x = (Math.random()-0.5)*30;
     }
   });
 
   if(currentCube && !busy) currentCube.rotation.y = Math.sin(t*0.002)*0.12;
   
-  // Εφέ κατά την πτώση (Φλόγα, Σπίθες, Καπνός)
   if(isLaunching && currentCube) {
     const eff = save.equippedEffect;
     if(eff === 'eff_flame') {
