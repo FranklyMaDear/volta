@@ -3,11 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Drop 2048 · 3D</title>
+<title>Drop 2048 · Space Wood Edition</title>
 <style>
   :root{
-    --bg:#EADFC8; --panel:#8C6A4F; --panel-deep:#6E4F38; --cream:#F7EFDC;
-    --ink:#4A3423; --accent:#F2A03D; --good:#7FA653; --coin:#F5C542;
+    --bg:#0B0C10; --panel:#8C6A4F; --panel-deep:#4A3423;
+    --cream:#F7EFDC;
+    --ink:#2F1B0D; --accent:#F2A03D; --good:#7FA653; --coin:#F5C542;
   }
   *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
   html,body{height:100%;overflow:hidden}
@@ -17,25 +18,28 @@
     color:var(--ink); user-select:none; touch-action:none;
   }
   @import url('https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700;800&display=swap');
-  #game{position:fixed;inset:0;display:block}
+  
+  #game{position:fixed;inset:0;display:block; z-index:0;}
+  
   /* ---------- HUD ---------- */
   .hud{position:fixed;left:0;right:0;top:0;padding:10px 12px;display:flex;gap:8px;align-items:center;pointer-events:none;z-index:5}
   .chip{
     background:var(--panel-deep);color:var(--cream);border-radius:14px;padding:6px 12px;
-    font-weight:800;font-size:15px;box-shadow:0 3px 0 rgba(0,0,0,.18);display:flex;align-items:center;gap:6px;
+    font-weight:800;font-size:15px;box-shadow:0 3px 0 rgba(0,0,0,.3);display:flex;align-items:center;gap:6px;
   }
   .chip small{font-weight:600;opacity:.75;font-size:11px;display:block;line-height:1}
   .chip .big{font-size:17px;line-height:1.1}
   .spacer{flex:1}
   #missionBar{
-    position:fixed;top:58px;left:50%;transform:translateX(-50%);z-index:5;pointer-events:none;
+    position:fixed;top:65px;left:50%;transform:translateX(-50%);z-index:5;pointer-events:none;
     background:var(--cream);border:3px solid var(--panel-deep);color:var(--ink);
-    border-radius:16px;padding:7px 16px;font-weight:700;font-size:14px;box-shadow:0 4px 0 rgba(0,0,0,.15);
+    border-radius:16px;padding:7px 16px;font-weight:700;font-size:14px;box-shadow:0 4px 0 rgba(0,0,0,.3);
     white-space:nowrap;
   }
   #missionBar b{color:#C2542F}
+  
   /* ---------- power-ups ---------- */
-  .powerbar{position:fixed;bottom:14px;left:0;right:0;display:flex;justify-content:center;gap:14px;z-index:5}
+  .powerbar{position:fixed;bottom:14px;left:0;right:0;display:flex;justify-content:center;gap:10px;z-index:5}
   .pbtn{
     pointer-events:auto;border:none;cursor:pointer;width:66px;height:66px;border-radius:18px;
     background:var(--good);box-shadow:0 4px 0 #5c7a3a;color:#fff;font-size:26px;line-height:1;
@@ -46,11 +50,12 @@
   .pbtn .cost{font-size:11px;font-weight:800;background:rgba(0,0,0,.22);border-radius:8px;padding:1px 7px}
   .pbtn.armed{outline:4px solid var(--accent);background:#C2542F;box-shadow:0 4px 0 #8f3c20}
   .pbtn:disabled{filter:grayscale(.8);opacity:.6;cursor:default}
+  
   /* ---------- modals ---------- */
-  .overlay{position:fixed;inset:0;background:rgba(60,40,20,.55);display:flex;align-items:center;justify-content:center;z-index:20;backdrop-filter:blur(2px)}
+  .overlay{position:fixed;inset:0;background:rgba(11,12,16,.75);display:flex;align-items:center;justify-content:center;z-index:20;backdrop-filter:blur(3px)}
   .card{
     background:var(--cream);border:4px solid var(--panel-deep);border-radius:26px;padding:26px 24px;
-    width:min(340px,88vw);text-align:center;box-shadow:0 10px 0 rgba(0,0,0,.2);
+    width:min(340px,88vw);text-align:center;box-shadow:0 10px 0 rgba(0,0,0,.4);
     animation:pop .25s cubic-bezier(.34,1.56,.64,1);
   }
   @keyframes pop{from{transform:scale(.7);opacity:0}}
@@ -71,6 +76,7 @@
   .day.today{background:var(--coin);border-color:#b8742a;color:#6b4a12;transform:scale(1.12)}
   .day.done{background:var(--good);color:#fff}
   .hidden{display:none!important}
+  
   #toast{
     position:fixed;bottom:96px;left:50%;transform:translateX(-50%);z-index:15;pointer-events:none;
     background:var(--panel-deep);color:var(--cream);font-weight:700;font-size:14px;border-radius:14px;
@@ -90,13 +96,13 @@
 <div id="missionBar">🎯 Αποστολή: <b id="missionText"></b></div>
 
 <div class="powerbar">
+  <button class="pbtn" id="btnMagnet">🧲<span class="cost">20 🪙</span></button>
   <button class="pbtn" id="btnHammer">🔨<span class="cost">15 🪙</span></button>
   <button class="pbtn" id="btnShuffle">🔄<span class="cost">5 🪙</span></button>
 </div>
 
 <div id="toast"></div>
 
-<!-- Daily reward -->
 <div class="overlay hidden" id="dailyModal">
   <div class="card">
     <div class="bear">🐻</div>
@@ -107,7 +113,6 @@
   </div>
 </div>
 
-<!-- Level complete -->
 <div class="overlay hidden" id="winModal">
   <div class="card">
     <div class="bear">🎉</div>
@@ -117,7 +122,6 @@
   </div>
 </div>
 
-<!-- Game over -->
 <div class="overlay hidden" id="loseModal">
   <div class="card">
     <div class="bear">😵</div>
@@ -130,12 +134,10 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script>
 /* =====================================================
-   Drop 2048 · 3D  —  MVP prototype
-   Μηχανισμός: εκτόξευση κύβων προς τα πάνω, συγχώνευση
-   ίδιων αριθμών, levels/αποστολές, power-ups, daily rewards.
-   ===================================================== */
+   Drop 2048 · 3D Space & Wood Edition
+===================================================== */
 
-const COLS = 5, ROWS = 7, CELL = 1.0, GAP = 0.12;
+const COLS = 5, ROWS = 6, CELL = 1.0, GAP = 0.12; 
 const BOARD_W = COLS * (CELL + GAP) - GAP;
 const BOARD_H = ROWS * (CELL + GAP) - GAP;
 
@@ -144,39 +146,64 @@ const LEVELS = [
   { target: 128,  preset: 4, text: "Φτιάξε έναν κύβο 128" },
   { target: 256,  preset: 7, text: "Φτιάξε έναν κύβο 256" },
   { target: 512,  preset: 9, text: "Φτιάξε έναν κύβο 512" },
+  { target: 1024, preset: 12, text: "Φτιάξε έναν κύβο 1024" },
 ];
 
+// Ξύλινη χρωματική παλέτα
 const TILE_COLORS = {
-  2:"#E88A2E", 4:"#A3B03E", 8:"#B0489B", 16:"#4A90D9", 32:"#E85D5D",
-  64:"#3FBFA8", 128:"#F2C038", 256:"#8A6FE8", 512:"#E8557F",
-  1024:"#5CD65C", 2048:"#2F3B52"
+  2: "#DEB887", 4: "#D2B48C", 8: "#C19A6B", 16: "#B8860B", 32: "#CD853F",
+  64: "#D2691E", 128: "#8B4513", 256: "#A0522D", 512: "#800000",
+  1024: "#5C4033", 2048: "#3E2723"
 };
 
 /* ---------------- state ---------------- */
-let scene, camera, renderer, boardGroup, raycaster, pointer;
-let grid = [];            // grid[c][r] -> {value, mesh} | null   (r=0 = πάνω)
-let currentCube = null;   // ο κύβος που ετοιμάζεται για ρίψη
+let scene, camera, renderer, boardGroup, raycaster, pointer, stars;
+let grid = [];
+let currentCube = null;
 let aimCol = 2, busy = false, hammerMode = false;
 let score = 0, coins = 0, level = 0, best = 0;
 let anims = [];
 const matCache = {};
 
+/* ---------------- audio ---------------- */
+const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+function playSound(type) {
+  if(audioCtx.state === 'suspended') audioCtx.resume();
+  const osc = audioCtx.createOscillator();
+  const gain = audioCtx.createGain();
+  osc.connect(gain);
+  gain.connect(audioCtx.destination);
+  
+  if (type === 'merge') {
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(300, audioCtx.currentTime);
+    osc.frequency.exponentialRampToValueAtTime(800, audioCtx.currentTime + 0.1);
+    gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1);
+    osc.start();
+    osc.stop(audioCtx.currentTime + 0.1);
+  }
+}
+
 /* ---------------- persistent save ---------------- */
 const SAVE_KEY = "drop2048-save";
 let save = { coins: 30, level: 0, best: 0, lastDay: null, streak: 0 };
-
 async function loadSave(){
   try{
     if(window.storage){
       const r = await window.storage.get(SAVE_KEY);
       if(r && r.value) save = Object.assign(save, JSON.parse(r.value));
+    } else {
+      const r = localStorage.getItem(SAVE_KEY);
+      if(r) save = Object.assign(save, JSON.parse(r));
     }
-  }catch(e){ /* πρώτη φορά — δεν υπάρχει αποθήκευση ακόμα */ }
+  }catch(e){ }
 }
 async function persist(){
   try{
     if(window.storage) await window.storage.set(SAVE_KEY, JSON.stringify(save));
-  }catch(e){ console.warn("save failed", e); }
+    else localStorage.setItem(SAVE_KEY, JSON.stringify(save));
+  }catch(e){ }
 }
 
 /* ---------------- three.js setup ---------------- */
@@ -188,14 +215,25 @@ function initThree(){
   renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 
   scene = new THREE.Scene();
-  scene.background = new THREE.Color("#EADFC8");
-  scene.fog = new THREE.Fog("#EADFC8", 18, 30);
+  scene.background = new THREE.Color("#0B0C10");
+  scene.fog = new THREE.Fog("#0B0C10", 15, 30);
+
+  // Αστέρια στο φόντο
+  const starGeo = new THREE.BufferGeometry();
+  const starPos = [];
+  for(let i=0; i<300; i++) {
+    starPos.push((Math.random()-0.5)*40, (Math.random()-0.5)*50, -4 - Math.random()*15);
+  }
+  starGeo.setAttribute('position', new THREE.Float32BufferAttribute(starPos, 3));
+  const starMat = new THREE.PointsMaterial({color: 0xffffff, size: 0.1, transparent: true, opacity: 0.7});
+  stars = new THREE.Points(starGeo, starMat);
+  scene.add(stars);
 
   camera = new THREE.PerspectiveCamera(42, innerWidth/innerHeight, 0.1, 60);
-
-  const amb = new THREE.AmbientLight(0xfff2dd, 0.75);
+  
+  const amb = new THREE.AmbientLight(0xfff2dd, 0.8);
   scene.add(amb);
-  const sun = new THREE.DirectionalLight(0xffffff, 0.85);
+  const sun = new THREE.DirectionalLight(0xffffff, 0.9);
   sun.position.set(4, 8, 7);
   sun.castShadow = true;
   sun.shadow.mapSize.set(1024,1024);
@@ -204,21 +242,21 @@ function initThree(){
   scene.add(sun);
 
   boardGroup = new THREE.Group();
-  boardGroup.rotation.x = -0.10;           // ελαφριά 3D κλίση
+  boardGroup.rotation.x = -0.10; 
   scene.add(boardGroup);
-
-  // πλάτη ταμπλό
+  
+  // Πλάτη ταμπλό (Ξύλινη)
   const back = new THREE.Mesh(
     new THREE.BoxGeometry(BOARD_W + 0.7, BOARD_H + 0.7, 0.3),
-    new THREE.MeshLambertMaterial({color:"#C9B18C"})
+    new THREE.MeshLambertMaterial({color:"#4A3423"})
   );
   back.position.z = -0.65;
   back.receiveShadow = true;
   boardGroup.add(back);
 
-  // κελιά
+  // Κελιά (Σκούρο Ξύλο)
   const cellGeo = new THREE.BoxGeometry(CELL*0.96, CELL*0.96, 0.12);
-  const cellMat = new THREE.MeshLambertMaterial({color:"#EFE6D2"});
+  const cellMat = new THREE.MeshLambertMaterial({color:"#2F1B0D"});
   for(let c=0;c<COLS;c++) for(let r=0;r<ROWS;r++){
     const m = new THREE.Mesh(cellGeo, cellMat);
     const p = cellPos(c,r);
@@ -238,43 +276,59 @@ function initThree(){
 function onResize(){
   renderer.setSize(innerWidth, innerHeight);
   camera.aspect = innerWidth/innerHeight;
-  // τοποθέτηση κάμερας ώστε να χωράει όλο το ταμπλό + launcher
-  const fit = Math.max(BOARD_H + 3.6, (BOARD_W + 1.4) / camera.aspect / Math.tan(THREE.MathUtils.degToRad(21)) * Math.tan(THREE.MathUtils.degToRad(21)));
-  const dist = (BOARD_H/2 + 2.1) / Math.tan(THREE.MathUtils.degToRad(camera.fov/2));
-  const distW = (BOARD_W/2 + 0.8) / (Math.tan(THREE.MathUtils.degToRad(camera.fov/2)) * camera.aspect);
-  camera.position.set(0, -1.0, Math.max(dist, distW));
-  camera.lookAt(0, -0.9, 0);
+  const dist = (BOARD_H/2 + 2.5) / Math.tan(THREE.MathUtils.degToRad(camera.fov/2));
+  const distW = (BOARD_W/2 + 1.0) / (Math.tan(THREE.MathUtils.degToRad(camera.fov/2)) * camera.aspect);
+  camera.position.set(0, -1.8, Math.max(dist, distW) + 1.5);
+  camera.lookAt(0, -1.2, 0);
   camera.updateProjectionMatrix();
 }
 
 function cellPos(c, r){
   return {
     x: -BOARD_W/2 + CELL/2 + c*(CELL+GAP),
-    y:  BOARD_H/2 - CELL/2 - r*(CELL+GAP)   // r=0 πάνω
+    y:  BOARD_H/2 - CELL/2 - r*(CELL+GAP)
   };
 }
-const launchY = -BOARD_H/2 - 1.15;
+const launchY = -BOARD_H/2 - 1.9; // Χαμηλότερα για να μην ενοχλεί το UI
 
-/* ---------------- cube visuals ---------------- */
+/* ---------------- cube visuals (Ξύλινη Υφή) ---------------- */
 function numberTexture(value){
   const cv = document.createElement("canvas");
   cv.width = cv.height = 128;
   const g = cv.getContext("2d");
-  const col = TILE_COLORS[value] || "#333";
-  // στρογγυλεμένο "καπάκι"
-  g.fillStyle = col;
+  const baseColor = TILE_COLORS[value] || "#8B4513";
+  
+  // Βάση
+  g.fillStyle = baseColor;
   roundRect(g, 4, 4, 120, 120, 22); g.fill();
+  
+  // Νερά ξύλου (Wood grain)
+  g.strokeStyle = "rgba(0,0,0,0.15)";
+  g.lineWidth = 1.5;
+  for(let i=0; i<20; i++) {
+    g.beginPath();
+    g.moveTo(4, Math.random()*128);
+    g.bezierCurveTo(40, Math.random()*128, 80, Math.random()*128, 124, Math.random()*128);
+    g.stroke();
+  }
+
+  // Σκίαση (Gradient)
   const grad = g.createLinearGradient(0,0,0,128);
-  grad.addColorStop(0,"rgba(255,255,255,.30)");
-  grad.addColorStop(0.4,"rgba(255,255,255,0)");
-  grad.addColorStop(1,"rgba(0,0,0,.18)");
+  grad.addColorStop(0,"rgba(255,255,255,.20)");
+  grad.addColorStop(0.5,"rgba(255,255,255,0)");
+  grad.addColorStop(1,"rgba(0,0,0,.35)");
   g.fillStyle = grad;
   roundRect(g, 4, 4, 120, 120, 22); g.fill();
-  g.fillStyle = "#fff";
+  
+  // Αριθμός (Σκαλιστός/Βαμμένος)
+  g.fillStyle = value >= 128 ? "#F7EFDC" : "#2F1B0D";
   g.font = `800 ${value>=1024?42:value>=128?50:60}px 'Baloo 2', sans-serif`;
   g.textAlign="center"; g.textBaseline="middle";
-  g.shadowColor="rgba(0,0,0,.25)"; g.shadowBlur=4; g.shadowOffsetY=3;
+  g.shadowColor = value >= 128 ? "rgba(0,0,0,.6)" : "rgba(255,255,255,.4)";
+  g.shadowBlur = 2; 
+  g.shadowOffsetY = 2;
   g.fillText(value, 64, 68);
+  
   const t = new THREE.CanvasTexture(cv);
   t.anisotropy = 4;
   return t;
@@ -287,9 +341,9 @@ function roundRect(g,x,y,w,h,r){
 function cubeMaterial(value){
   if(matCache[value]) return matCache[value];
   const tex = numberTexture(value);
-  const side = new THREE.MeshLambertMaterial({color: TILE_COLORS[value] || "#333"});
+  const side = new THREE.MeshLambertMaterial({color: TILE_COLORS[value] || "#8B4513"});
   const face = new THREE.MeshLambertMaterial({map: tex});
-  matCache[value] = [side, side, side, side, face, side]; // z+ πρόσοψη
+  matCache[value] = [side, side, side, side, face, side]; 
   return matCache[value];
 }
 const cubeGeo = new THREE.BoxGeometry(CELL*0.92, CELL*0.92, CELL*0.92);
@@ -320,14 +374,12 @@ function stepAnims(dt){
 
 /* ---------------- gameplay ---------------- */
 function newBoard(){
-  // καθάρισμα
   for(let c=0;c<COLS;c++) for(let r=0;r<ROWS;r++){
     if(grid[c] && grid[c][r]) boardGroup.remove(grid[c][r].mesh);
   }
   grid = Array.from({length:COLS},()=>Array(ROWS).fill(null));
   score = 0; updateHUD();
 
-  // προ-τοποθετημένα εμπόδια στα μεγαλύτερα levels
   const preset = LEVELS[Math.min(level, LEVELS.length-1)].preset;
   const vals = [2,4,8,16];
   for(let i=0;i<preset;i++){
@@ -400,7 +452,6 @@ function launch(){
   tween(cube.position, {x:p.x, y:p.y}, Math.max(0.13, dist*0.045), easeOut, ()=>{
     boardGroup.remove(cube);
     const cell = placeCube(c, targetR, cube.userData.value, true);
-    // μικρό squash
     cell.mesh.scale.set(1.15,0.85,1.15);
     tween(cell.mesh.scale, {x:1,y:1,z:1}, 0.18, easeBack);
     resolveMerges([{c, r:targetR}]).then(()=>{
@@ -440,8 +491,7 @@ async function resolveMerges(queue){
     score += newVal;
     coins += 1; save.coins = coins;
     updateHUD();
-
-    // animation: οι γείτονες "τρέχουν" στον κύβο-στόχο
+    
     await new Promise(res=>{
       let left = same.length;
       const tp = cellPos(c,r);
@@ -455,15 +505,14 @@ async function resolveMerges(queue){
         tween(m.scale, {x:.5,y:.5,z:.5}, 0.14);
       });
     });
-
-    // αναβάθμιση κύβου
+    
+    playSound('merge');
     boardGroup.remove(cell.mesh);
     grid[c][r] = null;
     const up = placeCube(c, r, newVal);
     up.mesh.scale.set(1.35,1.35,1.35);
     tween(up.mesh.scale, {x:1,y:1,z:1}, 0.22, easeBack);
 
-    // βαρύτητα προς τα πάνω + νέοι έλεγχοι
     const moved = applyGravity();
     queue.push({c,r}, ...moved);
     await wait(120);
@@ -520,7 +569,8 @@ function gameOver(){
 }
 
 /* ---------------- power-ups ---------------- */
-const HAMMER_COST = 15, SHUFFLE_COST = 5;
+const HAMMER_COST = 15, SHUFFLE_COST = 5, MAGNET_COST = 20;
+
 function tryHammer(){
   if(busy) return;
   if(hammerMode){ hammerMode=false; updateHUD(); return; }
@@ -541,13 +591,80 @@ function hammerHit(c,r){
     resolveMerges(moved).then(()=>{ busy=false; updateHUD(); persist(); });
   });
 }
+
 function tryShuffle(){
   if(busy || !currentCube) return;
   if(coins < SHUFFLE_COST){ toast("Δεν έχεις αρκετά 🪙"); return; }
-  coins -= SHUFFLE_COST; save.coins = coins; persist();
+  coins -= SHUFFLE_COST;
+  save.coins = coins; persist();
   boardGroup.remove(currentCube);
   currentCube = null;
   spawnCurrent(); setAim(aimCol); updateHUD();
+}
+
+function tryMagnet() {
+  if (busy) return;
+  if (coins < MAGNET_COST) { toast("Δεν έχεις αρκετά 🪙"); return; }
+  
+  let tilesByVal = {};
+  for(let c = 0; c < COLS; c++) {
+    for(let r = 0; r < ROWS; r++) {
+      if(grid[c][r]) {
+        let v = grid[c][r].value;
+        if(!tilesByVal[v]) tilesByVal[v] = [];
+        tilesByVal[v].push({ c, r, cell: grid[c][r] });
+      }
+    }
+  }
+  
+  let mergeGroups = Object.values(tilesByVal).filter(group => group.length > 1);
+  if (mergeGroups.length === 0) { 
+    toast("Δεν υπάρχουν όμοιοι κύβοι πουθενά!"); 
+    return; 
+  }
+  
+  coins -= MAGNET_COST; save.coins = coins; persist(); updateHUD();
+  busy = true;
+  let animationsPending = 0;
+  
+  mergeGroups.forEach(group => {
+    const targetSpot = group[0];
+    const newVal = targetSpot.cell.value * Math.pow(2, group.length - 1);
+    targetSpot.newVal = newVal;
+    
+    group.slice(1).forEach(t => {
+      const m = t.cell.mesh;
+      grid[t.c][t.r] = null;
+      const tp = cellPos(targetSpot.c, targetSpot.r);
+      animationsPending++;
+      
+      tween(m.position, {x: tp.x, y: tp.y, z: 1.0}, 0.35, easeBack, () => {
+        boardGroup.remove(m);
+        animationsPending--;
+        if(animationsPending === 0) finalizeMagnet(mergeGroups);
+      });
+      tween(m.scale, {x: 0.3, y: 0.3, z: 0.3}, 0.35);
+    });
+  });
+}
+
+function finalizeMagnet(mergeGroups) {
+  playSound('merge');
+  mergeGroups.forEach(group => {
+    const targetSpot = group[0];
+    boardGroup.remove(targetSpot.cell.mesh);
+    grid[targetSpot.c][targetSpot.r] = null;
+    score += targetSpot.newVal;
+    
+    const up = placeCube(targetSpot.c, targetSpot.r, targetSpot.newVal);
+    up.mesh.scale.set(1.5, 1.5, 1.5);
+    tween(up.mesh.scale, {x: 1, y: 1, z: 1}, 0.25, easeBack);
+  });
+  
+  setTimeout(() => {
+     const moved = applyGravity();
+     resolveMerges(moved).then(() => { busy = false; updateHUD(); persist(); });
+  }, 250);
 }
 
 /* ---------------- daily reward ---------------- */
@@ -599,7 +716,6 @@ function colFromEvent(e){
   const x = (e.touches ? e.touches[0].clientX : e.clientX) / innerWidth * 2 - 1;
   const y = -((e.touches ? e.touches[0].clientY : e.clientY) / innerHeight * 2 - 1);
   pointer.set(x,y); raycaster.setFromCamera(pointer, camera);
-  // τομή με το επίπεδο του ταμπλό (z≈0 στο boardGroup)
   const plane = new THREE.Plane(new THREE.Vector3(0,0,1).applyQuaternion(boardGroup.quaternion), 0);
   const hit = new THREE.Vector3();
   raycaster.ray.intersectPlane(plane, hit);
@@ -630,13 +746,25 @@ let lastT = 0;
 function loop(t){
   const dt = Math.min(0.05, (t-lastT)/1000); lastT = t;
   stepAnims(dt);
+  
+  if(stars) stars.rotation.y = t * 0.00005; // Αργή περιστροφή των αστεριών
   if(currentCube && !busy) currentCube.rotation.y = Math.sin(t*0.002)*0.12;
+  
   renderer.render(scene, camera);
   requestAnimationFrame(loop);
 }
 
 /* ---------------- boot ---------------- */
 (async function(){
+  // Event Listeners
+  document.getElementById("btnMagnet").addEventListener("click", tryMagnet);
+  document.getElementById("btnHammer").addEventListener("click", tryHammer);
+  document.getElementById("btnShuffle").addEventListener("click", tryShuffle);
+  
+  // Το Web Audio API χρειάζεται αλληλεπίδραση από τον χρήστη για να ξεκινήσει
+  const initAudio = () => { if(audioCtx.state === 'suspended') audioCtx.resume(); };
+  document.addEventListener('pointerdown', initAudio, {once:true});
+
   await loadSave();
   coins = save.coins; level = save.level; best = save.best;
   initThree();
@@ -647,8 +775,7 @@ function loop(t){
   const canvas = document.getElementById("game");
   canvas.addEventListener("pointermove", onMove);
   canvas.addEventListener("pointerdown", onTap);
-  document.getElementById("btnHammer").addEventListener("click", tryHammer);
-  document.getElementById("btnShuffle").addEventListener("click", tryShuffle);
+  
   document.getElementById("btnNext").addEventListener("click", ()=>{
     document.getElementById("winModal").classList.add("hidden");
     level = Math.min(level+1, LEVELS.length-1);
