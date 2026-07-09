@@ -127,24 +127,10 @@
       <button class="shop-tab" data-tab="boards">Ταμπλό</button>
       <button class="shop-tab" data-tab="effects">Εφέ</button>
       <button class="shop-tab" data-tab="sounds">Ήχοι</button>
-      <button class="shop-tab" data-tab="pets">Pet (31)</button>
+      <button class="shop-tab" data-tab="pets">Avatar (UI)</button>
     </div>
     <div class="shop-items" id="shopContainer"></div>
     <button class="btn" id="btnCloseShop">Κλείσιμο</button>
-  </div>
-</div>
-
-<div class="overlay hidden" id="petModal">
-  <div class="card">
-    <div style="font-size:40px; margin-bottom:10px;">🌕</div>
-    <h2>Pet Stats</h2>
-    <div style="font-size:18px; margin-top:15px; line-height:1.8;">
-      <div>🏆 Καλύτερο Σκορ: <b id="petBest">0</b></div>
-      <div>⭐ Σκορ: <b id="petScore">0</b></div>
-      <div>📈 Επίπεδο: <b id="petLevel">1</b></div>
-      <div>🪙 Νομίσματα: <b id="petCoins">0</b></div>
-    </div>
-    <button class="btn" id="btnClosePet">Κλείσιμο</button>
   </div>
 </div>
 
@@ -172,11 +158,10 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script>
 /* =====================================================
-   Drop 2048 · Deep Space & Full Customization
-   - 31 Pet Items (6 Categories)
-   - 6000+ Stars
-   - Background Emojis (Only Z axis, behind board)
-   - Win Modal with Dancing Pet & Joyful Sound
+   Drop 2048 · Deep Space Edition
+   - Αφαιρέθηκε το 3D Pet (Ανθρωπάκι) τελείως
+   - Το Avatar πλέον είναι σύστημα UI
+   - Το Background έχει μόνο Emojis στο βάθος
 ===================================================== */
 
 const COLS = 5, ROWS = 6, CELL = 1.0, GAP = 0.12; 
@@ -192,7 +177,7 @@ const LEVELS = [
   { target: 1024, preset: 12, text: "Φτιάξε κύβο 1024" },
 ];
 
-/* ---------------- Shop Data (31 Pet Items!) ---------------- */
+/* ---------------- Shop Data (31 Avatar Items) ---------------- */
 const SHOP = {
   cubes: [
     { id: 'wood', name: 'Ξύλο', price: 0, icon: '🪵' },
@@ -284,7 +269,6 @@ const SHOP = {
 
 let currentShopTab = 'cubes';
 
-/* ---------------- DEFAULT SAVE (Pet Arrays) ---------------- */
 const DEFAULT_SAVE = { 
   coins: 50, level: 0, best: 0, score: 0, 
   ownedCubes: ['wood'], equippedCube: 'wood',
@@ -298,7 +282,7 @@ let save = { ...DEFAULT_SAVE };
 
 async function loadSave(){
   try{
-    const r = localStorage.getItem("drop2048-save-v11");
+    const r = localStorage.getItem("drop2048-save-v12");
     if(r) {
       const parsed = JSON.parse(r);
       save = Object.assign({}, DEFAULT_SAVE, parsed);
@@ -306,7 +290,7 @@ async function loadSave(){
   }catch(e){ }
 }
 function persist(){
-  try{ localStorage.setItem("drop2048-save-v11", JSON.stringify(save)); }catch(e){ }
+  try{ localStorage.setItem("drop2048-save-v12", JSON.stringify(save)); }catch(e){ }
 }
 
 /* ---------------- Audio (Joyful Win Sound!) ---------------- */
@@ -342,9 +326,7 @@ function playMergeDefault(ctx) {
   osc.start(); osc.stop(ctx.currentTime + 0.1);
 }
 
-// Happy Win Sound (Bells & Claps)
 function playWinSound(ctx) {
-  // Ding Ding (Bells)
   for(let i=0; i<4; i++) {
     setTimeout(() => {
       const osc = ctx.createOscillator(); const gain = ctx.createGain();
@@ -356,7 +338,6 @@ function playWinSound(ctx) {
       osc.start(); osc.stop(ctx.currentTime + 0.2);
     }, i * 100);
   }
-  // Claps & Cheer
   for(let i=0; i<3; i++) {
     setTimeout(() => {
       const bufferSize = ctx.sampleRate * 0.08;
@@ -442,7 +423,7 @@ function playSoundMerge(id, ctx) {
   osc.start(); osc.stop(ctx.currentTime + 0.4);
 }
 
-/* ---------------- Particles Engine (10 Effects) ---------------- */
+/* ---------------- Particles Engine ---------------- */
 const particles = [];
 const pGeo = new THREE.BoxGeometry(0.08, 0.08, 0.08);
 const pMats = {
@@ -516,8 +497,8 @@ function createEmojiTexture(emoji) {
   ctx.fillText(emoji, 64, 68); return new THREE.CanvasTexture(cv);
 }
 
-/* ---------------- PET ENGINE (31 Items, Proper Alignment) ---------------- */
-function createPetTexture(isVictory = false, victoryTime = 0) {
+/* ---------------- UI AVATAR ENGINE (No 3D Pet) ---------------- */
+function createAvatarTexture(isVictory = false, victoryTime = 0) {
   const cv = document.createElement("canvas"); cv.width = cv.height = 256;
   const g = cv.getContext("2d");
   const cx = 128, cy = 128, rad = 90;
@@ -581,10 +562,10 @@ function createPetTexture(isVictory = false, victoryTime = 0) {
   else if(parts.includes('nose_sunglasses')) { g.fillStyle = "#000"; g.fillRect(cx-45, cy-30, 30, 20); g.fillRect(cx+15, cy-30, 30, 20); g.fillRect(cx-10, cy-20, 20, 6); g.fillRect(cx-45, cy-20, 6, 20); g.fillRect(cx+39, cy-20, 6, 20); }
   else if(parts.includes('nose_glasses')) { g.strokeStyle = "#000"; g.lineWidth = 6; g.beginPath(); g.arc(cx-35, cy-20, 30, 0, Math.PI*2); g.stroke(); g.beginPath(); g.arc(cx+35, cy-20, 30, 0, Math.PI*2); g.stroke(); g.beginPath(); g.moveTo(cx-5, cy-20); g.lineTo(cx+5, cy-20); g.stroke(); }
 
-  // 5. Mouth (Bottom Half, can be happy in victory)
+  // 5. Mouth (Bottom Half)
   let mouthY = 30 + yOff;
   if(parts.includes('mouth_smile') || (isVictory && !parts.some(p => ['mouth_o','mouth_tongue','mouth_smirk'].includes(p)))) {
-    if(isVictory && mouthHappy) { g.fillStyle = "#800000"; g.beginPath(); g.arc(cx, cy+mouthY, 30, 0, Math.PI); g.fill(); } // Wide smile
+    if(isVictory && mouthHappy) { g.fillStyle = "#800000"; g.beginPath(); g.arc(cx, cy+mouthY, 30, 0, Math.PI); g.fill(); } 
     else { g.fillStyle = "#800000"; g.beginPath(); g.arc(cx, cy+mouthY, 25, 0, Math.PI); g.fill(); }
   } else if(parts.includes('mouth_lipstick')) {
     g.fillStyle = "#DC143C"; g.beginPath(); g.arc(cx, cy+mouthY-5, 25, 0, Math.PI); g.fill();
@@ -610,10 +591,7 @@ function createPetTexture(isVictory = false, victoryTime = 0) {
   return new THREE.CanvasTexture(cv);
 }
 
-/* ---------------- 3D PET & WIN PET HANDLER ---------------- */
-let petMesh = null;
-function updatePetVisual() { if(petMesh) { scene.remove(petMesh); petMesh = null; } if(!save.ownedPets || save.ownedPets.length === 0) return; const tex = createPetTexture(false, 0); const mat = new THREE.SpriteMaterial({ map: tex, transparent: true }); petMesh = new THREE.Sprite(mat); petMesh.position.set(0, -BOARD_H/2 - 1.5, 0.1); petMesh.scale.set(1.8, 1.8, 1); petMesh.userData.isPet = true; scene.add(petMesh); }
-
+/* ---------------- WIN PET HANDLER (Only in UI) ---------------- */
 let winPetAnimId = null;
 function animateWinPet() {
   const canvas = document.getElementById('winPetCanvas');
@@ -624,7 +602,7 @@ function animateWinPet() {
   function draw() {
     const elapsed = (Date.now() - startTime) / 1000;
     ctx.clearRect(0, 0, 120, 120);
-    const tex = createPetTexture(true, elapsed);
+    const tex = createAvatarTexture(true, elapsed);
     ctx.drawImage(tex.image, 0, 0, 120, 120);
     winPetAnimId = requestAnimationFrame(draw);
   }
@@ -652,7 +630,7 @@ function initThree(){
       const tex = createEmojiTexture(emoji); const mat = new THREE.SpriteMaterial({ map: tex, transparent: true }); const sprite = new THREE.Sprite(mat);
       const size = Math.random() * 2 + 1.5; sprite.scale.set(size, size, 1);
       sprite.position.set((Math.random()-0.5)*60, (Math.random()-0.5)*60, -5 - Math.random()*20);
-      sprite.userData = { speed: Math.random()*2 + 1, dirZ: -Math.random()*3 - 1.5, timeOffset: Math.random() * 100 };
+      sprite.userData = { speed: Math.random()*2 + 1, dirZ: -Math.random()*3 - 1.5 };
       scene.add(sprite); bgElements.push(sprite);
     }
   });
@@ -665,7 +643,7 @@ function initThree(){
   cellMat = new THREE.MeshLambertMaterial(); const cellGeo = new THREE.BoxGeometry(CELL*0.96, CELL*0.96, 0.12);
   for(let c=0;c<COLS;c++) for(let r=0;r<ROWS;r++){ const m = new THREE.Mesh(cellGeo, cellMat); const p = cellPos(c,r); m.position.set(p.x, p.y, -0.42); boardGroup.add(m); }
 
-  updateBoardColorsLive(); initStarfield(); updatePetVisual();
+  updateBoardColorsLive(); initStarfield(); 
   raycaster = new THREE.Raycaster(); pointer = new THREE.Vector2(); onResize(); addEventListener("resize", onResize); requestAnimationFrame(loop);
 }
 
@@ -673,7 +651,6 @@ function updateBoardColorsLive() { const bData = SHOP.boards.find(b => b.id === 
 function onResize(){ renderer.setSize(innerWidth, innerHeight); camera.aspect = innerWidth/innerHeight; const dist = (BOARD_H/2 + 2.5) / Math.tan(THREE.MathUtils.degToRad(camera.fov/2)); camera.position.set(0, -1.8, dist + 1.5); camera.lookAt(0, -1.2, 0); camera.updateProjectionMatrix(); }
 function cellPos(c, r){ return { x: -BOARD_W/2 + CELL/2 + c*(CELL+GAP), y: BOARD_H/2 - CELL/2 - r*(CELL+GAP) }; }
 
-/* ---------------- Custom Cube Texture Generator ---------------- */
 function numberTexture(value){ const cv = document.createElement("canvas"); cv.width = cv.height = 128; const g = cv.getContext("2d"); const skin = save.equippedCube;
   if(skin === 'wood') { g.fillStyle = value >= 128 ? "#8B5A2B" : "#DEB887"; roundRect(g,4,4,120,120,22); g.fill(); g.strokeStyle="rgba(0,0,0,0.2)"; g.lineWidth=3; for(let i=0;i<25;i++){ g.beginPath(); const x1 = 4 + Math.random()*120; const y1 = 4 + Math.random()*120; const x2 = x1 + (Math.random()-0.5)*40; const y2 = y1 + (Math.random()-0.5)*40; g.moveTo(x1,y1); g.quadraticCurveTo((x1+x2)/2 + (Math.random()-0.5)*20, (y1+y2)/2 + (Math.random()-0.5)*20, x2, y2); g.stroke(); } } 
   else if (skin === 'whitered' || skin === 'whitegreen') { g.fillStyle = "white"; roundRect(g,4,4,120,120,22); g.fill(); g.fillStyle = skin === 'whitered' ? "#D32F2F" : "#388E3C"; g.save(); g.clip(); for(let i=-128; i<256; i+=32) { g.beginPath(); g.moveTo(i, 0); g.lineTo(i+20, 0); g.lineTo(i-108, 128); g.lineTo(i-128, 128); g.fill(); } g.restore(); }
@@ -692,11 +669,9 @@ function numberTexture(value){ const cv = document.createElement("canvas"); cv.w
 function roundRect(g,x,y,w,h,r){ g.beginPath(); g.moveTo(x+r,y); g.arcTo(x+w,y,x+w,y+h,r); g.arcTo(x+w,y+h,x,y+h,r); g.arcTo(x,y+h,x,y,r); g.arcTo(x,y,x+w,y,r); g.closePath(); }
 function makeCube(value){ const tex = numberTexture(value); const m = new THREE.Mesh(new THREE.BoxGeometry(CELL*0.92, CELL*0.92, CELL*0.92), new THREE.MeshLambertMaterial({map: tex, color:0xdddddd})); m.userData.value = value; return m; }
 
-/* ---------------- tweens ---------------- */
 function tween(obj, to, dur, ease, done){ const from = {}; for(const k in to) from[k] = obj[k]; anims.push({obj, from, to, dur, t:0, ease: ease||(t=>1-Math.pow(1-t,3)), done}); }
 function stepAnims(dt){ for(let i=anims.length-1;i>=0;i--){ const a = anims[i]; a.t += dt/a.dur; const k = a.t>=1 ? 1 : a.ease(a.t); for(const p in a.to) a.obj[p] = a.from[p] + (a.to[p]-a.from[p])*k; if(a.t>=1){ anims.splice(i,1); a.done && a.done(); } } }
 
-/* ---------------- gameplay ---------------- */
 function newBoard(){ for(let c=0;c<COLS;c++) for(let r=0;r<ROWS;r++){ if(grid[c] && grid[c][r]) boardGroup.remove(grid[c][r].mesh); } grid = Array.from({length:COLS},()=>Array(ROWS).fill(null)); score = save.score || 0; updateHUD(); matCache = {}; for(let i=0;i<LEVELS[Math.min(level, LEVELS.length-1)].preset;i++){ const c = Math.floor(Math.random()*COLS); const r = colHeight(c); if(r < 3) placeCube(c, r, [2,4,8,16][Math.floor(Math.random()*4)], true); } spawnCurrent(); }
 function colHeight(c){ let h=0; while(h<ROWS && grid[c][h]) h++; return h; }
 function placeCube(c, r, value, instant){ const cube = makeCube(value); const p = cellPos(c,r); cube.position.set(p.x, p.y, 0.1); boardGroup.add(cube); grid[c][r] = {value, mesh:cube}; if(!instant){ cube.scale.set(.4,.4,.4); tween(cube.scale, {x:1,y:1,z:1}, 0.22); } return grid[c][r]; }
@@ -707,33 +682,36 @@ function launch(){ if(busy || !currentCube) return; const c = aimCol; const h = 
 function isBoardFull() { for(let c=0;c<COLS;c++) for(let r=0;r<ROWS;r++) if(!grid[c][r]) return false; return true; }
 async function resolveMerges(queue){ while(queue.length){ const {c,r} = queue.shift(); const cell = grid[c][r]; if(!cell) continue; const same = [{c:c-1,r},{c:c+1,r},{c,r:r-1},{c,r:r+1}].filter(n => n.c>=0&&n.c<COLS&&n.r>=0&&n.r<ROWS&&grid[n.c][n.r]&&grid[n.c][n.r].value===cell.value); if(!same.length) continue; const newVal = cell.value * Math.pow(2, same.length); score += newVal; save.score = score; coins += 1; save.coins = coins; updateHUD(); await new Promise(res=>{ let left = same.length; const tp = cellPos(c,r); same.forEach(n=>{ const m = grid[n.c][n.r].mesh; grid[n.c][n.r] = null; tween(m.position, {x:tp.x, y:tp.y}, 0.14, null, ()=>{ boardGroup.remove(m); if(--left===0) res(); }); tween(m.scale, {x:.5,y:.5,z:.5}, 0.14); }); }); playSound('merge'); const eff = save.equippedEffect; if(eff !== 'eff_none' && eff !== 'eff_flame' && eff !== 'eff_sparkle' && eff !== 'eff_smoke') { const wp = new THREE.Vector3(); cell.mesh.getWorldPosition(wp); spawnBurst(wp.x, wp.y, wp.z, eff.replace('eff_',''), 15); } boardGroup.remove(cell.mesh); grid[c][r] = null; const up = placeCube(c, r, newVal); up.mesh.scale.set(1.35,1.35,1.35); tween(up.mesh.scale, {x:1,y:1,z:1}, 0.22); const moved = []; for(let xc=0;xc<COLS;xc++){ let write=0; for(let xr=0;xr<ROWS;xr++){ if(grid[xc][xr]){ if(xr!==write){ grid[xc][write]=grid[xc][xr]; grid[xc][xr]=null; tween(grid[xc][write].mesh.position, {y:cellPos(xc, write).y}, 0.15); moved.push({c:xc, r:write}); } write++; } } } queue.push({c,r}, ...moved); await new Promise(r=>setTimeout(r,120)); } persist(); }
 
-/* ---------------- levels / win / lose ---------------- */
 let winTimer = null;
 function checkWin(){ const t = LEVELS[Math.min(level, LEVELS.length-1)].target; let win = false; for(let c=0;c<COLS;c++) for(let r=0;r<ROWS;r++) if(grid[c][r] && grid[c][r].value >= t){ win = true; break; } if(!win) return false; busy = true; coins += 25; save.coins = coins; best = Math.max(best, score); save.best = best; save.level = Math.min(level+1, LEVELS.length-1); persist(); updateHUD(); document.getElementById("winNumberBox").textContent = t; for(let c=0;c<COLS;c++) for(let r=0;r<ROWS;r++) { if(grid[c][r]) { const mesh = grid[c][r].mesh; const origY = mesh.position.y; let delay = (c + r) * 50; setTimeout(() => { tween(mesh.position, {y: origY + 0.3}, 0.15, null, () => { tween(mesh.position, {y: origY - 0.15}, 0.15, null, () => { tween(mesh.position, {y: origY}, 0.15); }); }); }, delay); } } if(winTimer) clearTimeout(winTimer); winTimer = setTimeout(() => { playSound('win'); document.getElementById("winModal").classList.remove("hidden"); animateWinPet(); for(let i=0; i<5; i++) { setTimeout(() => { spawnBurst((Math.random()-0.5)*10, Math.random()*5, (Math.random()-0.5)*5, 'confetti', 30); }, i * 300); } winTimer = null; }, 3000); return true; }
 function gameOver(){ busy = true; best = Math.max(best, score); save.best = best; save.score = 0; persist(); document.getElementById("loseText").innerHTML = `Σκορ: <b>${score}</b>`; document.getElementById("loseModal").classList.remove("hidden"); }
 
-/* ---------------- input & powerups (ΔΩΡΕΑΝ) ---------------- */
-function onTap(e){ if(document.querySelector(".overlay:not(.hidden)")) return; const x = (e.touches ? e.touches[0].clientX : e.clientX) / innerWidth * 2 - 1; const y = -((e.touches ? e.touches[0].clientY : e.clientY) / innerHeight * 2 - 1); pointer.set(x,y); raycaster.setFromCamera(pointer, camera); const hit = new THREE.Vector3(); raycaster.ray.intersectPlane(new THREE.Plane(new THREE.Vector3(0,0,1).applyQuaternion(boardGroup.quaternion), 0), hit); boardGroup.worldToLocal(hit); if(petMesh) { const petPos = new THREE.Vector3(); petMesh.getWorldPosition(petPos); const dist = hit.distanceTo(petPos); if(dist < 1.0) { document.getElementById('petBest').textContent = save.best; document.getElementById('petScore').textContent = score; document.getElementById('petLevel').textContent = level+1; document.getElementById('petCoins').textContent = coins; document.getElementById('petModal').classList.remove('hidden'); return; } } const c = Math.max(0,Math.min(COLS-1, Math.round((hit.x + BOARD_W/2 - CELL/2) / (CELL+GAP)))); const r = Math.round((BOARD_H/2 - CELL/2 - hit.y) / (CELL+GAP)); if(hammerMode){ if(r>=0 && r<ROWS && grid[c][r]){ hammerMode=false; const m = grid[c][r].mesh; grid[c][r]=null; tween(m.scale, {x:.01,y:.01,z:.01}, 0.18, null, ()=> boardGroup.remove(m)); busy=true; setTimeout(()=>{ resolveMerges([]).then(()=>{ busy=false; updateHUD(); persist(); }); }, 180); } else { hammerMode=false; updateHUD(); } return; } setAim(c, true); launch(); }
+function onTap(e){ if(document.querySelector(".overlay:not(.hidden)")) return; const x = (e.touches ? e.touches[0].clientX : e.clientX) / innerWidth * 2 - 1; const y = -((e.touches ? e.touches[0].clientY : e.clientY) / innerHeight * 2 - 1); pointer.set(x,y); raycaster.setFromCamera(pointer, camera); const hit = new THREE.Vector3(); raycaster.ray.intersectPlane(new THREE.Plane(new THREE.Vector3(0,0,1).applyQuaternion(boardGroup.quaternion), 0), hit); boardGroup.worldToLocal(hit); const c = Math.max(0,Math.min(COLS-1, Math.round((hit.x + BOARD_W/2 - CELL/2) / (CELL+GAP)))); const r = Math.round((BOARD_H/2 - CELL/2 - hit.y) / (CELL+GAP)); if(hammerMode){ if(r>=0 && r<ROWS && grid[c][r]){ hammerMode=false; const m = grid[c][r].mesh; grid[c][r]=null; tween(m.scale, {x:.01,y:.01,z:.01}, 0.18, null, ()=> boardGroup.remove(m)); busy=true; setTimeout(()=>{ resolveMerges([]).then(()=>{ busy=false; updateHUD(); persist(); }); }, 180); } else { hammerMode=false; updateHUD(); } return; } setAim(c, true); launch(); }
 document.getElementById("btnHammer").onclick = ()=>{ if(busy)return; hammerMode=true; updateHUD(); toast("🔨 Επίλεξε κύβο"); }
 document.getElementById("btnShuffle").onclick = ()=>{ if(busy||!currentCube)return; boardGroup.remove(currentCube); currentCube=null; spawnCurrent(); setAim(aimCol); updateHUD(); }
 document.getElementById("btnMagnet").onclick = ()=>{ if(busy)return; let tilesByVal = {}; for(let c=0;c<COLS;c++) for(let r=0;r<ROWS;r++) if(grid[c][r]) { let v=grid[c][r].value; if(!tilesByVal[v])tilesByVal[v]=[]; tilesByVal[v].push({c,r,cell:grid[c][r]}); } let mg = Object.values(tilesByVal).filter(g=>g.length>1); if(!mg.length)return toast("Κανένα ζευγάρι!"); busy=true; let animsP=0; mg.forEach(group=>{ const trg = group[0]; trg.newVal = trg.cell.value * Math.pow(2, group.length-1); group.slice(1).forEach(t=>{ const m = t.cell.mesh; grid[t.c][t.r]=null; const tp=cellPos(trg.c,trg.r); animsP++; tween(m.position, {x:tp.x, y:tp.y, z:1.0}, 0.35, null, ()=>{ boardGroup.remove(m); if(--animsP===0) finMagnet(mg); }); tween(m.scale, {x:0.3,y:0.3,z:0.3}, 0.35); }); }); }
 function finMagnet(mg){ playSound('merge'); mg.forEach(g=>{ const trg=g[0]; boardGroup.remove(trg.cell.mesh); grid[trg.c][trg.r]=null; score+=trg.newVal; save.score=score; const up=placeCube(trg.c,trg.r,trg.newVal); up.mesh.scale.set(1.5,1.5,1.5); tween(up.mesh.scale,{x:1,y:1,z:1},0.25); }); setTimeout(()=>{ resolveMerges([]).then(()=>{ busy=false; updateHUD(); persist(); }); }, 250); }
 
-/* ---------------- Shop System (Pet Multi-Part) ---------------- */
 function renderShop() { const container = document.getElementById('shopContainer'); container.innerHTML = ''; const arr = SHOP[currentShopTab] || []; arr.forEach(item => { let propOwned = currentShopTab === 'cubes' ? 'ownedCubes' : currentShopTab === 'boards' ? 'ownedBoards' : currentShopTab === 'effects' ? 'ownedEffects' : currentShopTab === 'sounds' ? 'ownedSounds' : 'ownedPets'; let propEquip = currentShopTab === 'cubes' ? 'equippedCube' : currentShopTab === 'boards' ? 'equippedBoard' : currentShopTab === 'effects' ? 'equippedEffect' : currentShopTab === 'sounds' ? 'equippedSound' : 'equippedPets'; const isOwned = save[propOwned] && save[propOwned].includes(item.id); const isEquipped = save[propEquip] && save[propEquip].includes(item.id); const el = document.createElement('div'); el.className = `shop-item ${isOwned?'owned':''} ${isEquipped?'equipped':''}`; el.innerHTML = `<div style="font-size:36px; margin-bottom:5px;">${item.icon}</div><h3>${item.name}</h3><div class="price">${isEquipped?'ΦΟΡΕΜΕΝΟ':isOwned?'ΕΠΙΛΟΓΗ':'Δωρεάν'}</div>`; el.onclick = () => { if (currentShopTab === 'pets') { if (isEquipped) { save[propEquip] = save[propEquip].filter(id => id !== item.id); persist(); renderShop(); applyShopChanges(); toast("Αφαίρεσες το " + item.name); } else { if (!isOwned) { save[propOwned].push(item.id); } save[propEquip].push(item.id); persist(); renderShop(); applyShopChanges(); toast("Φόρεσες το " + item.name + "!"); } } else { if (isOwned) { save[propEquip] = item.id; persist(); renderShop(); applyShopChanges(); } else { save[propOwned].push(item.id); save[propEquip] = item.id; persist(); updateHUD(); renderShop(); applyShopChanges(); toast("Αγόρασες το " + item.name + "!"); } } }; container.appendChild(el); }); }
-function applyShopChanges() { if(currentShopTab === 'boards') updateBoardColorsLive(); if(currentShopTab === 'cubes') { matCache = {}; toast("Η εμφάνιση κύβου άλλαξε!"); } if(currentShopTab === 'sounds') toast("Ο ήχος άλλαξε!"); if(currentShopTab === 'pets') { updatePetVisual(); toast("Το Pet σου ενημερώθηκε!"); } }
+function applyShopChanges() { if(currentShopTab === 'boards') updateBoardColorsLive(); if(currentShopTab === 'cubes') { matCache = {}; toast("Η εμφάνιση κύβου άλλαξε!"); } if(currentShopTab === 'sounds') toast("Ο ήχος άλλαξε!"); if(currentShopTab === 'pets') { toast("Το Avatar σου ενημερώθηκε!"); } }
 document.querySelectorAll('.shop-tab').forEach(btn => { btn.onclick = (e) => { document.querySelectorAll('.shop-tab').forEach(b => b.classList.remove('active')); e.target.classList.add('active'); currentShopTab = e.target.dataset.tab; renderShop(); } });
 
-/* ---------------- UI ---------------- */
 function updateHUD(){ document.getElementById("hudLevel").textContent = level+1; document.getElementById("hudScore").textContent = score; document.getElementById("hudCoins").textContent = coins; document.getElementById("missionText").textContent = LEVELS[Math.min(level, LEVELS.length-1)].text; document.getElementById("btnHammer").classList.toggle("armed", hammerMode); }
 let toastTimer; function toast(msg){ const t=document.getElementById("toast"); t.textContent=msg; t.style.opacity=1; clearTimeout(toastTimer); toastTimer=setTimeout(()=>t.style.opacity=0, 1800); }
 
-/* ---------------- main loop ---------------- */
 let lastT = 0;
 function loop(t){ const dt = Math.min(0.05, (t-lastT)/1000); lastT = t; stepAnims(dt); updateParticles(dt); updateStarfield(2.0); bgElements.forEach(el => { const u = el.userData; el.position.z += u.dirZ * u.speed * dt * 3; if(el.position.z < -30) { el.position.z = 5 + Math.random()*10; el.position.x = (Math.random()-0.5)*60; el.position.y = (Math.random()-0.5)*60; u.dirZ = -Math.random()*3 - 1.5; u.speed = Math.random()*2 + 1; } }); if(currentCube && !busy) currentCube.rotation.y = Math.sin(t*0.002)*0.12; if(renderer) renderer.render(scene, camera); requestAnimationFrame(loop); }
 
-/* ---------------- boot ---------------- */
-(async function(){ document.getElementById('btnShop').onclick = () => { renderShop(); document.getElementById('shopModal').classList.remove('hidden'); }; document.getElementById('btnCloseShop').onclick = () => { document.getElementById('shopModal').classList.add('hidden'); }; document.getElementById('btnClosePet').onclick = () => { document.getElementById('petModal').classList.add('hidden'); }; document.addEventListener('pointerdown', ()=> { if(audioCtx.state === 'suspended') audioCtx.resume(); }, {once:true}); await loadSave(); coins = save.coins; level = save.level; best = save.best; initThree(); if(!renderer) return; newBoard(); updateHUD(); const cvs = document.getElementById("game"); cvs.addEventListener("pointermove", (e)=>{if(!busy)setAim((e.touches?e.touches[0].clientX:e.clientX)/innerWidth*2-1)}); cvs.addEventListener("pointerdown", onTap); document.getElementById("btnNext").onclick = ()=>{ document.getElementById("winModal").classList.add("hidden"); if(winPetAnimId) cancelAnimationFrame(winPetAnimId); level=Math.min(level+1,LEVELS.length-1); busy=false; newBoard(); }; document.getElementById("btnRetry").onclick = ()=>{ document.getElementById("loseModal").classList.add("hidden"); busy=false; newBoard(); }; })();
+(async function(){
+  document.getElementById('btnShop').onclick = () => { renderShop(); document.getElementById('shopModal').classList.remove('hidden'); };
+  document.getElementById('btnCloseShop').onclick = () => { document.getElementById('shopModal').classList.add('hidden'); };
+  document.addEventListener('pointerdown', ()=> { if(audioCtx.state === 'suspended') audioCtx.resume(); }, {once:true});
+  await loadSave(); coins = save.coins; level = save.level; best = save.best;
+  initThree(); if(!renderer) return; newBoard(); updateHUD();
+  const cvs = document.getElementById("game"); cvs.addEventListener("pointermove", (e)=>{if(!busy)setAim((e.touches?e.touches[0].clientX:e.clientX)/innerWidth*2-1)}); cvs.addEventListener("pointerdown", onTap);
+  document.getElementById("btnNext").onclick = ()=>{ document.getElementById("winModal").classList.add("hidden"); if(winPetAnimId) cancelAnimationFrame(winPetAnimId); level=Math.min(level+1,LEVELS.length-1); busy=false; newBoard(); };
+  document.getElementById("btnRetry").onclick = ()=>{ document.getElementById("loseModal").classList.add("hidden"); busy=false; newBoard(); };
+})();
 </script>
 </body>
 </html>
