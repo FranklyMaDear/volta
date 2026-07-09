@@ -427,13 +427,13 @@
 
       async function loadSave() {
         try {
-          const r = localStorage.getItem("drop2048-save-v8");
+          const r = localStorage.getItem("drop2048-save-v9");
           if (r) { const parsed = JSON.parse(r); save = Object.assign({}, DEFAULT_SAVE, parsed); }
         } catch (e) {}
       }
 
       function persist() {
-        try { localStorage.setItem("drop2048-save-v8", JSON.stringify(save)); } catch (e) {}
+        try { localStorage.setItem("drop2048-save-v9", JSON.stringify(save)); } catch (e) {}
       }
 
       const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -519,7 +519,7 @@
         starField.geometry.attributes.position.needsUpdate = true;
       }
 
-      /* ----- AZIRAM PET SYSTEM (ΜΙΚΡΟΤΕΡΟ ΜΕΓΕΘΟΣ) ----- */
+      /* ----- AZIRAM PET SYSTEM (ΜΕΓΕΘΟΣ ΚΟΥΜΠΙΟΥ) ----- */
       let aziramPet, sockets = {};
       let aziramReactionTime = 0;
       let aziramWinTime = 0;
@@ -553,20 +553,19 @@
         petGroup.rotation.y = -0.3;
         petGroup.rotation.x = 0.2;
         
-        // Μείωση μεγέθους ώστε να είναι όσο 2x2 κύβοι (scale 0.7)
-        petGroup.scale.set(0.7, 0.7, 0.7);
+        // Μέγεθος όσο ένα κουμπί (66px ύψος)
+        petGroup.scale.set(0.45, 0.45, 0.45);
 
         return petGroup;
       }
 
-      // Προσαρμογή θέσης ώστε να είναι κάτω δεξιά, δεξιά από τα κουμπιά
       function updateAziramScreenPosition() {
         if (!aziramPet || !camera) return;
-        // Συντεταγμένες NDC: x=0.65 (πιο δεξιά), y=-0.65 (πιο πάνω για να μην πέφτει πάνω στα κουμπιά)
-        const ndc = new THREE.Vector3(0.65, -0.65, 0.5);
+        // Θέση κάτω δεξιά, στο ίδιο ύψος με τα κουμπιά (y = -0.8 για να είναι ακριβώς στο bottom)
+        const ndc = new THREE.Vector3(0.7, -0.8, 0.5);
         ndc.unproject(camera);
         const dir = ndc.clone().sub(camera.position).normalize();
-        const pos = camera.position.clone().add(dir.multiplyScalar(5.5));
+        const pos = camera.position.clone().add(dir.multiplyScalar(4.5));
         aziramBasePosition.copy(pos);
         aziramPet.position.copy(aziramBasePosition);
       }
@@ -581,35 +580,33 @@
 
         if (aziramWinTime > 0) {
           aziramWinTime -= dt;
-          core.position.y = Math.abs(Math.sin(t * 8)) * 1.2;
-          aziramPet.rotation.x -= 0.15;
+          core.position.y = Math.abs(Math.sin(t * 8)) * 0.8;
+          aziramPet.rotation.x -= 0.1;
           aziramPet.rotation.y += 0.1;
           if (Math.random() < 0.2) {
             const worldPos = new THREE.Vector3();
             aziramPet.getWorldPosition(worldPos);
-            spawnBurst(worldPos.x, worldPos.y + 1, worldPos.z, 'confetti', 5);
-            if (Math.random() < 0.3) spawnBurst(worldPos.x, worldPos.y + 1, worldPos.z, 'stardust', 3);
-            if (Math.random() < 0.2) spawnBurst(worldPos.x, worldPos.y - 0.2, worldPos.z, 'smoke', 2);
+            spawnBurst(worldPos.x, worldPos.y + 0.8, worldPos.z, 'confetti', 3);
+            if (Math.random() < 0.3) spawnBurst(worldPos.x, worldPos.y + 0.8, worldPos.z, 'stardust', 2);
           }
         } else if (aziramReactionTime > 0) {
           aziramReactionTime -= dt;
-          core.position.x = (Math.random() - 0.5) * 0.25;
-          core.position.y = (Math.random() - 0.5) * 0.25;
-          aziramPet.rotation.y += 0.5;
-          core.scale.set(1.2, 0.8, 1.2);
-          sockets.handL.position.y = Math.sin(t * 0.08) * 0.6;
-          sockets.handR.position.y = Math.cos(t * 0.08) * 0.6;
+          core.position.x = (Math.random() - 0.5) * 0.2;
+          core.position.y = (Math.random() - 0.5) * 0.2;
+          aziramPet.rotation.y += 0.4;
+          core.scale.set(1.15, 0.85, 1.15);
+          sockets.handL.position.y = Math.sin(t * 0.08) * 0.4;
+          sockets.handR.position.y = Math.cos(t * 0.08) * 0.4;
         } else {
-          // Επαναφορά στη βάση
           aziramPet.position.copy(aziramBasePosition);
           aziramPet.rotation.x = 0.2;
           aziramPet.rotation.y += (-0.3 - aziramPet.rotation.y) * 0.1;
           core.scale.set(1, 1, 1);
-          core.position.y = Math.sin(t * 0.002) * 0.15;
-          sockets.handL.position.y = Math.sin(t * 0.003) * 0.1;
-          sockets.handR.position.y = Math.cos(t * 0.003) * 0.1;
-          sockets.footL.position.y = -0.8 + Math.cos(t * 0.004) * 0.05;
-          sockets.footR.position.y = -0.8 + Math.sin(t * 0.004) * 0.05;
+          core.position.y = Math.sin(t * 0.002) * 0.1;
+          sockets.handL.position.y = Math.sin(t * 0.003) * 0.08;
+          sockets.handR.position.y = Math.cos(t * 0.003) * 0.08;
+          sockets.footL.position.y = -0.8 + Math.cos(t * 0.004) * 0.03;
+          sockets.footR.position.y = -0.8 + Math.sin(t * 0.004) * 0.03;
         }
 
         core.traverse(child => { if (child.userData && child.userData.onUpdate) child.userData.onUpdate(t); });
@@ -827,7 +824,6 @@
         updateBoardColorsLive();
         initStarfield();
 
-        // Δημιουργία AZIRAM
         aziramPet = createAziram();
         scene.add(aziramPet);
         updateAziramScreenPosition();
@@ -1097,7 +1093,7 @@
         if (aziramPet) {
           const hits = raycaster.intersectObject(aziramPet, true);
           if (hits.length > 0 && aziramWinTime <= 0) {
-            aziramReactionTime = 1.5;
+            aziramReactionTime = 1.2;
             if (audioCtx.state !== 'suspended') playDropDefault(audioCtx);
             return;
           }
