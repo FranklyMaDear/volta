@@ -427,13 +427,13 @@
 
       async function loadSave() {
         try {
-          const r = localStorage.getItem("drop2048-save-v7");
+          const r = localStorage.getItem("drop2048-save-v8");
           if (r) { const parsed = JSON.parse(r); save = Object.assign({}, DEFAULT_SAVE, parsed); }
         } catch (e) {}
       }
 
       function persist() {
-        try { localStorage.setItem("drop2048-save-v7", JSON.stringify(save)); } catch (e) {}
+        try { localStorage.setItem("drop2048-save-v8", JSON.stringify(save)); } catch (e) {}
       }
 
       const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -519,11 +519,10 @@
         starField.geometry.attributes.position.needsUpdate = true;
       }
 
-      /* ----- AZIRAM PET SYSTEM (ΣΤΑΘΕΡΗ ΘΕΣΗ ΚΑΤΩ ΔΕΞΙΑ ΑΠΟ ΤΑ ΚΟΥΜΠΙΑ) ----- */
+      /* ----- AZIRAM PET SYSTEM (ΜΙΚΡΟΤΕΡΟ ΜΕΓΕΘΟΣ) ----- */
       let aziramPet, sockets = {};
       let aziramReactionTime = 0;
       let aziramWinTime = 0;
-      // Η θέση θα οριστεί δυναμικά με βάση την οθόνη μετά τη δημιουργία της κάμερας
       let aziramBasePosition = new THREE.Vector3(1.8, -3.5, -2.5);
 
       function createAziram() {
@@ -553,6 +552,9 @@
         petGroup.position.copy(aziramBasePosition);
         petGroup.rotation.y = -0.3;
         petGroup.rotation.x = 0.2;
+        
+        // Μείωση μεγέθους ώστε να είναι όσο 2x2 κύβοι (scale 0.7)
+        petGroup.scale.set(0.7, 0.7, 0.7);
 
         return petGroup;
       }
@@ -560,13 +562,11 @@
       // Προσαρμογή θέσης ώστε να είναι κάτω δεξιά, δεξιά από τα κουμπιά
       function updateAziramScreenPosition() {
         if (!aziramPet || !camera) return;
-        // Συντεταγμένες NDC: x=0.55 (δεξιά από το κέντρο), y=-0.75 (κάτω)
-        const ndc = new THREE.Vector3(0.55, -0.75, 0.5);
+        // Συντεταγμένες NDC: x=0.65 (πιο δεξιά), y=-0.65 (πιο πάνω για να μην πέφτει πάνω στα κουμπιά)
+        const ndc = new THREE.Vector3(0.65, -0.65, 0.5);
         ndc.unproject(camera);
-        // Υπολογισμός κατεύθυνσης από την κάμερα προς το σημείο
         const dir = ndc.clone().sub(camera.position).normalize();
-        // Τοποθέτηση σε απόσταση 6 μονάδων μπροστά από την κάμερα
-        const pos = camera.position.clone().add(dir.multiplyScalar(6.0));
+        const pos = camera.position.clone().add(dir.multiplyScalar(5.5));
         aziramBasePosition.copy(pos);
         aziramPet.position.copy(aziramBasePosition);
       }
@@ -830,7 +830,6 @@
         // Δημιουργία AZIRAM
         aziramPet = createAziram();
         scene.add(aziramPet);
-        // Αρχική τοποθέτηση
         updateAziramScreenPosition();
 
         raycaster = new THREE.Raycaster();
@@ -853,7 +852,6 @@
         camera.position.set(0, -1.8, dist + 1.5);
         camera.lookAt(0, -1.2, 0);
         camera.updateProjectionMatrix();
-        // Ενημέρωση θέσης AZIRAM για τη νέα ανάλυση
         updateAziramScreenPosition();
       }
 
@@ -1192,7 +1190,6 @@
         updateParticles(dt);
         updateStarfield(0.8);
 
-        // Update AZIRAM
         updateAziram(t, dt);
 
         if (currentCube && !busy) currentCube.rotation.y = Math.sin(t * 0.002) * 0.12;
