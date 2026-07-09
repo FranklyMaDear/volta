@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Drop 2048 · Space Wood Edition</title>
+<title>Drop 2048 · Deep Space Custom Edition</title>
 <style>
   :root{
     --bg:#0B0C10; --panel:#8C6A4F; --panel-deep:#4A3423;
@@ -49,44 +49,37 @@
   .pbtn:active{transform:translateY(3px);box-shadow:0 1px 0 #5c7a3a}
   .pbtn .cost{font-size:11px;font-weight:800;background:rgba(0,0,0,.22);border-radius:8px;padding:1px 7px}
   .pbtn.armed{outline:4px solid var(--accent);background:#C2542F;box-shadow:0 4px 0 #8f3c20}
-  .pbtn:disabled{filter:grayscale(.8);opacity:.6;cursor:default}
   
   /* ---------- Shop ---------- */
-  .shop-items { display: flex; gap: 10px; margin: 15px 0; overflow-x: auto; padding-bottom: 10px; }
+  .shop-tabs { display:flex; gap:5px; margin-bottom:10px; border-bottom:2px solid rgba(0,0,0,0.1); padding-bottom:10px;}
+  .shop-tab { flex:1; padding:8px 5px; font-weight:800; font-size:13px; border-radius:10px; background:#E4D7BC; color:#8C6A4F; border:none; cursor:pointer;}
+  .shop-tab.active { background:var(--accent); color:#fff; box-shadow:0 3px 0 #b8742a; transform:translateY(-2px);}
+  
+  .shop-items { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; max-height: 40vh; overflow-y: auto; padding-bottom: 10px; padding-right:5px;}
   .shop-item { 
     background: #E4D7BC; border: 3px solid #8C6A4F; border-radius: 14px; padding: 10px; 
-    min-width: 100px; flex-shrink: 0; cursor: pointer; transition: transform 0.1s;
+    cursor: pointer; transition: transform 0.1s; text-align:center;
   }
   .shop-item:active { transform: scale(0.95); }
-  .shop-item h3 { font-size: 15px; margin-bottom: 5px; color: var(--ink); }
-  .shop-item .price { font-weight: 800; color: #b8742a; }
+  .shop-item h3 { font-size: 14px; margin-bottom: 5px; color: var(--ink); line-height:1.2;}
+  .shop-item .price { font-weight: 800; color: #b8742a; font-size:13px;}
   .shop-item.owned .price { color: var(--good); }
-  .shop-item.equipped { border-color: var(--accent); background: #FFF5E1; }
+  .shop-item.equipped { border-color: var(--accent); background: #FFF5E1; box-shadow:0 0 10px rgba(242,160,61,0.5);}
 
   /* ---------- modals ---------- */
-  .overlay{position:fixed;inset:0;background:rgba(11,12,16,.75);display:flex;align-items:center;justify-content:center;z-index:20;backdrop-filter:blur(3px)}
+  .overlay{position:fixed;inset:0;background:rgba(11,12,16,.85);display:flex;align-items:center;justify-content:center;z-index:20;backdrop-filter:blur(4px)}
   .card{
-    background:var(--cream);border:4px solid var(--panel-deep);border-radius:26px;padding:26px 24px;
-    width:min(340px,88vw);text-align:center;box-shadow:0 10px 0 rgba(0,0,0,.4);
+    background:var(--cream);border:4px solid var(--panel-deep);border-radius:26px;padding:22px 20px;
+    width:min(380px,92vw);text-align:center;box-shadow:0 10px 0 rgba(0,0,0,.4);
     animation:pop .25s cubic-bezier(.34,1.56,.64,1);
   }
   @keyframes pop{from{transform:scale(.7);opacity:0}}
-  .card h2{font-size:24px;margin-bottom:6px;font-weight:800}
-  .card p{font-size:15px;margin-bottom:14px;line-height:1.45}
-  .card .bear{font-size:52px;line-height:1;margin-bottom:8px}
+  .card h2{font-size:22px; margin-bottom:6px;font-weight:800}
   .btn{
-    border:none;cursor:pointer;font-family:inherit;font-weight:800;font-size:17px;color:#fff;
-    background:var(--accent);border-radius:16px;padding:12px 30px;box-shadow:0 4px 0 #b8742a;transition:transform .08s;
+    border:none;cursor:pointer;font-family:inherit;font-weight:800;font-size:16px;color:#fff;
+    background:var(--accent);border-radius:16px;padding:12px 30px;box-shadow:0 4px 0 #b8742a;transition:transform .08s; margin-top:10px; width:100%;
   }
   .btn:active{transform:translateY(3px);box-shadow:0 1px 0 #b8742a}
-  .days{display:flex;gap:6px;justify-content:center;margin:12px 0 18px;flex-wrap:wrap}
-  .day{
-    width:40px;border-radius:10px;padding:5px 0;background:#E4D7BC;font-size:11px;font-weight:800;color:#8a7255;
-    border:2px solid transparent;
-  }
-  .day .c{font-size:14px;color:var(--ink)}
-  .day.today{background:var(--coin);border-color:#b8742a;color:#6b4a12;transform:scale(1.12)}
-  .day.done{background:var(--good);color:#fff}
   .hidden{display:none!important}
   
   #toast{
@@ -117,28 +110,21 @@
 <div id="toast"></div>
 
 <div class="overlay hidden" id="shopModal">
-  <div class="card" style="width: min(400px, 90vw);">
-    <div class="bear">🛍️</div>
-    <h2>Κατάστημα Εμφανίσεων</h2>
-    <p>Αγόρασε νέα στυλ για τους κύβους σου!</p>
+  <div class="card">
+    <h2 style="margin-bottom:15px;">🛍️ Εξατομίκευση</h2>
+    <div class="shop-tabs">
+      <button class="shop-tab active" data-tab="cubes">Κύβοι</button>
+      <button class="shop-tab" data-tab="boards">Ταμπλό</button>
+      <button class="shop-tab" data-tab="effects">Εφέ</button>
+    </div>
     <div class="shop-items" id="shopContainer"></div>
     <button class="btn" id="btnCloseShop">Κλείσιμο</button>
   </div>
 </div>
 
-<div class="overlay hidden" id="dailyModal">
-  <div class="card">
-    <div class="bear">🐻</div>
-    <h2>Καθημερινό Δώρο!</h2>
-    <p>Μέρα <b id="dailyDay">1</b> στη σειρά — συνέχισε το σερί για μεγαλύτερα δώρα!</p>
-    <div class="days" id="dailyDays"></div>
-    <button class="btn" id="btnClaim">Πάρε <span id="dailyAmt">10</span> 🪙</button>
-  </div>
-</div>
-
 <div class="overlay hidden" id="winModal">
   <div class="card">
-    <div class="bear">🎉</div>
+    <div style="font-size:40px; margin-bottom:10px;">🎉</div>
     <h2>Επίπεδο Ολοκληρώθηκε!</h2>
     <p id="winText"></p>
     <button class="btn" id="btnNext">Επόμενο επίπεδο ➜</button>
@@ -147,7 +133,7 @@
 
 <div class="overlay hidden" id="loseModal">
   <div class="card">
-    <div class="bear">😵</div>
+    <div style="font-size:40px; margin-bottom:10px;">😵</div>
     <h2>Γέμισε το ταμπλό!</h2>
     <p id="loseText"></p>
     <button class="btn" id="btnRetry">Ξαναπροσπάθησε</button>
@@ -157,109 +143,137 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script>
 /* =====================================================
-   Drop 2048 · Space Wood Edition 
-   + Magnet, Custom Character, Shop, Straight Launch
+   Drop 2048 · Deep Space & Full Customization
 ===================================================== */
 
 const COLS = 5, ROWS = 6, CELL = 1.0, GAP = 0.12; 
 const BOARD_W = COLS * (CELL + GAP) - GAP;
 const BOARD_H = ROWS * (CELL + GAP) - GAP;
+const launchY = -BOARD_H/2 - 1.9;
 
 const LEVELS = [
-  { target: 64,   preset: 0, text: "Φτιάξε έναν κύβο 64" },
-  { target: 128,  preset: 4, text: "Φτιάξε έναν κύβο 128" },
-  { target: 256,  preset: 7, text: "Φτιάξε έναν κύβο 256" },
-  { target: 512,  preset: 9, text: "Φτιάξε έναν κύβο 512" },
-  { target: 1024, preset: 12, text: "Φτιάξε έναν κύβο 1024" },
+  { target: 64,   preset: 0, text: "Φτιάξε κύβο 64" },
+  { target: 128,  preset: 4, text: "Φτιάξε κύβο 128" },
+  { target: 256,  preset: 7, text: "Φτιάξε κύβο 256" },
+  { target: 512,  preset: 9, text: "Φτιάξε κύβο 512" },
+  { target: 1024, preset: 12, text: "Φτιάξε κύβο 1024" },
 ];
 
-const TILE_COLORS = {
-  2: "#DEB887", 4: "#D2B48C", 8: "#C19A6B", 16: "#B8860B", 32: "#CD853F",
-  64: "#D2691E", 128: "#8B4513", 256: "#A0522D", 512: "#800000",
-  1024: "#5C4033", 2048: "#3E2723"
+/* ---------------- Shop Data ---------------- */
+const SHOP = {
+  cubes: [
+    { id: 'wood', name: 'Ξύλο', price: 0, icon: '🪵' },
+    { id: 'whitered', name: 'Άσπρο-Κόκκινο', price: 100, icon: '🍬' },
+    { id: 'whitegreen', name: 'Άσπρο-Πράσινο', price: 100, icon: '🍵' },
+    { id: 'zebra', name: 'Ζέβρα', price: 200, icon: '🦓' },
+    { id: 'neon', name: 'Cyber Neon', price: 250, icon: '⚡' },
+    { id: 'rainbow', name: 'Ουράνιο Τόξο', price: 350, icon: '🌈' },
+    { id: 'gold', name: 'Καθαρός Χρυσός', price: 500, icon: '🏆' },
+    { id: 'galaxy', name: 'Γαλαξίας', price: 800, icon: '🌌' }
+  ],
+  boards: [
+    { id: 'board_wood', name: 'Ξύλινο', price: 0, icon: '🟫', back: '#4A3423', cell: '#2F1B0D' },
+    { id: 'board_space', name: 'Βαθύ Διάστημα', price: 150, icon: '🟦', back: '#0B132B', cell: '#1C2541' },
+    { id: 'board_crimson', name: 'Πορφυρό', price: 150, icon: '🟥', back: '#3A0CA3', cell: '#7209B7' },
+    { id: 'board_emerald', name: 'Σμαράγδι', price: 150, icon: '🟩', back: '#004B23', cell: '#007200' }
+  ],
+  effects: [
+    { id: 'eff_none', name: 'Χωρίς Εφέ', price: 0, icon: '✖️' },
+    { id: 'eff_flame', name: 'Φλόγα (Βολή)', price: 200, icon: '🔥' },
+    { id: 'eff_sparkle', name: 'Αστερόσκονη (Βολή)', price: 200, icon: '✨' },
+    { id: 'eff_explode', name: 'Έκρηξη (Συγχώνευση)', price: 300, icon: '💥' },
+    { id: 'eff_confetti', name: 'Κομφετί (Συγχώνευση)', price: 350, icon: '🎊' },
+    { id: 'eff_plasma', name: 'Πλάσμα (Συγχώνευση)', price: 500, icon: '🔮' }
+  ]
 };
 
+let currentShopTab = 'cubes';
+
 /* ---------------- state ---------------- */
-let scene, camera, renderer, boardGroup, raycaster, pointer, stars, companion;
+let scene, camera, renderer, boardGroup, raycaster, pointer, bgElements = [];
+let backMesh, cellMat; 
 let grid = [];
 let currentCube = null;
-let aimCol = 2, busy = false, hammerMode = false;
-let score = 0, coins = 0, level = 0, best = 0;
+let aimCol = 2, busy = false, hammerMode = false, isLaunching = false;
+let score = 0, coins = 500, level = 0, best = 0; // Starting with 500 for testing
 let anims = [];
 const matCache = {};
 
-/* ---------------- audio ---------------- */
+let save = { 
+  coins: 50, level: 0, best: 0, score: 0, 
+  ownedCubes: ['wood'], equippedCube: 'wood',
+  ownedBoards: ['board_wood'], equippedBoard: 'board_wood',
+  ownedEffects: ['eff_none'], equippedEffect: 'eff_none'
+};
+
+async function loadSave(){
+  try{
+    const r = localStorage.getItem("drop2048-save-v2");
+    if(r) save = Object.assign(save, JSON.parse(r));
+  }catch(e){ }
+}
+function persist(){
+  try{ localStorage.setItem("drop2048-save-v2", JSON.stringify(save)); }catch(e){ }
+}
+
+/* ---------------- Audio ---------------- */
 const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 function playSound(type) {
   if(audioCtx.state === 'suspended') audioCtx.resume();
-  const osc = audioCtx.createOscillator();
-  const gain = audioCtx.createGain();
-  osc.connect(gain);
-  gain.connect(audioCtx.destination);
+  const osc = audioCtx.createOscillator(); const gain = audioCtx.createGain();
+  osc.connect(gain); gain.connect(audioCtx.destination);
   
   if (type === 'merge') {
-    osc.type = 'sine';
-    osc.frequency.setValueAtTime(300, audioCtx.currentTime);
+    osc.type = 'sine'; osc.frequency.setValueAtTime(300, audioCtx.currentTime);
     osc.frequency.exponentialRampToValueAtTime(800, audioCtx.currentTime + 0.1);
     gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
     gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1);
-    osc.start();
-    osc.stop(audioCtx.currentTime + 0.1);
+    osc.start(); osc.stop(audioCtx.currentTime + 0.1);
   }
 }
 
-/* ---------------- persistent save ---------------- */
-const SAVE_KEY = "drop2048-save";
-let save = { coins: 30, level: 0, best: 0, score: 0, lastDay: null, streak: 0, skins: ['wood'], equippedSkin: 'wood' };
-async function loadSave(){
-  try{
-    if(window.storage){
-      const r = await window.storage.get(SAVE_KEY);
-      if(r && r.value) save = Object.assign(save, JSON.parse(r.value));
+/* ---------------- Particles Engine ---------------- */
+const particles = [];
+const pGeo = new THREE.BoxGeometry(0.12, 0.12, 0.12);
+const pMats = {
+  'flame': new THREE.MeshBasicMaterial({color: 0xff4500}),
+  'sparkle': new THREE.MeshBasicMaterial({color: 0xffffff}),
+  'explode': new THREE.MeshBasicMaterial({color: 0xffa500}),
+  'plasma': new THREE.MeshBasicMaterial({color: 0x8a2be2}),
+  'confetti': [0xff0000, 0x00ff00, 0x0000ff, 0xffff00].map(c => new THREE.MeshBasicMaterial({color: c}))
+};
+
+function spawnParticle(x, y, z, type) {
+  let mat = pMats[type];
+  if(Array.isArray(mat)) mat = mat[Math.floor(Math.random()*mat.length)];
+  const p = new THREE.Mesh(pGeo, mat);
+  p.position.set(x + (Math.random()-0.5)*0.5, y + (Math.random()-0.5)*0.5, z + (Math.random()-0.5)*0.2);
+  
+  let vx = (Math.random()-0.5)*3, vy = (Math.random()-0.5)*3, vz = Math.random()*2;
+  if(type === 'flame' || type === 'sparkle') { vx *= 0.2; vy = -Math.random()*2; vz = 0; } // Trails go down
+  
+  scene.add(p);
+  particles.push({ mesh: p, life: 1.0, vx, vy, vz, type });
+}
+
+function spawnBurst(x, y, z, type, count) {
+  for(let i=0; i<count; i++) spawnParticle(x, y, z, type);
+}
+
+function updateParticles(dt) {
+  for(let i=particles.length-1; i>=0; i--) {
+    const p = particles[i];
+    p.life -= dt * 2.5; // lifespan
+    if(p.life <= 0) {
+      scene.remove(p.mesh); particles.splice(i, 1);
     } else {
-      const r = localStorage.getItem(SAVE_KEY);
-      if(r) save = Object.assign(save, JSON.parse(r));
+      p.mesh.position.x += p.vx * dt;
+      p.mesh.position.y += p.vy * dt;
+      p.mesh.position.z += p.vz * dt;
+      p.mesh.scale.setScalar(p.life);
+      if(p.type === 'flame' || p.type === 'explode') p.mesh.material.color.setHSL(0.1*p.life, 1, 0.5);
     }
-  }catch(e){ }
-}
-async function persist(){
-  try{
-    if(window.storage) await window.storage.set(SAVE_KEY, JSON.stringify(save));
-    else localStorage.setItem(SAVE_KEY, JSON.stringify(save));
-  }catch(e){ }
-}
-
-/* ---------------- 3D Companion ---------------- */
-function createCompanion() {
-  companion = new THREE.Group();
-
-  const bodyGeo = new THREE.BoxGeometry(1.2, 1.5, 0.8);
-  const bodyMat = new THREE.MeshLambertMaterial({ color: "#4A90D9" });
-  const body = new THREE.Mesh(bodyGeo, bodyMat);
-  body.position.y = 0.75;
-  companion.add(body);
-
-  const headGeo = new THREE.BoxGeometry(1.4, 1.4, 1.4);
-  const headMat = new THREE.MeshLambertMaterial({ color: "#F7EFDC" });
-  const head = new THREE.Mesh(headGeo, headMat);
-  head.position.y = 2.2;
-  companion.add(head);
-
-  const visorGeo = new THREE.BoxGeometry(1.0, 0.6, 0.2);
-  const visorMat = new THREE.MeshLambertMaterial({ color: "#0B0C10" });
-  const visor = new THREE.Mesh(visorGeo, visorMat);
-  visor.position.set(0, 2.2, 0.65);
-  companion.add(visor);
-
-  const antGeo = new THREE.CylinderGeometry(0.05, 0.05, 0.6);
-  const antMat = new THREE.MeshLambertMaterial({ color: "#7FA653" }); 
-  const antenna = new THREE.Mesh(antGeo, antMat);
-  antenna.position.set(0, 3.1, 0);
-  companion.add(antenna);
-
-  companion.position.set(4.5, -2, -1);
-  companion.rotation.y = -0.4;
-  scene.add(companion);
+  }
 }
 
 /* ---------------- three.js setup ---------------- */
@@ -268,157 +282,141 @@ function initThree(){
   renderer = new THREE.WebGLRenderer({canvas, antialias:true});
   renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
   renderer.shadowMap.enabled = true;
-  renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 
   scene = new THREE.Scene();
-  scene.background = new THREE.Color("#0B0C10");
   scene.fog = new THREE.Fog("#0B0C10", 15, 30);
 
-  // 1000 Stars
-  const starGeo = new THREE.BufferGeometry();
-  const starPos = [];
-  for(let i=0; i<1000; i++) {
-    starPos.push((Math.random()-0.5)*50, (Math.random()-0.5)*60, -4 - Math.random()*20);
+  // Dynamic Space Background (Planets & Asteroids)
+  const geom = new THREE.IcosahedronGeometry(1, 1);
+  for(let i=0; i<12; i++) {
+    const mat = new THREE.MeshLambertMaterial({ color: Math.random() * 0xffffff, wireframe: Math.random()>0.5 });
+    const mesh = new THREE.Mesh(geom, mat);
+    const size = Math.random() * 2 + 0.5;
+    mesh.scale.setScalar(size);
+    mesh.position.set((Math.random()-0.5)*30, Math.random()*40, -5 - Math.random()*15);
+    mesh.userData = { speed: Math.random()*2 + 1, rotSpeed: Math.random()*2 };
+    scene.add(mesh);
+    bgElements.push(mesh);
   }
-  starGeo.setAttribute('position', new THREE.Float32BufferAttribute(starPos, 3));
-  const starMat = new THREE.PointsMaterial({color: 0xffffff, size: 0.1, transparent: true, opacity: 0.7});
-  stars = new THREE.Points(starGeo, starMat);
-  scene.add(stars);
 
   camera = new THREE.PerspectiveCamera(42, innerWidth/innerHeight, 0.1, 60);
-  
-  const amb = new THREE.AmbientLight(0xfff2dd, 0.8);
-  scene.add(amb);
-  const sun = new THREE.DirectionalLight(0xffffff, 0.9);
-  sun.position.set(4, 8, 7);
-  sun.castShadow = true;
-  sun.shadow.mapSize.set(1024,1024);
-  sun.shadow.camera.left=-6; sun.shadow.camera.right=6;
-  sun.shadow.camera.top=8; sun.shadow.camera.bottom=-8;
+  scene.add(new THREE.AmbientLight(0xffffff, 0.7));
+  const sun = new THREE.DirectionalLight(0xffffff, 0.8);
+  sun.position.set(4, 8, 7); sun.castShadow = true;
   scene.add(sun);
 
   boardGroup = new THREE.Group();
   boardGroup.rotation.x = -0.10; 
   scene.add(boardGroup);
   
-  const back = new THREE.Mesh(
-    new THREE.BoxGeometry(BOARD_W + 0.7, BOARD_H + 0.7, 0.3),
-    new THREE.MeshLambertMaterial({color:"#4A3423"})
-  );
-  back.position.z = -0.65;
-  back.receiveShadow = true;
-  boardGroup.add(back);
+  backMesh = new THREE.Mesh(new THREE.BoxGeometry(BOARD_W + 0.7, BOARD_H + 0.7, 0.3), new THREE.MeshLambertMaterial());
+  backMesh.position.z = -0.65; backMesh.receiveShadow = true;
+  boardGroup.add(backMesh);
 
+  cellMat = new THREE.MeshLambertMaterial();
   const cellGeo = new THREE.BoxGeometry(CELL*0.96, CELL*0.96, 0.12);
-  const cellMat = new THREE.MeshLambertMaterial({color:"#2F1B0D"});
   for(let c=0;c<COLS;c++) for(let r=0;r<ROWS;r++){
     const m = new THREE.Mesh(cellGeo, cellMat);
     const p = cellPos(c,r);
     m.position.set(p.x, p.y, -0.42);
-    m.receiveShadow = true;
     boardGroup.add(m);
   }
 
-  createCompanion();
+  updateBoardColorsLive();
 
-  raycaster = new THREE.Raycaster();
-  pointer = new THREE.Vector2();
+  raycaster = new THREE.Raycaster(); pointer = new THREE.Vector2();
+  onResize(); addEventListener("resize", onResize); requestAnimationFrame(loop);
+}
 
-  onResize();
-  addEventListener("resize", onResize);
-  requestAnimationFrame(loop);
+function updateBoardColorsLive() {
+  const bData = SHOP.boards.find(b => b.id === save.equippedBoard) || SHOP.boards[0];
+  backMesh.material.color.set(bData.back);
+  cellMat.color.set(bData.cell);
 }
 
 function onResize(){
   renderer.setSize(innerWidth, innerHeight);
   camera.aspect = innerWidth/innerHeight;
   const dist = (BOARD_H/2 + 2.5) / Math.tan(THREE.MathUtils.degToRad(camera.fov/2));
-  const distW = (BOARD_W/2 + 1.0) / (Math.tan(THREE.MathUtils.degToRad(camera.fov/2)) * camera.aspect);
-  camera.position.set(0, -1.8, Math.max(dist, distW) + 1.5);
-  camera.lookAt(0, -1.2, 0);
-  camera.updateProjectionMatrix();
+  camera.position.set(0, -1.8, dist + 1.5);
+  camera.lookAt(0, -1.2, 0); camera.updateProjectionMatrix();
 }
 
-function cellPos(c, r){
-  return {
-    x: -BOARD_W/2 + CELL/2 + c*(CELL+GAP),
-    y:  BOARD_H/2 - CELL/2 - r*(CELL+GAP)
-  };
-}
-const launchY = -BOARD_H/2 - 1.9;
+function cellPos(c, r){ return { x: -BOARD_W/2 + CELL/2 + c*(CELL+GAP), y: BOARD_H/2 - CELL/2 - r*(CELL+GAP) }; }
 
-/* ---------------- cube visuals ---------------- */
+/* ---------------- Custom Texture Generator ---------------- */
 function numberTexture(value){
-  const cv = document.createElement("canvas");
-  cv.width = cv.height = 128;
+  const cv = document.createElement("canvas"); cv.width = cv.height = 128;
   const g = cv.getContext("2d");
-  const baseColor = TILE_COLORS[value] || "#8B4513";
-  
-  g.fillStyle = baseColor;
-  roundRect(g, 4, 4, 120, 120, 22); g.fill();
-  
-  g.strokeStyle = "rgba(0,0,0,0.15)";
-  g.lineWidth = 1.5;
-  for(let i=0; i<20; i++) {
-    g.beginPath();
-    g.moveTo(4, Math.random()*128);
-    g.bezierCurveTo(40, Math.random()*128, 80, Math.random()*128, 124, Math.random()*128);
-    g.stroke();
+  const skin = save.equippedCube;
+
+  // Base Logic per skin
+  if(skin === 'wood') {
+    g.fillStyle = value >= 128 ? "#8B4513" : "#D2B48C"; roundRect(g,4,4,120,120,22); g.fill();
+    g.strokeStyle="rgba(0,0,0,0.1)"; g.lineWidth=2;
+    for(let i=0;i<15;i++){ g.beginPath(); g.moveTo(4,Math.random()*128); g.bezierCurveTo(40,Math.random()*128,80,Math.random()*128,124,Math.random()*128); g.stroke(); }
+  } 
+  else if (skin === 'whitered' || skin === 'whitegreen') {
+    g.fillStyle = "white"; roundRect(g,4,4,120,120,22); g.fill();
+    g.fillStyle = skin === 'whitered' ? "#D32F2F" : "#388E3C";
+    g.save(); g.clip(); // clip to rounded rect
+    for(let i=-128; i<256; i+=32) { g.beginPath(); g.moveTo(i, 0); g.lineTo(i+20, 0); g.lineTo(i-108, 128); g.lineTo(i-128, 128); g.fill(); }
+    g.restore();
+  }
+  else if (skin === 'zebra') {
+    g.fillStyle = "white"; roundRect(g,4,4,120,120,22); g.fill();
+    g.fillStyle = "#111"; g.save(); g.clip();
+    for(let i=0; i<128; i+=24) { g.beginPath(); g.moveTo(0, i); g.bezierCurveTo(40, i+15, 80, i-15, 128, i); g.lineTo(128, i+10); g.bezierCurveTo(80, i-5, 40, i+25, 0, i+10); g.fill(); }
+    g.restore();
+  }
+  else if (skin === 'rainbow') {
+    let grad = g.createLinearGradient(0,0,128,128);
+    ['red','orange','yellow','green','cyan','blue','purple'].forEach((c,i)=>grad.addColorStop(i/6, c));
+    g.fillStyle = grad; roundRect(g,4,4,120,120,22); g.fill();
+  }
+  else if (skin === 'gold') {
+    let grad = g.createRadialGradient(64,64,0, 64,64,90);
+    grad.addColorStop(0,"#FFF59D"); grad.addColorStop(0.6,"#FBC02D"); grad.addColorStop(1,"#F57F17");
+    g.fillStyle = grad; roundRect(g,4,4,120,120,22); g.fill();
+  }
+  else if (skin === 'neon') {
+    g.fillStyle = "#111"; roundRect(g,4,4,120,120,22); g.fill();
+    g.strokeStyle = `hsl(${(Math.log2(value)*30)%360}, 100%, 50%)`; g.lineWidth=6; g.stroke();
+  }
+  else if (skin === 'galaxy') {
+    g.fillStyle = "#1A0B2E"; roundRect(g,4,4,120,120,22); g.fill();
+    g.fillStyle = "white";
+    for(let i=0; i<30; i++) { g.beginPath(); g.arc(Math.random()*128, Math.random()*128, Math.random()*2, 0, 7); g.fill(); }
   }
 
-  const grad = g.createLinearGradient(0,0,0,128);
-  grad.addColorStop(0,"rgba(255,255,255,.20)");
-  grad.addColorStop(0.5,"rgba(255,255,255,0)");
-  grad.addColorStop(1,"rgba(0,0,0,.35)");
-  g.fillStyle = grad;
-  roundRect(g, 4, 4, 120, 120, 22); g.fill();
-  
-  g.fillStyle = value >= 128 ? "#F7EFDC" : "#2F1B0D";
-  g.font = `800 ${value>=1024?42:value>=128?50:60}px 'Baloo 2', sans-serif`;
+  // Common Shadow & Text
+  let txtCol = (skin==='wood'&&value<128)||skin==='whitered'||skin==='whitegreen'||skin==='zebra' ? "#111" : "#FFF";
+  if(skin==='gold') txtCol = "#3E2723";
+  if(skin==='neon') txtCol = `hsl(${(Math.log2(value)*30)%360}, 100%, 65%)`;
+
+  g.fillStyle = txtCol; g.font = `800 ${value>=1024?42:value>=128?50:60}px 'Baloo 2', sans-serif`;
   g.textAlign="center"; g.textBaseline="middle";
-  g.shadowColor = value >= 128 ? "rgba(0,0,0,.6)" : "rgba(255,255,255,.4)";
-  g.shadowBlur = 2; 
-  g.shadowOffsetY = 2;
-  g.fillText(value, 64, 68);
+  g.shadowColor = skin==='neon' ? txtCol : "rgba(0,0,0,0.5)"; g.shadowBlur=4; g.fillText(value, 64, 68);
   
-  const t = new THREE.CanvasTexture(cv);
-  t.anisotropy = 4;
-  return t;
+  const t = new THREE.CanvasTexture(cv); t.anisotropy = 4; return t;
 }
-function roundRect(g,x,y,w,h,r){
-  g.beginPath();
-  g.moveTo(x+r,y); g.arcTo(x+w,y,x+w,y+h,r); g.arcTo(x+w,y+h,x,y+h,r);
-  g.arcTo(x,y+h,x,y,r); g.arcTo(x,y,x+w,y,r); g.closePath();
-}
-function cubeMaterial(value){
-  if(matCache[value]) return matCache[value];
-  const tex = numberTexture(value);
-  const side = new THREE.MeshLambertMaterial({color: TILE_COLORS[value] || "#8B4513"});
-  const face = new THREE.MeshLambertMaterial({map: tex});
-  matCache[value] = [side, side, side, side, face, side]; 
-  return matCache[value];
-}
-const cubeGeo = new THREE.BoxGeometry(CELL*0.92, CELL*0.92, CELL*0.92);
+
+function roundRect(g,x,y,w,h,r){ g.beginPath(); g.moveTo(x+r,y); g.arcTo(x+w,y,x+w,y+h,r); g.arcTo(x+w,y+h,x,y+h,r); g.arcTo(x,y+h,x,y,r); g.arcTo(x,y,x+w,y,r); g.closePath(); }
+
 function makeCube(value){
-  const m = new THREE.Mesh(cubeGeo, cubeMaterial(value));
-  m.castShadow = true;
-  m.userData.value = value;
-  return m;
+  const tex = numberTexture(value);
+  const m = new THREE.Mesh(new THREE.BoxGeometry(CELL*0.92, CELL*0.92, CELL*0.92), new THREE.MeshLambertMaterial({map: tex, color:0xdddddd}));
+  m.castShadow = true; m.userData.value = value; return m;
 }
 
 /* ---------------- tweens ---------------- */
 function tween(obj, to, dur, ease, done){
-  const from = {};
-  for(const k in to) from[k] = obj[k];
-  anims.push({obj, from, to, dur, t:0, ease: ease||easeOut, done});
+  const from = {}; for(const k in to) from[k] = obj[k];
+  anims.push({obj, from, to, dur, t:0, ease: ease||(t=>1-Math.pow(1-t,3)), done});
 }
-const easeOut = t => 1-Math.pow(1-t,3);
-const easeBack = t => 1 + 2.2*Math.pow(t-1,3) + 1.2*Math.pow(t-1,2);
 function stepAnims(dt){
   for(let i=anims.length-1;i>=0;i--){
-    const a = anims[i];
-    a.t += dt/a.dur;
-    const k = a.t>=1 ? 1 : a.ease(a.t);
+    const a = anims[i]; a.t += dt/a.dur; const k = a.t>=1 ? 1 : a.ease(a.t);
     for(const p in a.to) a.obj[p] = a.from[p] + (a.to[p]-a.from[p])*k;
     if(a.t>=1){ anims.splice(i,1); a.done && a.done(); }
   }
@@ -426,484 +424,263 @@ function stepAnims(dt){
 
 /* ---------------- gameplay ---------------- */
 function newBoard(){
-  for(let c=0;c<COLS;c++) for(let r=0;r<ROWS;r++){
-    if(grid[c] && grid[c][r]) boardGroup.remove(grid[c][r].mesh);
-  }
+  for(let c=0;c<COLS;c++) for(let r=0;r<ROWS;r++){ if(grid[c] && grid[c][r]) boardGroup.remove(grid[c][r].mesh); }
   grid = Array.from({length:COLS},()=>Array(ROWS).fill(null));
-  score = save.score || 0; 
-  updateHUD();
+  score = save.score || 0; updateHUD();
+  matCache = {}; // clear cache for skins
 
-  const preset = LEVELS[Math.min(level, LEVELS.length-1)].preset;
-  const vals = [2,4,8,16];
-  for(let i=0;i<preset;i++){
-    const c = Math.floor(Math.random()*COLS);
-    const r = colHeight(c);
-    if(r < 3){
-      placeCube(c, r, vals[Math.floor(Math.random()*vals.length)], true);
-    }
+  for(let i=0;i<LEVELS[Math.min(level, LEVELS.length-1)].preset;i++){
+    const c = Math.floor(Math.random()*COLS); const r = colHeight(c);
+    if(r < 3) placeCube(c, r, [2,4,8,16][Math.floor(Math.random()*4)], true);
   }
   spawnCurrent();
 }
-
-function colHeight(c){
-  let h=0; while(h<ROWS && grid[c][h]) h++;
-  return h;
-}
+function colHeight(c){ let h=0; while(h<ROWS && grid[c][h]) h++; return h; }
 
 function placeCube(c, r, value, instant){
-  const cube = makeCube(value);
-  const p = cellPos(c,r);
-  cube.position.set(p.x, p.y, 0.1);
-  boardGroup.add(cube);
+  const cube = makeCube(value); const p = cellPos(c,r);
+  cube.position.set(p.x, p.y, 0.1); boardGroup.add(cube);
   grid[c][r] = {value, mesh:cube};
-  if(!instant){
-    cube.scale.set(.4,.4,.4);
-    tween(cube.scale, {x:1,y:1,z:1}, 0.22, easeBack);
-  }
+  if(!instant){ cube.scale.set(.4,.4,.4); tween(cube.scale, {x:1,y:1,z:1}, 0.22); }
   return grid[c][r];
 }
 
-function randomDropValue(){
-  let maxOnBoard = 4;
-  for(let c=0;c<COLS;c++) for(let r=0;r<ROWS;r++)
-    if(grid[c][r]) maxOnBoard = Math.max(maxOnBoard, grid[c][r].value);
-  const cap = Math.min(32, Math.max(4, maxOnBoard/2));
-  const pool = [];
-  for(let v=2; v<=cap; v*=2) pool.push(v, v, v===2?v:0);
-  const vals = pool.filter(Boolean);
-  return vals[Math.floor(Math.random()*vals.length)];
-}
-
 function spawnCurrent(){
-  const v = randomDropValue();
-  currentCube = makeCube(v);
-  const p = cellPos(aimCol, 0);
-  currentCube.position.set(p.x, launchY, 0.1);
-  currentCube.scale.set(.3,.3,.3);
-  boardGroup.add(currentCube);
-  tween(currentCube.scale, {x:1,y:1,z:1}, 0.2, easeBack);
+  let maxOnBoard = 4;
+  for(let c=0;c<COLS;c++) for(let r=0;r<ROWS;r++) if(grid[c][r]) maxOnBoard = Math.max(maxOnBoard, grid[c][r].value);
+  const pool = []; for(let v=2; v<=Math.min(32, Math.max(4, maxOnBoard/2)); v*=2) pool.push(v, v, v===2?v:0);
+  const vals = pool.filter(Boolean);
+  
+  currentCube = makeCube(vals[Math.floor(Math.random()*vals.length)]);
+  currentCube.position.set(cellPos(aimCol, 0).x, launchY, 0.1);
+  currentCube.scale.set(.3,.3,.3); boardGroup.add(currentCube);
+  tween(currentCube.scale, {x:1,y:1,z:1}, 0.2);
 }
 
 function setAim(c, instant = false){
   aimCol = Math.max(0, Math.min(COLS-1, c));
   if(currentCube && !busy){
-    const targetX = cellPos(aimCol,0).x;
-    if (instant) {
-      currentCube.position.x = targetX;
-    } else {
-      tween(currentCube.position, {x: targetX}, 0.09);
-    }
+    const tx = cellPos(aimCol,0).x;
+    if (instant) currentCube.position.x = tx; else tween(currentCube.position, {x: tx}, 0.09);
   }
 }
 
 function launch(){
   if(busy || !currentCube) return;
-  const c = aimCol;
-  const h = colHeight(c);
+  const c = aimCol; const h = colHeight(c);
   if(h >= ROWS){ gameOver(); return; }
-  busy = true;
-  const targetR = h;
-  const p = cellPos(c, targetR);
-  const cube = currentCube;
-  currentCube = null;
-  const dist = Math.abs(cube.position.y - p.y);
-  tween(cube.position, {x:p.x, y:p.y}, Math.max(0.13, dist*0.045), easeOut, ()=>{
-    boardGroup.remove(cube);
+  busy = true; isLaunching = true;
+  
+  const targetR = h; const p = cellPos(c, targetR);
+  const cube = currentCube; currentCube = null;
+  
+  tween(cube.position, {y:p.y}, Math.max(0.13, Math.abs(cube.position.y - p.y)*0.045), null, ()=>{
+    isLaunching = false; boardGroup.remove(cube);
     const cell = placeCube(c, targetR, cube.userData.value, true);
-    cell.mesh.scale.set(1.15,0.85,1.15);
-    tween(cell.mesh.scale, {x:1,y:1,z:1}, 0.18, easeBack);
+    cell.mesh.scale.set(1.15,0.85,1.15); tween(cell.mesh.scale, {x:1,y:1,z:1}, 0.18);
     resolveMerges([{c, r:targetR}]).then(()=>{
       if(checkWin()) return;
-      if(colFull()){ gameOver(); return; }
-      busy = false;
-      spawnCurrent();
-      setAim(aimCol);
+      if(colHeight(c) >= ROWS){ gameOver(); return; }
+      busy = false; spawnCurrent(); setAim(aimCol);
     });
   });
 }
 
-function colFull(){
-  let full = 0;
-  for(let c=0;c<COLS;c++) if(colHeight(c) >= ROWS) full++;
-  return full >= COLS;
-}
-
-function neighbors(c,r){
-  const n = [];
-  if(c>0) n.push({c:c-1,r});
-  if(c<COLS-1) n.push({c:c+1,r});
-  if(r>0) n.push({c,r:r-1});
-  if(r<ROWS-1) n.push({c,r:r+1});
-  return n;
-}
-
 async function resolveMerges(queue){
   while(queue.length){
-    const {c,r} = queue.shift();
-    const cell = grid[c][r];
+    const {c,r} = queue.shift(); const cell = grid[c][r];
     if(!cell) continue;
-    const same = neighbors(c,r).filter(n => grid[n.c][n.r] && grid[n.c][n.r].value === cell.value);
+    const same = [{c:c-1,r},{c:c+1,r},{c,r:r-1},{c,r:r+1}].filter(n => n.c>=0&&n.c<COLS&&n.r>=0&&n.r<ROWS&&grid[n.c][n.r]&&grid[n.c][n.r].value===cell.value);
     if(!same.length) continue;
 
     const newVal = cell.value * Math.pow(2, same.length);
-    score += newVal;
-    save.score = score;
-    coins += 1; save.coins = coins;
-    updateHUD();
+    score += newVal; save.score = score; coins += 1; save.coins = coins; updateHUD();
     
     await new Promise(res=>{
-      let left = same.length;
-      const tp = cellPos(c,r);
+      let left = same.length; const tp = cellPos(c,r);
       same.forEach(n=>{
-        const m = grid[n.c][n.r].mesh;
-        grid[n.c][n.r] = null;
-        tween(m.position, {x:tp.x, y:tp.y}, 0.14, easeOut, ()=>{
-          boardGroup.remove(m);
-          if(--left===0) res();
-        });
+        const m = grid[n.c][n.r].mesh; grid[n.c][n.r] = null;
+        tween(m.position, {x:tp.x, y:tp.y}, 0.14, null, ()=>{ boardGroup.remove(m); if(--left===0) res(); });
         tween(m.scale, {x:.5,y:.5,z:.5}, 0.14);
       });
     });
     
     playSound('merge');
-    boardGroup.remove(cell.mesh);
-    grid[c][r] = null;
-    const up = placeCube(c, r, newVal);
-    up.mesh.scale.set(1.35,1.35,1.35);
-    tween(up.mesh.scale, {x:1,y:1,z:1}, 0.22, easeBack);
+    // Spawn Effect
+    const eff = save.equippedEffect;
+    if(eff !== 'eff_none' && eff !== 'eff_flame' && eff !== 'eff_sparkle') { // Burst effects
+      const wp = new THREE.Vector3(); cell.mesh.getWorldPosition(wp);
+      spawnBurst(wp.x, wp.y, wp.z, eff.replace('eff_',''), 15);
+    }
 
-    const moved = applyGravity();
-    queue.push({c,r}, ...moved);
-    await wait(120);
+    boardGroup.remove(cell.mesh); grid[c][r] = null;
+    const up = placeCube(c, r, newVal); up.mesh.scale.set(1.35,1.35,1.35); tween(up.mesh.scale, {x:1,y:1,z:1}, 0.22);
+
+    const moved = [];
+    for(let xc=0;xc<COLS;xc++){
+      let write=0;
+      for(let xr=0;xr<ROWS;xr++){
+        if(grid[xc][xr]){
+          if(xr!==write){
+            grid[xc][write]=grid[xc][xr]; grid[xc][xr]=null;
+            tween(grid[xc][write].mesh.position, {y:cellPos(xc, write).y}, 0.15);
+            moved.push({c:xc, r:write});
+          }
+          write++;
+        }
+      }
+    }
+    queue.push({c,r}, ...moved); await new Promise(r=>setTimeout(r,120));
   }
   persist();
 }
 
-function applyGravity(){
-  const moved = [];
-  for(let c=0;c<COLS;c++){
-    let write = 0;
-    for(let r=0;r<ROWS;r++){
-      if(grid[c][r]){
-        if(r !== write){
-          grid[c][write] = grid[c][r];
-          grid[c][r] = null;
-          const p = cellPos(c, write);
-          tween(grid[c][write].mesh.position, {y:p.y}, 0.15, easeOut);
-          moved.push({c, r:write});
-        }
-        write++;
-      }
-    }
-  }
-  return moved;
-}
-
-const wait = ms => new Promise(r=>setTimeout(r,ms));
-
 /* ---------------- levels / win / lose ---------------- */
 function checkWin(){
-  const target = LEVELS[Math.min(level, LEVELS.length-1)].target;
-  for(let c=0;c<COLS;c++) for(let r=0;r<ROWS;r++){
-    if(grid[c][r] && grid[c][r].value >= target){
-      busy = true;
-      coins += 25; save.coins = coins;
-      best = Math.max(best, score); save.best = best;
-      save.level = Math.min(level+1, LEVELS.length-1);
-      persist(); updateHUD();
-      document.getElementById("winText").innerHTML =
-        `Έφτιαξες τον κύβο <b>${target}</b>!<br>Κέρδισες <b>+25 🪙</b>`;
-      document.getElementById("winModal").classList.remove("hidden");
-      return true;
-    }
+  const t = LEVELS[Math.min(level, LEVELS.length-1)].target;
+  for(let c=0;c<COLS;c++) for(let r=0;r<ROWS;r++) if(grid[c][r] && grid[c][r].value >= t){
+      busy = true; coins += 25; save.coins = coins; best = Math.max(best, score); save.best = best;
+      save.level = Math.min(level+1, LEVELS.length-1); persist(); updateHUD();
+      document.getElementById("winText").innerHTML = `Έφτιαξες ${t}!<br>+25 🪙`;
+      document.getElementById("winModal").classList.remove("hidden"); return true;
   }
   return false;
 }
 function gameOver(){
-  busy = true;
-  best = Math.max(best, score); save.best = best;
-  save.score = 0; // Μηδενισμός σκορ μετά από ήττα
-  persist();
-  document.getElementById("loseText").innerHTML =
-    `Σκορ: <b>${score}</b> · Ρεκόρ: <b>${best}</b>`;
+  busy = true; best = Math.max(best, score); save.best = best; save.score = 0; persist();
+  document.getElementById("loseText").innerHTML = `Σκορ: <b>${score}</b>`;
   document.getElementById("loseModal").classList.remove("hidden");
 }
 
-/* ---------------- power-ups ---------------- */
-const HAMMER_COST = 15, SHUFFLE_COST = 5, MAGNET_COST = 20;
-
-function tryHammer(){
-  if(busy) return;
-  if(hammerMode){ hammerMode=false; updateHUD(); return; }
-  if(coins < HAMMER_COST){ toast("Δεν έχεις αρκετά 🪙"); return; }
-  hammerMode = true; updateHUD();
-  toast("🔨 Πάτησε έναν κύβο για να τον σπάσεις");
-}
-function hammerHit(c,r){
-  if(!grid[c][r]) return;
-  coins -= HAMMER_COST; save.coins = coins;
-  hammerMode = false;
-  const m = grid[c][r].mesh;
-  grid[c][r] = null;
-  tween(m.scale, {x:.01,y:.01,z:.01}, 0.18, easeOut, ()=> boardGroup.remove(m));
-  busy = true;
-  wait(180).then(()=>{
-    const moved = applyGravity();
-    resolveMerges(moved).then(()=>{ busy=false; updateHUD(); persist(); });
-  });
-}
-
-function tryShuffle(){
-  if(busy || !currentCube) return;
-  if(coins < SHUFFLE_COST){ toast("Δεν έχεις αρκετά 🪙"); return; }
-  coins -= SHUFFLE_COST;
-  save.coins = coins; persist();
-  boardGroup.remove(currentCube);
-  currentCube = null;
-  spawnCurrent(); setAim(aimCol); updateHUD();
-}
-
-function tryMagnet() {
-  if (busy) return;
-  if (coins < MAGNET_COST) { toast("Δεν έχεις αρκετά 🪙"); return; }
+/* ---------------- input & powerups ---------------- */
+function onTap(e){
+  if(document.querySelector(".overlay:not(.hidden)")) return;
+  const x = (e.touches ? e.touches[0].clientX : e.clientX) / innerWidth * 2 - 1;
+  const y = -((e.touches ? e.touches[0].clientY : e.clientY) / innerHeight * 2 - 1);
+  pointer.set(x,y); raycaster.setFromCamera(pointer, camera);
+  const hit = new THREE.Vector3(); raycaster.ray.intersectPlane(new THREE.Plane(new THREE.Vector3(0,0,1).applyQuaternion(boardGroup.quaternion), 0), hit);
+  boardGroup.worldToLocal(hit);
+  const c = Math.max(0,Math.min(COLS-1, Math.round((hit.x + BOARD_W/2 - CELL/2) / (CELL+GAP))));
+  const r = Math.round((BOARD_H/2 - CELL/2 - hit.y) / (CELL+GAP));
   
+  if(hammerMode){
+    if(r>=0 && r<ROWS && grid[c][r]){
+      coins-=15; save.coins=coins; hammerMode=false;
+      const m = grid[c][r].mesh; grid[c][r]=null; tween(m.scale, {x:.01,y:.01,z:.01}, 0.18, null, ()=> boardGroup.remove(m));
+      busy=true; setTimeout(()=>{ resolveMerges([]).then(()=>{ busy=false; updateHUD(); persist(); }); }, 180);
+    } else { hammerMode=false; updateHUD(); }
+    return;
+  }
+  setAim(c, true); launch();
+}
+document.getElementById("btnHammer").onclick = ()=>{ if(busy)return; if(coins<15)return toast("Χρειάζεσαι 15🪙"); hammerMode=true; updateHUD(); toast("🔨 Επίλεξε κύβο"); }
+document.getElementById("btnShuffle").onclick = ()=>{ if(busy||!currentCube||coins<5)return; coins-=5; save.coins=coins; persist(); boardGroup.remove(currentCube); currentCube=null; spawnCurrent(); setAim(aimCol); updateHUD(); }
+document.getElementById("btnMagnet").onclick = ()=>{
+  if(busy||coins<20)return;
   let tilesByVal = {};
-  for(let c = 0; c < COLS; c++) {
-    for(let r = 0; r < ROWS; r++) {
-      if(grid[c][r]) {
-        let v = grid[c][r].value;
-        if(!tilesByVal[v]) tilesByVal[v] = [];
-        tilesByVal[v].push({ c, r, cell: grid[c][r] });
-      }
-    }
-  }
-  
-  let mergeGroups = Object.values(tilesByVal).filter(group => group.length > 1);
-  if (mergeGroups.length === 0) { 
-    toast("Δεν υπάρχουν όμοιοι κύβοι πουθενά!"); 
-    return; 
-  }
-  
-  coins -= MAGNET_COST; save.coins = coins; persist(); updateHUD();
-  busy = true;
-  let animationsPending = 0;
-  
-  mergeGroups.forEach(group => {
-    const targetSpot = group[0];
-    const newVal = targetSpot.cell.value * Math.pow(2, group.length - 1);
-    targetSpot.newVal = newVal;
-    
-    group.slice(1).forEach(t => {
-      const m = t.cell.mesh;
-      grid[t.c][t.r] = null;
-      const tp = cellPos(targetSpot.c, targetSpot.r);
-      animationsPending++;
-      
-      tween(m.position, {x: tp.x, y: tp.y, z: 1.0}, 0.35, easeBack, () => {
-        boardGroup.remove(m);
-        animationsPending--;
-        if(animationsPending === 0) finalizeMagnet(mergeGroups);
-      });
-      tween(m.scale, {x: 0.3, y: 0.3, z: 0.3}, 0.35);
+  for(let c=0;c<COLS;c++) for(let r=0;r<ROWS;r++) if(grid[c][r]) { let v=grid[c][r].value; if(!tilesByVal[v])tilesByVal[v]=[]; tilesByVal[v].push({c,r,cell:grid[c][r]}); }
+  let mg = Object.values(tilesByVal).filter(g=>g.length>1); if(!mg.length)return toast("Κανένα ζευγάρι!");
+  coins-=20; save.coins=coins; persist(); updateHUD(); busy=true; let animsP=0;
+  mg.forEach(group=>{
+    const trg = group[0]; trg.newVal = trg.cell.value * Math.pow(2, group.length-1);
+    group.slice(1).forEach(t=>{
+      const m = t.cell.mesh; grid[t.c][t.r]=null; const tp=cellPos(trg.c,trg.r); animsP++;
+      tween(m.position, {x:tp.x, y:tp.y, z:1.0}, 0.35, null, ()=>{ boardGroup.remove(m); if(--animsP===0) finMagnet(mg); });
+      tween(m.scale, {x:0.3,y:0.3,z:0.3}, 0.35);
     });
   });
 }
-
-function finalizeMagnet(mergeGroups) {
+function finMagnet(mg){
   playSound('merge');
-  mergeGroups.forEach(group => {
-    const targetSpot = group[0];
-    boardGroup.remove(targetSpot.cell.mesh);
-    grid[targetSpot.c][targetSpot.r] = null;
-    score += targetSpot.newVal;
-    save.score = score;
-    
-    const up = placeCube(targetSpot.c, targetSpot.r, targetSpot.newVal);
-    up.mesh.scale.set(1.5, 1.5, 1.5);
-    tween(up.mesh.scale, {x: 1, y: 1, z: 1}, 0.25, easeBack);
+  mg.forEach(g=>{
+    const trg=g[0]; boardGroup.remove(trg.cell.mesh); grid[trg.c][trg.r]=null; score+=trg.newVal; save.score=score;
+    const up=placeCube(trg.c,trg.r,trg.newVal); up.mesh.scale.set(1.5,1.5,1.5); tween(up.mesh.scale,{x:1,y:1,z:1},0.25);
   });
-  
-  setTimeout(() => {
-     const moved = applyGravity();
-     resolveMerges(moved).then(() => { busy = false; updateHUD(); persist(); });
-  }, 250);
+  setTimeout(()=>{ resolveMerges([]).then(()=>{ busy=false; updateHUD(); persist(); }); }, 250);
 }
 
 /* ---------------- Shop System ---------------- */
-const SKINS = [
-  { id: 'wood', name: 'Κλασικό Ξύλο', price: 0, icon: '🪵' },
-  { id: 'neon', name: 'Cyber Neon', price: 150, icon: '⚡' },
-  { id: 'gold', name: 'Χρυσός', price: 500, icon: '🏆' }
-];
-
 function renderShop() {
-  const container = document.getElementById('shopContainer');
-  container.innerHTML = '';
+  const container = document.getElementById('shopContainer'); container.innerHTML = '';
+  const arr = SHOP[currentShopTab];
   
-  SKINS.forEach(skin => {
-    const isOwned = save.skins.includes(skin.id);
-    const isEquipped = save.equippedSkin === skin.id;
+  arr.forEach(item => {
+    let propOwned = currentShopTab === 'cubes' ? 'ownedCubes' : currentShopTab === 'boards' ? 'ownedBoards' : 'ownedEffects';
+    let propEquip = currentShopTab === 'cubes' ? 'equippedCube' : currentShopTab === 'boards' ? 'equippedBoard' : 'equippedEffect';
     
-    const el = document.createElement('div');
-    el.className = `shop-item ${isOwned ? 'owned' : ''} ${isEquipped ? 'equipped' : ''}`;
+    const isOwned = save[propOwned].includes(item.id);
+    const isEquipped = save[propEquip] === item.id;
     
-    el.innerHTML = `
-      <div style="font-size:30px; margin-bottom:5px;">${skin.icon}</div>
-      <h3>${skin.name}</h3>
-      <div class="price">${isEquipped ? 'ΕΠΙΛΕΓΜΕΝΟ' : (isOwned ? 'ΕΠΙΛΟΓΗ' : skin.price + ' 🪙')}</div>
-    `;
+    const el = document.createElement('div'); el.className = `shop-item ${isOwned?'owned':''} ${isEquipped?'equipped':''}`;
+    el.innerHTML = `<div style="font-size:36px; margin-bottom:5px;">${item.icon}</div><h3>${item.name}</h3><div class="price">${isEquipped?'ΕΠΙΛΕΓΜΕΝΟ':isOwned?'ΕΠΙΛΟΓΗ':item.price+' 🪙'}</div>`;
     
     el.onclick = () => {
-      if (isOwned) {
-        save.equippedSkin = skin.id;
-        persist(); renderShop(); updateSkinLive();
-      } else if (coins >= skin.price) {
-        coins -= skin.price; save.coins = coins;
-        save.skins.push(skin.id); save.equippedSkin = skin.id;
-        persist(); updateHUD(); renderShop(); updateSkinLive();
-        toast("Αγόρασες το " + skin.name + "!");
-      } else {
-        toast("Δεν έχεις αρκετά 🪙");
-      }
+      if (isOwned) { save[propEquip] = item.id; persist(); renderShop(); applyShopChanges(); }
+      else if (coins >= item.price) {
+        coins -= item.price; save.coins = coins; save[propOwned].push(item.id); save[propEquip] = item.id;
+        persist(); updateHUD(); renderShop(); applyShopChanges(); toast("Αγόρασες το " + item.name + "!");
+      } else toast("Δεν έχεις αρκετά 🪙");
     };
     container.appendChild(el);
   });
 }
-
-function updateSkinLive() {
-  toast("Η εμφάνιση άλλαξε (ισχύει για τους επόμενους κύβους)!");
-  // Μπορεί να επεκταθεί στο numberTexture() με βάση το save.equippedSkin
+function applyShopChanges() {
+  if(currentShopTab === 'boards') updateBoardColorsLive();
+  if(currentShopTab === 'cubes') toast("Η εμφάνιση κύβου άλλαξε!"); // Applied on next spawn/merge
 }
 
-/* ---------------- daily reward ---------------- */
-function todayStr(){ return new Date().toISOString().slice(0,10); }
-function showDailyIfDue(){
-  const today = todayStr();
-  if(save.lastDay === today) return;
-  const yesterday = new Date(Date.now()-86400000).toISOString().slice(0,10);
-  save.streak = (save.lastDay === yesterday) ? Math.min(save.streak+1, 7) : 1;
-  const amt = save.streak * 10;
-  document.getElementById("dailyDay").textContent = save.streak;
-  document.getElementById("dailyAmt").textContent = amt;
-  const wrap = document.getElementById("dailyDays");
-  wrap.innerHTML = "";
-  for(let d=1; d<=7; d++){
-    const el = document.createElement("div");
-    el.className = "day" + (d<save.streak?" done":"") + (d===save.streak?" today":"");
-    el.innerHTML = `Day ${d}<div class="c">${d*10}🪙</div>`;
-    wrap.appendChild(el);
+document.querySelectorAll('.shop-tab').forEach(btn => {
+  btn.onclick = (e) => {
+    document.querySelectorAll('.shop-tab').forEach(b => b.classList.remove('active'));
+    e.target.classList.add('active'); currentShopTab = e.target.dataset.tab; renderShop();
   }
-  document.getElementById("btnClaim").onclick = ()=>{
-    coins += amt; save.coins = coins;
-    save.lastDay = today;
-    persist(); updateHUD();
-    document.getElementById("dailyModal").classList.add("hidden");
-  };
-  document.getElementById("dailyModal").classList.remove("hidden");
-}
+});
 
 /* ---------------- UI ---------------- */
 function updateHUD(){
-  document.getElementById("hudLevel").textContent = level+1;
-  document.getElementById("hudScore").textContent = score;
-  document.getElementById("hudCoins").textContent = coins;
-  document.getElementById("missionText").textContent =
-    LEVELS[Math.min(level, LEVELS.length-1)].text;
+  document.getElementById("hudLevel").textContent = level+1; document.getElementById("hudScore").textContent = score;
+  document.getElementById("hudCoins").textContent = coins; document.getElementById("missionText").textContent = LEVELS[Math.min(level, LEVELS.length-1)].text;
   document.getElementById("btnHammer").classList.toggle("armed", hammerMode);
 }
-let toastTimer;
-function toast(msg){
-  const t = document.getElementById("toast");
-  t.textContent = msg; t.style.opacity = 1;
-  clearTimeout(toastTimer);
-  toastTimer = setTimeout(()=> t.style.opacity = 0, 1800);
-}
-
-/* ---------------- input ---------------- */
-function colFromEvent(e){
-  const x = (e.touches ? e.touches[0].clientX : e.clientX) / innerWidth * 2 - 1;
-  const y = -((e.touches ? e.touches[0].clientY : e.clientY) / innerHeight * 2 - 1);
-  pointer.set(x,y); raycaster.setFromCamera(pointer, camera);
-  const plane = new THREE.Plane(new THREE.Vector3(0,0,1).applyQuaternion(boardGroup.quaternion), 0);
-  const hit = new THREE.Vector3();
-  raycaster.ray.intersectPlane(plane, hit);
-  boardGroup.worldToLocal(hit);
-  const c = Math.round((hit.x + BOARD_W/2 - CELL/2) / (CELL+GAP));
-  const r = Math.round((BOARD_H/2 - CELL/2 - hit.y) / (CELL+GAP));
-  return {c: Math.max(0,Math.min(COLS-1,c)), r, rawY: hit.y};
-}
-function onMove(e){
-  if(busy) return;
-  const {c} = colFromEvent(e);
-  setAim(c);
-}
-function onTap(e){
-  if(document.querySelector(".overlay:not(.hidden)")) return;
-  const {c, r} = colFromEvent(e);
-  if(hammerMode){
-    if(r>=0 && r<ROWS && grid[c][r]) hammerHit(c,r);
-    else { hammerMode=false; updateHUD(); }
-    return;
-  }
-  setAim(c, true); 
-  launch();
-}
+let toastTimer; function toast(msg){ const t=document.getElementById("toast"); t.textContent=msg; t.style.opacity=1; clearTimeout(toastTimer); toastTimer=setTimeout(()=>t.style.opacity=0, 1800); }
 
 /* ---------------- main loop ---------------- */
 let lastT = 0;
 function loop(t){
-  const dt = Math.min(0.05, (t-lastT)/1000); lastT = t;
-  stepAnims(dt);
+  const dt = Math.min(0.05, (t-lastT)/1000); lastT = t; stepAnims(dt); updateParticles(dt);
   
-  if(stars) stars.rotation.y = t * 0.00005; 
+  // Background Animation (Deep Space passing by)
+  bgElements.forEach(el => {
+    el.position.y -= el.userData.speed * dt * 5; el.rotation.x += el.userData.rotSpeed * dt; el.rotation.y += el.userData.rotSpeed * dt;
+    if(el.position.y < -20) { el.position.y = 30 + Math.random()*10; el.position.x = (Math.random()-0.5)*30; }
+  });
+
   if(currentCube && !busy) currentCube.rotation.y = Math.sin(t*0.002)*0.12;
   
-  // Κίνηση του Companion (αιωρείται)
-  if(companion) companion.position.y = -2 + Math.sin(t * 0.003) * 0.2;
+  // Launch Particles Trail
+  if(isLaunching && currentCube && (save.equippedEffect==='eff_flame' || save.equippedEffect==='eff_sparkle')) {
+    const wp = new THREE.Vector3(); currentCube.getWorldPosition(wp);
+    spawnParticle(wp.x, wp.y - 0.2, wp.z, save.equippedEffect.replace('eff_',''));
+  }
   
-  renderer.render(scene, camera);
-  requestAnimationFrame(loop);
+  renderer.render(scene, camera); requestAnimationFrame(loop);
 }
 
 /* ---------------- boot ---------------- */
 (async function(){
-  document.getElementById("btnMagnet").addEventListener("click", tryMagnet);
-  document.getElementById("btnHammer").addEventListener("click", tryHammer);
-  document.getElementById("btnShuffle").addEventListener("click", tryShuffle);
+  document.getElementById('btnShop').onclick = () => { renderShop(); document.getElementById('shopModal').classList.remove('hidden'); };
+  document.getElementById('btnCloseShop').onclick = () => { document.getElementById('shopModal').classList.add('hidden'); };
+  document.addEventListener('pointerdown', ()=> { if(audioCtx.state === 'suspended') audioCtx.resume(); }, {once:true});
+
+  await loadSave(); coins = save.coins; level = save.level; best = save.best;
+  initThree(); newBoard(); updateHUD();
   
-  document.getElementById('btnShop').onclick = () => {
-    renderShop();
-    document.getElementById('shopModal').classList.remove('hidden');
-  };
-  document.getElementById('btnCloseShop').onclick = () => {
-    document.getElementById('shopModal').classList.add('hidden');
-  };
-
-  const initAudio = () => { if(audioCtx.state === 'suspended') audioCtx.resume(); };
-  document.addEventListener('pointerdown', initAudio, {once:true});
-
-  await loadSave();
-  coins = save.coins; level = save.level; best = save.best;
-  initThree();
-  newBoard();
-  updateHUD();
-  showDailyIfDue();
-
-  const canvas = document.getElementById("game");
-  canvas.addEventListener("pointermove", onMove);
-  canvas.addEventListener("pointerdown", onTap);
+  const cvs = document.getElementById("game");
+  cvs.addEventListener("pointermove", (e)=>{if(!busy)setAim((e.touches?e.touches[0].clientX:e.clientX)/innerWidth*2-1)});
+  cvs.addEventListener("pointerdown", onTap);
   
-  document.getElementById("btnNext").addEventListener("click", ()=>{
-    document.getElementById("winModal").classList.add("hidden");
-    level = Math.min(level+1, LEVELS.length-1);
-    hammerMode = false; busy = false;
-    newBoard(); updateHUD();
-  });
-  document.getElementById("btnRetry").addEventListener("click", ()=>{
-    document.getElementById("loseModal").classList.add("hidden");
-    hammerMode = false; busy = false;
-    newBoard(); updateHUD();
-  });
+  document.getElementById("btnNext").onclick = ()=>{ document.getElementById("winModal").classList.add("hidden"); level=Math.min(level+1,LEVELS.length-1); busy=false; newBoard(); };
+  document.getElementById("btnRetry").onclick = ()=>{ document.getElementById("loseModal").classList.add("hidden"); busy=false; newBoard(); };
 })();
 </script>
 </body>
