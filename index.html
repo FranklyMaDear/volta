@@ -122,6 +122,20 @@
   </div>
 </div>
 
+<div class="overlay hidden" id="petModal">
+  <div class="card">
+    <div style="font-size:40px; margin-bottom:10px;">🌕</div>
+    <h2>Pet Stats</h2>
+    <div style="font-size:18px; margin-top:15px; line-height:1.8;">
+      <div>🏆 Καλύτερο Σκορ: <b id="petBest">0</b></div>
+      <div>⭐ Σκορ: <b id="petScore">0</b></div>
+      <div>📈 Επίπεδο: <b id="petLevel">1</b></div>
+      <div>🪙 Νομίσματα: <b id="petCoins">0</b></div>
+    </div>
+    <button class="btn" id="btnClosePet">Κλείσιμο</button>
+  </div>
+</div>
+
 <div class="overlay hidden" id="winModal">
   <div class="card">
     <div style="font-size:40px; margin-bottom:10px;">🎉</div>
@@ -144,9 +158,9 @@
 <script>
 /* =====================================================
    Drop 2048 · Deep Space & Full Customization
-   - Pet System (Planet Character)
+   - Pet System (Multi-part & Uniform Placement)
+   - Pet Stats Popup
    - Enhanced Starfield
-   - 3D Background Emojis
 ===================================================== */
 
 const COLS = 5, ROWS = 6, CELL = 1.0, GAP = 0.12; 
@@ -212,16 +226,16 @@ const SHOP = {
     { id: 'snd_echo', name: 'Echo', price: 0, icon: '🌌' }
   ],
   pets: [
-    { id: 'pet_base', name: 'Βασικός Πλανήτης', price: 0, icon: '🌕' },
-    { id: 'pet_eyes', name: 'Μάτια', price: 0, icon: '👀' },
-    { id: 'pet_eye', name: 'Ένα Μάτι', price: 0, icon: '👁️' },
-    { id: 'pet_tongue', name: 'Γλώσσα', price: 0, icon: '👅' },
-    { id: 'pet_mouth', name: 'Στόμα', price: 0, icon: '👄' },
-    { id: 'pet_nose', name: 'Μύτη', price: 0, icon: '👃' },
-    { id: 'pet_arm', name: 'Χέρι', price: 0, icon: '💪' },
-    { id: 'pet_leg', name: 'Πόδι', price: 0, icon: '🦵' },
-    { id: 'pet_hat', name: 'Καπέλο', price: 0, icon: '🎩' },
-    { id: 'pet_helmet', name: 'Κράνος', price: 0, icon: '⛑️' }
+    { id: 'pet_base', name: 'Βασικός Πλανήτης', price: 0, icon: '🌕', type: 'base' },
+    { id: 'pet_eyes', name: 'Μάτια', price: 0, icon: '👀', type: 'eyes' },
+    { id: 'pet_eye', name: 'Ένα Μάτι (Κύκλωπας)', price: 0, icon: '👁️', type: 'eyes' },
+    { id: 'pet_mouth', name: 'Στόμα', price: 0, icon: '👄', type: 'mouth' },
+    { id: 'pet_tongue', name: 'Γλώσσα', price: 0, icon: '👅', type: 'mouth' },
+    { id: 'pet_nose', name: 'Μύτη', price: 0, icon: '👃', type: 'nose' },
+    { id: 'pet_hat', name: 'Καπέλο', price: 0, icon: '🎩', type: 'hat' },
+    { id: 'pet_helmet', name: 'Κράνος', price: 0, icon: '⛑️', type: 'hat' },
+    { id: 'pet_arm', name: 'Χέρια', price: 0, icon: '💪', type: 'arms' },
+    { id: 'pet_leg', name: 'Πόδια', price: 0, icon: '🦵', type: 'legs' }
   ]
 };
 
@@ -234,14 +248,14 @@ const DEFAULT_SAVE = {
   ownedBoards: ['board_wood'], equippedBoard: 'board_wood',
   ownedEffects: ['eff_none'], equippedEffect: 'eff_none',
   ownedSounds: ['snd_default'], equippedSound: 'snd_default',
-  ownedPets: ['pet_base'], equippedPet: 'pet_base'
+  ownedPets: ['pet_base'], equippedPets: ['pet_base']
 };
 
 let save = { ...DEFAULT_SAVE };
 
 async function loadSave(){
   try{
-    const r = localStorage.getItem("drop2048-save-v8");
+    const r = localStorage.getItem("drop2048-save-v9");
     if(r) {
       const parsed = JSON.parse(r);
       save = Object.assign({}, DEFAULT_SAVE, parsed);
@@ -249,7 +263,7 @@ async function loadSave(){
   }catch(e){ }
 }
 function persist(){
-  try{ localStorage.setItem("drop2048-save-v8", JSON.stringify(save)); }catch(e){ }
+  try{ localStorage.setItem("drop2048-save-v9", JSON.stringify(save)); }catch(e){ }
 }
 
 /* ---------------- Audio (9 Different Sounds) ---------------- */
@@ -454,8 +468,8 @@ function initStarfield() {
   const starPos = new Float32Array(starCount * 3);
   const starColors = new Float32Array(starCount * 3);
   for (let i = 0; i < starCount * 3; i += 3) {
-    starPos[i] = (Math.random() - 0.5) * 400;     
-    starPos[i+1] = (Math.random() - 0.5) * 400;   
+    starPos[i] = (Math.random() - 0.5) * 500;     
+    starPos[i+1] = (Math.random() - 0.5) * 500;   
     starPos[i+2] = (Math.random() - 0.5) * 300;   
     
     const col = Math.random();
@@ -475,7 +489,7 @@ function initStarfield() {
     depthWrite: false
   });
   starField = new THREE.Points(starGeo, starMat);
-  starField.position.z = -20; 
+  starField.position.z = -30; 
   scene.add(starField);
 }
 
@@ -484,10 +498,10 @@ function updateStarfield(speed) {
   const positions = starField.geometry.attributes.position.array;
   for (let i = 2; i < positions.length; i += 3) {
     positions[i] += speed; 
-    if (positions[i] > 20) { 
+    if (positions[i] > 30) { 
       positions[i] = -120;   
-      positions[i-2] = (Math.random() - 0.5) * 400; 
-      positions[i-1] = (Math.random() - 0.5) * 400; 
+      positions[i-2] = (Math.random() - 0.5) * 500; 
+      positions[i-1] = (Math.random() - 0.5) * 500; 
     }
   }
   starField.geometry.attributes.position.needsUpdate = true;
@@ -505,30 +519,29 @@ function createEmojiTexture(emoji) {
   return new THREE.CanvasTexture(cv);
 }
 
-/* ---------------- PET Engine ---------------- */
+/* ---------------- PET Engine (Multi-part & Uniform Placement) ---------------- */
 let petMesh = null;
 function createPetTexture() {
   const cv = document.createElement("canvas");
   cv.width = cv.height = 256;
   const g = cv.getContext("2d");
   
-  // Βασικό σχήμα (Πλανήτης)
   const rad = 90;
   const cx = 128, cy = 128;
   
-  // Σχέδιο πλανήτη (βάση)
+  // 1. Σχέδιο βάσης (Πλανήτης)
   const grad = g.createRadialGradient(cx-20, cy-20, 20, cx, cy, rad);
   grad.addColorStop(0, "#FFD700");
   grad.addColorStop(0.7, "#FF8C00");
   grad.addColorStop(1, "#8B4500");
   g.fillStyle = grad;
   g.beginPath(); g.arc(cx, cy, rad, 0, Math.PI*2); g.fill();
-  
-  // Μάτια, στόμα, κλπ με βάση το επιλεγμένο pet
-  const equip = save.equippedPet;
-  
-  // Μάτια (👀)
-  if(equip === 'pet_eyes') {
+
+  // Φόρτωση των επιλεγμένων μερών
+  const parts = save.equippedPets || ['pet_base'];
+
+  // 2. Μάτια
+  if(parts.includes('pet_eyes')) {
     g.fillStyle = "#FFF"; g.beginPath(); g.arc(cx-35, cy-30, 25, 0, Math.PI*2); g.fill();
     g.beginPath(); g.arc(cx+35, cy-30, 25, 0, Math.PI*2); g.fill();
     g.fillStyle = "#000"; g.beginPath(); g.arc(cx-35, cy-25, 8, 0, Math.PI*2); g.fill();
@@ -536,47 +549,50 @@ function createPetTexture() {
     g.fillStyle = "#FFF"; g.beginPath(); g.arc(cx-45, cy-35, 3, 0, Math.PI*2); g.fill();
     g.beginPath(); g.arc(cx+25, cy-35, 3, 0, Math.PI*2); g.fill();
   }
-  // Ένα Μάτι (👁️)
-  else if(equip === 'pet_eye') {
+  else if(parts.includes('pet_eye')) { // Ένα Μάτι
     g.fillStyle = "#FFF"; g.beginPath(); g.arc(cx, cy-30, 35, 0, Math.PI*2); g.fill();
     g.fillStyle = "#00BFFF"; g.beginPath(); g.arc(cx, cy-20, 15, 0, Math.PI*2); g.fill();
     g.fillStyle = "#000"; g.beginPath(); g.arc(cx, cy-20, 6, 0, Math.PI*2); g.fill();
     g.fillStyle = "#FFF"; g.beginPath(); g.arc(cx-10, cy-25, 3, 0, Math.PI*2); g.fill();
   }
-  // Γλώσσα (👅)
-  if(equip === 'pet_tongue') {
-    g.fillStyle = "#FF69B4"; g.beginPath(); g.ellipse(cx, cy+40, 25, 40, 0, 0, Math.PI*2); g.fill();
-    g.strokeStyle = "#C71585"; g.lineWidth = 2; g.stroke();
-  }
-  // Στόμα (👄)
-  else if(equip === 'pet_mouth') {
+
+  // 3. Στόμα
+  if(parts.includes('pet_mouth')) {
     g.fillStyle = "#800000"; g.beginPath(); g.arc(cx, cy+10, 30, 0, Math.PI); g.fill();
     g.fillStyle = "#FF69B4"; g.beginPath(); g.arc(cx, cy+10, 15, 0, Math.PI); g.fill();
   }
-  // Μύτη (👃)
-  else if(equip === 'pet_nose') {
+  else if(parts.includes('pet_tongue')) {
+    g.fillStyle = "#FF69B4"; g.beginPath(); g.ellipse(cx, cy+40, 25, 40, 0, 0, Math.PI*2); g.fill();
+    g.strokeStyle = "#C71585"; g.lineWidth = 2; g.stroke();
+  }
+
+  // 4. Μύτη
+  if(parts.includes('pet_nose')) {
     g.fillStyle = "#D2B48C"; g.beginPath(); g.ellipse(cx, cy-5, 12, 18, 0, 0, Math.PI*2); g.fill();
     g.fillStyle = "#8B4513"; g.beginPath(); g.arc(cx-6, cy, 3, 0, Math.PI*2); g.fill(); 
     g.beginPath(); g.arc(cx+6, cy, 3, 0, Math.PI*2); g.fill(); 
   }
-  // Χέρι (💪)
-  if(equip === 'pet_arm') {
+
+  // 5. Χέρια (Συμμετρικά)
+  if(parts.includes('pet_arm')) {
     g.fillStyle = "#8B4513"; g.save(); g.translate(cx-110, cy+20); g.rotate(-0.3); g.fillRect(0, 0, 30, 15); g.restore();
     g.fillStyle = "#D2B48C"; g.save(); g.translate(cx+80, cy+20); g.rotate(0.3); g.fillRect(0, 0, 30, 15); g.restore();
   }
-  // Πόδι (🦵)
-  if(equip === 'pet_leg') {
+
+  // 6. Πόδια (Συμμετρικά)
+  if(parts.includes('pet_leg')) {
     g.fillStyle = "#D2B48C"; g.fillRect(cx-25, cy+85, 15, 30); 
     g.fillRect(cx+10, cy+85, 15, 30);
   }
-  // Καπέλο (🎩)
-  if(equip === 'pet_hat') {
+
+  // 7. Καπέλο
+  if(parts.includes('pet_hat')) {
     g.fillStyle = "#000"; g.fillRect(cx-40, cy-110, 80, 10);
     g.fillRect(cx-25, cy-140, 50, 35);
     g.fillStyle = "#FF0000"; g.fillRect(cx-5, cy-105, 10, 5);
   }
-  // Κράνος (⛑️)
-  if(equip === 'pet_helmet') {
+  // 8. Κράνος
+  else if(parts.includes('pet_helmet')) {
     g.fillStyle = "#FFA500"; g.beginPath(); g.arc(cx, cy-10, 85, Math.PI, 2*Math.PI); g.fill();
     g.fillStyle = "#FFF"; g.fillRect(cx-10, cy-95, 20, 5);
   }
@@ -590,8 +606,11 @@ function updatePetVisual() {
   const tex = createPetTexture();
   const mat = new THREE.SpriteMaterial({ map: tex, transparent: true });
   petMesh = new THREE.Sprite(mat);
-  petMesh.position.set(0, -BOARD_H/2 - 1.5, 0.1); // Κάτω από το ταμπλό
+  petMesh.position.set(0, -BOARD_H/2 - 1.5, 0.1);
   petMesh.scale.set(1.8, 1.8, 1);
+  
+  // Προσθήκη αλληλεπίδρασης κλικ
+  petMesh.userData.isPet = true;
   scene.add(petMesh);
 }
 
@@ -627,27 +646,26 @@ function initThree(){
   // BACKGROUND EMOJIS (3D Movement)
   const bgEmojis = ['⚡️', '⭐️', '🌟', '🌎', '🛰️', '🚀', '🪐', '🛸'];
   bgEmojis.forEach(emoji => {
-    for(let i=0; i<3; i++) {
+    for(let i=0; i<4; i++) {
       const tex = createEmojiTexture(emoji);
       const mat = new THREE.SpriteMaterial({ map: tex, transparent: true });
       const sprite = new THREE.Sprite(mat);
       const size = Math.random() * 2 + 1.5;
       sprite.scale.set(size, size, 1);
       
-      // Κίνηση σε 3 άξονες
       sprite.position.set(
-        (Math.random()-0.5)*40, 
-        (Math.random()-0.5)*40, 
-        -10 - Math.random()*40
+        (Math.random()-0.5)*50, 
+        (Math.random()-0.5)*50, 
+        -10 - Math.random()*50
       );
       
       sprite.userData = { 
         speed: Math.random()*1 + 0.5, 
         wobbleAmpX: Math.random()*0.05,
         wobbleAmpY: Math.random()*0.05,
-        dirX: (Math.random() - 0.5) * 2,
-        dirY: (Math.random() - 0.5) * 2,
-        dirZ: -0.5 - Math.random()*1.5,
+        dirX: (Math.random() - 0.5) * 3,
+        dirY: (Math.random() - 0.5) * 3,
+        dirZ: -0.8 - Math.random()*2,
         timeOffset: Math.random() * 100
       };
       scene.add(sprite);
@@ -992,6 +1010,23 @@ function onTap(e){
   pointer.set(x,y); raycaster.setFromCamera(pointer, camera);
   const hit = new THREE.Vector3(); raycaster.ray.intersectPlane(new THREE.Plane(new THREE.Vector3(0,0,1).applyQuaternion(boardGroup.quaternion), 0), hit);
   boardGroup.worldToLocal(hit);
+  
+  // Έλεγχος αν πατήθηκε το Pet
+  if(petMesh) {
+      const petPos = new THREE.Vector3();
+      petMesh.getWorldPosition(petPos);
+      const dist = hit.distanceTo(petPos);
+      if(dist < 0.8) {
+          // Άνοιγμα modal pet
+          document.getElementById('petBest').textContent = save.best;
+          document.getElementById('petScore').textContent = score;
+          document.getElementById('petLevel').textContent = level+1;
+          document.getElementById('petCoins').textContent = coins;
+          document.getElementById('petModal').classList.remove('hidden');
+          return;
+      }
+  }
+  
   const c = Math.max(0,Math.min(COLS-1, Math.round((hit.x + BOARD_W/2 - CELL/2) / (CELL+GAP))));
   const r = Math.round((BOARD_H/2 - CELL/2 - hit.y) / (CELL+GAP));
   
@@ -1045,19 +1080,36 @@ function renderShop() {
     let propEquip = currentShopTab === 'cubes' ? 'equippedCube' : 
                     currentShopTab === 'boards' ? 'equippedBoard' : 
                     currentShopTab === 'effects' ? 'equippedEffect' : 
-                    currentShopTab === 'sounds' ? 'equippedSound' : 'equippedPet';
+                    currentShopTab === 'sounds' ? 'equippedSound' : 'equippedPets';
     
     const isOwned = save[propOwned] && save[propOwned].includes(item.id);
-    const isEquipped = save[propEquip] === item.id;
+    const isEquipped = save[propEquip] && save[propEquip].includes(item.id);
     
     const el = document.createElement('div'); el.className = `shop-item ${isOwned?'owned':''} ${isEquipped?'equipped':''}`;
-    el.innerHTML = `<div style="font-size:36px; margin-bottom:5px;">${item.icon}</div><h3>${item.name}</h3><div class="price">${isEquipped?'ΕΠΙΛΕΓΜΕΝΟ':isOwned?'ΕΠΙΛΟΓΗ':'Δωρεάν'}</div>`;
+    el.innerHTML = `<div style="font-size:36px; margin-bottom:5px;">${item.icon}</div><h3>${item.name}</h3><div class="price">${isEquipped?'ΦΟΡΕΜΕΝΟ':isOwned?'ΕΠΙΛΟΓΗ':'Δωρεάν'}</div>`;
     
     el.onclick = () => {
-      if (isOwned) { save[propEquip] = item.id; persist(); renderShop(); applyShopChanges(); }
-      else {
-        save[propOwned].push(item.id); save[propEquip] = item.id;
-        persist(); updateHUD(); renderShop(); applyShopChanges(); toast("Αγόρασες το " + item.name + "!"); 
+      if (currentShopTab === 'pets') {
+          // Pet System Logic (Toggle parts)
+          if (isEquipped) {
+              // Remove part
+              save[propEquip] = save[propEquip].filter(id => id !== item.id);
+              persist(); renderShop(); applyShopChanges(); toast("Αφαίρεσες το " + item.name);
+          } else {
+              // Add part (if owned)
+              if (!isOwned) {
+                  save[propOwned].push(item.id);
+              }
+              save[propEquip].push(item.id);
+              persist(); renderShop(); applyShopChanges(); toast("Φόρεσες το " + item.name + "!");
+          }
+      } else {
+          // Standard Shop Logic
+          if (isOwned) { save[propEquip] = item.id; persist(); renderShop(); applyShopChanges(); }
+          else {
+            save[propOwned].push(item.id); save[propEquip] = item.id;
+            persist(); updateHUD(); renderShop(); applyShopChanges(); toast("Αγόρασες το " + item.name + "!"); 
+          }
       }
     };
     container.appendChild(el);
@@ -1091,17 +1143,15 @@ let lastT = 0;
 function loop(t){
   const dt = Math.min(0.05, (t-lastT)/1000); lastT = t; stepAnims(dt); updateParticles(dt);
   
-  updateStarfield(1.5); // Ενισχυμένη ταχύτητα και κίνηση
+  updateStarfield(1.5); 
 
   bgElements.forEach(el => {
     const u = el.userData;
     
-    // Κίνηση σε Χ, Υ, Ζ
     el.position.x += u.dirX * u.speed * dt * 2;
     el.position.y += u.dirY * u.speed * dt * 2;
     el.position.z += u.dirZ * u.speed * dt * 2;
 
-    // Reset όταν περάσει τα όρια
     if (el.position.z < -40) { el.position.z = 30; el.position.x = (Math.random()-0.5)*40; el.position.y = (Math.random()-0.5)*40; }
     if (el.position.x < -25 || el.position.x > 25) { u.dirX *= -1; }
     if (el.position.y < -25 || el.position.y > 25) { u.dirY *= -1; }
@@ -1117,6 +1167,7 @@ function loop(t){
 (async function(){
   document.getElementById('btnShop').onclick = () => { renderShop(); document.getElementById('shopModal').classList.remove('hidden'); };
   document.getElementById('btnCloseShop').onclick = () => { document.getElementById('shopModal').classList.add('hidden'); };
+  document.getElementById('btnClosePet').onclick = () => { document.getElementById('petModal').classList.add('hidden'); };
   document.addEventListener('pointerdown', ()=> { if(audioCtx.state === 'suspended') audioCtx.resume(); }, {once:true});
 
   await loadSave(); coins = save.coins; level = save.level; best = save.best;
