@@ -38,7 +38,7 @@
   }
   #missionBar b{color:#C2542F}
   
-  /* ---------- power-ups ---------- */
+  /* ---------- power-ups (ΔΩΡΕΑΝ) ---------- */
   .powerbar{position:fixed;bottom:14px;left:0;right:0;display:flex;justify-content:center;gap:10px;z-index:5}
   .pbtn{
     pointer-events:auto;border:none;cursor:pointer;width:66px;height:66px;border-radius:18px;
@@ -144,7 +144,9 @@
 <script>
 /* =====================================================
    Drop 2048 · Deep Space & Full Customization
-   - ΔΩΡΕΑΝ ΚΑΤΑΣΤΗΜΑ & ΒΟΗΘΕΙΕΣ
+   - Όλα ΔΩΡΕΑΝ (Shop & Powerups)
+   - Χωρίς Σκιές
+   - Νέος ήχος "drop" όταν ακουμπάς τον κύβο
 ===================================================== */
 
 const COLS = 5, ROWS = 6, CELL = 1.0, GAP = 0.12; 
@@ -217,7 +219,7 @@ function persist(){
   try{ localStorage.setItem("drop2048-save-v3", JSON.stringify(save)); }catch(e){ }
 }
 
-/* ---------------- Audio ---------------- */
+/* ---------------- Audio (Νέος ήχος 'drop') ---------------- */
 const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 function playSound(type) {
   if(audioCtx.state === 'suspended') audioCtx.resume();
@@ -228,6 +230,13 @@ function playSound(type) {
     osc.type = 'sine'; osc.frequency.setValueAtTime(300, audioCtx.currentTime);
     osc.frequency.exponentialRampToValueAtTime(800, audioCtx.currentTime + 0.1);
     gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1);
+    osc.start(); osc.stop(audioCtx.currentTime + 0.1);
+  } else if (type === 'drop') {
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(800, audioCtx.currentTime);
+    osc.frequency.exponentialRampToValueAtTime(400, audioCtx.currentTime + 0.1);
+    gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
     gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1);
     osc.start(); osc.stop(audioCtx.currentTime + 0.1);
   }
@@ -289,16 +298,16 @@ function createEmojiTexture(emoji) {
   return new THREE.CanvasTexture(cv);
 }
 
-/* ---------------- three.js setup ---------------- */
+/* ---------------- three.js setup (Χωρίς Σκιές) ---------------- */
 function initThree(){
   const canvas = document.getElementById("game");
   renderer = new THREE.WebGLRenderer({canvas, antialias:true});
   renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+  // Καμία ρύθμιση shadowMap.enabled, άρα χωρίς σκιές.
 
   scene = new THREE.Scene();
   scene.fog = new THREE.Fog("#0B0C10", 15, 30);
 
-  // Background Emojis
   const bgEmojis = ['🌟', '⚡️', '⭐️', '🪐', '🌎', '🌙', '🚀', '🛸', '🛰️', '🗼', '🛩️'];
   
   bgEmojis.forEach(emoji => {
@@ -349,6 +358,7 @@ function initThree(){
   scene.add(new THREE.AmbientLight(0xffffff, 0.7));
   const sun = new THREE.DirectionalLight(0xffffff, 0.8);
   sun.position.set(4, 8, 7); 
+  // Χωρίς shadow.cast, άρα καμία σκιά.
   scene.add(sun);
 
   boardGroup = new THREE.Group();
@@ -524,6 +534,9 @@ function launch(){
   if(h >= ROWS){ gameOver(); return; }
   busy = true; isLaunching = true;
   
+  // Νέος ήχος όταν ακουμπάς και αφήνεις τον κύβο
+  playSound('drop');
+
   const targetR = h; const p = cellPos(c, targetR);
   const cube = currentCube; currentCube = null;
   
@@ -617,7 +630,7 @@ function onTap(e){
   
   if(hammerMode){
     if(r>=0 && r<ROWS && grid[c][r]){
-      // ΔΩΡΕΑΝ: Αφαιρέθηκε το coins-=15
+      // ΔΩΡΕΑΝ: χωρίς αφαίρεση coin
       hammerMode=false;
       const m = grid[c][r].mesh; grid[c][r]=null; tween(m.scale, {x:.01,y:.01,z:.01}, 0.18, null, ()=> boardGroup.remove(m));
       busy=true; setTimeout(()=>{ resolveMerges([]).then(()=>{ busy=false; updateHUD(); persist(); }); }, 180);
@@ -666,16 +679,15 @@ function renderShop() {
     const isEquipped = save[propEquip] === item.id;
     
     const el = document.createElement('div'); el.className = `shop-item ${isOwned?'owned':''} ${isEquipped?'equipped':''}`;
-    // Εμφάνιση "Δωρεάν" αντί για 0 νομίσματα
     el.innerHTML = `<div style="font-size:36px; margin-bottom:5px;">${item.icon}</div><h3>${item.name}</h3><div class="price">${isEquipped?'ΕΠΙΛΕΓΜΕΝΟ':isOwned?'ΕΠΙΛΟΓΗ':'Δωρεάν'}</div>`;
     
     el.onclick = () => {
       if (isOwned) { save[propEquip] = item.id; persist(); renderShop(); applyShopChanges(); }
-      else if (coins >= item.price) { // 0 >= 0 είναι πάντα αληθές
-        // ΔΩΡΕΑΝ: coins -= item.price; (αφαιρώ την αφαίρεση για να μην χαλάσουν τα coins)
+      else {
+        // ΔΩΡΕΑΝ: αγοράζεται χωρίς αφαίρεση coin
         save[propOwned].push(item.id); save[propEquip] = item.id;
         persist(); updateHUD(); renderShop(); applyShopChanges(); toast("Αγόρασες το " + item.name + "!"); 
-      } else toast("Δεν έχεις αρκετά 🪙"); // Δεν θα εμφανιστεί ποτέ αφού είναι δωρεάν
+      }
     };
     container.appendChild(el);
   });
