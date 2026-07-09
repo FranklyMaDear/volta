@@ -51,6 +51,18 @@
   .pbtn.armed{outline:4px solid var(--accent);background:#C2542F;box-shadow:0 4px 0 #8f3c20}
   .pbtn:disabled{filter:grayscale(.8);opacity:.6;cursor:default}
   
+  /* ---------- Shop ---------- */
+  .shop-items { display: flex; gap: 10px; margin: 15px 0; overflow-x: auto; padding-bottom: 10px; }
+  .shop-item { 
+    background: #E4D7BC; border: 3px solid #8C6A4F; border-radius: 14px; padding: 10px; 
+    min-width: 100px; flex-shrink: 0; cursor: pointer; transition: transform 0.1s;
+  }
+  .shop-item:active { transform: scale(0.95); }
+  .shop-item h3 { font-size: 15px; margin-bottom: 5px; color: var(--ink); }
+  .shop-item .price { font-weight: 800; color: #b8742a; }
+  .shop-item.owned .price { color: var(--good); }
+  .shop-item.equipped { border-color: var(--accent); background: #FFF5E1; }
+
   /* ---------- modals ---------- */
   .overlay{position:fixed;inset:0;background:rgba(11,12,16,.75);display:flex;align-items:center;justify-content:center;z-index:20;backdrop-filter:blur(3px)}
   .card{
@@ -91,6 +103,7 @@
   <div class="chip"><div><small>ΕΠΙΠΕΔΟ</small><span class="big" id="hudLevel">1</span></div></div>
   <div class="chip"><div><small>ΣΚΟΡ</small><span class="big" id="hudScore">0</span></div></div>
   <div class="spacer"></div>
+  <button class="chip" id="btnShop" style="cursor:pointer; border:none; outline:none; background:var(--accent); pointer-events:auto;">🛒 Κατάστημα</button>
   <div class="chip">🪙 <span class="big" id="hudCoins">0</span></div>
 </div>
 <div id="missionBar">🎯 Αποστολή: <b id="missionText"></b></div>
@@ -102,6 +115,16 @@
 </div>
 
 <div id="toast"></div>
+
+<div class="overlay hidden" id="shopModal">
+  <div class="card" style="width: min(400px, 90vw);">
+    <div class="bear">🛍️</div>
+    <h2>Κατάστημα Εμφανίσεων</h2>
+    <p>Αγόρασε νέα στυλ για τους κύβους σου!</p>
+    <div class="shop-items" id="shopContainer"></div>
+    <button class="btn" id="btnCloseShop">Κλείσιμο</button>
+  </div>
+</div>
 
 <div class="overlay hidden" id="dailyModal">
   <div class="card">
@@ -134,7 +157,8 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script>
 /* =====================================================
-   Drop 2048 · 3D Space & Wood Edition
+   Drop 2048 · Space Wood Edition 
+   + Magnet, Custom Character, Shop, Straight Launch
 ===================================================== */
 
 const COLS = 5, ROWS = 6, CELL = 1.0, GAP = 0.12; 
@@ -149,7 +173,6 @@ const LEVELS = [
   { target: 1024, preset: 12, text: "Φτιάξε έναν κύβο 1024" },
 ];
 
-// Ξύλινη χρωματική παλέτα
 const TILE_COLORS = {
   2: "#DEB887", 4: "#D2B48C", 8: "#C19A6B", 16: "#B8860B", 32: "#CD853F",
   64: "#D2691E", 128: "#8B4513", 256: "#A0522D", 512: "#800000",
@@ -157,7 +180,7 @@ const TILE_COLORS = {
 };
 
 /* ---------------- state ---------------- */
-let scene, camera, renderer, boardGroup, raycaster, pointer, stars;
+let scene, camera, renderer, boardGroup, raycaster, pointer, stars, companion;
 let grid = [];
 let currentCube = null;
 let aimCol = 2, busy = false, hammerMode = false;
@@ -187,7 +210,7 @@ function playSound(type) {
 
 /* ---------------- persistent save ---------------- */
 const SAVE_KEY = "drop2048-save";
-let save = { coins: 30, level: 0, best: 0, lastDay: null, streak: 0 };
+let save = { coins: 30, level: 0, best: 0, score: 0, lastDay: null, streak: 0, skins: ['wood'], equippedSkin: 'wood' };
 async function loadSave(){
   try{
     if(window.storage){
@@ -206,6 +229,39 @@ async function persist(){
   }catch(e){ }
 }
 
+/* ---------------- 3D Companion ---------------- */
+function createCompanion() {
+  companion = new THREE.Group();
+
+  const bodyGeo = new THREE.BoxGeometry(1.2, 1.5, 0.8);
+  const bodyMat = new THREE.MeshLambertMaterial({ color: "#4A90D9" });
+  const body = new THREE.Mesh(bodyGeo, bodyMat);
+  body.position.y = 0.75;
+  companion.add(body);
+
+  const headGeo = new THREE.BoxGeometry(1.4, 1.4, 1.4);
+  const headMat = new THREE.MeshLambertMaterial({ color: "#F7EFDC" });
+  const head = new THREE.Mesh(headGeo, headMat);
+  head.position.y = 2.2;
+  companion.add(head);
+
+  const visorGeo = new THREE.BoxGeometry(1.0, 0.6, 0.2);
+  const visorMat = new THREE.MeshLambertMaterial({ color: "#0B0C10" });
+  const visor = new THREE.Mesh(visorGeo, visorMat);
+  visor.position.set(0, 2.2, 0.65);
+  companion.add(visor);
+
+  const antGeo = new THREE.CylinderGeometry(0.05, 0.05, 0.6);
+  const antMat = new THREE.MeshLambertMaterial({ color: "#7FA653" }); 
+  const antenna = new THREE.Mesh(antGeo, antMat);
+  antenna.position.set(0, 3.1, 0);
+  companion.add(antenna);
+
+  companion.position.set(4.5, -2, -1);
+  companion.rotation.y = -0.4;
+  scene.add(companion);
+}
+
 /* ---------------- three.js setup ---------------- */
 function initThree(){
   const canvas = document.getElementById("game");
@@ -218,11 +274,11 @@ function initThree(){
   scene.background = new THREE.Color("#0B0C10");
   scene.fog = new THREE.Fog("#0B0C10", 15, 30);
 
-  // Αστέρια στο φόντο
+  // 1000 Stars
   const starGeo = new THREE.BufferGeometry();
   const starPos = [];
-  for(let i=0; i<300; i++) {
-    starPos.push((Math.random()-0.5)*40, (Math.random()-0.5)*50, -4 - Math.random()*15);
+  for(let i=0; i<1000; i++) {
+    starPos.push((Math.random()-0.5)*50, (Math.random()-0.5)*60, -4 - Math.random()*20);
   }
   starGeo.setAttribute('position', new THREE.Float32BufferAttribute(starPos, 3));
   const starMat = new THREE.PointsMaterial({color: 0xffffff, size: 0.1, transparent: true, opacity: 0.7});
@@ -245,7 +301,6 @@ function initThree(){
   boardGroup.rotation.x = -0.10; 
   scene.add(boardGroup);
   
-  // Πλάτη ταμπλό (Ξύλινη)
   const back = new THREE.Mesh(
     new THREE.BoxGeometry(BOARD_W + 0.7, BOARD_H + 0.7, 0.3),
     new THREE.MeshLambertMaterial({color:"#4A3423"})
@@ -254,7 +309,6 @@ function initThree(){
   back.receiveShadow = true;
   boardGroup.add(back);
 
-  // Κελιά (Σκούρο Ξύλο)
   const cellGeo = new THREE.BoxGeometry(CELL*0.96, CELL*0.96, 0.12);
   const cellMat = new THREE.MeshLambertMaterial({color:"#2F1B0D"});
   for(let c=0;c<COLS;c++) for(let r=0;r<ROWS;r++){
@@ -264,6 +318,8 @@ function initThree(){
     m.receiveShadow = true;
     boardGroup.add(m);
   }
+
+  createCompanion();
 
   raycaster = new THREE.Raycaster();
   pointer = new THREE.Vector2();
@@ -289,20 +345,18 @@ function cellPos(c, r){
     y:  BOARD_H/2 - CELL/2 - r*(CELL+GAP)
   };
 }
-const launchY = -BOARD_H/2 - 1.9; // Χαμηλότερα για να μην ενοχλεί το UI
+const launchY = -BOARD_H/2 - 1.9;
 
-/* ---------------- cube visuals (Ξύλινη Υφή) ---------------- */
+/* ---------------- cube visuals ---------------- */
 function numberTexture(value){
   const cv = document.createElement("canvas");
   cv.width = cv.height = 128;
   const g = cv.getContext("2d");
   const baseColor = TILE_COLORS[value] || "#8B4513";
   
-  // Βάση
   g.fillStyle = baseColor;
   roundRect(g, 4, 4, 120, 120, 22); g.fill();
   
-  // Νερά ξύλου (Wood grain)
   g.strokeStyle = "rgba(0,0,0,0.15)";
   g.lineWidth = 1.5;
   for(let i=0; i<20; i++) {
@@ -312,7 +366,6 @@ function numberTexture(value){
     g.stroke();
   }
 
-  // Σκίαση (Gradient)
   const grad = g.createLinearGradient(0,0,0,128);
   grad.addColorStop(0,"rgba(255,255,255,.20)");
   grad.addColorStop(0.5,"rgba(255,255,255,0)");
@@ -320,7 +373,6 @@ function numberTexture(value){
   g.fillStyle = grad;
   roundRect(g, 4, 4, 120, 120, 22); g.fill();
   
-  // Αριθμός (Σκαλιστός/Βαμμένος)
   g.fillStyle = value >= 128 ? "#F7EFDC" : "#2F1B0D";
   g.font = `800 ${value>=1024?42:value>=128?50:60}px 'Baloo 2', sans-serif`;
   g.textAlign="center"; g.textBaseline="middle";
@@ -378,7 +430,8 @@ function newBoard(){
     if(grid[c] && grid[c][r]) boardGroup.remove(grid[c][r].mesh);
   }
   grid = Array.from({length:COLS},()=>Array(ROWS).fill(null));
-  score = 0; updateHUD();
+  score = save.score || 0; 
+  updateHUD();
 
   const preset = LEVELS[Math.min(level, LEVELS.length-1)].preset;
   const vals = [2,4,8,16];
@@ -431,10 +484,15 @@ function spawnCurrent(){
   tween(currentCube.scale, {x:1,y:1,z:1}, 0.2, easeBack);
 }
 
-function setAim(c){
+function setAim(c, instant = false){
   aimCol = Math.max(0, Math.min(COLS-1, c));
   if(currentCube && !busy){
-    tween(currentCube.position, {x: cellPos(aimCol,0).x}, 0.09);
+    const targetX = cellPos(aimCol,0).x;
+    if (instant) {
+      currentCube.position.x = targetX;
+    } else {
+      tween(currentCube.position, {x: targetX}, 0.09);
+    }
   }
 }
 
@@ -489,6 +547,7 @@ async function resolveMerges(queue){
 
     const newVal = cell.value * Math.pow(2, same.length);
     score += newVal;
+    save.score = score;
     coins += 1; save.coins = coins;
     updateHUD();
     
@@ -562,7 +621,9 @@ function checkWin(){
 }
 function gameOver(){
   busy = true;
-  best = Math.max(best, score); save.best = best; persist();
+  best = Math.max(best, score); save.best = best;
+  save.score = 0; // Μηδενισμός σκορ μετά από ήττα
+  persist();
   document.getElementById("loseText").innerHTML =
     `Σκορ: <b>${score}</b> · Ρεκόρ: <b>${best}</b>`;
   document.getElementById("loseModal").classList.remove("hidden");
@@ -655,6 +716,7 @@ function finalizeMagnet(mergeGroups) {
     boardGroup.remove(targetSpot.cell.mesh);
     grid[targetSpot.c][targetSpot.r] = null;
     score += targetSpot.newVal;
+    save.score = score;
     
     const up = placeCube(targetSpot.c, targetSpot.r, targetSpot.newVal);
     up.mesh.scale.set(1.5, 1.5, 1.5);
@@ -665,6 +727,52 @@ function finalizeMagnet(mergeGroups) {
      const moved = applyGravity();
      resolveMerges(moved).then(() => { busy = false; updateHUD(); persist(); });
   }, 250);
+}
+
+/* ---------------- Shop System ---------------- */
+const SKINS = [
+  { id: 'wood', name: 'Κλασικό Ξύλο', price: 0, icon: '🪵' },
+  { id: 'neon', name: 'Cyber Neon', price: 150, icon: '⚡' },
+  { id: 'gold', name: 'Χρυσός', price: 500, icon: '🏆' }
+];
+
+function renderShop() {
+  const container = document.getElementById('shopContainer');
+  container.innerHTML = '';
+  
+  SKINS.forEach(skin => {
+    const isOwned = save.skins.includes(skin.id);
+    const isEquipped = save.equippedSkin === skin.id;
+    
+    const el = document.createElement('div');
+    el.className = `shop-item ${isOwned ? 'owned' : ''} ${isEquipped ? 'equipped' : ''}`;
+    
+    el.innerHTML = `
+      <div style="font-size:30px; margin-bottom:5px;">${skin.icon}</div>
+      <h3>${skin.name}</h3>
+      <div class="price">${isEquipped ? 'ΕΠΙΛΕΓΜΕΝΟ' : (isOwned ? 'ΕΠΙΛΟΓΗ' : skin.price + ' 🪙')}</div>
+    `;
+    
+    el.onclick = () => {
+      if (isOwned) {
+        save.equippedSkin = skin.id;
+        persist(); renderShop(); updateSkinLive();
+      } else if (coins >= skin.price) {
+        coins -= skin.price; save.coins = coins;
+        save.skins.push(skin.id); save.equippedSkin = skin.id;
+        persist(); updateHUD(); renderShop(); updateSkinLive();
+        toast("Αγόρασες το " + skin.name + "!");
+      } else {
+        toast("Δεν έχεις αρκετά 🪙");
+      }
+    };
+    container.appendChild(el);
+  });
+}
+
+function updateSkinLive() {
+  toast("Η εμφάνιση άλλαξε (ισχύει για τους επόμενους κύβους)!");
+  // Μπορεί να επεκταθεί στο numberTexture() με βάση το save.equippedSkin
 }
 
 /* ---------------- daily reward ---------------- */
@@ -737,7 +845,7 @@ function onTap(e){
     else { hammerMode=false; updateHUD(); }
     return;
   }
-  setAim(c);
+  setAim(c, true); 
   launch();
 }
 
@@ -747,8 +855,11 @@ function loop(t){
   const dt = Math.min(0.05, (t-lastT)/1000); lastT = t;
   stepAnims(dt);
   
-  if(stars) stars.rotation.y = t * 0.00005; // Αργή περιστροφή των αστεριών
+  if(stars) stars.rotation.y = t * 0.00005; 
   if(currentCube && !busy) currentCube.rotation.y = Math.sin(t*0.002)*0.12;
+  
+  // Κίνηση του Companion (αιωρείται)
+  if(companion) companion.position.y = -2 + Math.sin(t * 0.003) * 0.2;
   
   renderer.render(scene, camera);
   requestAnimationFrame(loop);
@@ -756,12 +867,18 @@ function loop(t){
 
 /* ---------------- boot ---------------- */
 (async function(){
-  // Event Listeners
   document.getElementById("btnMagnet").addEventListener("click", tryMagnet);
   document.getElementById("btnHammer").addEventListener("click", tryHammer);
   document.getElementById("btnShuffle").addEventListener("click", tryShuffle);
   
-  // Το Web Audio API χρειάζεται αλληλεπίδραση από τον χρήστη για να ξεκινήσει
+  document.getElementById('btnShop').onclick = () => {
+    renderShop();
+    document.getElementById('shopModal').classList.remove('hidden');
+  };
+  document.getElementById('btnCloseShop').onclick = () => {
+    document.getElementById('shopModal').classList.add('hidden');
+  };
+
   const initAudio = () => { if(audioCtx.state === 'suspended') audioCtx.resume(); };
   document.addEventListener('pointerdown', initAudio, {once:true});
 
