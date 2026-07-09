@@ -427,13 +427,13 @@
 
       async function loadSave() {
         try {
-          const r = localStorage.getItem("drop2048-save-v5");
+          const r = localStorage.getItem("drop2048-save-v6");
           if (r) { const parsed = JSON.parse(r); save = Object.assign({}, DEFAULT_SAVE, parsed); }
         } catch (e) {}
       }
 
       function persist() {
-        try { localStorage.setItem("drop2048-save-v5", JSON.stringify(save)); } catch (e) {}
+        try { localStorage.setItem("drop2048-save-v6", JSON.stringify(save)); } catch (e) {}
       }
 
       const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -519,17 +519,18 @@
         starField.geometry.attributes.position.needsUpdate = true;
       }
 
-      /* ----- AZIRAM PET SYSTEM (ΟΛΟΚΛΗΡΩΜΕΝΟΣ) ----- */
+      /* ----- AZIRAM PET SYSTEM (FIXED VISIBILITY) ----- */
       let aziramPet, sockets = {};
       let aziramReactionTime = 0;
       let aziramWinTime = 0;
-      let aziramTargetPos = new THREE.Vector3(2.5, -3.8, 0.5);
+      // Σταθερή θέση μπροστά από την κάμερα (κάτω δεξιά)
+      let aziramBasePosition = new THREE.Vector3(2.5, -3.0, -2.0);
 
       function createAziram() {
         const petGroup = new THREE.Group();
         const jellyCore = new THREE.Group();
 
-        const bodyMat = new THREE.MeshPhongMaterial({ color: 0x33ffaa, shininess: 120, transparent: true, opacity: 0.85 });
+        const bodyMat = new THREE.MeshPhongMaterial({ color: 0x33ffaa, shininess: 120, transparent: true, opacity: 0.9 });
         const body = new THREE.Mesh(new THREE.SphereGeometry(0.7, 32, 32), bodyMat);
         jellyCore.add(body);
 
@@ -549,7 +550,7 @@
         jellyCore.add(sockets.feet);
 
         petGroup.add(jellyCore);
-        petGroup.position.copy(aziramTargetPos);
+        petGroup.position.copy(aziramBasePosition);
         petGroup.rotation.y = -0.3;
         petGroup.rotation.x = 0.2;
 
@@ -585,6 +586,8 @@
           sockets.handL.position.y = Math.sin(t * 0.08) * 0.6;
           sockets.handR.position.y = Math.cos(t * 0.08) * 0.6;
         } else {
+          // Idle: επαναφορά στη βάση
+          aziramPet.position.copy(aziramBasePosition);
           aziramPet.rotation.x = 0.2;
           aziramPet.rotation.y += (-0.3 - aziramPet.rotation.y) * 0.1;
           core.scale.set(1, 1, 1);
@@ -810,23 +813,15 @@
         updateBoardColorsLive();
         initStarfield();
 
-        // Δημιουργία AZIRAM
+        // Δημιουργία AZIRAM με σταθερή θέση
         aziramPet = createAziram();
         scene.add(aziramPet);
-        updateAziramScreenPosition();
 
         raycaster = new THREE.Raycaster();
         pointer = new THREE.Vector2();
         onResize();
         addEventListener("resize", onResize);
         requestAnimationFrame(loop);
-      }
-
-      function updateAziramScreenPosition() {
-        const ndc = new THREE.Vector3(0.82, -0.78, 0.5);
-        ndc.unproject(camera);
-        aziramTargetPos.copy(ndc);
-        if (aziramPet) aziramPet.position.copy(aziramTargetPos);
       }
 
       function updateBoardColorsLive() {
@@ -842,7 +837,7 @@
         camera.position.set(0, -1.8, dist + 1.5);
         camera.lookAt(0, -1.2, 0);
         camera.updateProjectionMatrix();
-        updateAziramScreenPosition();
+        // Δεν χρειάζεται να αλλάξουμε τη θέση του AZIRAM – μένει σταθερή μπροστά από την κάμερα
       }
 
       function cellPos(c, r) {
@@ -1060,7 +1055,6 @@
         updateHUD();
         document.getElementById("winText").innerHTML = `Έφτιαξες ${t}!<br>+25 🪙`;
 
-        // Ενεργοποίηση celebration
         triggerAziramCelebration();
 
         if (winTimer) clearTimeout(winTimer);
