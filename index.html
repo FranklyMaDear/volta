@@ -149,6 +149,15 @@
       0%, 100% { transform: scale(1); }
       50% { transform: scale(1.08); }
     }
+    /* Το μικρόφωνο έχει τη δική του θέση: δεξιά, πάνω από το Aziram */
+    #btnMic {
+      position: fixed;
+      right: 14px;
+      bottom: 225px;
+      z-index: 6;
+      width: 58px;
+      height: 58px;
+    }
     .shop-tabs {
       display: flex;
       gap: 5px;
@@ -473,9 +482,13 @@
         ],
         sounds: [
           { id: 'snd_default', name: 'Default', price: 0, icon: '🔊' },
-          { id: 'snd_bass', name: 'Bass Drop', price: 0, icon: '🔊' },
+          { id: 'snd_bass', name: 'Bass Drop', price: 0, icon: '🎛️' },
           { id: 'snd_bell', name: 'Καμπάνα', price: 0, icon: '🔔' },
-          { id: 'snd_echo', name: 'Echo', price: 0, icon: '🌌' }
+          { id: 'snd_echo', name: 'Echo', price: 0, icon: '🌌' },
+          { id: 'snd_retro', name: 'Retro 8-bit', price: 100, icon: '👾' },
+          { id: 'snd_pop', name: 'Bubble Pop', price: 100, icon: '🫧' },
+          { id: 'snd_laser', name: 'Laser', price: 150, icon: '🔫' },
+          { id: 'snd_magic', name: 'Μαγικό', price: 200, icon: '✨' }
         ],
         pet_color: [
           { id: 'color_green', name: 'Πράσινο (Jelly)', price: 0, icon: '🟢' },
@@ -483,7 +496,8 @@
           { id: 'color_pink', name: 'Neon Ροζ', price: 0, icon: '🌸' },
           { id: 'color_gold', name: 'Καθαρός Χρυσός', price: 0, icon: '🟡' },
           { id: 'color_red', name: 'Κόκκινο Λάβας', price: 0, icon: '🔴' },
-          { id: 'color_rainbow', name: 'RGB (Ουρ. Τόξο)', price: 0, icon: '🌈' }
+          { id: 'color_rainbow', name: 'RGB (Ουρ. Τόξο)', price: 0, icon: '🌈' },
+          { id: 'color_slime', name: 'Slime Γαλαξίας', price: 400, icon: '🪼' }
         ],
         pet_head: [
           { id: 'head_none', name: 'Τίποτα', price: 0, icon: '🚫' },
@@ -586,26 +600,48 @@
       function playSound(type) {
         if (audioCtx.state === 'suspended') audioCtx.resume();
         if (type === 'win') { playWinSound(audioCtx); return; }
-        const osc = audioCtx.createOscillator();
-        const gain = audioCtx.createGain();
-        osc.connect(gain);
-        gain.connect(audioCtx.destination);
-        if (type === 'drop') {
-          osc.type = 'sine';
-          osc.frequency.setValueAtTime(800, audioCtx.currentTime);
-          osc.frequency.exponentialRampToValueAtTime(400, audioCtx.currentTime + 0.1);
-          gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
-          gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1);
-          osc.start();
-          osc.stop(audioCtx.currentTime + 0.15);
-        } else if (type === 'merge') {
-          osc.type = 'sine';
-          osc.frequency.setValueAtTime(300, audioCtx.currentTime);
-          osc.frequency.exponentialRampToValueAtTime(800, audioCtx.currentTime + 0.1);
-          gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
-          gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.2);
-          osc.start();
-          osc.stop(audioCtx.currentTime + 0.2);
+        const s = save.equippedSound || 'snd_default';
+        const now = audioCtx.currentTime;
+
+        function tone(freq0, freq1, dur, wave, vol, delay) {
+          const o = audioCtx.createOscillator();
+          const g = audioCtx.createGain();
+          o.connect(g);
+          g.connect(audioCtx.destination);
+          o.type = wave;
+          const t0 = now + (delay || 0);
+          o.frequency.setValueAtTime(freq0, t0);
+          if (freq1) o.frequency.exponentialRampToValueAtTime(freq1, t0 + dur);
+          g.gain.setValueAtTime(vol, t0);
+          g.gain.exponentialRampToValueAtTime(0.01, t0 + dur);
+          o.start(t0);
+          o.stop(t0 + dur + 0.05);
+        }
+
+        if (s === 'snd_default') {
+          if (type === 'drop') tone(800, 400, 0.1, 'sine', 0.2);
+          else tone(300, 800, 0.2, 'sine', 0.3);
+        } else if (s === 'snd_bass') {
+          if (type === 'drop') tone(150, 60, 0.18, 'sawtooth', 0.3);
+          else { tone(70, 200, 0.3, 'sawtooth', 0.35); tone(140, 400, 0.3, 'sine', 0.2); }
+        } else if (s === 'snd_bell') {
+          if (type === 'drop') { tone(880, null, 0.35, 'sine', 0.15); tone(1760, null, 0.25, 'sine', 0.06); }
+          else { tone(1046, null, 0.55, 'sine', 0.2); tone(2093, null, 0.4, 'sine', 0.08); tone(1568, null, 0.45, 'sine', 0.06, 0.05); }
+        } else if (s === 'snd_echo') {
+          const f = type === 'drop' ? 600 : 900;
+          for (let i = 0; i < 3; i++) tone(f, f * 0.8, 0.12, 'sine', 0.22 / (i + 1), i * 0.13);
+        } else if (s === 'snd_retro') {
+          if (type === 'drop') tone(440, 220, 0.08, 'square', 0.12);
+          else { tone(523, null, 0.07, 'square', 0.12); tone(659, null, 0.07, 'square', 0.12, 0.07); tone(784, null, 0.1, 'square', 0.12, 0.14); }
+        } else if (s === 'snd_pop') {
+          if (type === 'drop') tone(1200, 300, 0.06, 'sine', 0.3);
+          else { tone(400, 1600, 0.09, 'sine', 0.32); tone(600, 2000, 0.08, 'sine', 0.15, 0.06); }
+        } else if (s === 'snd_laser') {
+          if (type === 'drop') tone(1800, 200, 0.15, 'sawtooth', 0.13);
+          else tone(200, 2200, 0.2, 'sawtooth', 0.17);
+        } else if (s === 'snd_magic') {
+          const base = type === 'drop' ? 700 : 950;
+          for (let i = 0; i < 4; i++) tone(base + i * 180, null, 0.16, 'triangle', 0.11, i * 0.05);
         }
       }
 
@@ -653,7 +689,42 @@
         speechSynthesis.onvoiceschanged = () => speechSynthesis.getVoices();
       }
 
-      /* ----- MIC (Speech Recognition → pet repeats) ----- */
+      /* ----- AZIRAM Q&A BRAIN (offline) ----- */
+      function stripAccents(s) {
+        return s.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+      }
+
+      function answerQuestion(raw) {
+        const q = stripAccents(raw.toLowerCase());
+        const has = (...w) => w.some(x => q.includes(x));
+
+        if (has('πως σε λενε', 'ονομα σου', 'ποιος εισαι', 'τι εισαι')) return "Με λένε Aziram και είμαι το slime φιλαράκι σου!";
+        if (has('τι κανεις', 'πως εισαι', 'εισαι καλα', 'ολα καλα')) return "Τέλεια είμαι! Έτοιμος για κύβους!";
+        if (has('σκορ', 'ποντο')) return "Το σκορ σου είναι " + score + " πόντοι! Συνέχισε!";
+        if (has('επιπεδο', 'πιστα')) return "Είμαστε στο επίπεδο " + (level + 1) + "!";
+        if (has('νομισματα', 'λεφτα', 'χρηματα', 'κερματα')) return "Έχεις " + coins + " νομίσματα! Πάμε για ψώνια;";
+        if (has('αποστολη', 'στοχος', 'τι πρεπει')) return "Η αποστολή μας: " + LEVELS[Math.min(level, LEVELS.length - 1)].text + "!";
+        if (has('ανεκδοτο', 'αστειο', 'πες κατι αστειο')) {
+          const jokes = [
+            "Γιατί ο κύβος πήγε σχολείο; Για να γίνει τετράγωνο μυαλό!",
+            "Τι λέει το 2 στο 2; Έλα να γίνουμε 4άρι!",
+            "Είμαι slime, αλλά δεν ζηλεύω κανέναν!",
+            "Ξέρεις ποιο είναι το αγαπημένο μου φαγητό; Τα κυβάκια ζάχαρης!"
+          ];
+          return jokes[Math.floor(Math.random() * jokes.length)];
+        }
+        if (has('βοηθεια', 'συμβουλη', 'πως παιζ', 'τι να κανω')) return "Ένωσε ίδιους αριθμούς! Και κράτα τους μεγάλους κύβους στις άκρες!";
+        if (has('σε αγαπω', 'σ αγαπω', 'σε συμπαθω')) return "Κι εγώ σε αγαπώ πάρα πολύ!";
+        if (has('ποσο χρονων', 'ηλικια')) return "Είμαι νεογέννητο slime! Μόλις λίγων λεπτών!";
+        if (has('αντιο', 'τα λεμε', 'φευγω')) return "Γεια σου! Έλα πάλι γρήγορα, θα σε περιμένω!";
+        if (has('ευχαριστω')) return "Παρακαλώ! Ό,τι θες, εδώ είμαι!";
+        if (has('τραγουδ')) return "Λα λα λα! Κύβοι κύβοι παντού! Χι χι!";
+        if (has('γεια', 'καλημερα', 'καλησπερα', 'καληνυχτα', 'χαιρετε')) return "Γεια σου! Χαίρομαι πολύ που σε ακούω!";
+        // Αν δεν κατάλαβε, επαναλαμβάνει αυτό που είπες
+        return "Είπες: " + raw + ". Ωραίο ακούγεται!";
+      }
+
+      /* ----- MIC (Speech Recognition → pet answers) ----- */
       let recognition = null,
         isListening = false;
 
@@ -676,13 +747,15 @@
           recognition.onstart = () => {
             isListening = true;
             btn.classList.add('listening');
-            toast("🎤 Σε ακούω...");
+            toast("🎤 Ρώτα με κάτι...");
           };
           recognition.onresult = (e) => {
             const txt = e.results[0][0].transcript;
             if (txt) {
-              showSpeech(txt, Math.max(2500, txt.length * 90));
-              speak(txt);
+              const reply = answerQuestion(txt);
+              aziramReactionTime = 1.2;
+              showSpeech(reply, Math.max(2800, reply.length * 80));
+              speak(reply);
             }
           };
           recognition.onerror = () => toast("Δεν σε άκουσα 😅 Ξαναδοκίμασε");
@@ -772,7 +845,7 @@
       }
 
       /* ----- AZIRAM PET SYSTEM (redesigned) ----- */
-      let aziramPet, aziramBodyMesh, sockets = {};
+      let aziramPet, aziramBodyMesh, aziramCore, slimeGroup = null, sockets = {};
       let mouthMesh, browL, browR, aziramEyes = null;
       let aziramReactionTime = 0,
         aziramWinTime = 0;
@@ -886,6 +959,7 @@
         jellyCore.add(sockets.feet);
 
         petGroup.add(jellyCore);
+        aziramCore = jellyCore;
         petGroup.rotation.y = -0.3;
         petGroup.rotation.x = 0.2;
 
@@ -904,6 +978,61 @@
         aziramBasePosition.copy(pos);
         aziramPet.position.copy(aziramBasePosition);
         updateSpeechPosition();
+      }
+
+      // Slime Γαλαξίας: καρδούλες, αστεράκια, sprinkles και γκλίτερ μέσα στο σώμα
+      function buildSlime() {
+        slimeGroup = new THREE.Group();
+        const items = [];
+        // Καρδούλες (φλαταρισμένες σφαίρες)
+        [0xff6699, 0xff3366, 0xcc44aa].forEach(col => {
+          const h = new THREE.Mesh(new THREE.SphereGeometry(0.09, 10, 10),
+            new THREE.MeshPhongMaterial({ color: col, shininess: 150 }));
+          h.scale.set(1, 0.95, 0.55);
+          items.push(h);
+        });
+        // Αστεράκια (οκτάεδρα)
+        [0xffdd55, 0x66ddff, 0x88ffcc].forEach(col => {
+          const s = new THREE.Mesh(new THREE.OctahedronGeometry(0.08),
+            new THREE.MeshPhongMaterial({ color: col, shininess: 150 }));
+          items.push(s);
+        });
+        // Sprinkles (μικροί χρωματιστοί κύλινδροι)
+        const sprinkleColors = [0xffaacc, 0xaaddff, 0xffeeaa, 0xccffaa, 0xddaaff];
+        for (let i = 0; i < 8; i++) {
+          const sp = new THREE.Mesh(new THREE.CylinderGeometry(0.02, 0.02, 0.1, 6),
+            new THREE.MeshBasicMaterial({ color: sprinkleColors[i % 5] }));
+          sp.rotation.set(Math.random() * 3, Math.random() * 3, Math.random() * 3);
+          items.push(sp);
+        }
+        // Γκλίτερ (λευκές κουκκιδίτσες)
+        const glitterMat = new THREE.MeshBasicMaterial({ color: 0xffffff });
+        for (let i = 0; i < 22; i++) {
+          items.push(new THREE.Mesh(new THREE.SphereGeometry(0.018, 6, 6), glitterMat));
+        }
+        // Τυχαία τοποθέτηση ΜΕΣΑ στο σώμα
+        items.forEach(m => {
+          const r = 0.5 * Math.cbrt(Math.random());
+          const th = Math.random() * Math.PI * 2;
+          const ph = Math.acos(2 * Math.random() - 1);
+          m.position.set(
+            r * Math.sin(ph) * Math.cos(th) * 0.9,
+            r * Math.sin(ph) * Math.sin(th) * 1.05,
+            r * Math.cos(ph) * 0.8
+          );
+          m.userData.baseY = m.position.y;
+          m.userData.ph = Math.random() * 10;
+          slimeGroup.add(m);
+        });
+        // Αργή αιώρηση των στολιδιών
+        slimeGroup.userData.onUpdate = (t) => {
+          slimeGroup.rotation.y = Math.sin(t * 0.0004) * 0.35;
+          slimeGroup.children.forEach(m => {
+            m.position.y = m.userData.baseY + Math.sin(t * 0.001 + m.userData.ph) * 0.03;
+            m.rotation.y += 0.006;
+          });
+        };
+        aziramCore.add(slimeGroup);
       }
 
       // Μεγάλα εκφραστικά μάτια με λευκή γυαλάδα
@@ -929,12 +1058,19 @@
 
         if (slotCategory === 'pet_color') {
           aziramBodyMesh.userData.isRainbow = false;
+          if (slimeGroup) { aziramCore.remove(slimeGroup); slimeGroup = null; }
+          aziramBodyMesh.material.opacity = 0.88;
           if (itemId === 'color_green') aziramBaseColor.setHex(0x33ffaa);
           if (itemId === 'color_blue') aziramBaseColor.setHex(0x00aaff);
           if (itemId === 'color_pink') aziramBaseColor.setHex(0xff00ff);
           if (itemId === 'color_gold') aziramBaseColor.setHex(0xffd700);
           if (itemId === 'color_red') aziramBaseColor.setHex(0xff4500);
           if (itemId === 'color_rainbow') aziramBodyMesh.userData.isRainbow = true;
+          if (itemId === 'color_slime') {
+            aziramBaseColor.setHex(0x55d8e8);
+            aziramBodyMesh.material.opacity = 0.62;
+            buildSlime();
+          }
           aziramBodyMesh.material.color.copy(aziramBaseColor);
           return;
         }
@@ -1444,11 +1580,34 @@
           roundRect(g, 4, 4, 120, 120, 22);
           g.fill(); }
 
-        g.font = `800 ${value>=1024?42:value>=128?50:60}px 'Baloo 2', sans-serif`;
+        // Λευκό στρογγυλό background πίσω από τον αριθμό στα "πολύχρωμα" skins
+        const badgeSkins = ['whitered', 'whitegreen', 'zebra', 'rainbow', 'galaxy', 'neon', 'ice', 'lava'];
+        const hasBadge = badgeSkins.includes(skin);
+        if (hasBadge) {
+          g.save();
+          g.shadowColor = "rgba(0,0,0,0.35)";
+          g.shadowBlur = 7;
+          g.shadowOffsetY = 2;
+          g.beginPath();
+          g.arc(64, 66, 37, 0, Math.PI * 2);
+          g.fillStyle = "rgba(255,255,255,0.96)";
+          g.fill();
+          g.restore();
+          g.lineWidth = 3;
+          g.strokeStyle = "rgba(0,0,0,0.12)";
+          g.beginPath();
+          g.arc(64, 66, 37, 0, Math.PI * 2);
+          g.stroke();
+        }
+        if (hasBadge) {
+          g.font = `800 ${value>=1024?30:value>=128?36:44}px 'Baloo 2', sans-serif`;
+        } else {
+          g.font = `800 ${value>=1024?42:value>=128?50:60}px 'Baloo 2', sans-serif`;
+        }
         g.textAlign = "center";
         g.textBaseline = "middle";
-        g.fillStyle = skin === 'wood' ? (value >= 128 ? "#FFF" : "#000") : "#FFF";
-        g.fillText(value, 64, 68);
+        g.fillStyle = hasBadge ? "#2F1B0D" : (skin === 'wood' ? (value >= 128 ? "#FFF" : "#000") : "#FFF");
+        g.fillText(value, 64, hasBadge ? 66 : 68);
         const t = new THREE.CanvasTexture(cv);
         t.anisotropy = 4;
         return t;
