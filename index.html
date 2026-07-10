@@ -303,6 +303,39 @@
       transition: opacity .25s;
       white-space: nowrap;
     }
+    
+    /* SPEECH BUBBLE */
+    #speech {
+      position: fixed;
+      z-index: 10;
+      pointer-events: none;
+      font-weight: 800;
+      font-size: 24px;
+      background: #ffffff;
+      color: #333;
+      padding: 8px 16px;
+      border-radius: 20px;
+      border: 3px solid var(--panel-deep);
+      box-shadow: 0 4px 0 var(--panel-deep);
+      transform: translate(-50%, -120%);
+      opacity: 0;
+      transition: opacity 0.2s ease-in-out, transform 0.2s ease-in-out;
+    }
+    #speech.visible {
+      opacity: 1;
+      transform: translate(-50%, -140%);
+    }
+    #speech::after {
+      content: "";
+      position: absolute;
+      top: 100%;
+      left: 50%;
+      margin-left: -10px;
+      border-width: 12px;
+      border-style: solid;
+      border-color: #ffffff transparent transparent transparent;
+      filter: drop-shadow(0 4px 0 var(--panel-deep));
+    }
   </style>
 </head>
 <body>
@@ -316,6 +349,9 @@
     <div class="chip">🪙 <span class="big" id="hudCoins">0</span></div>
   </div>
   <div id="missionBar">🎯 Αποστολή: <b id="missionText"></b></div>
+
+  <!-- SPEECH BUBBLE ELEMENT -->
+  <div id="speech"><span id="speechText">WOW!</span></div>
 
   <div class="powerbar">
     <button class="pbtn" id="btnMagnet">🧲<span class="cost">Δωρεάν</span></button>
@@ -372,7 +408,7 @@
   <script>
     (function() {
       /* =====================================================
-         DROP 2048 · FRANKLYGAMES EDITION (Complete)
+         DROP 2048 · FRANKLYGAMES EDITION (Complete with Pet)
       ===================================================== */
       const COLS = 5,
         ROWS = 6,
@@ -643,9 +679,46 @@
       let aziramReactionTime = 0,
         aziramWinTime = 0;
       let aziramBasePosition = new THREE.Vector3(2.5, -3.8, 0.5);
+      
+      // Speech Bubble Variables
+      let speechTimer = null;
+
+      function showSpeech(text, duration) {
+        const el = document.getElementById("speechText");
+        const bbl = document.getElementById("speech");
+        
+        if(speechTimer) clearTimeout(speechTimer);
+        
+        el.innerText = text;
+        bbl.classList.add("visible");
+        bbl.style.opacity = "1";
+        
+        // Update speech bubble position to follow the pet
+        updateSpeechPosition();
+        
+        speechTimer = setTimeout(() => {
+            bbl.classList.remove("visible");
+            bbl.style.opacity = "0";
+        }, duration);
+      }
+
+      function updateSpeechPosition() {
+        if(!aziramPet) return;
+        const vec = aziramPet.position.clone();
+        vec.project(camera);
+        const x = (vec.x * .5 + .5) * window.innerWidth;
+        const y = (-vec.y * .5 + .5) * window.innerHeight;
+        
+        const bbl = document.getElementById("speech");
+        bbl.style.left = x + "px";
+        bbl.style.top = y + "px";
+      }
 
       function createAziram() {
         const petGroup = new THREE.Group();
+        // Μείωση μεγέθους από 0.45 σε 0.33
+        petGroup.scale.set(0.33, 0.33, 0.33);
+        
         const jellyCore = new THREE.Group();
         const bodyMat = new THREE.MeshPhongMaterial({ color: 0x33ffaa, shininess: 120, transparent: true,
         opacity: 0.85 });
@@ -682,7 +755,6 @@
         jellyCore.add(sockets.feet);
 
         petGroup.add(jellyCore);
-        petGroup.scale.set(0.45, 0.45, 0.45);
         petGroup.rotation.y = -0.3;
         petGroup.rotation.x = 0.2;
 
@@ -691,12 +763,15 @@
 
       function updateAziramScreenPosition() {
         if (!aziramPet || !camera) return;
-        const ndc = new THREE.Vector3(0.72, -0.78, 0.5);
+        // Τοποθέτηση δίπλα στα κουμπιά, πιο δεξιά και κάτω
+        const ndc = new THREE.Vector3(0.73, -0.88, 0.1);
         ndc.unproject(camera);
         const dir = ndc.clone().sub(camera.position).normalize();
         const pos = camera.position.clone().add(dir.multiplyScalar(5.0));
         aziramBasePosition.copy(pos);
         aziramPet.position.copy(aziramBasePosition);
+        // Ενημέρωση της φούσκας ομιλίας
+        updateSpeechPosition();
       }
 
       function equipPetSlot(slotCategory, itemId) {
@@ -1277,6 +1352,7 @@
         updateHUD();
         document.getElementById("winText").innerHTML = `Έφτιαξες ${t}!<br>+25 🪙`;
         aziramWinTime = 3.0;
+        showSpeech("WOW! 🎉", 2500);
         if (winTimer) clearTimeout(winTimer);
         winTimer = setTimeout(() => { document.getElementById("winModal").classList.remove("hidden");
           winTimer = null; }, 3000);
@@ -1289,6 +1365,7 @@
         save.best = best;
         save.score = 0;
         persist();
+        showSpeech("Nooo! 😭", 2500);
         document.getElementById("loseText").innerHTML = `Σκορ: <b>${score}</b>`;
         document.getElementById("loseModal").classList.remove("hidden");
       }
@@ -1303,7 +1380,8 @@
         if (aziramPet) {
           const hits = raycaster.intersectObject(aziramPet, true);
           if (hits.length > 0 && aziramWinTime <= 0) {
-            aziramReactionTime = 1.2;
+            aziramReactionTime = 1.0;
+            showSpeech("😊", 1500);
             if (audioCtx.state !== 'suspended') playSound('drop');
             return;
           }
@@ -1512,13 +1590,14 @@
           } else if (aziramReactionTime > 0) {
             aziramReactionTime -= dt;
             aziramPet.rotation.x = 0.2;
-            core.position.x = (Math.random() - 0.5) * 0.15;
-            core.position.y = (Math.random() - 0.5) * 0.15;
-            aziramPet.rotation.y += 0.4;
-            core.scale.y = 1 + Math.sin(t * 0.05) * 0.3;
-            core.scale.x = 1 + Math.cos(t * 0.05) * 0.3;
-            sockets.handL.position.y = Math.sin(t * 0.05) * 0.5;
-            sockets.handR.position.y = Math.cos(t * 0.05) * 0.5;
+            // Απλοποιημένη κίνηση: ένα μικρό αναπήδημα και γαργάλημα
+            core.position.y = 0.2 * Math.sin(t * 0.2);
+            core.position.x = 0.1 * Math.cos(t * 0.2);
+            aziramPet.rotation.y = -0.3 + Math.sin(t * 0.15) * 0.1;
+            core.scale.x = 1 + Math.sin(t * 0.2) * 0.1;
+            core.scale.y = 1 + Math.cos(t * 0.2) * 0.1;
+            sockets.handL.position.y = Math.sin(t * 0.25) * 0.5;
+            sockets.handR.position.y = Math.cos(t * 0.25) * 0.5;
           } else {
             aziramPet.position.copy(aziramBasePosition);
             core.position.x = 0;
