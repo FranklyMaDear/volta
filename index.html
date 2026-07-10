@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Drop 2048 · Starfield Pure</title>
+<title>Drop 2048 · Full Edition</title>
 <style>
   :root{
     --bg:#0B0C10; --panel:#8C6A4F; --panel-deep:#4A3423;
@@ -23,7 +23,7 @@
   #missionBar{position:fixed;top:65px;left:50%;transform:translateX(-50%);z-index:5;pointer-events:none;background:var(--cream);border:3px solid var(--panel-deep);color:var(--ink);border-radius:16px;padding:7px 16px;font-weight:700;font-size:14px;box-shadow:0 4px 0 rgba(0,0,0,.3);white-space:nowrap;}
   #missionBar b{color:#C2542F}
   
-  /* Κουμπιά Βοήθειας - Κάτω Αριστερά */
+  /* Κουμπιά Βοήθειας - Κάτω Αριστερά (ώστε ο AZIRAM να είναι Κάτω Δεξιά ελεύθερος) */
   .powerbar{position:fixed;bottom:18px;left:14px;display:flex;justify-content:flex-start;gap:10px;z-index:5}
   .pbtn{pointer-events:auto;border:none;cursor:pointer;width:66px;height:66px;border-radius:18px;background:var(--good);box-shadow:0 4px 0 #5c7a3a;color:#fff;font-size:26px;line-height:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;font-family:inherit;transition:transform .08s;}
   .pbtn:active{transform:translateY(3px);box-shadow:0 1px 0 #5c7a3a}
@@ -35,7 +35,7 @@
   .shop-tab { flex:1; padding:8px 12px; font-weight:800; font-size:13px; border-radius:10px; background:#E4D7BC; color:#8C6A4F; border:none; cursor:pointer; white-space:nowrap;}
   .shop-tab.active { background:var(--accent); color:#fff; box-shadow:0 3px 0 #b8742a; transform:translateY(-2px);}
   
-  /* Υποκατηγορίες Pet */
+  /* Υποκατηγορίες Pet - Εμφανίζονται όταν είναι ενεργό το Pet tab */
   .pet-subtabs { display:none; flex-wrap:wrap; gap:5px; margin-bottom:10px; background:#f0e5d1; padding:8px; border-radius:10px; justify-content:center;}
   .pet-subtabs.active { display:flex; }
   .pet-subtab { padding:6px 10px; font-weight:800; font-size:11px; border-radius:8px; background:#C2542F; color:#fff; border:none; cursor:pointer; }
@@ -72,7 +72,7 @@
 </div>
 <div id="missionBar">🎯 Αποστολή: <b id="missionText"></b></div>
 
-<!-- Κουμπιά Βοήθειας (Αριστερά) -->
+<!-- Κουμπιά Βοήθειας -->
 <div class="powerbar">
   <button class="pbtn" id="btnMagnet">🧲<span class="cost">Δωρεάν</span></button>
   <button class="pbtn" id="btnHammer">🔨<span class="cost">Δωρεάν</span></button>
@@ -81,18 +81,21 @@
 
 <div id="toast"></div>
 
-<!-- SHOP UI -->
+<!-- SHOP MODAL -->
 <div class="overlay hidden" id="shopModal">
   <div class="card">
-    <h2 style="margin-bottom:15px;">🛍️ Κατάστημα</h2>
+    <h2 style="margin-bottom:15px;">🛍️ Εξατομίκευση</h2>
     
-    <div class="shop-tabs">
+    <!-- Κύριες Κατηγορίες -->
+    <div class="shop-tabs" id="mainTabs">
       <button class="shop-tab active" data-maintab="cubes">Κύβοι</button>
       <button class="shop-tab" data-maintab="boards">Ταμπλό</button>
+      <button class="shop-tab" data-maintab="effects">Εφέ</button>
+      <button class="shop-tab" data-maintab="sounds">Ήχοι</button>
       <button class="shop-tab" data-maintab="pets">Pet</button>
     </div>
 
-    <!-- PET Υποκατηγορίες -->
+    <!-- Υποκατηγορίες Pet (μέσα στο shop) -->
     <div class="pet-subtabs" id="petSubTabs">
       <button class="pet-subtab active" data-subtab="pet_color">Χρώμα</button>
       <button class="pet-subtab" data-subtab="pet_head">Κεφάλι</button>
@@ -129,7 +132,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script>
 /* =====================================================
-   DROP 2048 · FULL EDITION (Game + Shop + Pet)
+   DROP 2048 · FULL EDITION 
 ===================================================== */
 
 const COLS = 5, ROWS = 6, CELL = 1.0, GAP = 0.12; 
@@ -166,6 +169,20 @@ const SHOP = {
     { id: 'board_emerald', name: 'Σμαράγδι', price: 0, icon: '🟩', back: '#004B23', cell: '#7BDF4B' },
     { id: 'board_white', name: 'Λευκός Καμβάς', price: 0, icon: '⬜', back: '#F5F5F5', cell: '#E0E0E0' },
     { id: 'board_neon', name: 'Νέον Σκοτάδι', price: 0, icon: '🟪', back: '#0A0A0A', cell: '#FF00FF' }
+  ],
+  effects: [
+    { id: 'eff_none', name: 'Χωρίς Εφέ', price: 0, icon: '✖️' },
+    { id: 'eff_flame', name: 'Φλόγα', price: 0, icon: '🔥' },
+    { id: 'eff_sparkle', name: 'Αστερόσκονη', price: 0, icon: '✨' },
+    { id: 'eff_smoke', name: 'Καπνός', price: 0, icon: '💨' },
+    { id: 'eff_explode', name: 'Έκρηξη', price: 0, icon: '💥' },
+    { id: 'eff_confetti', name: 'Κομφετί', price: 0, icon: '🎊' }
+  ],
+  sounds: [
+    { id: 'snd_default', name: 'Default', price: 0, icon: '🔊' },
+    { id: 'snd_bass', name: 'Bass Drop', price: 0, icon: '🔊' },
+    { id: 'snd_bell', name: 'Καμπάνα', price: 0, icon: '🔔' },
+    { id: 'snd_echo', name: 'Echo', price: 0, icon: '🌌' }
   ],
   pet_color: [
     { id: 'color_green', name: 'Πράσινο (Jelly)', price: 0, icon: '🟢' },
@@ -220,6 +237,8 @@ const DEFAULT_SAVE = {
   coins: 5000, level: 0, best: 0, score: 0, 
   ownedCubes: ['wood'], equippedCube: 'wood',
   ownedBoards: ['board_wood'], equippedBoard: 'board_wood',
+  ownedEffects: ['eff_none'], equippedEffect: 'eff_none',
+  ownedSounds: ['snd_default'], equippedSound: 'snd_default',
   ownedPetColor: ['color_green'], equippedPetColor: 'color_green',
   ownedPetHead: ['head_none'], equippedPetHead: 'head_none',
   ownedPetFace: ['face_none'], equippedPetFace: 'face_none',
@@ -233,13 +252,13 @@ let save = { ...DEFAULT_SAVE };
 
 async function loadSave(){
   try { 
-      const r = localStorage.getItem("drop2048-v5"); 
+      const r = localStorage.getItem("drop2048-v-final"); 
       if(r) save = Object.assign({}, DEFAULT_SAVE, JSON.parse(r)); 
   } catch(e) {}
 }
-function persist(){ try{ localStorage.setItem("drop2048-v5", JSON.stringify(save)); }catch(e){} }
+function persist(){ try{ localStorage.setItem("drop2048-v-final", JSON.stringify(save)); }catch(e){} }
 
-/* ----- AUDIO SYSTEM ----- */
+/* ----- AUDIO & PARTICLES ----- */
 const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 function playSound(type) {
   if(audioCtx.state === 'suspended') audioCtx.resume();
@@ -256,10 +275,12 @@ function playSound(type) {
 }
 function playWinSound(ctx) { for(let i=0; i<4; i++) { setTimeout(() => { const osc = ctx.createOscillator(); const gain = ctx.createGain(); osc.connect(gain); gain.connect(ctx.destination); osc.type = 'sine'; osc.frequency.setValueAtTime(600 + (i*250), ctx.currentTime); gain.gain.setValueAtTime(0.15, ctx.currentTime); gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.2); osc.start(); osc.stop(ctx.currentTime + 0.2); }, i * 100); } }
 
-/* ----- PARTICLES ----- */
 const particles = [];
 const pGeo = new THREE.BoxGeometry(0.08, 0.08, 0.08);
 const pMats = { 
+  'flame': new THREE.MeshBasicMaterial({color: 0xff4500}), 
+  'sparkle': new THREE.MeshBasicMaterial({color: 0xffffff}),
+  'smoke': new THREE.MeshBasicMaterial({color: 0x888888, transparent:true, opacity:0.7}),
   'explode': new THREE.MeshBasicMaterial({color: 0xffa500}), 
   'confetti': [0xff0000, 0x00ff00, 0x0000ff, 0xffff00].map(c => new THREE.MeshBasicMaterial({color: c})) 
 };
@@ -267,24 +288,24 @@ function spawnParticle(x, y, z, type) {
   let mat = pMats[type]; if(Array.isArray(mat)) mat = mat[Math.floor(Math.random()*mat.length)];
   const p = new THREE.Mesh(pGeo, mat); p.position.set(x, y, z);
   let vx = (Math.random()-0.5)*6, vy = (Math.random()-0.5)*6, vz = (Math.random()-0.5)*6;
+  if(type === 'flame' || type === 'smoke') { vx *= 0.2; vy = -Math.random()*2 - 0.5; vz = 0; } 
   if(type === 'confetti') { p.scale.set(0.15,0.15,0.15); vy = Math.random()*5; }
   scene.add(p); particles.push({ mesh: p, life: 1.0, vx, vy, vz, type });
 }
 function spawnBurst(x, y, z, type, count) { for(let i=0; i<count; i++) spawnParticle(x, y, z, type); }
 function updateParticles(dt) {
   for(let i=particles.length-1; i>=0; i--) {
-    const p = particles[i]; p.life -= dt * 2.5; 
+    const p = particles[i]; p.life -= dt * (p.type==='smoke'?1.5:2.5); 
     if(p.life <= 0) { scene.remove(p.mesh); particles.splice(i, 1); }
     else { 
         p.mesh.position.x += p.vx * dt; p.mesh.position.y += p.vy * dt; p.mesh.position.z += p.vz * dt; 
         if(p.type === 'confetti') p.vy -= dt*10; 
         p.mesh.scale.setScalar(p.life); 
-        if(p.type === 'explode') p.mesh.material.color.setHSL(0.1*p.life, 1, 0.5); 
+        if(p.type === 'flame' || p.type === 'explode') p.mesh.material.color.setHSL(0.1*p.life, 1, 0.5); 
     }
   }
 }
 
-/* ----- STARFIELD ----- */
 let starField;
 function initStarfield() {
   const starCount = 8000; const starGeo = new THREE.BufferGeometry(); const starPos = new Float32Array(starCount * 3);
@@ -301,7 +322,7 @@ function updateStarfield(speed) {
 /* ----- AZIRAM PET SYSTEM (ΚΑΤΩ ΔΕΞΙΑ) ----- */
 let aziramPet, aziramBodyMesh, sockets = {};
 let aziramReactionTime = 0, aziramWinTime = 0; 
-let aziramTargetPos = new THREE.Vector3(2.5, -3.8, 0.5); // Τέλεια θέση Κάτω Δεξιά
+let aziramTargetPos = new THREE.Vector3(2.3, -3.5, 0.5); // Τέλεια θέση Κάτω Δεξιά δίπλα στα κουμπιά
 
 function createAziram() {
     const petGroup = new THREE.Group();
@@ -543,12 +564,13 @@ function setAim(c, instant = false){ aimCol = Math.max(0, Math.min(COLS-1, c)); 
 
 function launch(){ 
   if(busy || !currentCube) return; const c = aimCol; const h = colHeight(c); if(h >= ROWS){ gameOver(); return; } busy = true; playSound('drop'); 
+  const eff = save.equippedEffect; if(eff !== 'eff_none' && eff !== 'eff_explode' && eff !== 'eff_confetti') { const wp = new THREE.Vector3(); currentCube.getWorldPosition(wp); spawnBurst(wp.x, wp.y - 0.3, wp.z, eff.replace('eff_',''), 8); }
   const targetR = h; const p = cellPos(c, targetR); const cube = currentCube; currentCube = null; 
   tween(cube.position, {y:p.y}, Math.max(0.13, Math.abs(cube.position.y - p.y)*0.045), null, ()=>{ boardGroup.remove(cube); const cell = placeCube(c, targetR, cube.userData.value, true); cell.mesh.scale.set(1.15,0.85,1.15); tween(cell.mesh.scale, {x:1,y:1,z:1}, 0.18); resolveMerges([{c, r:targetR}]).then(()=>{ if(checkWin()) return; if(isBoardFull()){ gameOver(); return; } busy = false; spawnCurrent(); setAim(aimCol); }); }); 
 }
 
 function isBoardFull() { for(let c=0;c<COLS;c++) for(let r=0;r<ROWS;r++) if(!grid[c][r]) return false; return true; }
-async function resolveMerges(queue){ while(queue.length){ const {c,r} = queue.shift(); const cell = grid[c][r]; if(!cell) continue; const same = [{c:c-1,r},{c:c+1,r},{c,r:r-1},{c,r:r+1}].filter(n => n.c>=0&&n.c<COLS&&n.r>=0&&n.r<ROWS&&grid[n.c][n.r]&&grid[n.c][n.r].value===cell.value); if(!same.length) continue; const newVal = cell.value * Math.pow(2, same.length); score += newVal; save.score = score; coins += 1; save.coins = coins; updateHUD(); await new Promise(res=>{ let left = same.length; const tp = cellPos(c,r); same.forEach(n=>{ const m = grid[n.c][n.r].mesh; grid[n.c][n.r] = null; tween(m.position, {x:tp.x, y:tp.y}, 0.14, null, ()=>{ boardGroup.remove(m); if(--left===0) res(); }); tween(m.scale, {x:.5,y:.5,z:.5}, 0.14); }); }); playSound('merge'); boardGroup.remove(cell.mesh); grid[c][r] = null; const up = placeCube(c, r, newVal); up.mesh.scale.set(1.35,1.35,1.35); tween(up.mesh.scale, {x:1,y:1,z:1}, 0.22); const moved = []; for(let xc=0;xc<COLS;xc++){ let write=0; for(let xr=0;xr<ROWS;xr++){ if(grid[xc][xr]){ if(xr!==write){ grid[xc][write]=grid[xc][xr]; grid[xc][xr]=null; tween(grid[xc][write].mesh.position, {y:cellPos(xc, write).y}, 0.15); moved.push({c:xc, r:write}); } write++; } } } queue.push({c,r}, ...moved); await new Promise(r=>setTimeout(r,120)); } persist(); }
+async function resolveMerges(queue){ while(queue.length){ const {c,r} = queue.shift(); const cell = grid[c][r]; if(!cell) continue; const same = [{c:c-1,r},{c:c+1,r},{c,r:r-1},{c,r:r+1}].filter(n => n.c>=0&&n.c<COLS&&n.r>=0&&n.r<ROWS&&grid[n.c][n.r]&&grid[n.c][n.r].value===cell.value); if(!same.length) continue; const newVal = cell.value * Math.pow(2, same.length); score += newVal; save.score = score; coins += 1; save.coins = coins; updateHUD(); await new Promise(res=>{ let left = same.length; const tp = cellPos(c,r); same.forEach(n=>{ const m = grid[n.c][n.r].mesh; grid[n.c][n.r] = null; tween(m.position, {x:tp.x, y:tp.y}, 0.14, null, ()=>{ boardGroup.remove(m); if(--left===0) res(); }); tween(m.scale, {x:.5,y:.5,z:.5}, 0.14); }); }); playSound('merge'); const eff = save.equippedEffect; if(eff === 'eff_explode' || eff === 'eff_confetti') { const wp = new THREE.Vector3(); cell.mesh.getWorldPosition(wp); spawnBurst(wp.x, wp.y, wp.z, eff.replace('eff_',''), 15); } boardGroup.remove(cell.mesh); grid[c][r] = null; const up = placeCube(c, r, newVal); up.mesh.scale.set(1.35,1.35,1.35); tween(up.mesh.scale, {x:1,y:1,z:1}, 0.22); const moved = []; for(let xc=0;xc<COLS;xc++){ let write=0; for(let xr=0;xr<ROWS;xr++){ if(grid[xc][xr]){ if(xr!==write){ grid[xc][write]=grid[xc][xr]; grid[xc][xr]=null; tween(grid[xc][write].mesh.position, {y:cellPos(xc, write).y}, 0.15); moved.push({c:xc, r:write}); } write++; } } } queue.push({c,r}, ...moved); await new Promise(r=>setTimeout(r,120)); } persist(); }
 
 let winTimer = null;
 function checkWin(){ 
@@ -557,7 +579,7 @@ function checkWin(){
   if(!win) return false; 
   busy = true; coins += 25; save.coins = coins; best = Math.max(best, score); save.best = best; save.level = Math.min(level+1, LEVELS.length-1); persist(); updateHUD(); 
   document.getElementById("winText").innerHTML = `Έφτιαξες ${t}!<br>+25 🪙`; 
-  aziramWinTime = 3.0; // Celebration
+  aziramWinTime = 3.0; // Celebration AZIRAM
   if(winTimer) clearTimeout(winTimer); 
   winTimer = setTimeout(() => { document.getElementById("winModal").classList.remove("hidden"); winTimer = null; }, 3000); 
   return true; 
@@ -574,7 +596,7 @@ function onTap(e){
   if (aziramPet) {
       const hits = raycaster.intersectObject(aziramPet, true);
       if (hits.length > 0 && aziramWinTime <= 0) {
-          aziramReactionTime = 1.2; if(audioCtx.state !== 'suspended') playDropDefault(audioCtx); return; 
+          aziramReactionTime = 1.2; if(audioCtx.state !== 'suspended') playSound('drop'); return; 
       }
   }
 
@@ -596,6 +618,8 @@ let currentPetSubTab = 'pet_color';
 function getShopProperties(tab) {
     if(tab === 'cubes') return { owned: 'ownedCubes', equip: 'equippedCube' };
     if(tab === 'boards') return { owned: 'ownedBoards', equip: 'equippedBoard' };
+    if(tab === 'effects') return { owned: 'ownedEffects', equip: 'equippedEffect' };
+    if(tab === 'sounds') return { owned: 'ownedSounds', equip: 'equippedSound' };
     if(tab === 'pet_color') return { owned: 'ownedPetColor', equip: 'equippedPetColor' };
     if(tab === 'pet_head') return { owned: 'ownedPetHead', equip: 'equippedPetHead' };
     if(tab === 'pet_face') return { owned: 'ownedPetFace', equip: 'equippedPetFace' };
@@ -707,6 +731,12 @@ function loop(t){
 }
 
 (async function(){
+  // Clear old conflicting saves
+  localStorage.removeItem("drop2048-save-pure");
+  localStorage.removeItem("drop2048-save-v2");
+  localStorage.removeItem("drop2048-save-v3");
+  localStorage.removeItem("drop2048-save-v4");
+  
   document.getElementById('btnShop').onclick = () => { renderShop(); document.getElementById('shopModal').classList.remove('hidden'); };
   document.getElementById('btnCloseShop').onclick = () => { document.getElementById('shopModal').classList.add('hidden'); };
   document.addEventListener('pointerdown', ()=> { if(audioCtx.state === 'suspended') audioCtx.resume(); }, {once:true});
