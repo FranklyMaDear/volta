@@ -25,17 +25,16 @@
         html, body {
             height: 100%;
             overflow: hidden;
-            background: var(--bg);
+            background: var(--cream);
             font-family: "Baloo 2", system-ui, sans-serif;
             color: var(--ink);
             user-select: none;
             touch-action: none;
         }
         .home-container {
-            background: var(--cream);
             width: 100vw;
             height: 100vh;
-            padding: 12px 10px;
+            padding: 10px 8px;
             display: flex;
             flex-direction: column;
             overflow: hidden;
@@ -87,84 +86,125 @@
         .avatar-area {
             flex-shrink: 0;
             text-align: center;
-            margin: 4px 0 8px;
+            margin: 2px 0 6px;
+            position: relative;
+            height: 110px;
         }
         #avatarContainer {
             display: inline-block;
             position: relative;
-            width: 110px;
-            height: 130px;
+            width: 90px;
+            height: 100px;
             background: transparent;
             transition: transform 0.3s;
         }
-        /* Avatar Animations */
-        .av-bounce { animation: avBounce 0.6s infinite alternate; }
-        @keyframes avBounce {
-            0% { transform: translateY(0px) scale(1,1); }
-            100% { transform: translateY(-18px) scale(1.05,0.95); }
-        }
-        .av-sleep { animation: avSleep 2s infinite alternate; }
-        @keyframes avSleep {
-            0% { transform: rotate(0deg) scale(1,1); }
-            100% { transform: rotate(5deg) scale(0.95,1.05); }
-        }
-        .av-walk { animation: avWalk 0.8s infinite alternate; }
-        @keyframes avWalk {
-            0% { transform: translateX(-12px) scale(1,1); }
-            100% { transform: translateX(12px) scale(1,1); }
-        }
-        .av-idle { animation: avIdle 2s infinite alternate; }
-        @keyframes avIdle {
-            0% { transform: translateY(0px) scale(1,1); }
-            100% { transform: translateY(-5px) scale(1.02,0.98); }
-        }
-        .av-hop { animation: avHop 0.4s infinite alternate; }
-        @keyframes avHop {
-            0% { transform: translateY(0px) scale(1,1); }
-            100% { transform: translateY(-22px) scale(1.1,0.9); }
-        }
-
-        .av-body {
-            width: 80px;
-            height: 90px;
-            border-radius: 50%;
-            margin: 20px auto 0;
+        /* Detailed Jelly Slime Avatar */
+        .jelly-body {
+            width: 70px;
+            height: 80px;
+            border-radius: 50% 50% 45% 45%;
+            margin: 15px auto 0;
             position: relative;
-            transition: background 0.3s, opacity 0.3s;
-            box-shadow: 0 6px 18px rgba(0,0,0,0.25);
+            background: radial-gradient(circle at 30% 30%, #88ffbb, #33ffaa 60%, #119977);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.2), inset 0 -10px 20px rgba(0,80,60,0.3);
+            transition: background 0.3s, transform 0.3s;
+            transform-origin: center bottom;
         }
-        .av-face {
+        .jelly-eye {
             position: absolute;
-            top: 18px;
+            width: 16px;
+            height: 22px;
+            background: #fff;
+            border-radius: 50%;
+            top: 28px;
+            box-shadow: inset 0 2px 6px rgba(0,0,0,0.1);
+        }
+        .jelly-eye::after {
+            content: '';
+            position: absolute;
+            width: 10px;
+            height: 14px;
+            background: #1a1a1a;
+            border-radius: 50%;
+            top: 2px;
+            left: 3px;
+            transition: transform 0.2s;
+        }
+        .jelly-eye.left { left: 16px; }
+        .jelly-eye.right { right: 16px; }
+        .jelly-mouth {
+            position: absolute;
+            bottom: 22px;
             left: 50%;
             transform: translateX(-50%);
-            font-size: 32px;
-            line-height: 1;
+            width: 18px;
+            height: 10px;
+            border-bottom: 4px solid #5a1a1a;
+            border-radius: 0 0 20px 20px;
+            transition: all 0.2s;
         }
-        .av-head {
+        .jelly-arms {
             position: absolute;
-            top: -12px;
-            left: 50%;
-            transform: translateX(-50%);
-            font-size: 36px;
-            line-height: 1;
+            top: 30px;
+            width: 100%;
+            height: 20px;
         }
-        .av-clothes {
+        .jelly-arm {
+            position: absolute;
+            width: 16px;
+            height: 40px;
+            background: radial-gradient(circle at 50% 30%, #66ffaa, #2aaf77);
+            border-radius: 50%;
+            transition: transform 0.2s;
+        }
+        .jelly-arm.left { left: -12px; transform-origin: top center; }
+        .jelly-arm.right { right: -12px; transform-origin: top center; }
+        .jelly-prop {
+            position: absolute;
+            right: -10px;
+            bottom: 35px;
+            font-size: 28px;
+            line-height: 1;
+            transition: transform 0.3s;
+        }
+        .jelly-clothes {
             position: absolute;
             bottom: 5px;
             left: 50%;
             transform: translateX(-50%);
-            font-size: 34px;
+            font-size: 28px;
             line-height: 1;
-        }
-        .av-prop {
-            position: absolute;
-            right: -12px;
-            bottom: 28px;
-            font-size: 32px;
-            line-height: 1;
+            pointer-events: none;
         }
 
+        /* Avatar Animations */
+        .av-idle .jelly-body { animation: idlePulse 2s infinite alternate; }
+        @keyframes idlePulse { 0% { transform: scale(1,1) translateY(0); } 100% { transform: scale(1.02,0.98) translateY(-4px); } }
+        
+        .av-walk .jelly-body { animation: walkMove 0.6s infinite alternate; }
+        @keyframes walkMove { 0% { transform: translateX(-10px) scale(1,1); } 100% { transform: translateX(10px) scale(1,1); } }
+        .av-walk .jelly-arm.left { animation: armSwing 0.6s infinite alternate; transform-origin: top; }
+        .av-walk .jelly-arm.right { animation: armSwing 0.6s infinite alternate-reverse; transform-origin: top; }
+        @keyframes armSwing { 0% { transform: rotate(20deg); } 100% { transform: rotate(-20deg); } }
+
+        .av-sleep .jelly-body { animation: sleepBreathe 2s infinite alternate; transform-origin: center; }
+        @keyframes sleepBreathe { 0% { transform: rotate(5deg) scale(0.98,1.02); } 100% { transform: rotate(-5deg) scale(1.02,0.98); } }
+        .av-sleep .jelly-eye::after { transform: translateY(4px); }
+        .av-sleep .jelly-mouth { width: 14px; height: 8px; border-bottom-color: transparent; border-radius: 50%; background: #5a1a1a; opacity: 0.5; }
+
+        .av-hop .jelly-body { animation: hopMove 0.4s infinite alternate; }
+        @keyframes hopMove { 0% { transform: translateY(0px) scale(1,1); } 100% { transform: translateY(-25px) scale(1.1,0.9); } }
+        .av-hop .jelly-arm.left { animation: hopArm 0.4s infinite alternate; }
+        .av-hop .jelly-arm.right { animation: hopArm 0.4s infinite alternate-reverse; }
+        @keyframes hopArm { 0% { transform: rotate(30deg); } 100% { transform: rotate(-30deg); } }
+
+        .av-cheer .jelly-body { animation: cheerMove 0.3s infinite alternate; }
+        @keyframes cheerMove { 0% { transform: translateY(0px) scale(1,1); } 100% { transform: translateY(-10px) scale(1.05,0.95); } }
+        .av-cheer .jelly-arm.left { animation: cheerArm 0.2s infinite alternate; }
+        .av-cheer .jelly-arm.right { animation: cheerArm 0.2s infinite alternate-reverse; }
+        @keyframes cheerArm { 0% { transform: rotate(40deg) scale(1); } 100% { transform: rotate(-30deg) scale(1.1); } }
+
+        /* Room Tabs */
         .room-tabs {
             display: flex;
             gap: 6px;
@@ -296,7 +336,6 @@
         }
         .hidden { display: none !important; }
 
-        /* Toast inside iframe */
         #toast {
             position: fixed;
             bottom: 70px;
@@ -315,23 +354,21 @@
             white-space: nowrap;
             box-shadow: 0 4px 12px rgba(0, 0, 0, .4);
         }
-
         @media (max-width: 480px) {
-            .home-container { padding: 8px 6px; }
+            .home-container { padding: 6px 4px; }
             .home-stat { font-size: 10px; min-width: 40px; padding: 2px 4px; }
             .home-stat .bar { height: 4px; }
-            #avatarContainer { width: 90px; height: 110px; }
-            .av-body { width: 65px; height: 75px; margin: 15px auto 0; }
-            .av-face { font-size: 26px; }
-            .av-head { font-size: 30px; }
-            .av-clothes { font-size: 28px; }
-            .av-prop { font-size: 26px; right: -8px; bottom: 22px; }
+            .avatar-area { height: 90px; }
+            #avatarContainer { width: 70px; height: 80px; }
+            .jelly-body { width: 55px; height: 65px; margin: 10px auto 0; }
+            .jelly-eye { width: 12px; height: 18px; top: 22px; }
+            .jelly-eye::after { width: 8px; height: 11px; top: 1px; left: 2px; }
+            .jelly-mouth { width: 14px; height: 8px; bottom: 18px; border-bottom-width: 3px; }
+            .jelly-arm { width: 12px; height: 30px; }
+            .jelly-arm.left { left: -8px; }
+            .jelly-arm.right { right: -8px; }
             .room-tab { font-size: 10px; padding: 4px 2px; }
             .room-panel .room-icon { font-size: 36px; }
-        }
-        @media (max-width: 380px) {
-            #avatarContainer { width: 70px; height: 90px; }
-            .av-body { width: 50px; height: 60px; margin: 10px auto 0; }
         }
     </style>
 </head>
@@ -348,11 +385,15 @@
 
         <div class="avatar-area">
             <div id="avatarContainer" class="av-idle">
-                <div class="av-head" id="avHead"></div>
-                <div class="av-body" id="avBody"></div>
-                <div class="av-face" id="avFace"></div>
-                <div class="av-clothes" id="avClothes"></div>
-                <div class="av-prop" id="avProp"></div>
+                <div class="jelly-body" id="jellyBody">
+                    <div class="jelly-eye left"></div>
+                    <div class="jelly-eye right"></div>
+                    <div class="jelly-mouth"></div>
+                    <div class="jelly-arm left"></div>
+                    <div class="jelly-arm right"></div>
+                    <div class="jelly-prop" id="jellyProp"></div>
+                    <div class="jelly-clothes" id="jellyClothes"></div>
+                </div>
             </div>
         </div>
 
@@ -451,7 +492,6 @@
             let save = { ...DEFAULT_SAVE };
             let toastTimer = null;
             let petState = 'idle';
-            let animationFrame = null;
 
             function loadSave() {
                 try {
@@ -459,7 +499,6 @@
                     if (r) {
                         const parsed = JSON.parse(r);
                         save = Object.assign({}, DEFAULT_SAVE, parsed);
-                        // Ensure arrays for furniture
                         if (typeof save.equippedBedroomFurniture === 'string') {
                             save.equippedBedroomFurniture = save.equippedBedroomFurniture !== 'fur_none' ? [save.equippedBedroomFurniture] : [];
                         }
@@ -472,21 +511,13 @@
                         if (!save.ownedPetClothes) save.ownedPetClothes = ['cl_none'];
                         if (!save.ownedPetFurniture) save.ownedPetFurniture = ['fur_none'];
                         if (!save.ownedPetFood) save.ownedPetFood = [];
-                        if (save.energy === undefined) save.energy = 70;
-                        if (save.hunger === undefined) save.hunger = 30;
-                        if (save.cleanliness === undefined) save.cleanliness = 80;
-                        if (save.toilet === undefined) save.toilet = 0;
-                        if (!save.lastUpdate) save.lastUpdate = Date.now();
                     }
-                } catch (e) { console.warn('Load save error', e); }
+                } catch (e) {}
             }
 
             function persist() {
                 try { localStorage.setItem(SAVE_KEY, JSON.stringify(save)); } catch (e) {}
-                // Notify parent game to sync pet appearance
-                if (window.parent) {
-                    window.parent.postMessage('refreshPet', '*');
-                }
+                if (window.parent) window.parent.postMessage('refreshPet', '*');
             }
 
             function toast(msg) {
@@ -497,38 +528,28 @@
                 toastTimer = setTimeout(() => t.style.opacity = 0, 1800);
             }
 
-            // ---- Stat Update ----
             function updateTamagotchiStats() {
                 const now = Date.now();
                 const elapsed = (now - save.lastUpdate) / 1000;
                 if (elapsed <= 0) return;
 
                 const hour = new Date().getHours();
-
-                // Ενέργεια: 22:00-08:00 ξεκούραση
                 if (hour >= 8 && hour < 22) {
                     save.energy = Math.max(0, (save.energy || 50) - elapsed * 0.25);
                 } else {
                     save.energy = Math.min(100, (save.energy || 50) + elapsed * 0.45);
                 }
-
-                // Πείνα: κορύφωση σε ώρες γευμάτων
                 let hungerRate = 0.15;
                 if (hour >= 7 && hour <= 8) hungerRate = 0.9;
                 else if (hour >= 12 && hour <= 13) hungerRate = 0.9;
                 else if (hour >= 19 && hour <= 20) hungerRate = 0.9;
                 save.hunger = Math.min(100, (save.hunger || 50) + elapsed * hungerRate);
-
-                // Καθαριότητα
                 save.cleanliness = Math.max(0, (save.cleanliness || 80) - elapsed * 0.12);
-
-                // Τουαλέτα: μόνο όταν είναι ξύπνιος
                 if (hour >= 8 && hour < 22) {
                     save.toilet = Math.min(100, (save.toilet || 0) + elapsed * (100 / 10800));
                 } else {
                     save.toilet = Math.max(0, (save.toilet || 0) - elapsed * 0.3);
                 }
-
                 save.lastUpdate = now;
                 persist();
                 renderHomeStats();
@@ -586,42 +607,71 @@
                 cdToilet.classList.toggle('hidden', remToilet <= 0);
             }
 
-            // ---- Avatar Rendering ----
             function renderHomeAvatar() {
                 const container = document.getElementById('avatarContainer');
                 if (!container) return;
-                // Sync animation state with pet state
                 container.className = '';
                 if (petState === 'sleep') container.classList.add('av-sleep');
                 else if (petState === 'walk') container.classList.add('av-walk');
                 else if (petState === 'hop') container.classList.add('av-hop');
+                else if (petState === 'cheer') container.classList.add('av-cheer');
                 else container.classList.add('av-idle');
 
-                const bodyEl = document.getElementById('avBody');
+                const bodyEl = document.getElementById('jellyBody');
                 const colorMap = {
-                    'color_green': '#33ffaa',
-                    'color_blue': '#00aaff',
-                    'color_pink': '#ff00ff',
-                    'color_gold': '#ffd700',
-                    'color_red': '#ff4500',
-                    'color_rainbow': 'linear-gradient(45deg, red, orange, yellow, green, cyan, blue, purple)',
-                    'color_slime': '#55d8e8'
+                    'color_green': 'radial-gradient(circle at 30% 30%, #88ffbb, #33ffaa 60%, #119977)',
+                    'color_blue': 'radial-gradient(circle at 30% 30%, #88ccff, #00aaff 60%, #0066aa)',
+                    'color_pink': 'radial-gradient(circle at 30% 30%, #ff88cc, #ff00ff 60%, #aa00aa)',
+                    'color_gold': 'radial-gradient(circle at 30% 30%, #ffee88, #ffd700 60%, #aa8800)',
+                    'color_red': 'radial-gradient(circle at 30% 30%, #ff8866, #ff4500 60%, #aa2200)',
+                    'color_rainbow': 'conic-gradient(from 45deg, red, orange, yellow, green, cyan, blue, purple, red)',
+                    'color_slime': 'radial-gradient(circle at 30% 30%, #88eeff, #55d8e8 60%, #2288aa)'
                 };
-                const color = colorMap[save.equippedPetColor] || '#33ffaa';
-                bodyEl.style.background = color;
+                bodyEl.style.background = colorMap[save.equippedPetColor] || colorMap['color_green'];
 
                 const headMap = {
                     'head_none': '', 'head_antenna': '📡', 'head_halo': '👼', 'head_propeller': '🚁',
                     'head_mohawk': '🤘', 'head_horns': '😈', 'head_crown': '👑', 'head_wizard': '🧙',
                     'head_pirate': '🏴‍☠️', 'head_santa': '🎅'
                 };
-                document.getElementById('avHead').textContent = headMap[save.equippedPetHead] || '';
+                // Simple overlay for head props (placed above body)
+                // We'll use a simple approach via pseudo-element or additional div. 
+                // For simplicity in this revision, I'll use the existing structure.
+                // Actually, let's just put it as a small overlay.
+                let headHtml = document.querySelector('.jelly-head-prop');
+                if (!headHtml) {
+                    headHtml = document.createElement('div');
+                    headHtml.className = 'jelly-head-prop';
+                    headHtml.style.position = 'absolute';
+                    headHtml.style.top = '-30px';
+                    headHtml.style.left = '50%';
+                    headHtml.style.transform = 'translateX(-50%)';
+                    headHtml.style.fontSize = '34px';
+                    headHtml.style.lineHeight = '1';
+                    headHtml.style.pointerEvents = 'none';
+                    bodyEl.appendChild(headHtml);
+                }
+                headHtml.textContent = headMap[save.equippedPetHead] || '';
 
                 const faceMap = {
                     'face_none': '👁️', 'face_pixel': '🕶️', 'face_scouter': '📟', 'face_laser': '🔴',
                     'face_monocle': '🧐', 'face_ninja': '🥷', 'face_mustache': '👨', 'face_blush': '☺️'
                 };
-                document.getElementById('avFace').textContent = faceMap[save.equippedPetFace] || '👁️';
+                // For face, we can replace the eyes/mouth or add a mask. 
+                // Since we have a complex CSS face, we'll just set the mouth/eyes style based on face.
+                const eyes = document.querySelectorAll('.jelly-eye');
+                const mouth = document.querySelector('.jelly-mouth');
+                if (save.equippedPetFace === 'face_pixel') {
+                    eyes.forEach(e => e.style.background = '#000'); // pixel shades
+                    mouth.style.borderBottom = 'none';
+                } else if (save.equippedPetFace === 'face_laser') {
+                    eyes.forEach(e => e.style.background = '#ff0000');
+                    eyes.forEach(e => e.style.boxShadow = '0 0 10px #ff0000');
+                } else {
+                    eyes.forEach(e => e.style.background = '#fff');
+                    eyes.forEach(e => e.style.boxShadow = 'inset 0 2px 6px rgba(0,0,0,0.1)');
+                    mouth.style.borderBottom = '4px solid #5a1a1a';
+                }
 
                 const clothesMap = {
                     'cl_none': '', 'cl_scarf': '🧣', 'cl_bowtie': '🎀', 'cl_vest': '🧥', 'cl_apron': '👨‍🍳',
@@ -629,31 +679,27 @@
                     'cl_pants': '👖', 'cl_shoes': '👟', 'cl_suit': '🕴️', 'cl_dress': '👗', 'cl_glasses': '👓',
                     'cl_crown': '👑'
                 };
-                document.getElementById('avClothes').textContent = clothesMap[save.equippedPetClothes] || '';
+                document.getElementById('jellyClothes').textContent = clothesMap[save.equippedPetClothes] || '';
 
                 const propMap = {
                     'prop_none': '', 'prop_lollipop': '🍭', 'prop_icecream': '🍦', 'prop_lightsaber': '🗡️',
                     'prop_wand': '🪄', 'prop_shield': '🛡️', 'prop_balloon': '🎈'
                 };
-                document.getElementById('avProp').textContent = propMap[save.equippedPetProps] || '';
+                document.getElementById('jellyProp').textContent = propMap[save.equippedPetProps] || '';
             }
 
-            // ---- Furniture Display ----
             function updateFurniture() {
                 const roomMap = {
                     bedroom: save.equippedBedroomFurniture || [],
                     kitchen: save.equippedKitchenFurniture || [],
                     bathroom: save.equippedBathroomFurniture || []
                 };
-                const renderItems = (ids) => {
-                    // Map furniture IDs to icons (using a local map)
-                    const furnitureIconMap = {
-                        'fur_bed': '🛏️', 'fur_lamp': '💡', 'fur_rug': '🧶', 'fur_painting': '🖼️',
-                        'fur_table': '🪑', 'fur_plant': '🌿', 'fur_sofa': '🛋️', 'fur_fridge': '🧊',
-                        'fur_bathtub': '🛁', 'fur_mirror': '🪞', 'fur_soap': '🧼', 'fur_toilet': '🚽', 'fur_towel': '🧣'
-                    };
-                    return ids.map(id => furnitureIconMap[id] || '🪑').join(' ');
+                const furnitureIconMap = {
+                    'fur_bed': '🛏️', 'fur_lamp': '💡', 'fur_rug': '🧶', 'fur_painting': '🖼️',
+                    'fur_table': '🪑', 'fur_plant': '🌿', 'fur_sofa': '🛋️', 'fur_fridge': '🧊',
+                    'fur_bathtub': '🛁', 'fur_mirror': '🪞', 'fur_soap': '🧼', 'fur_toilet': '🚽', 'fur_towel': '🧣'
                 };
+                const renderItems = (ids) => ids.map(id => furnitureIconMap[id] || '🪑').join(' ');
                 document.getElementById('bedroomFurniture').textContent = renderItems(roomMap.bedroom) || '🚫 Χωρίς έπιπλα';
                 document.getElementById('kitchenFurniture').textContent = renderItems(roomMap.kitchen) || '🚫 Χωρίς έπιπλα';
                 document.getElementById('bathroomFurniture').textContent = renderItems(roomMap.bathroom) || '🚫 Χωρίς έπιπλα';
@@ -663,7 +709,6 @@
                 document.getElementById('roomBathroom').classList.toggle('furnished', roomMap.bathroom.length > 0);
             }
 
-            // ---- Actions ----
             function doSleep() {
                 const now = Date.now();
                 if ((save.sleepCooldown || 0) > now) return;
@@ -682,12 +727,7 @@
                 const now = Date.now();
                 if ((save.feedCooldown || 0) > now) return;
                 const foodItems = save.ownedPetFood || [];
-                if (foodItems.length === 0) {
-                    toast("Δεν έχεις φαγητό! Αγόρασε από το κατάστημα.");
-                    return;
-                }
-                const foodId = foodItems[0];
-                // Map food IDs to icons and reduction
+                if (foodItems.length === 0) { toast("Δεν έχεις φαγητό! Αγόρασε από το κατάστημα."); return; }
                 const foodDataMap = {
                     'food_apple': { name: 'Μήλο', icon: '🍎', reduction: 15 },
                     'food_pizza': { name: 'Πίτσα', icon: '🍕', reduction: 30 },
@@ -696,15 +736,11 @@
                     'food_steak': { name: 'Μπριζόλα', icon: '🥩', reduction: 40 },
                     'food_sushi': { name: 'Σούσι', icon: '🍣', reduction: 35 }
                 };
+                const foodId = foodItems[0];
                 const food = foodDataMap[foodId];
-                if (!food) {
-                    toast("Άγνωστο φαγητό");
-                    return;
-                }
-                const idx = foodItems.indexOf(foodId);
-                foodItems.splice(idx, 1);
+                if (!food) { toast("Άγνωστο φαγητό"); return; }
+                foodItems.splice(0, 1);
                 save.ownedPetFood = foodItems;
-
                 save.hunger = Math.max(0, (save.hunger || 50) - food.reduction);
                 save.feedCooldown = now + 6000;
                 save.lastUpdate = now;
@@ -744,41 +780,31 @@
                 setTimeout(() => { petState = 'idle'; renderHomeAvatar(); }, 3000);
             }
 
-            // ---- Init ----
             function init() {
                 loadSave();
                 renderHomeStats();
                 renderHomeAvatar();
                 updateFurniture();
 
-                // Auto-update stats every 3s
-                setInterval(() => {
-                    updateTamagotchiStats();
-                }, 3000);
+                setInterval(() => { updateTamagotchiStats(); }, 3000);
 
-                // Tabs
                 document.querySelectorAll('.room-tab').forEach(tab => {
                     tab.onclick = (e) => {
                         document.querySelectorAll('.room-tab').forEach(t => t.classList.remove('active'));
                         e.target.classList.add('active');
                         const room = e.target.dataset.room;
                         document.querySelectorAll('.room-panel').forEach(p => p.classList.remove('active'));
-                        document.getElementById('room' + room.charAt(0).toUpperCase() + room.slice(1))
-                            .classList.add('active');
+                        document.getElementById('room' + room.charAt(0).toUpperCase() + room.slice(1)).classList.add('active');
                     };
                 });
 
-                // Buttons
                 document.getElementById('btnSleep').onclick = doSleep;
                 document.getElementById('btnFeed').onclick = doFeed;
                 document.getElementById('btnWash').onclick = doWash;
                 document.getElementById('btnToilet').onclick = doToilet;
 
-                // Close button - sends message to parent
                 document.getElementById('btnCloseHome').onclick = () => {
-                    if (window.parent) {
-                        window.parent.postMessage('closeHome', '*');
-                    }
+                    if (window.parent) window.parent.postMessage('closeHome', '*');
                 };
             }
 
