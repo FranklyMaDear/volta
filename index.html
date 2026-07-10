@@ -416,7 +416,9 @@
         GAP = 0.12;
       const BOARD_W = COLS * (CELL + GAP) - GAP;
       const BOARD_H = ROWS * (CELL + GAP) - GAP;
-      const launchY = -BOARD_H / 2 - 1.9;
+      
+      // ΑΛΛΑΓΗ 1: Μετακίνηση του σημείου που γεννιέται ο κύβος (στη θέση της κόκκινης γραμμής)
+      const launchY = -BOARD_H / 2 - 0.4; 
 
       const LEVELS = [
         { target: 64, preset: 0, text: "Φτιάξε κύβο 64" },
@@ -716,7 +718,6 @@
 
       function createAziram() {
         const petGroup = new THREE.Group();
-        // Μείωση μεγέθους από 0.45 σε 0.33
         petGroup.scale.set(0.33, 0.33, 0.33);
         
         const jellyCore = new THREE.Group();
@@ -763,8 +764,10 @@
 
       function updateAziramScreenPosition() {
         if (!aziramPet || !camera) return;
-        // Τοποθέτηση δίπλα στα κουμπιά, πιο δεξιά και κάτω
-        const ndc = new THREE.Vector3(0.73, -0.88, 0.1);
+        
+        // ΑΛΛΑΓΗ 2: Μετακίνηση του Avatar πιο πάνω στην οθόνη (από -0.88 σε -0.75)
+        const ndc = new THREE.Vector3(0.73, -0.75, 0.1);
+        
         ndc.unproject(camera);
         const dir = ndc.clone().sub(camera.position).normalize();
         const pos = camera.position.clone().add(dir.multiplyScalar(5.0));
