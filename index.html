@@ -123,12 +123,12 @@
             transform: translateX(-50%);
             display: flex;
             justify-content: center;
-            gap: 8px;
+            gap: 10px;
             z-index: 5;
             background: rgba(11, 12, 16, 0.6);
             backdrop-filter: blur(4px);
-            padding: 6px 12px;
-            border-radius: 18px;
+            padding: 8px 16px;
+            border-radius: 20px;
             border: 1px solid rgba(255, 255, 255, 0.08);
             pointer-events: none;
         }
@@ -136,13 +136,13 @@
             pointer-events: auto;
             border: none;
             cursor: pointer;
-            width: 56px;
-            height: 56px;
-            border-radius: 16px;
+            width: 64px;
+            height: 64px;
+            border-radius: 18px;
             background: var(--good);
             box-shadow: 0 4px 0 #5c7a3a;
             color: #fff;
-            font-size: 24px;
+            font-size: 28px;
             line-height: 1;
             display: flex;
             flex-direction: column;
@@ -157,11 +157,11 @@
             box-shadow: 0 1px 0 #5c7a3a;
         }
         .pbtn .cost {
-            font-size: 8px;
+            font-size: 9px;
             font-weight: 800;
             background: rgba(0, 0, 0, .25);
             border-radius: 6px;
-            padding: 1px 6px;
+            padding: 1px 7px;
             margin-top: -2px;
         }
         .pbtn.armed {
@@ -185,12 +185,12 @@
             }
         }
 
-        /* ===== MISSION BAR ===== */
+        /* ===== MISSION BAR (below powerups, 3D effect) ===== */
         #missionBar {
             position: fixed;
-            top: 0;
+            top: 118px;
             left: 50%;
-            transform: translate(-50%, -120%);
+            transform: translate(-50%, -120%) perspective(600px) rotateX(15deg);
             transition: transform .55s cubic-bezier(.34, 1.5, .64, 1);
             z-index: 30;
             pointer-events: auto;
@@ -200,15 +200,16 @@
             border-top: none;
             color: var(--ink);
             border-radius: 0 0 20px 20px;
-            padding: 10px 22px 8px;
+            padding: 8px 20px 6px;
             font-weight: 700;
-            font-size: 15px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, .5);
+            font-size: 14px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, .6);
             white-space: nowrap;
             letter-spacing: 0.3px;
+            transform-origin: top center;
         }
         #missionBar.show {
-            transform: translate(-50%, 0);
+            transform: translate(-50%, 0) perspective(600px) rotateX(0deg);
         }
         #missionBar b {
             color: var(--red);
@@ -524,72 +525,86 @@
         .home-avatar-area #homeAvatarContainer {
             display: inline-block;
             position: relative;
-            width: 90px;
-            height: 110px;
+            width: 120px;
+            height: 140px;
             background: transparent;
             transition: transform 0.3s;
         }
-        /* Avatar Animations */
+        /* Avatar Animations - same as game */
         .av-bounce {
             animation: avBounce 0.6s infinite alternate;
         }
         @keyframes avBounce {
             0% { transform: translateY(0px) scale(1,1); }
-            100% { transform: translateY(-15px) scale(1.05,0.95); }
+            100% { transform: translateY(-20px) scale(1.05,0.95); }
         }
         .av-sleep {
             animation: avSleep 2s infinite alternate;
         }
         @keyframes avSleep {
             0% { transform: rotate(0deg) scale(1,1); }
-            100% { transform: rotate(5deg) scale(0.95,1.05); }
+            100% { transform: rotate(6deg) scale(0.95,1.05); }
         }
         .av-walk {
             animation: avWalk 0.8s infinite alternate;
         }
         @keyframes avWalk {
-            0% { transform: translateX(-10px) scale(1,1); }
-            100% { transform: translateX(10px) scale(1,1); }
+            0% { transform: translateX(-15px) scale(1,1); }
+            100% { transform: translateX(15px) scale(1,1); }
+        }
+        .av-idle {
+            animation: avIdle 2s infinite alternate;
+        }
+        @keyframes avIdle {
+            0% { transform: translateY(0px) scale(1,1); }
+            100% { transform: translateY(-5px) scale(1.02,0.98); }
+        }
+        .av-hop {
+            animation: avHop 0.4s infinite alternate;
+        }
+        @keyframes avHop {
+            0% { transform: translateY(0px) scale(1,1); }
+            100% { transform: translateY(-25px) scale(1.1,0.9); }
         }
 
         .home-avatar-area .av-body {
-            width: 70px;
-            height: 80px;
+            width: 90px;
+            height: 100px;
             border-radius: 50%;
-            margin: 15px auto 0;
+            margin: 20px auto 0;
             position: relative;
             transition: background 0.3s;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            box-shadow: 0 6px 18px rgba(0,0,0,0.25);
         }
         .home-avatar-area .av-face {
             position: absolute;
-            top: 15px;
+            top: 20px;
             left: 50%;
             transform: translateX(-50%);
-            font-size: 28px;
+            font-size: 34px;
             line-height: 1;
         }
         .home-avatar-area .av-head {
             position: absolute;
-            top: -10px;
+            top: -12px;
             left: 50%;
             transform: translateX(-50%);
-            font-size: 32px;
+            font-size: 38px;
             line-height: 1;
         }
         .home-avatar-area .av-clothes {
             position: absolute;
-            bottom: 5px;
+            bottom: 8px;
             left: 50%;
             transform: translateX(-50%);
-            font-size: 30px;
+            font-size: 36px;
             line-height: 1;
         }
         .home-avatar-area .av-prop {
             position: absolute;
-            right: -10px;
-            bottom: 25px;
-            font-size: 28px;
+            right: -15px;
+            bottom: 30px;
+            font-size: 34px;
             line-height: 1;
         }
 
@@ -733,22 +748,23 @@
             }
             .powerbar {
                 top: 46px;
-                padding: 4px 8px;
-                gap: 5px;
+                padding: 6px 10px;
+                gap: 6px;
                 border-radius: 14px;
             }
             .pbtn {
-                width: 48px;
-                height: 48px;
-                font-size: 20px;
-                border-radius: 12px;
+                width: 52px;
+                height: 52px;
+                font-size: 22px;
+                border-radius: 14px;
             }
             .pbtn .cost {
                 font-size: 7px;
             }
             #missionBar {
-                font-size: 12px;
-                padding: 6px 14px 5px;
+                top: 104px;
+                font-size: 11px;
+                padding: 5px 12px 4px;
                 border-radius: 0 0 14px 14px;
             }
             .home-stat {
@@ -760,13 +776,13 @@
                 height: 4px;
             }
             .home-avatar-area #homeAvatarContainer {
-                width: 70px;
-                height: 90px;
+                width: 90px;
+                height: 110px;
             }
             .home-avatar-area .av-body {
-                width: 55px;
-                height: 65px;
-                margin: 10px auto 0;
+                width: 70px;
+                height: 80px;
+                margin: 12px auto 0;
             }
             .room-tab {
                 font-size: 10px;
@@ -810,13 +826,13 @@
                 font-size: 11px;
             }
             .pbtn {
-                width: 40px;
-                height: 40px;
-                font-size: 17px;
+                width: 44px;
+                height: 44px;
+                font-size: 18px;
             }
             #missionBar {
-                font-size: 10px;
-                padding: 4px 10px 3px;
+                font-size: 9px;
+                padding: 3px 8px 2px;
             }
         }
     </style>
@@ -842,7 +858,7 @@
         <button class="pbtn" id="btnMic">🎤<span class="cost">Μίλα</span></button>
     </div>
 
-    <!-- ===== MISSION BAR ===== -->
+    <!-- ===== MISSION BAR (3D roll-up) ===== -->
     <div id="missionBar">🎯 Αποστολή: <b id="missionText"></b></div>
 
     <!-- ===== SPEECH BUBBLE ===== -->
@@ -861,7 +877,6 @@
                 <button class="shop-tab" data-maintab="effects">Εφέ</button>
                 <button class="shop-tab" data-maintab="sounds">Ήχοι</button>
                 <button class="shop-tab" data-maintab="pets">Pet</button>
-                <button class="shop-tab" data-maintab="furniture">Έπιπλα</button>
             </div>
             <div class="pet-subtabs" id="petSubTabs">
                 <button class="pet-subtab active" data-subtab="pet_color">Χρώμα</button>
@@ -872,6 +887,8 @@
                 <button class="pet-subtab" data-subtab="pet_props">Αντικείμενο</button>
                 <button class="pet-subtab" data-subtab="pet_feet">Πόδια</button>
                 <button class="pet-subtab" data-subtab="pet_clothes">Ρούχα</button>
+                <button class="pet-subtab" data-subtab="pet_furniture">Έπιπλα</button>
+                <button class="pet-subtab" data-subtab="pet_food">Φαγητά</button>
             </div>
             <div class="shop-items" id="shopContainer"></div>
             <button class="btn" id="btnCloseShop">Κλείσιμο</button>
@@ -962,12 +979,15 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js">
     </script>
     <script>
+        // ============================================================
+        //  MAIN GAME & PET LOGIC (Full integration)
+        //  To split: move all pet-related code (home, shop tabs for pet, 
+        //  pet avatar, furniture, food) to a separate file aziram.index.html
+        //  and keep game mechanics in this file.
+        // ============================================================
         (function() {
             'use strict';
 
-            /* ============================================================
-               DROP 2048 · FRANKLYGAMES EDITION
-            ============================================================ */
             const COLS = 5,
                 ROWS = 6,
                 CELL = 1.0,
@@ -984,6 +1004,7 @@
                 { target: 1024, preset: 12, text: "Φτιάξε κύβο 1024" }
             ];
 
+            // ---- Shop data (full) ----
             const SHOP = {
                 cubes: [
                     { id: 'wood', name: 'Ξύλο', price: 0, icon: '🪵' },
@@ -1085,7 +1106,6 @@
                     { id: 'feet_moonboots', name: 'Moon Boots', price: 0, icon: '👢' },
                     { id: 'feet_hover', name: 'Hover Sneakers', price: 0, icon: '👟' }
                 ],
-                /* ===== CLOTHES (NEW - inside Pet) ===== */
                 pet_clothes: [
                     { id: 'cl_none', name: 'Χωρίς', price: 0, icon: '👕' },
                     { id: 'cl_hat', name: 'Καπέλο', price: 50, icon: '🧢' },
@@ -1102,8 +1122,7 @@
                     { id: 'cl_crown', name: 'Στέμμα', price: 250, icon: '👑' },
                     { id: 'cl_apron', name: 'Ποδιά', price: 100, icon: '👨‍🍳' }
                 ],
-                /* ===== FURNITURE ===== */
-                furniture: [
+                pet_furniture: [
                     { id: 'fur_none', name: 'Χωρίς', price: 0, icon: '🚫', room: 'none' },
                     { id: 'fur_bed', name: 'Κρεβάτι', price: 200, icon: '🛏️', room: 'bedroom' },
                     { id: 'fur_lamp', name: 'Λάμπα', price: 100, icon: '💡', room: 'bedroom' },
@@ -1118,6 +1137,14 @@
                     { id: 'fur_soap', name: 'Σαπούνι', price: 60, icon: '🧼', room: 'bathroom' },
                     { id: 'fur_toilet', name: 'Λεκάνη', price: 220, icon: '🚽', room: 'bathroom' },
                     { id: 'fur_towel', name: 'Πετσέτα', price: 70, icon: '🧣', room: 'bathroom' }
+                ],
+                pet_food: [
+                    { id: 'food_apple', name: 'Μήλο', price: 15, icon: '🍎', hungerReduction: 15 },
+                    { id: 'food_pizza', name: 'Πίτσα', price: 30, icon: '🍕', hungerReduction: 30 },
+                    { id: 'food_cake', name: 'Γλυκό', price: 20, icon: '🍰', hungerReduction: 20 },
+                    { id: 'food_banana', name: 'Μπανάνα', price: 12, icon: '🍌', hungerReduction: 12 },
+                    { id: 'food_steak', name: 'Μπριζόλα', price: 40, icon: '🥩', hungerReduction: 40 },
+                    { id: 'food_sushi', name: 'Σούσι', price: 35, icon: '🍣', hungerReduction: 35 }
                 ]
             };
 
@@ -1153,11 +1180,11 @@
                 equippedPetFeet: 'feet_none',
                 ownedPetClothes: ['cl_none'],
                 equippedPetClothes: 'cl_none',
-                ownedFurniture: ['fur_none'],
-                /* Furniture is now stored per room as arrays */
+                ownedPetFurniture: ['fur_none'],
                 equippedBedroomFurniture: [],
                 equippedKitchenFurniture: [],
                 equippedBathroomFurniture: [],
+                ownedPetFood: [],
                 energy: 70,
                 hunger: 30,
                 cleanliness: 80,
@@ -1173,11 +1200,10 @@
 
             async function loadSave() {
                 try {
-                    const r = localStorage.getItem("drop2048-frankly-v6");
+                    const r = localStorage.getItem("drop2048-frankly-v7");
                     if (r) {
                         const parsed = JSON.parse(r);
                         save = Object.assign({}, DEFAULT_SAVE, parsed);
-                        // Migrate furniture from string to array if needed
                         if (typeof save.equippedBedroomFurniture === 'string') {
                             save.equippedBedroomFurniture = save.equippedBedroomFurniture !== 'fur_none' ? [save.equippedBedroomFurniture] : [];
                         }
@@ -1189,17 +1215,23 @@
                         }
                         if (!save.ownedPetClothes) save.ownedPetClothes = ['cl_none'];
                         if (!save.equippedPetClothes) save.equippedPetClothes = 'cl_none';
+                        if (!save.ownedPetFurniture) save.ownedPetFurniture = ['fur_none'];
+                        if (!save.ownedPetFood) save.ownedPetFood = [];
                         if (save.energy === undefined) save.energy = 70;
                         if (save.hunger === undefined) save.hunger = 30;
                         if (save.cleanliness === undefined) save.cleanliness = 80;
                         if (save.toilet === undefined) save.toilet = 0;
                         if (!save.lastUpdate) save.lastUpdate = Date.now();
+                        if (!save.sleepCooldown) save.sleepCooldown = 0;
+                        if (!save.feedCooldown) save.feedCooldown = 0;
+                        if (!save.washCooldown) save.washCooldown = 0;
+                        if (!save.toiletCooldown) save.toiletCooldown = 0;
                     }
                 } catch (e) { console.warn('Load save error', e); }
             }
 
             function persist() {
-                try { localStorage.setItem("drop2048-frankly-v6", JSON.stringify(save)); } catch (e) {}
+                try { localStorage.setItem("drop2048-frankly-v7", JSON.stringify(save)); } catch (e) {}
             }
 
             let coins = 0,
@@ -1207,7 +1239,7 @@
                 score = 0,
                 best = 0;
 
-            /* ===== AUDIO ===== */
+            // ---- Audio ----
             const audioCtx = new(window.AudioContext || window.webkitAudioContext)();
 
             function playSound(type) {
@@ -1215,8 +1247,8 @@
                 if (type === 'win') { playWinSound(audioCtx); return; }
                 const s = save.equippedSound || 'snd_default';
                 const now = audioCtx.currentTime;
-                // ... (sound logic)
-                const tone = (freq0, freq1, dur, wave, vol, delay) => {
+
+                function tone(freq0, freq1, dur, wave, vol, delay) {
                     const o = audioCtx.createOscillator();
                     const g = audioCtx.createGain();
                     o.connect(g);
@@ -1229,8 +1261,7 @@
                     g.gain.exponentialRampToValueAtTime(0.01, t0 + dur);
                     o.start(t0);
                     o.stop(t0 + dur + 0.05);
-                };
-                // Default sounds (shortened for brevity, functioning as before)
+                }
                 if (s === 'snd_default') {
                     if (type === 'drop') tone(800, 400, 0.1, 'sine', 0.2);
                     else tone(300, 800, 0.2, 'sine', 0.3);
@@ -1368,6 +1399,7 @@
                 };
             }
 
+            // ---- Particles ----
             const particles = [];
             const pGeo = new THREE.BoxGeometry(0.08, 0.08, 0.08);
             const pMats = {
@@ -1445,7 +1477,7 @@
                 starField.geometry.attributes.position.needsUpdate = true;
             }
 
-            /* ===== AZIRAM PET ===== */
+            // ---- AZIRAM PET (3D) ----
             let aziramPet, aziramBodyMesh, aziramCore, slimeGroup = null,
                 sockets = {};
             let mouthMesh, browL, browR, aziramEyes = null;
@@ -2030,7 +2062,7 @@
                 }
             }
 
-            /* ===== CLOTHES ===== */
+            // ---- Clothes ----
             function equipClothes(itemId) {
                 if (!aziramPet) return;
                 const existing = aziramCore.children.filter(c => c.userData && c.userData.isClothing);
@@ -2132,7 +2164,7 @@
                 aziramCore.add(clothGroup);
             }
 
-            /* ===== FURNITURE ===== */
+            // ---- Furniture ----
             function updateFurniture() {
                 const roomMap = {
                     bedroom: save.equippedBedroomFurniture || [],
@@ -2141,7 +2173,7 @@
                 };
                 const renderItems = (ids) => {
                     return ids.map(id => {
-                        const f = SHOP.furniture.find(item => item.id === id);
+                        const f = SHOP.pet_furniture.find(item => item.id === id);
                         return f ? f.icon : '';
                     }).join(' ');
                 };
@@ -2154,7 +2186,7 @@
                 document.getElementById('roomBathroom').classList.toggle('furnished', roomMap.bathroom.length > 0);
             }
 
-            /* ===== TAMAGOTCHI STATS ===== */
+            // ---- Tamagotchi Stats ----
             let tamagotchiInterval = null;
 
             function updateTamagotchiStats() {
@@ -2185,7 +2217,6 @@
                 if (hour >= 8 && hour < 22) {
                     save.toilet = Math.min(100, (save.toilet || 0) + elapsed * (100 / 10800));
                 } else {
-                    // decreases slowly during sleep
                     save.toilet = Math.max(0, (save.toilet || 0) - elapsed * 0.3);
                 }
 
@@ -2250,8 +2281,7 @@
                 const container = document.getElementById('homeAvatarContainer');
                 if (!container) return;
                 // Remove previous animations
-                container.classList.remove('av-bounce', 'av-sleep', 'av-walk', 'av-idle');
-
+                container.className = '';
                 // Sync with main pet state
                 if (aziramWinTime > 0) {
                     container.classList.add('av-bounce');
@@ -2260,7 +2290,7 @@
                 } else if (petState === 'walk') {
                     container.classList.add('av-walk');
                 } else if (petState === 'hop') {
-                    container.classList.add('av-bounce');
+                    container.classList.add('av-hop');
                 } else {
                     container.classList.add('av-idle');
                 }
@@ -2323,15 +2353,34 @@
             function doFeed() {
                 const now = Date.now();
                 if ((save.feedCooldown || 0) > now) return;
-                save.hunger = Math.max(0, (save.hunger || 50) - 35);
+                // Use a food item from inventory if available
+                const foodItems = save.ownedPetFood || [];
+                if (foodItems.length === 0) {
+                    toast("Δεν έχεις φαγητό! Αγόρασε από το κατάστημα.");
+                    return;
+                }
+                // Use first food item
+                const foodId = foodItems[0];
+                const foodData = SHOP.pet_food.find(f => f.id === foodId);
+                if (!foodData) {
+                    toast("Άγνωστο φαγητό");
+                    return;
+                }
+                // Remove one food item
+                const idx = foodItems.indexOf(foodId);
+                foodItems.splice(idx, 1);
+                save.ownedPetFood = foodItems;
+
+                save.hunger = Math.max(0, (save.hunger || 50) - foodData.hungerReduction);
                 save.feedCooldown = now + 6000;
                 save.lastUpdate = now;
                 persist();
                 renderHomeStats();
-                showSpeech("Μμμμ, νόστιμο! 😋", 1800);
+                showSpeech("Μμμμ, " + foodData.name + "! 😋", 1800);
                 speak("Μμμμ, νόστιμο!");
-                toast("🍽️ Ο Aziram έφαγε! -35 Πείνα");
+                toast("🍽️ Ο Aziram έφαγε " + foodData.name + "! -" + foodData.hungerReduction + " Πείνα");
                 updateAziramMoodFromStats();
+                renderShop(); // refresh inventory display
             }
 
             function doWash() {
@@ -2375,7 +2424,7 @@
                 prevMood = aziramMood;
             }
 
-            /* ===== THREE.JS GAME ===== */
+            // ---- THREE.JS GAME ----
             let scene, camera, renderer, boardGroup, raycaster, pointer;
             let backMesh, cellMat, grid = [],
                 currentCube = null,
@@ -2659,7 +2708,15 @@
                     cell.mesh.scale.set(1.15, 0.85, 1.15);
                     tween(cell.mesh.scale, { x: 1, y: 1, z: 1 }, 0.18);
                     resolveMerges([{ c, r: targetR }]).then(() => {
-                        if (checkWin()) return;
+                        if (checkWin()) {
+                            // Win condition met, but we continue spawning
+                            // The modal will appear, but we don't stop the game.
+                            // We just set busy false and spawn next cube.
+                            busy = false;
+                            spawnCurrent();
+                            setAim(aimCol);
+                            return;
+                        }
                         if (isBoardFull()) { gameOver(); return; }
                         busy = false;
                         spawnCurrent();
@@ -2748,6 +2805,7 @@
             }
 
             let winTimer = null;
+            let winShown = false;
 
             function checkWin() {
                 const t = LEVELS[Math.min(level, LEVELS.length - 1)].target;
@@ -2757,33 +2815,39 @@
                         if (grid[c][r] && grid[c][r].value >= t) { win = true; break; }
                 if (!win) return false;
 
-                busy = true;
-                coins += 25;
-                save.coins = coins;
-                best = Math.max(best, score);
-                save.best = best;
-                save.level = Math.min(level + 1, LEVELS.length - 1);
-                persist();
-                updateHUD();
-                document.getElementById("winText").innerHTML = `Έφτιαξες ${t}!<br>+25 🪙<br>Το παιχνίδι συνεχίζεται!`;
+                // We have a win
+                if (!winShown) {
+                    winShown = true;
+                    coins += 25;
+                    save.coins = coins;
+                    best = Math.max(best, score);
+                    save.best = best;
+                    save.level = Math.min(level + 1, LEVELS.length - 1);
+                    persist();
+                    updateHUD();
+                    document.getElementById("winText").innerHTML = `Έφτιαξες ${t}!<br>+25 🪙<br>Το παιχνίδι συνεχίζεται!`;
 
-                // ===== CELEBRATION: FIREWORKS, CONFETTI, CLAPPING, SOUNDS =====
-                playWinSound(audioCtx);
-                for (let i = 0; i < 30; i++) {
-                    setTimeout(() => {
-                        const x = (Math.random() - 0.5) * 14;
-                        const y = (Math.random() - 0.5) * 10 + 2;
-                        spawnBurst(x, y, 0, 'confetti', 15);
-                        spawnBurst(x, y, 0, 'explode', 10);
-                    }, i * 120);
+                    // Celebration
+                    playWinSound(audioCtx);
+                    for (let i = 0; i < 30; i++) {
+                        setTimeout(() => {
+                            const x = (Math.random() - 0.5) * 14;
+                            const y = (Math.random() - 0.5) * 10 + 2;
+                            spawnBurst(x, y, 0, 'confetti', 15);
+                            spawnBurst(x, y, 0, 'explode', 10);
+                        }, i * 120);
+                    }
+                    aziramWinTime = 6.0;
+                    showSpeech("Τα καταφέραμε! 🎉", 3800);
+                    speak("Μπράβο! Τα καταφέραμε!");
+
+                    if (winTimer) clearTimeout(winTimer);
+                    winTimer = setTimeout(() => {
+                        document.getElementById("winModal").classList.remove("hidden");
+                        winTimer = null;
+                        // Reset winShown after modal is closed
+                    }, 3500);
                 }
-                aziramWinTime = 6.0;
-                showSpeech("Τα καταφέραμε! 🎉", 3800);
-                speak("Μπράβο! Τα καταφέραμε!");
-
-                if (winTimer) clearTimeout(winTimer);
-                winTimer = setTimeout(() => { document.getElementById("winModal").classList.remove("hidden");
-                    winTimer = null; }, 3500);
                 return true;
             }
 
@@ -2905,7 +2969,7 @@
                         persist(); }); }, 250);
             }
 
-            /* ===== SHOP SYSTEM ===== */
+            // ---- Shop System ----
             function getShopProperties(tab) {
                 const map = {
                     cubes: { owned: 'ownedCubes', equip: 'equippedCube' },
@@ -2919,7 +2983,9 @@
                     pet_hands: { owned: 'ownedPetHands', equip: 'equippedPetHands' },
                     pet_props: { owned: 'ownedPetProps', equip: 'equippedPetProps' },
                     pet_feet: { owned: 'ownedPetFeet', equip: 'equippedPetFeet' },
-                    pet_clothes: { owned: 'ownedPetClothes', equip: 'equippedPetClothes' }
+                    pet_clothes: { owned: 'ownedPetClothes', equip: 'equippedPetClothes' },
+                    pet_furniture: { owned: 'ownedPetFurniture', equip: 'equippedFurniture' },
+                    pet_food: { owned: 'ownedPetFood', equip: '' }
                 };
                 return map[tab] || { owned: '', equip: '' };
             }
@@ -2933,9 +2999,9 @@
                 const container = document.getElementById('shopContainer');
                 container.innerHTML = '';
 
-                // Special handling for furniture: show all items, grouped or not
-                if (activeTab === 'furniture') {
-                    const items = SHOP.furniture;
+                // Special handling for furniture
+                if (activeTab === 'pet_furniture') {
+                    const items = SHOP.pet_furniture;
                     items.forEach(item => {
                         const room = item.room;
                         let roomItems = [];
@@ -2943,7 +3009,7 @@
                         else if (room === 'kitchen') roomItems = save.equippedKitchenFurniture || [];
                         else if (room === 'bathroom') roomItems = save.equippedBathroomFurniture || [];
 
-                        const isOwned = save.ownedFurniture && save.ownedFurniture.includes(item.id);
+                        const isOwned = save.ownedPetFurniture && save.ownedPetFurniture.includes(item.id);
                         const isInRoom = roomItems.includes(item.id);
 
                         const el = document.createElement('div');
@@ -2952,7 +3018,6 @@
                             `<div style="font-size:32px; margin-bottom:3px;">${item.icon}</div><h3>${item.name}</h3><div class="price">${isInRoom?'ΣΤΟ ΔΩΜΑΤΙΟ':isOwned?'ΕΠΙΛΟΓΗ':item.price===0?'Δωρεάν':item.price+' 🪙'}</div>`;
                         el.onclick = () => {
                             if (item.id === 'fur_none') {
-                                // Remove all furniture from rooms
                                 save.equippedBedroomFurniture = [];
                                 save.equippedKitchenFurniture = [];
                                 save.equippedBathroomFurniture = [];
@@ -2962,9 +3027,7 @@
                                 toast("Αφαιρέθηκαν όλα τα έπιπλα");
                                 return;
                             }
-
                             if (isOwned) {
-                                // Toggle in room
                                 const roomKey = room === 'bedroom' ? 'equippedBedroomFurniture' :
                                     room === 'kitchen' ? 'equippedKitchenFurniture' : 'equippedBathroomFurniture';
                                 const arr = save[roomKey] || [];
@@ -2982,8 +3045,7 @@
                             } else if (coins >= item.price) {
                                 coins -= item.price;
                                 save.coins = coins;
-                                save.ownedFurniture.push(item.id);
-                                // Auto-place in room
+                                save.ownedPetFurniture.push(item.id);
                                 const roomKey = room === 'bedroom' ? 'equippedBedroomFurniture' :
                                     room === 'kitchen' ? 'equippedKitchenFurniture' : 'equippedBathroomFurniture';
                                 if (!save[roomKey]) save[roomKey] = [];
@@ -2993,6 +3055,36 @@
                                 renderShop();
                                 updateFurniture();
                                 toast("Αγόρασες και τοποθέτησες το " + item.name + "!");
+                            } else { toast("Δεν έχεις αρκετά νομίσματα!"); }
+                        };
+                        container.appendChild(el);
+                    });
+                    return;
+                }
+
+                // Special handling for food
+                if (activeTab === 'pet_food') {
+                    const items = SHOP.pet_food;
+                    items.forEach(item => {
+                        const isOwned = save.ownedPetFood && save.ownedPetFood.includes(item.id);
+                        const el = document.createElement('div');
+                        el.className = `shop-item ${isOwned?'owned':''}`;
+                        el.innerHTML =
+                            `<div style="font-size:32px; margin-bottom:3px;">${item.icon}</div><h3>${item.name}</h3><div class="price">${isOwned?'ΣΤΟ ΑΠΟΘΕΜΑ':item.price+' 🪙'}</div>`;
+                        el.onclick = () => {
+                            if (isOwned) {
+                                toast("Ήδη έχεις " + item.name + " στο απόθεμα!");
+                                return;
+                            }
+                            if (coins >= item.price) {
+                                coins -= item.price;
+                                save.coins = coins;
+                                if (!save.ownedPetFood) save.ownedPetFood = [];
+                                save.ownedPetFood.push(item.id);
+                                persist();
+                                updateHUD();
+                                renderShop();
+                                toast("Αγόρασες " + item.name + "!");
                             } else { toast("Δεν έχεις αρκετά νομίσματα!"); }
                         };
                         container.appendChild(el);
@@ -3050,7 +3142,7 @@
                     if (tabChanged === 'pet_clothes') equipClothes(save.equippedPetClothes);
                     else equipPetSlot(tabChanged, save[getShopProperties(tabChanged).equip]);
                 }
-                if (tabChanged === 'furniture') updateFurniture();
+                if (tabChanged === 'pet_furniture') updateFurniture();
                 if (tabChanged === 'effects') toast("Το εφέ άλλαξε!");
                 if (tabChanged === 'sounds') toast("Ο ήχος άλλαξε!");
             }
@@ -3090,7 +3182,7 @@
                 toastTimer = setTimeout(() => t.style.opacity = 0, 1800);
             }
 
-            /* ===== MISSION BAR (every 10s) ===== */
+            // ---- Mission Bar (every 10s) ----
             function showMissionBar() {
                 const bar = document.getElementById('missionBar');
                 bar.classList.add('show');
@@ -3099,7 +3191,7 @@
             setInterval(showMissionBar, 10000);
             setTimeout(showMissionBar, 500);
 
-            /* ===== MOOD SYSTEM ===== */
+            // ---- Mood System ----
             let lastSmokeTime = 0;
 
             function computeMood(now) {
@@ -3293,11 +3385,11 @@
                 requestAnimationFrame(loop);
             }
 
-            /* ===== INIT ===== */
+            // ---- INIT ----
             (async function() {
                 const keys = ['drop2048-save-pure', 'drop2048-save-v2', 'drop2048-save-v3', 'drop2048-save-v4',
                     'drop2048-v5', 'drop2048-frankly-v1', 'drop2048-frankly-v2', 'drop2048-frankly-v3',
-                    'drop2048-frankly-v4', 'drop2048-frankly-v5'
+                    'drop2048-frankly-v4', 'drop2048-frankly-v5', 'drop2048-frankly-v6'
                 ];
                 keys.forEach(k => localStorage.removeItem(k));
 
@@ -3375,8 +3467,8 @@
                 document.getElementById("btnNext").onclick = () => {
                     document.getElementById("winModal").classList.add("hidden");
                     level = Math.min(level + 1, LEVELS.length - 1);
+                    winShown = false; // reset for next level
                     busy = false;
-                    // Board remains unchanged! Just update target.
                     updateHUD();
                     // Continue playing
                 };
@@ -3384,6 +3476,7 @@
                     document.getElementById("loseModal").classList.add("hidden");
                     busy = false;
                     newBoard();
+                    winShown = false;
                 };
 
                 tamagotchiInterval = setInterval(() => { updateTamagotchiStats(); }, 3000);
