@@ -76,7 +76,7 @@
     }
     #missionBar {
       position: fixed;
-      top: 65px;
+      top: 122px;
       left: 50%;
       transform: translateX(-50%);
       z-index: 5;
@@ -96,30 +96,31 @@
     }
     .powerbar {
       position: fixed;
-      bottom: 18px;
-      left: 14px;
+      top: 62px;
+      left: 50%;
+      transform: translateX(-50%);
       display: flex;
-      justify-content: flex-start;
-      gap: 10px;
+      justify-content: center;
+      gap: 8px;
       z-index: 5;
     }
     .pbtn {
       pointer-events: auto;
       border: none;
       cursor: pointer;
-      width: 66px;
-      height: 66px;
-      border-radius: 18px;
+      width: 50px;
+      height: 50px;
+      border-radius: 14px;
       background: var(--good);
-      box-shadow: 0 4px 0 #5c7a3a;
+      box-shadow: 0 3px 0 #5c7a3a;
       color: #fff;
-      font-size: 26px;
+      font-size: 20px;
       line-height: 1;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      gap: 2px;
+      gap: 1px;
       font-family: inherit;
       transition: transform .08s;
     }
@@ -128,11 +129,11 @@
       box-shadow: 0 1px 0 #5c7a3a;
     }
     .pbtn .cost {
-      font-size: 11px;
+      font-size: 8px;
       font-weight: 800;
       background: rgba(0, 0, 0, .22);
-      border-radius: 8px;
-      padding: 1px 7px;
+      border-radius: 6px;
+      padding: 1px 5px;
     }
     .pbtn.armed {
       outline: 4px solid var(--accent);
@@ -148,15 +149,6 @@
     @keyframes pulse {
       0%, 100% { transform: scale(1); }
       50% { transform: scale(1.08); }
-    }
-    /* Το μικρόφωνο έχει τη δική του θέση: δεξιά, πάνω από το Aziram */
-    #btnMic {
-      position: fixed;
-      right: 14px;
-      bottom: 225px;
-      z-index: 6;
-      width: 58px;
-      height: 58px;
     }
     .shop-tabs {
       display: flex;
@@ -469,8 +461,12 @@
           { id: 'board_space', name: 'Βαθύ Διάστημα', price: 0, icon: '🟦', back: '#0B132B', cell: '#4A5A8A' },
           { id: 'board_crimson', name: 'Πορφυρό', price: 0, icon: '🟥', back: '#3A0CA3', cell: '#A47CFF' },
           { id: 'board_emerald', name: 'Σμαράγδι', price: 0, icon: '🟩', back: '#004B23', cell: '#7BDF4B' },
-          { id: 'board_white', name: 'Λευκός Καμβάς', price: 0, icon: '⬜', back: '#F5F5F5', cell: '#E0E0E0' },
-          { id: 'board_neon', name: 'Νέον Σκοτάδι', price: 0, icon: '🟪', back: '#0A0A0A', cell: '#FF00FF' }
+          { id: 'board_neon', name: 'Νέον Σκοτάδι', price: 0, icon: '🟪', back: '#0A0A0A', cell: '#FF00FF' },
+          { id: 'board_candy', name: 'Ζαχαρωτό', price: 100, icon: '🍭', back: '#D95F8A', cell: '#8E2F55' },
+          { id: 'board_ocean', name: 'Ωκεανός', price: 120, icon: '🌊', back: '#0E5E6F', cell: '#063846' },
+          { id: 'board_forest', name: 'Δάσος', price: 120, icon: '🌲', back: '#2E5A1C', cell: '#16300A' },
+          { id: 'board_sunset', name: 'Ηλιοβασίλεμα', price: 150, icon: '🌅', back: '#C2542F', cell: '#6E2410' },
+          { id: 'board_royal', name: 'Βασιλικό', price: 200, icon: '👑', back: '#3B2A6E', cell: '#221545' }
         ],
         effects: [
           { id: 'eff_none', name: 'Χωρίς Εφέ', price: 0, icon: '✖️' },
@@ -856,6 +852,32 @@
       const aziramBaseColor = new THREE.Color(0x33ffaa);
       const angryColor = new THREE.Color(0xff5544);
 
+      // Συμπεριφορά: περπατάει, στέκεται, κοιμάται, χοροπηδάει σε όλο το κάτω μέρος
+      let aziramNdcX = 0.5,
+        wanderTargetX = -0.2,
+        petState = 'stand',
+        petStateTimer = 3,
+        faceDir = -1;
+
+      function pickNextState() {
+        const r = Math.random();
+        if (aziramMood === 'bored' && r < 0.55) {
+          petState = 'sleep';
+          petStateTimer = 6 + Math.random() * 5;
+          showSpeech("Zzz... 💤", 2000);
+        } else if (r < 0.45) {
+          petState = 'walk';
+          wanderTargetX = -0.6 + Math.random() * 1.25;
+          petStateTimer = 10;
+        } else if (r < 0.62) {
+          petState = 'hop';
+          petStateTimer = 1.3;
+        } else {
+          petState = 'stand';
+          petStateTimer = 2 + Math.random() * 3;
+        }
+      }
+
       // Speech Bubble Variables
       let speechTimer = null;
 
@@ -894,11 +916,11 @@
         petGroup.scale.set(0.33, 0.33, 0.33);
 
         const jellyCore = new THREE.Group();
-        const bodyMat = new THREE.MeshPhongMaterial({ color: 0x33ffaa, shininess: 120, transparent: true,
+        const bodyMat = new THREE.MeshPhongMaterial({ color: 0x33ffaa, shininess: 160, transparent: true,
           opacity: 0.88 });
-        // Ελαφρώς "αχλαδωτό" σώμα — πιο χαριτωμένο από τέλεια σφαίρα
+        // Σώμα σαν gummy/slime της φωτογραφίας: ψηλό, στρογγυλεμένο
         aziramBodyMesh = new THREE.Mesh(new THREE.SphereGeometry(0.7, 32, 32), bodyMat);
-        aziramBodyMesh.scale.set(0.95, 1.08, 0.92);
+        aziramBodyMesh.scale.set(0.82, 1.18, 0.72);
         jellyCore.add(aziramBodyMesh);
 
         // Εσωτερική "καρδιά" jelly — δίνει βάθος στο ημιδιάφανο σώμα
@@ -906,7 +928,8 @@
           new THREE.SphereGeometry(0.35, 16, 16),
           new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.15 })
         );
-        innerGlow.position.set(0, 0.05, 0);
+        innerGlow.position.set(0, 0.15, 0);
+        innerGlow.scale.set(1, 1.3, 0.8);
         jellyCore.add(innerGlow);
 
         // ΣΤΟΜΑ — αλλάζει σχήμα ανά συναίσθημα και ανοιγοκλείνει όταν μιλάει
@@ -914,23 +937,23 @@
           new THREE.SphereGeometry(0.16, 24, 16),
           new THREE.MeshBasicMaterial({ color: 0x5a1a1a })
         );
-        mouthMesh.position.set(0, -0.2, 0.6);
+        mouthMesh.position.set(0, -0.18, 0.47);
         mouthMesh.scale.set(1, 0.35, 0.35);
         jellyCore.add(mouthMesh);
 
         // ΦΡΥΔΙΑ — εμφανίζονται όταν νευριάζει
         const browMat = new THREE.MeshBasicMaterial({ color: 0x113322 });
         browL = new THREE.Mesh(new THREE.BoxGeometry(0.26, 0.06, 0.05), browMat);
-        browL.position.set(-0.26, 0.4, 0.58);
+        browL.position.set(-0.26, 0.46, 0.42);
         browL.visible = false;
         jellyCore.add(browL);
         browR = new THREE.Mesh(new THREE.BoxGeometry(0.26, 0.06, 0.05), browMat);
-        browR.position.set(0.26, 0.4, 0.58);
+        browR.position.set(0.26, 0.46, 0.42);
         browR.visible = false;
         jellyCore.add(browR);
 
         sockets.head = new THREE.Group();
-        sockets.head.position.set(0, 0.7, 0);
+        sockets.head.position.set(0, 0.8, 0);
         jellyCore.add(sockets.head);
         sockets.face = new THREE.Group();
         jellyCore.add(sockets.face);
@@ -939,22 +962,22 @@
 
         sockets.hands = new THREE.Group();
         sockets.handL = new THREE.Group();
-        sockets.handL.position.set(-1.0, 0, 0);
+        sockets.handL.position.set(-0.62, -0.1, 0);
         sockets.hands.add(sockets.handL);
         sockets.handR = new THREE.Group();
-        sockets.handR.position.set(1.0, 0, 0);
+        sockets.handR.position.set(0.62, -0.1, 0);
         sockets.hands.add(sockets.handR);
         sockets.prop = new THREE.Group();
-        sockets.prop.position.set(0, 0.2, 0.4);
+        sockets.prop.position.set(0.15, 0.1, 0.35);
         sockets.handR.add(sockets.prop);
         jellyCore.add(sockets.hands);
 
         sockets.feet = new THREE.Group();
         sockets.footL = new THREE.Group();
-        sockets.footL.position.set(-0.4, -0.85, 0);
+        sockets.footL.position.set(-0.3, -0.88, 0.05);
         sockets.feet.add(sockets.footL);
         sockets.footR = new THREE.Group();
-        sockets.footR.position.set(0.4, -0.85, 0);
+        sockets.footR.position.set(0.3, -0.88, 0.05);
         sockets.feet.add(sockets.footR);
         jellyCore.add(sockets.feet);
 
@@ -969,8 +992,8 @@
       function updateAziramScreenPosition() {
         if (!aziramPet || !camera) return;
 
-        // Πιο αριστερά (0.58 αντί 0.73) ώστε να φαίνεται ολόκληρο
-        const ndc = new THREE.Vector3(0.58, -0.75, 0.1);
+        // Η θέση X κινείται καθώς το Aziram περπατάει στο κάτω μέρος
+        const ndc = new THREE.Vector3(aziramNdcX, -0.78, 0.1);
 
         ndc.unproject(camera);
         const dir = ndc.clone().sub(camera.position).normalize();
@@ -1040,13 +1063,13 @@
         const g = new THREE.Group();
         const ballMat = new THREE.MeshBasicMaterial({ color: color || 0x111111 });
         const hlMat = new THREE.MeshBasicMaterial({ color: 0xffffff });
-        [-0.26, 0.26].forEach(x => {
+        [-0.24, 0.24].forEach(x => {
           const eye = new THREE.Group();
           const ball = new THREE.Mesh(new THREE.SphereGeometry(0.15, 16, 16), ballMat);
           const hl = new THREE.Mesh(new THREE.SphereGeometry(0.05, 8, 8), hlMat);
           hl.position.set(0.05, 0.06, 0.11);
           eye.add(ball, hl);
-          eye.position.set(x, 0.18, 0.56);
+          eye.position.set(x, 0.22, 0.44);
           g.add(eye);
         });
         sockets.face.add(g);
@@ -1394,9 +1417,16 @@
 
         if (slotCategory === 'pet_hands') {
           if (itemId === 'hands_none') {
-            const hMat = new THREE.MeshPhongMaterial({ color: 0x33ffaa, shininess: 120 });
-            sockets.handL.add(new THREE.Mesh(new THREE.SphereGeometry(0.18, 16, 16), hMat));
-            sockets.handR.add(new THREE.Mesh(new THREE.SphereGeometry(0.18, 16, 16), hMat));
+            // Κοντόχοντρα gummy χεράκια που κρέμονται στο πλάι
+            const hMat = new THREE.MeshPhongMaterial({ color: 0x33ffaa, shininess: 160, transparent: true, opacity: 0.9 });
+            const armL = new THREE.Mesh(new THREE.SphereGeometry(0.17, 16, 16), hMat);
+            armL.scale.set(0.9, 2.1, 0.9);
+            armL.position.y = -0.2;
+            sockets.handL.add(armL);
+            const armR = new THREE.Mesh(new THREE.SphereGeometry(0.17, 16, 16), hMat);
+            armR.scale.set(0.9, 2.1, 0.9);
+            armR.position.y = -0.2;
+            sockets.handR.add(armR);
           }
           if (itemId === 'hands_energy') {
             const eMat = new THREE.MeshBasicMaterial({ color: 0x00ffff });
@@ -1412,12 +1442,13 @@
 
         if (slotCategory === 'pet_feet') {
           if (itemId === 'feet_none') {
-            const fMat = new THREE.MeshPhongMaterial({ color: 0x33ffaa, shininess: 120 });
+            // Κοντόχοντρα gummy ποδαράκια
+            const fMat = new THREE.MeshPhongMaterial({ color: 0x33ffaa, shininess: 160, transparent: true, opacity: 0.9 });
             const footL = new THREE.Mesh(new THREE.SphereGeometry(0.2, 16, 16), fMat);
-            footL.scale.y = 0.5;
+            footL.scale.set(0.9, 1.2, 0.9);
             sockets.footL.add(footL);
             const footR = new THREE.Mesh(new THREE.SphereGeometry(0.2, 16, 16), fMat);
-            footR.scale.y = 0.5;
+            footR.scale.set(0.9, 1.2, 0.9);
             sockets.footR.add(footR);
           }
           if (itemId === 'feet_moonboots') {
@@ -1581,7 +1612,7 @@
           g.fill(); }
 
         // Λευκό στρογγυλό background πίσω από τον αριθμό στα "πολύχρωμα" skins
-        const badgeSkins = ['whitered', 'whitegreen', 'zebra', 'rainbow', 'galaxy', 'neon', 'ice', 'lava'];
+        const badgeSkins = ['whitered', 'whitegreen', 'zebra', 'rainbow', 'galaxy', 'neon', 'ice', 'lava', 'gold'];
         const hasBadge = badgeSkins.includes(skin);
         if (hasBadge) {
           g.save();
@@ -1860,6 +1891,13 @@
         if (aziramPet) {
           const hits = raycaster.intersectObject(aziramPet, true);
           if (hits.length > 0 && aziramWinTime <= 0) {
+            if (petState === 'sleep') {
+              petState = 'stand';
+              petStateTimer = 2.5;
+              showSpeech("Ε; Ξύπνησα! 😳", 1800);
+              speak("Ε; Ξύπνησα!");
+              return;
+            }
             aziramReactionTime = 1.0;
             const greetings = ["Γεια σου! 😊", "Χι χι! 😄", "Παίζουμε; 🎮", "Είμαι ο Aziram! 💚"];
             const pick = greetings[Math.floor(Math.random() * greetings.length)];
@@ -2105,7 +2143,7 @@
             browL.visible = false;
             browR.visible = false;
           } else {
-            /* --- ΣΥΝΑΙΣΘΗΜΑΤΑ --- */
+            /* --- ΣΥΜΠΕΡΙΦΟΡΑ & ΣΥΝΑΙΣΘΗΜΑΤΑ --- */
             const now = performance.now();
             aziramMood = computeMood(now);
             if (aziramMood !== prevMood) {
@@ -2113,61 +2151,120 @@
               prevMood = aziramMood;
             }
 
-            aziramPet.position.copy(aziramBasePosition);
+            // Όταν αγχώνεται/νευριάζει δεν κοιμάται ούτε περπατάει
+            if (aziramMood === 'angry' || aziramMood === 'anxious') {
+              if (petState === 'sleep' || petState === 'walk') { petState = 'stand'; petStateTimer = 2; }
+            } else {
+              petStateTimer -= dt;
+              if (petStateTimer <= 0) pickNextState();
+            }
+
+            // Περπάτημα: κίνηση προς τον στόχο
+            if (petState === 'walk') {
+              const dir = Math.sign(wanderTargetX - aziramNdcX);
+              if (dir !== 0) faceDir = dir;
+              aziramNdcX += dir * 0.11 * dt;
+              if (Math.abs(wanderTargetX - aziramNdcX) < 0.02) {
+                petState = 'stand';
+                petStateTimer = 1.5 + Math.random() * 2.5;
+              }
+            }
+            updateAziramScreenPosition();
+
             core.position.x = 0;
             aziramPet.rotation.x = 0.2;
-            aziramPet.rotation.y += (-0.3 - aziramPet.rotation.y) * 0.1;
-            core.scale.y = 1 + Math.sin(t * 0.004) * 0.04;
-            core.scale.x = 1 + Math.cos(t * 0.004) * 0.04;
-            core.position.y = Math.sin(t * 0.002) * 0.15;
-            sockets.handL.position.y = Math.sin(t * 0.003) * 0.1;
-            sockets.handR.position.y = Math.cos(t * 0.003) * 0.1;
-            sockets.footL.position.y = -0.85 + Math.cos(t * 0.004) * 0.05;
-            sockets.footR.position.y = -0.85 + Math.sin(t * 0.004) * 0.05;
+
+            if (petState === 'sleep') {
+              // Ξαπλώνει στο πλάι και κοιμάται
+              aziramPet.rotation.z += (1.15 - aziramPet.rotation.z) * 0.06;
+              aziramPet.rotation.y += (-0.1 - aziramPet.rotation.y) * 0.06;
+              core.scale.y = 1 + Math.sin(t * 0.0015) * 0.05;
+              core.scale.x = 1 + Math.cos(t * 0.0015) * 0.05;
+              core.position.y = -0.15;
+              sockets.handL.position.y = -0.1;
+              sockets.handR.position.y = -0.1;
+              if (aziramEyes) aziramEyes.scale.set(1, 0.1, 1);
+              if (!isTalking) mouthMesh.scale.set(0.4, 0.18, 0.35);
+              browL.visible = false;
+              browR.visible = false;
+              if (Math.random() < 0.004) showSpeech("Zzz 💤", 1600);
+            } else if (petState === 'hop') {
+              // Χοροπηδάει χαρούμενα
+              aziramPet.rotation.z += (0 - aziramPet.rotation.z) * 0.15;
+              aziramPet.rotation.y += (-0.3 - aziramPet.rotation.y) * 0.1;
+              core.position.y = Math.abs(Math.sin(t * 0.012)) * 0.5;
+              core.scale.y = 1 + Math.sin(t * 0.012) * 0.08;
+              core.scale.x = 1;
+              sockets.handL.position.y = Math.abs(Math.sin(t * 0.012)) * 0.3;
+              sockets.handR.position.y = Math.abs(Math.sin(t * 0.012)) * 0.3;
+              if (aziramEyes) aziramEyes.scale.set(1, 1, 1);
+              if (!isTalking) mouthMesh.scale.set(0.8, 0.5, 0.35);
+              browL.visible = false;
+              browR.visible = false;
+            } else if (petState === 'walk') {
+              // Περπατάει: κοιτάει προς την κατεύθυνση, τα πόδια εναλλάσσονται
+              aziramPet.rotation.z += (0 - aziramPet.rotation.z) * 0.15;
+              aziramPet.rotation.y += ((faceDir > 0 ? 0.55 : -1.1) - aziramPet.rotation.y) * 0.08;
+              core.position.y = Math.abs(Math.sin(t * 0.012)) * 0.12;
+              core.scale.set(1, 1, 1);
+              sockets.footL.position.y = -0.88 + Math.max(0, Math.sin(t * 0.012)) * 0.18;
+              sockets.footR.position.y = -0.88 + Math.max(0, -Math.sin(t * 0.012)) * 0.18;
+              sockets.handL.position.y = Math.sin(t * 0.012) * 0.12;
+              sockets.handR.position.y = -Math.sin(t * 0.012) * 0.12;
+              if (aziramEyes) aziramEyes.scale.set(1, 1, 1);
+              if (!isTalking) mouthMesh.scale.set(1, 0.35, 0.35);
+              browL.visible = false;
+              browR.visible = false;
+            } else {
+              // Στέκεται: ήρεμη αναπνοή jelly
+              aziramPet.rotation.z += (0 - aziramPet.rotation.z) * 0.1;
+              aziramPet.rotation.y += (-0.3 - aziramPet.rotation.y) * 0.1;
+              core.scale.y = 1 + Math.sin(t * 0.004) * 0.04;
+              core.scale.x = 1 + Math.cos(t * 0.004) * 0.04;
+              core.position.y = Math.sin(t * 0.002) * 0.15;
+              sockets.handL.position.y = Math.sin(t * 0.003) * 0.1;
+              sockets.handR.position.y = Math.cos(t * 0.003) * 0.1;
+              sockets.footL.position.y = -0.88 + Math.cos(t * 0.004) * 0.05;
+              sockets.footR.position.y = -0.88 + Math.sin(t * 0.004) * 0.05;
+
+              // Εκφράσεις διάθεσης όταν στέκεται
+              const showBrows = aziramMood === 'angry';
+              browL.visible = showBrows;
+              browR.visible = showBrows;
+              if (showBrows) {
+                browL.rotation.z = -0.45;
+                browR.rotation.z = 0.45;
+              }
+
+              if (aziramMood === 'angry') {
+                if (aziramEyes) aziramEyes.scale.set(1, 0.7, 1);
+                if (!isTalking) mouthMesh.scale.set(0.8, 0.12, 0.35);
+                if (now - lastSmokeTime > 1200) {
+                  lastSmokeTime = now;
+                  const wp = new THREE.Vector3();
+                  sockets.head.getWorldPosition(wp);
+                  spawnBurst(wp.x, wp.y + 0.2, wp.z, 'smoke', 2);
+                }
+              } else if (aziramMood === 'anxious') {
+                if (aziramEyes) aziramEyes.scale.set(1.3, 1.3, 1.3);
+                if (!isTalking) mouthMesh.scale.set(0.5, 0.55, 0.35);
+                aziramPet.position.x += (Math.random() - 0.5) * 0.05;
+                aziramPet.position.y += (Math.random() - 0.5) * 0.05;
+              } else if (aziramMood === 'bored') {
+                if (aziramEyes) aziramEyes.scale.set(1, 0.35, 1);
+                aziramPet.rotation.z = Math.sin(t * 0.0008) * 0.12;
+                const yawn = Math.max(0, Math.sin(t * 0.0012));
+                if (!isTalking) mouthMesh.scale.set(0.55 + yawn * 0.2, 0.2 + yawn * 0.55, 0.35);
+              } else {
+                if (aziramEyes) aziramEyes.scale.set(1, 1, 1);
+                if (!isTalking) mouthMesh.scale.set(1, 0.35, 0.35);
+              }
+            }
 
             // Χρώμα σώματος: κοκκινίζει όταν νευριάζει
             if (!aziramBodyMesh.userData.isRainbow) {
               const target = (aziramMood === 'angry' || aziramMood === 'anxious') ? angryColor : aziramBaseColor;
               aziramBodyMesh.material.color.lerp(target, 0.06);
-            }
-
-            // Φρύδια: ορατά μόνο όταν νευριάζει / αγχώνεται
-            const showBrows = aziramMood === 'angry';
-            browL.visible = showBrows;
-            browR.visible = showBrows;
-            if (showBrows) {
-              browL.rotation.z = -0.45;
-              browR.rotation.z = 0.45;
-            }
-
-            // Μάτια & λοιπές εκφράσεις ανά διάθεση
-            if (aziramMood === 'angry') {
-              if (aziramEyes) aziramEyes.scale.set(1, 0.7, 1);
-              if (!isTalking) mouthMesh.scale.set(0.8, 0.12, 0.35); // Σφιγμένο στόμα
-              // Καπνός από το κεφάλι κάθε ~1.2s
-              if (now - lastSmokeTime > 1200) {
-                lastSmokeTime = now;
-                const wp = new THREE.Vector3();
-                sockets.head.getWorldPosition(wp);
-                spawnBurst(wp.x, wp.y + 0.2, wp.z, 'smoke', 2);
-              }
-            } else if (aziramMood === 'anxious') {
-              if (aziramEyes) aziramEyes.scale.set(1.3, 1.3, 1.3); // Γουρλωμένα μάτια
-              if (!isTalking) mouthMesh.scale.set(0.5, 0.55, 0.35); // Στόμα "Ο"
-              // Τρέμει από αγωνία
-              aziramPet.position.x += (Math.random() - 0.5) * 0.05;
-              aziramPet.position.y += (Math.random() - 0.5) * 0.05;
-            } else if (aziramMood === 'bored') {
-              if (aziramEyes) aziramEyes.scale.set(1, 0.35, 1); // Μισόκλειστα μάτια
-              // Γέρνει στο πλάι, χασμουριέται περιοδικά
-              aziramPet.rotation.z = Math.sin(t * 0.0008) * 0.12;
-              const yawn = Math.max(0, Math.sin(t * 0.0012));
-              if (!isTalking) mouthMesh.scale.set(0.55 + yawn * 0.2, 0.2 + yawn * 0.55, 0.35);
-            } else {
-              // idle: χαλαρό χαμόγελο
-              if (aziramEyes) aziramEyes.scale.set(1, 1, 1);
-              aziramPet.rotation.z += (0 - aziramPet.rotation.z) * 0.1;
-              if (!isTalking) mouthMesh.scale.set(1, 0.35, 0.35);
             }
           }
 
@@ -2199,6 +2296,14 @@
         document.getElementById('btnCloseShop').onclick = () => { document.getElementById('shopModal').classList.add(
           'hidden'); };
         document.addEventListener('pointerdown', () => { if (audioCtx.state === 'suspended') audioCtx.resume(); }, { once: true });
+        // iOS: το speechSynthesis θέλει "ξεκλείδωμα" με πρώτο άγγιγμα του χρήστη
+        document.addEventListener('pointerdown', () => {
+          try {
+            const u = new SpeechSynthesisUtterance(' ');
+            u.volume = 0;
+            speechSynthesis.speak(u);
+          } catch (e) {}
+        }, { once: true });
 
         await loadSave();
         coins = save.coins;
