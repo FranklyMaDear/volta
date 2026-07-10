@@ -131,7 +131,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script>
 /* =====================================================
-   DROP 2048 · FRANKLYGAMES EDITION (Full Working Code)
+   DROP 2048 · FRANKLYGAMES EDITION (Avatar fix)
 ===================================================== */
 
 const COLS = 5, ROWS = 6, CELL = 1.0, GAP = 0.12; 
@@ -252,11 +252,11 @@ let save = { ...DEFAULT_SAVE };
 // Φόρτωση και Αποθήκευση Δεδομένων
 async function loadSave(){
   try { 
-      const r = localStorage.getItem("drop2048-frankly-v1"); 
+      const r = localStorage.getItem("drop2048-frankly-v2"); 
       if(r) save = Object.assign({}, DEFAULT_SAVE, JSON.parse(r)); 
   } catch(e) {}
 }
-function persist(){ try{ localStorage.setItem("drop2048-frankly-v1", JSON.stringify(save)); }catch(e){} }
+function persist(){ try{ localStorage.setItem("drop2048-frankly-v2", JSON.stringify(save)); }catch(e){} }
 
 /* ----- AUDIO & PARTICLES ----- */
 const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -319,10 +319,11 @@ function updateStarfield(speed) {
   starField.geometry.attributes.position.needsUpdate = true;
 }
 
-/* ----- AZIRAM PET SYSTEM ----- */
+/* ----- AZIRAM PET SYSTEM (ΣΩΣΤΗ ΘΕΣΗ ΚΑΤΩ ΔΕΞΙΑ) ----- */
 let aziramPet, aziramBodyMesh, sockets = {};
 let aziramReactionTime = 0, aziramWinTime = 0; 
-let aziramTargetPos = new THREE.Vector3(2.5, -3.8, 0.5); // Τέλεια θέση Κάτω Δεξιά δίπλα στα κουμπιά
+// Η θέση θα υπολογίζεται δυναμικά από NDC
+let aziramBasePosition = new THREE.Vector3(2.5, -3.8, 0.5);
 
 function createAziram() {
     const petGroup = new THREE.Group();
@@ -347,11 +348,25 @@ function createAziram() {
     jellyCore.add(sockets.feet);
 
     petGroup.add(jellyCore);
-    petGroup.position.copy(aziramTargetPos);
+    // Μέγεθος όσο τα κουμπιά
+    petGroup.scale.set(0.45, 0.45, 0.45);
     petGroup.rotation.y = -0.3; 
     petGroup.rotation.x = 0.2;
 
     return petGroup;
+}
+
+// Υπολογισμός θέσης από NDC ώστε να είναι κάτω δεξιά, δίπλα στα κουμπιά
+function updateAziramScreenPosition() {
+    if (!aziramPet || !camera) return;
+    // NDC: x=0.72 (δεξιά), y=-0.78 (κάτω, στο ύψος των κουμπιών)
+    const ndc = new THREE.Vector3(0.72, -0.78, 0.5);
+    ndc.unproject(camera);
+    const dir = ndc.clone().sub(camera.position).normalize();
+    // Απόσταση από την κάμερα ώστε να φαίνεται καθαρά
+    const pos = camera.position.clone().add(dir.multiplyScalar(5.0));
+    aziramBasePosition.copy(pos);
+    aziramPet.position.copy(aziramBasePosition);
 }
 
 function equipPetSlot(slotCategory, itemId) {
@@ -526,12 +541,20 @@ function initThree(){
 
   updateBoardColorsLive(); initStarfield(); 
   aziramPet = createAziram(); scene.add(aziramPet);
+  // Αρχική τοποθέτηση
+  updateAziramScreenPosition();
   
   raycaster = new THREE.Raycaster(); pointer = new THREE.Vector2(); onResize(); addEventListener("resize", onResize); requestAnimationFrame(loop);
 }
 
 function updateBoardColorsLive() { const bData = SHOP.boards.find(b => b.id === save.equippedBoard) || SHOP.boards[0]; backMesh.material.color.set(bData.back); cellMat.color.set(bData.cell); }
-function onResize(){ renderer.setSize(innerWidth, innerHeight); camera.aspect = innerWidth/innerHeight; const dist = (BOARD_H/2 + 2.5) / Math.tan(THREE.MathUtils.degToRad(camera.fov/2)); camera.position.set(0, -1.8, dist + 1.5); camera.lookAt(0, -1.2, 0); camera.updateProjectionMatrix(); }
+function onResize(){ 
+  renderer.setSize(innerWidth, innerHeight); camera.aspect = innerWidth/innerHeight; 
+  const dist = (BOARD_H/2 + 2.5) / Math.tan(THREE.MathUtils.degToRad(camera.fov/2)); 
+  camera.position.set(0, -1.8, dist + 1.5); camera.lookAt(0, -1.2, 0); camera.updateProjectionMatrix(); 
+  // Ενημέρωση θέσης AZIRAM για τη νέα ανάλυση
+  updateAziramScreenPosition();
+}
 function cellPos(c, r){ return { x: -BOARD_W/2 + CELL/2 + c*(CELL+GAP), y: BOARD_H/2 - CELL/2 - r*(CELL+GAP) }; }
 
 function numberTexture(value){ 
@@ -713,6 +736,8 @@ function loop(t){
           sockets.handL.position.y = Math.sin(t*0.05) * 0.5;
           sockets.handR.position.y = Math.cos(t*0.05) * 0.5;
       } else {
+          // Επαναφορά στη σωστή θέση (κάτω δεξιά)
+          aziramPet.position.copy(aziramBasePosition);
           core.position.x = 0;
           aziramPet.rotation.x = 0.2;
           aziramPet.rotation.y += (-0.3 - aziramPet.rotation.y) * 0.1;
@@ -737,6 +762,7 @@ function loop(t){
   localStorage.removeItem("drop2048-save-v3");
   localStorage.removeItem("drop2048-save-v4");
   localStorage.removeItem("drop2048-v5");
+  localStorage.removeItem("drop2048-frankly-v1");
   
   document.getElementById('btnShop').onclick = () => { renderShop(); document.getElementById('shopModal').classList.remove('hidden'); };
   document.getElementById('btnCloseShop').onclick = () => { document.getElementById('shopModal').classList.add('hidden'); };
