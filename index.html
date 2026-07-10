@@ -40,44 +40,46 @@
             z-index: 0;
         }
 
-        /* ===== HUD ===== */
+        /* ===== HUD (TOP) ===== */
         .hud {
             position: fixed;
             left: 0;
             right: 0;
-            top: 48px;
-            padding: 6px 12px 4px;
+            top: 0;
+            padding: 6px 10px 4px;
             display: flex;
             gap: 6px;
             align-items: center;
             pointer-events: none;
             z-index: 5;
-            background: rgba(11, 12, 16, 0.55);
+            background: rgba(11, 12, 16, 0.75);
             backdrop-filter: blur(4px);
-            border-bottom: 2px solid rgba(255, 255, 255, 0.06);
+            border-bottom: 2px solid rgba(255, 255, 255, 0.08);
+            height: 48px;
         }
         .chip {
             background: var(--panel-deep);
             color: var(--cream);
-            border-radius: 14px;
+            border-radius: 12px;
             padding: 4px 10px;
             font-weight: 800;
-            font-size: 14px;
+            font-size: 13px;
             box-shadow: 0 3px 0 rgba(0, 0, 0, .3);
             display: flex;
             align-items: center;
-            gap: 5px;
+            gap: 4px;
             pointer-events: auto;
+            line-height: 1.2;
         }
         .chip small {
             font-weight: 600;
             opacity: .75;
-            font-size: 10px;
+            font-size: 9px;
             display: block;
             line-height: 1;
         }
         .chip .big {
-            font-size: 16px;
+            font-size: 15px;
             line-height: 1.1;
         }
         .spacer {
@@ -88,10 +90,10 @@
             border: none;
             cursor: pointer;
             color: #fff;
-            border-radius: 14px;
+            border-radius: 12px;
             padding: 4px 12px;
             font-weight: 800;
-            font-size: 15px;
+            font-size: 14px;
             box-shadow: 0 3px 0 #b8742a;
             pointer-events: auto;
             transition: transform .08s;
@@ -111,6 +113,76 @@
         }
         .hud-btn.home-btn:active {
             box-shadow: 0 1px 0 #2d5a7a;
+        }
+
+        /* ===== POWERUPS (BELOW HUD) ===== */
+        .powerbar {
+            position: fixed;
+            top: 50px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            z-index: 5;
+            background: rgba(11, 12, 16, 0.6);
+            backdrop-filter: blur(4px);
+            padding: 6px 12px;
+            border-radius: 18px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            pointer-events: none;
+        }
+        .pbtn {
+            pointer-events: auto;
+            border: none;
+            cursor: pointer;
+            width: 56px;
+            height: 56px;
+            border-radius: 16px;
+            background: var(--good);
+            box-shadow: 0 4px 0 #5c7a3a;
+            color: #fff;
+            font-size: 24px;
+            line-height: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 0px;
+            font-family: inherit;
+            transition: transform .08s;
+        }
+        .pbtn:active {
+            transform: translateY(4px);
+            box-shadow: 0 1px 0 #5c7a3a;
+        }
+        .pbtn .cost {
+            font-size: 8px;
+            font-weight: 800;
+            background: rgba(0, 0, 0, .25);
+            border-radius: 6px;
+            padding: 1px 6px;
+            margin-top: -2px;
+        }
+        .pbtn.armed {
+            outline: 3px solid var(--accent);
+            background: var(--red);
+            box-shadow: 0 4px 0 #8f3c20;
+        }
+        .pbtn.listening {
+            outline: 3px solid #ff5555;
+            background: var(--red);
+            box-shadow: 0 4px 0 #8f3c20;
+            animation: pulse 1s infinite;
+        }
+        @keyframes pulse {
+            0%,
+            100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.08);
+            }
         }
 
         /* ===== MISSION BAR (roll-up) ===== */
@@ -142,79 +214,10 @@
             color: var(--red);
         }
 
-        /* ===== POWERUPS (bottom) ===== */
-        .powerbar {
-            position: fixed;
-            bottom: 18px;
-            left: 50%;
-            transform: translateX(-50%);
-            display: flex;
-            justify-content: center;
-            gap: 8px;
-            z-index: 5;
-            background: rgba(11, 12, 16, 0.55);
-            backdrop-filter: blur(4px);
-            padding: 6px 12px;
-            border-radius: 22px;
-            border: 1px solid rgba(255, 255, 255, 0.06);
-        }
-        .pbtn {
-            pointer-events: auto;
-            border: none;
-            cursor: pointer;
-            width: 48px;
-            height: 48px;
-            border-radius: 14px;
-            background: var(--good);
-            box-shadow: 0 3px 0 #5c7a3a;
-            color: #fff;
-            font-size: 19px;
-            line-height: 1;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            gap: 0px;
-            font-family: inherit;
-            transition: transform .08s;
-        }
-        .pbtn:active {
-            transform: translateY(3px);
-            box-shadow: 0 1px 0 #5c7a3a;
-        }
-        .pbtn .cost {
-            font-size: 7px;
-            font-weight: 800;
-            background: rgba(0, 0, 0, .22);
-            border-radius: 6px;
-            padding: 1px 5px;
-            margin-top: -2px;
-        }
-        .pbtn.armed {
-            outline: 3px solid var(--accent);
-            background: var(--red);
-            box-shadow: 0 3px 0 #8f3c20;
-        }
-        .pbtn.listening {
-            outline: 3px solid #ff5555;
-            background: var(--red);
-            box-shadow: 0 3px 0 #8f3c20;
-            animation: pulse 1s infinite;
-        }
-        @keyframes pulse {
-            0%,
-            100% {
-                transform: scale(1);
-            }
-            50% {
-                transform: scale(1.08);
-            }
-        }
-
         /* ===== TOAST ===== */
         #toast {
             position: fixed;
-            bottom: 78px;
+            bottom: 80px;
             left: 50%;
             transform: translateX(-50%);
             z-index: 15;
@@ -441,28 +444,57 @@
             display: none !important;
         }
 
-        /* ===== HOME / TAMAGOTCHI ===== */
-        .home-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr 1fr;
-            gap: 8px;
-            margin: 8px 0;
+        /* ===== HOME / TAMAGOTCHI (FULL SCREEN) ===== */
+        .home-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(11, 12, 16, .92);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 50;
+            backdrop-filter: blur(6px);
+            padding: 0;
+        }
+        .home-card {
+            background: var(--cream);
+            border: none;
+            border-radius: 0;
+            width: 100vw;
+            height: 100vh;
+            max-width: 100%;
+            max-height: 100%;
+            padding: 12px 10px;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            animation: pop .25s cubic-bezier(.34, 1.56, .64, 1);
+        }
+
+        .home-stats {
+            display: flex;
+            gap: 6px;
+            margin-bottom: 8px;
             flex-shrink: 0;
+            flex-wrap: wrap;
+            justify-content: center;
         }
         .home-stat {
             background: #E4D7BC;
             border-radius: 12px;
-            padding: 6px 8px;
-            font-size: 13px;
+            padding: 4px 8px;
+            font-size: 12px;
             font-weight: 700;
             display: flex;
             flex-direction: column;
             align-items: center;
             gap: 2px;
+            min-width: 60px;
+            flex: 1;
         }
         .home-stat .bar {
             width: 100%;
-            height: 8px;
+            height: 6px;
             background: #c9b899;
             border-radius: 6px;
             overflow: hidden;
@@ -480,64 +512,155 @@
             background: var(--accent);
         }
 
-        .rooms-container {
-            display: flex;
-            gap: 8px;
-            margin: 6px 0 10px;
-            flex: 1;
-            min-height: 0;
+        .home-avatar-area {
+            flex-shrink: 0;
+            text-align: center;
+            margin: 4px 0 8px;
         }
-        .room {
+        .home-avatar-area #homeAvatarContainer {
+            display: inline-block;
+            position: relative;
+            width: 90px;
+            height: 110px;
+            background: transparent;
+        }
+        .home-avatar-area .av-body {
+            width: 70px;
+            height: 80px;
+            border-radius: 50%;
+            margin: 15px auto 0;
+            position: relative;
+            transition: background 0.3s;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+        .home-avatar-area .av-face {
+            position: absolute;
+            top: 15px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 28px;
+            line-height: 1;
+        }
+        .home-avatar-area .av-head {
+            position: absolute;
+            top: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 32px;
+            line-height: 1;
+        }
+        .home-avatar-area .av-clothes {
+            position: absolute;
+            bottom: 5px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 30px;
+            line-height: 1;
+        }
+        .home-avatar-area .av-prop {
+            position: absolute;
+            right: -10px;
+            bottom: 25px;
+            font-size: 28px;
+            line-height: 1;
+        }
+
+        .room-tabs {
+            display: flex;
+            gap: 6px;
+            margin-bottom: 8px;
+            flex-shrink: 0;
+        }
+        .room-tab {
             flex: 1;
+            padding: 6px 4px;
+            font-weight: 800;
+            font-size: 12px;
+            border-radius: 10px;
+            background: #E4D7BC;
+            color: #8C6A4F;
+            border: none;
+            cursor: pointer;
+            transition: .1s;
+            white-space: nowrap;
+        }
+        .room-tab.active {
+            background: var(--accent);
+            color: #fff;
+            box-shadow: 0 3px 0 #b8742a;
+            transform: translateY(-2px);
+        }
+
+        .room-view {
+            flex: 1;
+            overflow-y: auto;
+            min-height: 0;
             background: #f0e5d1;
             border-radius: 16px;
-            padding: 10px 8px;
+            padding: 12px;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            gap: 6px;
+            gap: 8px;
             border: 3px solid #8C6A4F;
-            min-height: 100px;
+            margin-bottom: 6px;
         }
-        .room .icon {
-            font-size: 38px;
+        .room-panel {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            height: 100%;
+            gap: 6px;
         }
-        .room .label {
+        .room-panel.active {
+            display: flex;
+        }
+        .room-panel .room-icon {
+            font-size: 48px;
+        }
+        .room-panel .room-label {
             font-weight: 700;
-            font-size: 13px;
+            font-size: 14px;
             color: var(--ink);
         }
-        .room .action-btn {
+        .room-panel .furniture-display {
+            font-size: 28px;
+            font-weight: 600;
+            color: var(--panel-deep);
+        }
+        .room-panel .action-btn {
             border: none;
             font-family: inherit;
             font-weight: 800;
-            font-size: 12px;
+            font-size: 14px;
             color: #fff;
             background: var(--good);
-            border-radius: 12px;
-            padding: 6px 16px;
+            border-radius: 14px;
+            padding: 8px 20px;
             box-shadow: 0 3px 0 #5c7a3a;
             cursor: pointer;
             transition: transform .08s;
             margin-top: 4px;
         }
-        .room .action-btn:active {
+        .room-panel .action-btn:active {
             transform: translateY(3px);
             box-shadow: 0 1px 0 #5c7a3a;
         }
-        .room .action-btn:disabled {
+        .room-panel .action-btn:disabled {
             opacity: 0.5;
             transform: none;
             box-shadow: 0 3px 0 #5c7a3a;
             cursor: not-allowed;
         }
-        .room .cooldown {
+        .room-panel .cooldown {
             font-size: 10px;
             color: var(--red);
             font-weight: 600;
         }
-        .room.furnished {
+        .room-panel.furnished {
             border-color: var(--accent);
         }
 
@@ -547,49 +670,78 @@
             flex-shrink: 0;
         }
         .home-footer .btn {
-            flex: 1;
             margin-top: 0;
+            flex: 1;
+        }
+
+        /* ===== WIN / LOSE MODALS ===== */
+        .win-lose-overlay {
+            z-index: 25;
         }
 
         /* ===== RESPONSIVE ===== */
         @media (max-width: 480px) {
             .hud {
-                top: 38px;
-                padding: 4px 8px;
+                height: 44px;
+                padding: 4px 6px;
                 gap: 4px;
             }
             .chip {
-                font-size: 12px;
-                padding: 3px 7px;
-                border-radius: 10px;
+                font-size: 11px;
+                padding: 2px 6px;
+                border-radius: 8px;
             }
             .chip .big {
-                font-size: 14px;
+                font-size: 13px;
             }
             .hud-btn {
-                font-size: 13px;
-                padding: 3px 8px;
-                border-radius: 10px;
+                font-size: 12px;
+                padding: 2px 8px;
+                border-radius: 8px;
             }
             .powerbar {
-                bottom: 10px;
+                top: 46px;
                 padding: 4px 8px;
                 gap: 5px;
-                border-radius: 16px;
+                border-radius: 14px;
             }
             .pbtn {
-                width: 40px;
-                height: 40px;
-                font-size: 16px;
-                border-radius: 10px;
+                width: 48px;
+                height: 48px;
+                font-size: 20px;
+                border-radius: 12px;
             }
             .pbtn .cost {
-                font-size: 6px;
+                font-size: 7px;
             }
             #missionBar {
                 font-size: 12px;
                 padding: 6px 14px 5px;
                 border-radius: 0 0 14px 14px;
+            }
+            .home-stat {
+                font-size: 10px;
+                min-width: 40px;
+                padding: 2px 4px;
+            }
+            .home-stat .bar {
+                height: 4px;
+            }
+            .home-avatar-area #homeAvatarContainer {
+                width: 70px;
+                height: 90px;
+            }
+            .home-avatar-area .av-body {
+                width: 55px;
+                height: 65px;
+                margin: 10px auto 0;
+            }
+            .room-tab {
+                font-size: 10px;
+                padding: 4px 2px;
+            }
+            .room-panel .room-icon {
+                font-size: 36px;
             }
             .card {
                 padding: 14px 12px;
@@ -602,32 +754,6 @@
             .shop-item h3 {
                 font-size: 11px;
             }
-            .rooms-container {
-                flex-direction: row;
-                flex-wrap: wrap;
-            }
-            .room {
-                min-height: 80px;
-                padding: 6px 4px;
-                flex: 1 1 30%;
-            }
-            .room .icon {
-                font-size: 28px;
-            }
-            .room .label {
-                font-size: 11px;
-            }
-            .room .action-btn {
-                font-size: 10px;
-                padding: 4px 10px;
-            }
-            .home-grid {
-                gap: 4px;
-            }
-            .home-stat {
-                font-size: 11px;
-                padding: 4px 6px;
-            }
             #speech {
                 font-size: 16px;
                 padding: 6px 14px;
@@ -636,32 +762,29 @@
             #toast {
                 font-size: 12px;
                 padding: 6px 14px;
-                bottom: 64px;
+                bottom: 70px;
             }
         }
         @media (max-width: 380px) {
             .hud-btn {
-                font-size: 11px;
-                padding: 2px 6px;
-            }
-            .chip {
                 font-size: 10px;
                 padding: 2px 5px;
             }
+            .chip {
+                font-size: 9px;
+                padding: 2px 4px;
+            }
             .chip .big {
-                font-size: 12px;
+                font-size: 11px;
             }
             .pbtn {
-                width: 34px;
-                height: 34px;
-                font-size: 14px;
+                width: 40px;
+                height: 40px;
+                font-size: 17px;
             }
             #missionBar {
                 font-size: 10px;
                 padding: 4px 10px 3px;
-            }
-            .room .icon {
-                font-size: 22px;
             }
         }
     </style>
@@ -669,7 +792,7 @@
 <body>
     <canvas id="game"></canvas>
 
-    <!-- ===== HUD ===== -->
+    <!-- ===== HUD (TOP) ===== -->
     <div class="hud">
         <div class="chip"><div><small>ΕΠΙΠΕΔΟ</small><span class="big" id="hudLevel">1</span></div></div>
         <div class="chip"><div><small>ΣΚΟΡ</small><span class="big" id="hudScore">0</span></div></div>
@@ -679,19 +802,19 @@
         <div class="chip">🪙 <span class="big" id="hudCoins">0</span></div>
     </div>
 
-    <!-- ===== MISSION BAR (roll-up) ===== -->
-    <div id="missionBar">🎯 Αποστολή: <b id="missionText"></b></div>
-
-    <!-- ===== SPEECH BUBBLE ===== -->
-    <div id="speech"><span id="speechText">WOW!</span></div>
-
-    <!-- ===== POWERUPS (bottom) ===== -->
+    <!-- ===== POWERUPS (BELOW HUD) ===== -->
     <div class="powerbar">
         <button class="pbtn" id="btnMagnet">🧲<span class="cost">Δωρεάν</span></button>
         <button class="pbtn" id="btnHammer">🔨<span class="cost">Δωρεάν</span></button>
         <button class="pbtn" id="btnShuffle">🔄<span class="cost">Δωρεάν</span></button>
         <button class="pbtn" id="btnMic">🎤<span class="cost">Μίλα</span></button>
     </div>
+
+    <!-- ===== MISSION BAR ===== -->
+    <div id="missionBar">🎯 Αποστολή: <b id="missionText"></b></div>
+
+    <!-- ===== SPEECH BUBBLE ===== -->
+    <div id="speech"><span id="speechText">WOW!</span></div>
 
     <!-- ===== TOAST ===== -->
     <div id="toast"></div>
@@ -723,38 +846,63 @@
         </div>
     </div>
 
-    <!-- ===== HOME MODAL ===== -->
-    <div class="overlay hidden" id="homeModal">
-        <div class="card">
-            <h2 style="margin-bottom:6px;">🏠 Το Σπίτι του Aziram</h2>
-            <div class="home-grid" id="homeStats">
+    <!-- ===== HOME MODAL (FULL SCREEN) ===== -->
+    <div class="home-overlay hidden" id="homeModal">
+        <div class="home-card">
+            <h2 style="margin:0 0 4px 0; font-size:20px; flex-shrink:0;">🏠 Το Σπίτι του Aziram</h2>
+
+            <div class="home-stats" id="homeStats">
                 <div class="home-stat">⚡ Ενέργεια<div class="bar"><div id="energyBar" style="width:70%"></div></div><span id="energyText">70</span></div>
                 <div class="home-stat">🍽️ Πείνα<div class="bar"><div id="hungerBar" style="width:30%"></div></div><span id="hungerText">30</span></div>
                 <div class="home-stat">🧼 Καθαριότητα<div class="bar"><div id="cleanBar" style="width:80%"></div></div><span id="cleanText">80</span></div>
+                <div class="home-stat">🚽 Τουαλέτα<div class="bar"><div id="toiletBar" style="width:10%"></div></div><span id="toiletText">10</span></div>
             </div>
-            <div class="rooms-container" id="roomsContainer">
-                <div class="room" id="roomBedroom">
-                    <div class="icon">🛏️</div>
-                    <div class="label">Κρεβατοκάμαρα</div>
-                    <div id="bedroomFurniture"></div>
+
+            <div class="home-avatar-area">
+                <div id="homeAvatarContainer">
+                    <div class="av-head" id="avHead"></div>
+                    <div class="av-body" id="avBody"></div>
+                    <div class="av-face" id="avFace"></div>
+                    <div class="av-clothes" id="avClothes"></div>
+                    <div class="av-prop" id="avProp"></div>
+                </div>
+            </div>
+
+            <div class="room-tabs">
+                <button class="room-tab active" data-room="bedroom">🛏️ Υπνοδωμάτιο</button>
+                <button class="room-tab" data-room="kitchen">🍳 Κουζίνα</button>
+                <button class="room-tab" data-room="bathroom">🛁 Μπάνιο</button>
+            </div>
+
+            <div class="room-view" id="roomViewContainer">
+                <!-- BEDROOM -->
+                <div class="room-panel active" id="roomBedroom">
+                    <div class="room-icon">🛏️</div>
+                    <div class="room-label">Υπνοδωμάτιο</div>
+                    <div class="furniture-display" id="bedroomFurniture"></div>
                     <button class="action-btn" id="btnSleep">😴 Ύπνος</button>
                     <div class="cooldown hidden" id="sleepCooldown"></div>
                 </div>
-                <div class="room" id="roomKitchen">
-                    <div class="icon">🍳</div>
-                    <div class="label">Κουζίνα</div>
-                    <div id="kitchenFurniture"></div>
+                <!-- KITCHEN -->
+                <div class="room-panel" id="roomKitchen">
+                    <div class="room-icon">🍳</div>
+                    <div class="room-label">Κουζίνα</div>
+                    <div class="furniture-display" id="kitchenFurniture"></div>
                     <button class="action-btn" id="btnFeed">🍽️ Τάισμα</button>
                     <div class="cooldown hidden" id="feedCooldown"></div>
                 </div>
-                <div class="room" id="roomBathroom">
-                    <div class="icon">🛁</div>
-                    <div class="label">Μπάνιο</div>
-                    <div id="bathroomFurniture"></div>
+                <!-- BATHROOM -->
+                <div class="room-panel" id="roomBathroom">
+                    <div class="room-icon">🛁</div>
+                    <div class="room-label">Μπάνιο</div>
+                    <div class="furniture-display" id="bathroomFurniture"></div>
                     <button class="action-btn" id="btnWash">🧼 Πλύσιμο</button>
+                    <button class="action-btn" id="btnToilet">🚽 Τουαλέτα</button>
                     <div class="cooldown hidden" id="washCooldown"></div>
+                    <div class="cooldown hidden" id="toiletCooldown"></div>
                 </div>
             </div>
+
             <div class="home-footer">
                 <button class="btn secondary" id="btnCloseHome">Κλείσιμο</button>
             </div>
@@ -762,7 +910,7 @@
     </div>
 
     <!-- ===== WIN / LOSE MODALS ===== -->
-    <div class="overlay hidden" id="winModal">
+    <div class="overlay hidden win-lose-overlay" id="winModal">
         <div class="card">
             <div style="font-size:40px; margin-bottom:6px;">🎉</div>
             <h2>Επίπεδο Ολοκληρώθηκε!</h2>
@@ -770,7 +918,7 @@
             <button class="btn" id="btnNext">Επόμενο επίπεδο ➜</button>
         </div>
     </div>
-    <div class="overlay hidden" id="loseModal">
+    <div class="overlay hidden win-lose-overlay" id="loseModal">
         <div class="card">
             <div style="font-size:40px; margin-bottom:6px;">😵</div>
             <h2>Γέμισε το ταμπλό!</h2>
@@ -787,7 +935,7 @@
 
             /* ============================================================
                DROP 2048 · FRANKLYGAMES EDITION
-               (Full Tamagotchi + Home + Shop + Effects Fix)
+               (Full Tamagotchi + Home + Shop + Effects Fix + Daily Schedule)
             ============================================================ */
             const COLS = 5,
                 ROWS = 6,
@@ -805,22 +953,14 @@
                 { target: 1024, preset: 12, text: "Φτιάξε κύβο 1024" }
             ];
 
-            /* ===== SHOP DATA ===== */
             const SHOP = {
-                cubes: [
-                    { id: 'wood', name: 'Ξύλο', price: 0, icon: '🪵' },
-                    { id: 'whitered', name: 'Άσπρο-Κόκκινο', price: 0, icon: '🍬' },
-                    { id: 'whitegreen', name: 'Άσπρο-Πράσινο', price: 0, icon: '🍵' },
-                    { id: 'zebra', name: 'Ζέβρα', price: 0, icon: '🦓' },
-                    { id: 'neon', name: 'Cyber Neon', price: 0, icon: '⚡' },
-                    { id: 'rainbow', name: 'Ουράνιο Τόξο', price: 0, icon: '🌈' },
-                    { id: 'gold', name: 'Καθαρός Χρυσός', price: 0, icon: '🏆' },
-                    { id: 'galaxy', name: 'Γαλαξίας', price: 0, icon: '🌌' },
-                    { id: 'ice', name: 'Παγωμένος', price: 0, icon: '🧊' },
-                    { id: 'lava', name: 'Λάβα', price: 0, icon: '🌋' }
-                ],
-                boards: [
-                    { id: 'board_wood', name: 'Ξύλινο', price: 0, icon: '🟫', back: '#4A3423', cell: '#2F1B0D' },
+                cubes: [{ id: 'wood', name: 'Ξύλο', price: 0, icon: '🪵' }, { id: 'whitered', name: 'Άσπρο-Κόκκινο', price: 0,
+                        icon: '🍬' }, { id: 'whitegreen', name: 'Άσπρο-Πράσινο', price: 0, icon: '🍵' }, { id: 'zebra',
+                        name: 'Ζέβρα', price: 0, icon: '🦓' }, { id: 'neon', name: 'Cyber Neon', price: 0, icon: '⚡' },
+                    { id: 'rainbow', name: 'Ουράνιο Τόξο', price: 0, icon: '🌈' }, { id: 'gold', name: 'Καθαρός Χρυσός',
+                        price: 0, icon: '🏆' }, { id: 'galaxy', name: 'Γαλαξίας', price: 0, icon: '🌌' }, { id: 'ice',
+                        name: 'Παγωμένος', price: 0, icon: '🧊' }, { id: 'lava', name: 'Λάβα', price: 0, icon: '🌋' }],
+                boards: [{ id: 'board_wood', name: 'Ξύλινο', price: 0, icon: '🟫', back: '#4A3423', cell: '#2F1B0D' },
                     { id: 'board_space', name: 'Βαθύ Διάστημα', price: 0, icon: '🟦', back: '#0B132B', cell: '#4A5A8A' },
                     { id: 'board_crimson', name: 'Πορφυρό', price: 0, icon: '🟥', back: '#3A0CA3', cell: '#A47CFF' },
                     { id: 'board_emerald', name: 'Σμαράγδι', price: 0, icon: '🟩', back: '#004B23', cell: '#7BDF4B' },
@@ -831,112 +971,84 @@
                     { id: 'board_sunset', name: 'Ηλιοβασίλεμα', price: 150, icon: '🌅', back: '#C2542F', cell: '#6E2410' },
                     { id: 'board_royal', name: 'Βασιλικό', price: 200, icon: '👑', back: '#3B2A6E', cell: '#221545' }
                 ],
-                effects: [
-                    { id: 'eff_none', name: 'Χωρίς Εφέ', price: 0, icon: '✖️' },
-                    { id: 'eff_flame', name: 'Φλόγα', price: 0, icon: '🔥' },
-                    { id: 'eff_sparkle', name: 'Αστερόσκονη', price: 0, icon: '✨' },
-                    { id: 'eff_smoke', name: 'Καπνός', price: 0, icon: '💨' },
-                    { id: 'eff_explode', name: 'Έκρηξη', price: 0, icon: '💥' },
-                    { id: 'eff_confetti', name: 'Κομφετί', price: 0, icon: '🎊' }
+                effects: [{ id: 'eff_none', name: 'Χωρίς Εφέ', price: 0, icon: '✖️' }, { id: 'eff_flame', name: 'Φλόγα',
+                        price: 0, icon: '🔥' }, { id: 'eff_sparkle', name: 'Αστερόσκονη', price: 0, icon: '✨' },
+                    { id: 'eff_smoke', name: 'Καπνός', price: 0, icon: '💨' }, { id: 'eff_explode', name: 'Έκρηξη',
+                        price: 0, icon: '💥' }, { id: 'eff_confetti', name: 'Κομφετί', price: 0, icon: '🎊' }
                 ],
-                sounds: [
-                    { id: 'snd_default', name: 'Default', price: 0, icon: '🔊' },
-                    { id: 'snd_bass', name: 'Bass Drop', price: 0, icon: '🎛️' },
-                    { id: 'snd_bell', name: 'Καμπάνα', price: 0, icon: '🔔' },
-                    { id: 'snd_echo', name: 'Echo', price: 0, icon: '🌌' },
-                    { id: 'snd_retro', name: 'Retro 8-bit', price: 100, icon: '👾' },
-                    { id: 'snd_pop', name: 'Bubble Pop', price: 100, icon: '🫧' },
-                    { id: 'snd_laser', name: 'Laser', price: 150, icon: '🔫' },
-                    { id: 'snd_magic', name: 'Μαγικό', price: 200, icon: '✨' }
+                sounds: [{ id: 'snd_default', name: 'Default', price: 0, icon: '🔊' }, { id: 'snd_bass', name: 'Bass Drop',
+                        price: 0, icon: '🎛️' }, { id: 'snd_bell', name: 'Καμπάνα', price: 0, icon: '🔔' },
+                    { id: 'snd_echo', name: 'Echo', price: 0, icon: '🌌' }, { id: 'snd_retro', name: 'Retro 8-bit',
+                        price: 100, icon: '👾' }, { id: 'snd_pop', name: 'Bubble Pop', price: 100, icon: '🫧' },
+                    { id: 'snd_laser', name: 'Laser', price: 150, icon: '🔫' }, { id: 'snd_magic', name: 'Μαγικό',
+                        price: 200, icon: '✨' }
                 ],
-                pet_color: [
-                    { id: 'color_green', name: 'Πράσινο (Jelly)', price: 0, icon: '🟢' },
-                    { id: 'color_blue', name: 'Διαστημικό Μπλε', price: 0, icon: '🔵' },
-                    { id: 'color_pink', name: 'Neon Ροζ', price: 0, icon: '🌸' },
-                    { id: 'color_gold', name: 'Καθαρός Χρυσός', price: 0, icon: '🟡' },
-                    { id: 'color_red', name: 'Κόκκινο Λάβας', price: 0, icon: '🔴' },
-                    { id: 'color_rainbow', name: 'RGB (Ουρ. Τόξο)', price: 0, icon: '🌈' },
-                    { id: 'color_slime', name: 'Slime Γαλαξίας', price: 400, icon: '🪼' }
+                pet_color: [{ id: 'color_green', name: 'Πράσινο (Jelly)', price: 0, icon: '🟢' },
+                    { id: 'color_blue', name: 'Διαστημικό Μπλε', price: 0, icon: '🔵' }, { id: 'color_pink',
+                        name: 'Neon Ροζ', price: 0, icon: '🌸' }, { id: 'color_gold', name: 'Καθαρός Χρυσός', price: 0,
+                        icon: '🟡' }, { id: 'color_red', name: 'Κόκκινο Λάβας', price: 0, icon: '🔴' },
+                    { id: 'color_rainbow', name: 'RGB (Ουρ. Τόξο)', price: 0, icon: '🌈' }, { id: 'color_slime',
+                        name: 'Slime Γαλαξίας', price: 400, icon: '🪼' }
                 ],
-                pet_head: [
-                    { id: 'head_none', name: 'Τίποτα', price: 0, icon: '🚫' },
-                    { id: 'head_antenna', name: 'Κεραία', price: 0, icon: '📡' },
-                    { id: 'head_halo', name: 'Φωτοστέφανο', price: 0, icon: '👼' },
-                    { id: 'head_propeller', name: 'Έλικας', price: 0, icon: '🚁' },
-                    { id: 'head_mohawk', name: 'Neon Μοϊκάνα', price: 0, icon: '🤘' },
-                    { id: 'head_horns', name: 'Κέρατα', price: 0, icon: '😈' },
-                    { id: 'head_crown', name: 'Στέμμα', price: 0, icon: '👑' },
-                    { id: 'head_wizard', name: 'Καπέλο Μάγου', price: 150, icon: '🧙' },
-                    { id: 'head_pirate', name: 'Πειρατική Μπαντάνα', price: 120, icon: '🏴‍☠️' },
-                    { id: 'head_santa', name: 'Σκούφος Άγ. Βασίλη', price: 200, icon: '🎅' }
+                pet_head: [{ id: 'head_none', name: 'Τίποτα', price: 0, icon: '🚫' }, { id: 'head_antenna',
+                        name: 'Κεραία', price: 0, icon: '📡' }, { id: 'head_halo', name: 'Φωτοστέφανο', price: 0,
+                        icon: '👼' }, { id: 'head_propeller', name: 'Έλικας', price: 0, icon: '🚁' },
+                    { id: 'head_mohawk', name: 'Neon Μοϊκάνα', price: 0, icon: '🤘' }, { id: 'head_horns', name: 'Κέρατα',
+                        price: 0, icon: '😈' }, { id: 'head_crown', name: 'Στέμμα', price: 0, icon: '👑' },
+                    { id: 'head_wizard', name: 'Καπέλο Μάγου', price: 150, icon: '🧙' }, { id: 'head_pirate',
+                        name: 'Πειρατική Μπαντάνα', price: 120, icon: '🏴‍☠️' }, { id: 'head_santa',
+                        name: 'Σκούφος Άγ. Βασίλη', price: 200, icon: '🎅' }
                 ],
-                pet_face: [
-                    { id: 'face_none', name: 'Κανονικά Μάτια', price: 0, icon: '👁️' },
-                    { id: 'face_pixel', name: 'Deal With It', price: 0, icon: '🕶️' },
-                    { id: 'face_scouter', name: 'Ανιχνευτής', price: 0, icon: '📟' },
-                    { id: 'face_laser', name: 'Laser Μάτια', price: 0, icon: '🔴' },
-                    { id: 'face_monocle', name: 'Μονόκλ', price: 100, icon: '🧐' },
-                    { id: 'face_ninja', name: 'Μάσκα Νίντζα', price: 150, icon: '🥷' },
-                    { id: 'face_mustache', name: 'Μουστάκι', price: 80, icon: '👨' },
-                    { id: 'face_blush', name: 'Ροζ Μάγουλα', price: 60, icon: '☺️' }
+                pet_face: [{ id: 'face_none', name: 'Κανονικά Μάτια', price: 0, icon: '👁️' }, { id: 'face_pixel',
+                        name: 'Deal With It', price: 0, icon: '🕶️' }, { id: 'face_scouter', name: 'Ανιχνευτής',
+                        price: 0, icon: '📟' }, { id: 'face_laser', name: 'Laser Μάτια', price: 0, icon: '🔴' },
+                    { id: 'face_monocle', name: 'Μονόκλ', price: 100, icon: '🧐' }, { id: 'face_ninja',
+                        name: 'Μάσκα Νίντζα', price: 150, icon: '🥷' }, { id: 'face_mustache', name: 'Μουστάκι',
+                        price: 80, icon: '👨' }, { id: 'face_blush', name: 'Ροζ Μάγουλα', price: 60, icon: '☺️' }
                 ],
-                pet_body: [
-                    { id: 'body_none', name: 'Τίποτα', price: 0, icon: '🚫' },
-                    { id: 'body_orbits', name: 'Δακτύλιοι', price: 0, icon: '🪐' },
-                    { id: 'body_cape', name: 'Κόκκινη Κάπα', price: 0, icon: '🦸' },
-                    { id: 'body_angelwings', name: 'Φτερά Αγγέλου', price: 300, icon: '🕊️' },
-                    { id: 'body_batwings', name: 'Φτερά Νυχτερίδας', price: 300, icon: '🦇' },
-                    { id: 'body_jetpack', name: 'Jetpack', price: 500, icon: '🚀' }
+                pet_body: [{ id: 'body_none', name: 'Τίποτα', price: 0, icon: '🚫' }, { id: 'body_orbits',
+                        name: 'Δακτύλιοι', price: 0, icon: '🪐' }, { id: 'body_cape', name: 'Κόκκινη Κάπα', price: 0,
+                        icon: '🦸' }, { id: 'body_angelwings', name: 'Φτερά Αγγέλου', price: 300, icon: '🕊️' },
+                    { id: 'body_batwings', name: 'Φτερά Νυχτερίδας', price: 300, icon: '🦇' }, { id: 'body_jetpack',
+                        name: 'Jetpack', price: 500, icon: '🚀' }
                 ],
-                pet_hands: [
-                    { id: 'hands_none', name: 'Jelly Χέρια', price: 0, icon: '👋' },
-                    { id: 'hands_energy', name: 'Ενέργεια', price: 0, icon: '🔵' },
-                    { id: 'hands_boxing', name: 'Γάντια Μποξ', price: 0, icon: '🥊' }
+                pet_hands: [{ id: 'hands_none', name: 'Jelly Χέρια', price: 0, icon: '👋' }, { id: 'hands_energy',
+                        name: 'Ενέργεια', price: 0, icon: '🔵' }, { id: 'hands_boxing', name: 'Γάντια Μποξ', price: 0,
+                        icon: '🥊' }
                 ],
-                pet_props: [
-                    { id: 'prop_none', name: 'Τίποτα', price: 0, icon: '🚫' },
-                    { id: 'prop_lollipop', name: 'Γλειφιτζούρι', price: 0, icon: '🍭' },
-                    { id: 'prop_icecream', name: 'Παγωτό', price: 0, icon: '🍦' },
-                    { id: 'prop_lightsaber', name: 'Laser Σπαθί', price: 0, icon: '🗡️' },
-                    { id: 'prop_wand', name: 'Μαγικό Ραβδί', price: 150, icon: '🪄' },
-                    { id: 'prop_shield', name: 'Ασπίδα', price: 120, icon: '🛡️' },
-                    { id: 'prop_balloon', name: 'Μπαλόνι', price: 100, icon: '🎈' }
+                pet_props: [{ id: 'prop_none', name: 'Τίποτα', price: 0, icon: '🚫' }, { id: 'prop_lollipop',
+                        name: 'Γλειφιτζούρι', price: 0, icon: '🍭' }, { id: 'prop_icecream', name: 'Παγωτό', price: 0,
+                        icon: '🍦' }, { id: 'prop_lightsaber', name: 'Laser Σπαθί', price: 0, icon: '🗡️' },
+                    { id: 'prop_wand', name: 'Μαγικό Ραβδί', price: 150, icon: '🪄' }, { id: 'prop_shield',
+                        name: 'Ασπίδα', price: 120, icon: '🛡️' }, { id: 'prop_balloon', name: 'Μπαλόνι', price: 100,
+                        icon: '🎈' }
                 ],
-                pet_feet: [
-                    { id: 'feet_none', name: 'Jelly Πόδια', price: 0, icon: '🦶' },
-                    { id: 'feet_moonboots', name: 'Moon Boots', price: 0, icon: '👢' },
-                    { id: 'feet_hover', name: 'Hover Sneakers', price: 0, icon: '👟' }
+                pet_feet: [{ id: 'feet_none', name: 'Jelly Πόδια', price: 0, icon: '🦶' }, { id: 'feet_moonboots',
+                        name: 'Moon Boots', price: 0, icon: '👢' }, { id: 'feet_hover', name: 'Hover Sneakers',
+                        price: 0, icon: '👟' }
                 ],
-                /* ===== NEW: Clothes ===== */
-                clothes: [
-                    { id: 'cl_none', name: 'Χωρίς', price: 0, icon: '👕' },
-                    { id: 'cl_scarf', name: 'Κασκόλ', price: 80, icon: '🧣' },
-                    { id: 'cl_bowtie', name: 'Παπιγιόν', price: 60, icon: '🎀' },
-                    { id: 'cl_vest', name: 'Γιλέκο', price: 120, icon: '🧥' },
-                    { id: 'cl_apron', name: 'Ποδιά', price: 100, icon: '👨‍🍳' },
-                    { id: 'cl_tie', name: 'Γραβάτα', price: 70, icon: '👔' },
-                    { id: 'cl_hoodie', name: 'Φούτερ', price: 150, icon: '👕' },
-                    { id: 'cl_sunglasses', name: 'Γυαλιά Ηλίου', price: 90, icon: '🕶️' }
+                clothes: [{ id: 'cl_none', name: 'Χωρίς', price: 0, icon: '👕' }, { id: 'cl_scarf', name: 'Κασκόλ',
+                        price: 80, icon: '🧣' }, { id: 'cl_bowtie', name: 'Παπιγιόν', price: 60, icon: '🎀' },
+                    { id: 'cl_vest', name: 'Γιλέκο', price: 120, icon: '🧥' }, { id: 'cl_apron', name: 'Ποδιά',
+                        price: 100, icon: '👨‍🍳' }, { id: 'cl_tie', name: 'Γραβάτα', price: 70, icon: '👔' },
+                    { id: 'cl_hoodie', name: 'Φούτερ', price: 150, icon: '👕' }, { id: 'cl_sunglasses',
+                        name: 'Γυαλιά Ηλίου', price: 90, icon: '🕶️' }
                 ],
-                /* ===== NEW: Furniture ===== */
-                furniture: [
-                    { id: 'fur_none', name: 'Χωρίς', price: 0, icon: '🚫' },
-                    { id: 'fur_bed', name: 'Κρεβάτι', price: 200, icon: '🛏️', room: 'bedroom' },
-                    { id: 'fur_table', name: 'Τραπέζι', price: 150, icon: '🪑', room: 'kitchen' },
-                    { id: 'fur_bathtub', name: 'Μπανιέρα', price: 180, icon: '🛁', room: 'bathroom' },
-                    { id: 'fur_lamp', name: 'Λάμπα', price: 100, icon: '💡', room: 'bedroom' },
-                    { id: 'fur_plant', name: 'Φυτό', price: 80, icon: '🌿', room: 'kitchen' },
-                    { id: 'fur_mirror', name: 'Καθρέφτης', price: 90, icon: '🪞', room: 'bathroom' },
-                    { id: 'fur_rug', name: 'Χαλί', price: 110, icon: '🧶', room: 'bedroom' },
-                    { id: 'fur_painting', name: 'Πίνακας', price: 130, icon: '🖼️', room: 'kitchen' },
-                    { id: 'fur_soap', name: 'Σαπούνι', price: 60, icon: '🧼', room: 'bathroom' }
+                furniture: [{ id: 'fur_none', name: 'Χωρίς', price: 0, icon: '🚫' }, { id: 'fur_bed', name: 'Κρεβάτι',
+                        price: 200, icon: '🛏️', room: 'bedroom' }, { id: 'fur_table', name: 'Τραπέζι', price: 150,
+                        icon: '🪑', room: 'kitchen' }, { id: 'fur_bathtub', name: 'Μπανιέρα', price: 180, icon: '🛁',
+                        room: 'bathroom' }, { id: 'fur_lamp', name: 'Λάμπα', price: 100, icon: '💡', room: 'bedroom' },
+                    { id: 'fur_plant', name: 'Φυτό', price: 80, icon: '🌿', room: 'kitchen' }, { id: 'fur_mirror',
+                        name: 'Καθρέφτης', price: 90, icon: '🪞', room: 'bathroom' }, { id: 'fur_rug', name: 'Χαλί',
+                        price: 110, icon: '🧶', room: 'bedroom' }, { id: 'fur_painting', name: 'Πίνακας', price: 130,
+                        icon: '🖼️', room: 'kitchen' }, { id: 'fur_soap', name: 'Σαπούνι', price: 60, icon: '🧼',
+                        room: 'bathroom' }
                 ]
             };
 
             let currentMainTab = 'cubes';
             let currentPetSubTab = 'pet_color';
 
-            /* ===== SAVE ===== */
             const DEFAULT_SAVE = {
                 coins: 5000,
                 level: 0,
@@ -964,7 +1076,6 @@
                 equippedPetProps: 'prop_none',
                 ownedPetFeet: ['feet_none'],
                 equippedPetFeet: 'feet_none',
-                /* new clothes & furniture */
                 ownedClothes: ['cl_none'],
                 equippedClothes: 'cl_none',
                 ownedFurniture: ['fur_none'],
@@ -972,25 +1083,26 @@
                 equippedBedroomFurniture: 'fur_none',
                 equippedKitchenFurniture: 'fur_none',
                 equippedBathroomFurniture: 'fur_none',
-                /* tamagotchi stats */
                 energy: 70,
                 hunger: 30,
                 cleanliness: 80,
+                toilet: 0,
                 lastUpdate: Date.now(),
                 sleepCooldown: 0,
                 feedCooldown: 0,
-                washCooldown: 0
+                washCooldown: 0,
+                toiletCooldown: 0
             };
 
             let save = { ...DEFAULT_SAVE };
 
             async function loadSave() {
                 try {
-                    const r = localStorage.getItem("drop2048-frankly-v4");
+                    const r = localStorage.getItem("drop2048-frankly-v5");
                     if (r) {
                         const parsed = JSON.parse(r);
                         save = Object.assign({}, DEFAULT_SAVE, parsed);
-                        // ensure new fields exist
+                        // Ensure new fields
                         if (!save.ownedClothes) save.ownedClothes = ['cl_none'];
                         if (!save.equippedClothes) save.equippedClothes = 'cl_none';
                         if (!save.ownedFurniture) save.ownedFurniture = ['fur_none'];
@@ -1001,16 +1113,18 @@
                         if (save.energy === undefined) save.energy = 70;
                         if (save.hunger === undefined) save.hunger = 30;
                         if (save.cleanliness === undefined) save.cleanliness = 80;
+                        if (save.toilet === undefined) save.toilet = 0;
                         if (!save.lastUpdate) save.lastUpdate = Date.now();
                         if (!save.sleepCooldown) save.sleepCooldown = 0;
                         if (!save.feedCooldown) save.feedCooldown = 0;
                         if (!save.washCooldown) save.washCooldown = 0;
+                        if (!save.toiletCooldown) save.toiletCooldown = 0;
                     }
                 } catch (e) { console.warn('Load save error', e); }
             }
 
             function persist() {
-                try { localStorage.setItem("drop2048-frankly-v4", JSON.stringify(save)); } catch (e) {}
+                try { localStorage.setItem("drop2048-frankly-v5", JSON.stringify(save)); } catch (e) {}
             }
 
             let coins = 0,
@@ -1091,7 +1205,6 @@
                 }
             }
 
-            /* ===== VOICE (TTS) ===== */
             let isTalking = false;
 
             function speak(text) {
@@ -1116,7 +1229,6 @@
                 speechSynthesis.onvoiceschanged = () => speechSynthesis.getVoices();
             }
 
-            /* ===== AZIRAM Q&A ===== */
             function stripAccents(s) { return s.normalize('NFD').replace(/[\u0300-\u036f]/g, ''); }
 
             function answerQuestion(raw) {
@@ -1148,7 +1260,6 @@
                 return "Είπες: " + raw + ". Ωραίο ακούγεται!";
             }
 
-            /* ===== MIC ===== */
             let recognition = null,
                 isListening = false;
 
@@ -1181,7 +1292,6 @@
                 };
             }
 
-            /* ===== PARTICLES ===== */
             const particles = [];
             const pGeo = new THREE.BoxGeometry(0.08, 0.08, 0.08);
             const pMats = {
@@ -1844,18 +1954,14 @@
                 }
             }
 
-            /* ===== CLOTHES (new) ===== */
+            /* ===== CLOTHES ===== */
             function equipClothes(itemId) {
                 if (!aziramPet) return;
-                // Remove any existing clothes from core
                 const existing = aziramCore.children.filter(c => c.userData && c.userData.isClothing);
                 existing.forEach(c => aziramCore.remove(c));
-
                 if (itemId === 'cl_none') return;
-
                 const clothGroup = new THREE.Group();
                 clothGroup.userData.isClothing = true;
-
                 if (itemId === 'cl_scarf') {
                     const scarf = new THREE.Mesh(new THREE.TorusGeometry(0.32, 0.06, 12, 20), new THREE
                         .MeshPhongMaterial({ color: 0xdd2244 }));
@@ -1907,7 +2013,7 @@
                 aziramCore.add(clothGroup);
             }
 
-            /* ===== FURNITURE (new) ===== */
+            /* ===== FURNITURE ===== */
             let furnitureObjects = { bedroom: null, kitchen: null, bathroom: null };
 
             function updateFurniture() {
@@ -1916,61 +2022,77 @@
                     kitchen: save.equippedKitchenFurniture || 'fur_none',
                     bathroom: save.equippedBathroomFurniture || 'fur_none'
                 };
-                // Update room UI
                 document.getElementById('bedroomFurniture').textContent =
-                    roomMap.bedroom === 'fur_none' ? '' : '🪑 ' + (SHOP.furniture.find(f => f.id === roomMap
-                        .bedroom)?.name || '');
+                    roomMap.bedroom === 'fur_none' ? '🚫 Χωρίς έπιπλο' : '🪑 ' + (SHOP.furniture.find(f => f.id ===
+                        roomMap.bedroom)?.name || '');
                 document.getElementById('kitchenFurniture').textContent =
-                    roomMap.kitchen === 'fur_none' ? '' : '🪑 ' + (SHOP.furniture.find(f => f.id === roomMap
-                        .kitchen)?.name || '');
+                    roomMap.kitchen === 'fur_none' ? '🚫 Χωρίς έπιπλο' : '🪑 ' + (SHOP.furniture.find(f => f.id ===
+                        roomMap.kitchen)?.name || '');
                 document.getElementById('bathroomFurniture').textContent =
-                    roomMap.bathroom === 'fur_none' ? '' : '🪑 ' + (SHOP.furniture.find(f => f.id === roomMap
-                        .bathroom)?.name || '');
+                    roomMap.bathroom === 'fur_none' ? '🚫 Χωρίς έπιπλο' : '🪑 ' + (SHOP.furniture.find(f => f.id ===
+                        roomMap.bathroom)?.name || '');
 
-                // Apply visual flair to rooms
                 document.getElementById('roomBedroom').classList.toggle('furnished', roomMap.bedroom !== 'fur_none');
                 document.getElementById('roomKitchen').classList.toggle('furnished', roomMap.kitchen !== 'fur_none');
                 document.getElementById('roomBathroom').classList.toggle('furnished', roomMap.bathroom !== 'fur_none');
             }
 
-            /* ===== TAMAGOTCHI SYSTEM ===== */
+            /* ===== TAMAGOTCHI STATS ===== */
             let tamagotchiInterval = null;
 
             function updateTamagotchiStats() {
                 const now = Date.now();
-                const elapsed = (now - save.lastUpdate) / 1000; // seconds
+                const elapsed = (now - save.lastUpdate) / 1000;
+                if (elapsed <= 0) return;
 
-                if (elapsed > 0) {
-                    // Energy: -0.3 per second (sleeping restores)
-                    // Hunger: +0.2 per second (feeding reduces)
-                    // Cleanliness: -0.15 per second (washing restores)
-                    if (save.energy !== undefined) {
-                        save.energy = Math.max(0, Math.min(100, save.energy - elapsed * 0.3));
-                    }
-                    if (save.hunger !== undefined) {
-                        save.hunger = Math.max(0, Math.min(100, save.hunger + elapsed * 0.2));
-                    }
-                    if (save.cleanliness !== undefined) {
-                        save.cleanliness = Math.max(0, Math.min(100, save.cleanliness - elapsed * 0.15));
-                    }
-                    save.lastUpdate = now;
-                    persist();
+                const hour = new Date().getHours();
+
+                // ENERGY: sleep 22:00-08:00, awake 08:00-22:00
+                if (hour >= 8 && hour < 22) {
+                    save.energy = Math.max(0, (save.energy || 50) - elapsed * 0.25);
+                } else {
+                    save.energy = Math.min(100, (save.energy || 50) + elapsed * 0.45);
                 }
+
+                // HUNGER: spikes at breakfast (7-8), lunch (12-13), dinner (19-20)
+                let hungerRate = 0.15;
+                if (hour >= 7 && hour <= 8) hungerRate = 0.9;
+                else if (hour >= 12 && hour <= 13) hungerRate = 0.9;
+                else if (hour >= 19 && hour <= 20) hungerRate = 0.9;
+                save.hunger = Math.min(100, (save.hunger || 50) + elapsed * hungerRate);
+
+                // CLEANLINESS: gradual decrease
+                save.cleanliness = Math.max(0, (save.cleanliness || 80) - elapsed * 0.12);
+
+                // TOILET: fills up only when awake (3 hours to fill = 100 / 10800 per sec)
+                if (hour >= 8 && hour < 22) {
+                    save.toilet = Math.min(100, (save.toilet || 0) + elapsed * (100 / 10800));
+                } else {
+                    // decreases slowly during sleep
+                    save.toilet = Math.max(0, (save.toilet || 0) - elapsed * 0.3);
+                }
+
+                save.lastUpdate = now;
+                persist();
                 renderHomeStats();
+                renderHomeAvatar();
             }
 
             function renderHomeStats() {
                 const e = Math.round(save.energy || 50);
                 const h = Math.round(save.hunger || 50);
-                const c = Math.round(save.cleanliness || 50);
+                const c = Math.round(save.cleanliness || 80);
+                const t = Math.round(save.toilet || 0);
 
                 document.getElementById('energyText').textContent = e;
                 document.getElementById('hungerText').textContent = h;
                 document.getElementById('cleanText').textContent = c;
+                document.getElementById('toiletText').textContent = t;
 
                 const eBar = document.getElementById('energyBar');
                 const hBar = document.getElementById('hungerBar');
                 const cBar = document.getElementById('cleanBar');
+                const tBar = document.getElementById('toiletBar');
 
                 eBar.style.width = e + '%';
                 eBar.className = e < 25 ? 'low' : e < 50 ? 'warn' : '';
@@ -1978,20 +2100,24 @@
                 hBar.className = h > 75 ? 'low' : h > 50 ? 'warn' : '';
                 cBar.style.width = c + '%';
                 cBar.className = c < 25 ? 'low' : c < 50 ? 'warn' : '';
+                tBar.style.width = t + '%';
+                tBar.className = t > 75 ? 'low' : t > 50 ? 'warn' : '';
 
-                // Update button states
                 const now = Date.now();
                 document.getElementById('btnSleep').disabled = (save.sleepCooldown || 0) > now;
                 document.getElementById('btnFeed').disabled = (save.feedCooldown || 0) > now;
                 document.getElementById('btnWash').disabled = (save.washCooldown || 0) > now;
+                document.getElementById('btnToilet').disabled = (save.toiletCooldown || 0) > now;
 
                 const cdSleep = document.getElementById('sleepCooldown');
                 const cdFeed = document.getElementById('feedCooldown');
                 const cdWash = document.getElementById('washCooldown');
+                const cdToilet = document.getElementById('toiletCooldown');
 
                 const remSleep = Math.max(0, ((save.sleepCooldown || 0) - now) / 1000);
                 const remFeed = Math.max(0, ((save.feedCooldown || 0) - now) / 1000);
                 const remWash = Math.max(0, ((save.washCooldown || 0) - now) / 1000);
+                const remToilet = Math.max(0, ((save.toiletCooldown || 0) - now) / 1000);
 
                 cdSleep.textContent = remSleep > 0 ? '⏳ ' + Math.ceil(remSleep) + 's' : '';
                 cdSleep.classList.toggle('hidden', remSleep <= 0);
@@ -1999,14 +2125,86 @@
                 cdFeed.classList.toggle('hidden', remFeed <= 0);
                 cdWash.textContent = remWash > 0 ? '⏳ ' + Math.ceil(remWash) + 's' : '';
                 cdWash.classList.toggle('hidden', remWash <= 0);
+                cdToilet.textContent = remToilet > 0 ? '⏳ ' + Math.ceil(remToilet) + 's' : '';
+                cdToilet.classList.toggle('hidden', remToilet <= 0);
+            }
+
+            function renderHomeAvatar() {
+                const container = document.getElementById('homeAvatarContainer');
+                if (!container) return;
+                // Body color
+                const bodyEl = document.getElementById('avBody');
+                const colorMap = {
+                    'color_green': '#33ffaa',
+                    'color_blue': '#00aaff',
+                    'color_pink': '#ff00ff',
+                    'color_gold': '#ffd700',
+                    'color_red': '#ff4500',
+                    'color_rainbow': 'linear-gradient(45deg, red, orange, yellow, green, cyan, blue, purple)',
+                    'color_slime': '#55d8e8'
+                };
+                const color = colorMap[save.equippedPetColor] || '#33ffaa';
+                bodyEl.style.background = color;
+
+                // Head
+                const headMap = {
+                    'head_none': '',
+                    'head_antenna': '📡',
+                    'head_halo': '👼',
+                    'head_propeller': '🚁',
+                    'head_mohawk': '🤘',
+                    'head_horns': '😈',
+                    'head_crown': '👑',
+                    'head_wizard': '🧙',
+                    'head_pirate': '🏴‍☠️',
+                    'head_santa': '🎅'
+                };
+                document.getElementById('avHead').textContent = headMap[save.equippedPetHead] || '';
+
+                // Face
+                const faceMap = {
+                    'face_none': '👁️',
+                    'face_pixel': '🕶️',
+                    'face_scouter': '📟',
+                    'face_laser': '🔴',
+                    'face_monocle': '🧐',
+                    'face_ninja': '🥷',
+                    'face_mustache': '👨',
+                    'face_blush': '☺️'
+                };
+                document.getElementById('avFace').textContent = faceMap[save.equippedPetFace] || '👁️';
+
+                // Clothes
+                const clothesMap = {
+                    'cl_none': '',
+                    'cl_scarf': '🧣',
+                    'cl_bowtie': '🎀',
+                    'cl_vest': '🧥',
+                    'cl_apron': '👨‍🍳',
+                    'cl_tie': '👔',
+                    'cl_hoodie': '👕',
+                    'cl_sunglasses': '🕶️'
+                };
+                document.getElementById('avClothes').textContent = clothesMap[save.equippedClothes] || '';
+
+                // Prop
+                const propMap = {
+                    'prop_none': '',
+                    'prop_lollipop': '🍭',
+                    'prop_icecream': '🍦',
+                    'prop_lightsaber': '🗡️',
+                    'prop_wand': '🪄',
+                    'prop_shield': '🛡️',
+                    'prop_balloon': '🎈'
+                };
+                document.getElementById('avProp').textContent = propMap[save.equippedPetProps] || '';
             }
 
             function doSleep() {
                 const now = Date.now();
                 if ((save.sleepCooldown || 0) > now) return;
-                const e = save.energy || 50;
-                save.energy = Math.min(100, e + 40);
-                save.sleepCooldown = now + 8000; // 8s cooldown
+                save.energy = Math.min(100, (save.energy || 50) + 40);
+                save.sleepCooldown = now + 8000;
                 save.lastUpdate = now;
                 persist();
                 renderHomeStats();
@@ -2019,8 +2217,7 @@
             function doFeed() {
                 const now = Date.now();
                 if ((save.feedCooldown || 0) > now) return;
-                const h = save.hunger || 50;
-                save.hunger = Math.max(0, h - 35);
+                save.hunger = Math.max(0, (save.hunger || 50) - 35);
                 save.feedCooldown = now + 6000;
                 save.lastUpdate = now;
                 persist();
@@ -2034,8 +2231,7 @@
             function doWash() {
                 const now = Date.now();
                 if ((save.washCooldown || 0) > now) return;
-                const c = save.cleanliness || 50;
-                save.cleanliness = Math.min(100, c + 45);
+                save.cleanliness = Math.min(100, (save.cleanliness || 80) + 45);
                 save.washCooldown = now + 7000;
                 save.lastUpdate = now;
                 persist();
@@ -2046,22 +2242,30 @@
                 updateAziramMoodFromStats();
             }
 
+            function doToilet() {
+                const now = Date.now();
+                if ((save.toiletCooldown || 0) > now) return;
+                save.toilet = Math.max(0, (save.toilet || 0) - 80);
+                save.toiletCooldown = now + 5000;
+                save.lastUpdate = now;
+                persist();
+                renderHomeStats();
+                showSpeech("Ααα, ανάσα! 🚽", 1800);
+                speak("Ααα, ανάσα!");
+                toast("🚽 Ο Aziram πήγε τουαλέτα! -80 Τουαλέτα");
+                updateAziramMoodFromStats();
+            }
+
             function updateAziramMoodFromStats() {
                 const e = save.energy || 50;
                 const h = save.hunger || 50;
-                const c = save.cleanliness || 50;
-                if (e < 20) {
-                    aziramMood = 'tired';
-                    showSpeech("Νυστάζω... 😴", 2000);
-                } else if (h > 80) {
-                    aziramMood = 'hungry';
-                    showSpeech("Πεινάω... 🍽️", 2000);
-                } else if (c < 20) {
-                    aziramMood = 'dirty';
-                    showSpeech("Είμαι λερωμένος... 🧼", 2000);
-                } else {
-                    aziramMood = 'idle';
-                }
+                const c = save.cleanliness || 80;
+                const t = save.toilet || 0;
+                if (e < 20) { aziramMood = 'tired';
+                    showSpeech("Νυστάζω... 😴", 2000); } else if (h > 80) { aziramMood = 'hungry';
+                    showSpeech("Πεινάω... 🍽️", 2000); } else if (c < 20) { aziramMood = 'dirty';
+                    showSpeech("Είμαι λερωμένος... 🧼", 2000); } else if (t > 80) { aziramMood = 'toilet';
+                    showSpeech("Πρέπει να πάω τουαλέτα... 🚽", 2000); } else { aziramMood = 'idle'; }
                 prevMood = aziramMood;
             }
 
@@ -2330,8 +2534,6 @@
                 busy = true;
                 lastActionTime = performance.now();
                 playSound('drop');
-
-                // ===== EFFECT ON DROP =====
                 const eff = save.equippedEffect;
                 if (eff !== 'eff_none') {
                     const wp = new THREE.Vector3();
@@ -2341,7 +2543,6 @@
                     else if (etype === 'confetti') spawnBurst(wp.x, wp.y - 0.3, wp.z, 'confetti', 20);
                     else spawnBurst(wp.x, wp.y - 0.3, wp.z, etype, 10);
                 }
-
                 const targetR = h;
                 const p = cellPos(c, targetR);
                 const cube = currentCube;
@@ -2401,8 +2602,6 @@
                         });
                     });
                     playSound('merge');
-
-                    // ===== EFFECT ON MERGE =====
                     const eff = save.equippedEffect;
                     if (eff !== 'eff_none') {
                         const wp = new THREE.Vector3();
@@ -2412,7 +2611,6 @@
                         else if (etype === 'confetti') spawnBurst(wp.x, wp.y, wp.z, 'confetti', 25);
                         else spawnBurst(wp.x, wp.y, wp.z, etype, 12);
                     }
-
                     if (newVal >= 64 && aziramWinTime <= 0) {
                         aziramReactionTime = 1.2;
                         showSpeech("WOW! " + newVal + "! 🤩", 1800);
@@ -2462,12 +2660,24 @@
                 persist();
                 updateHUD();
                 document.getElementById("winText").innerHTML = `Έφτιαξες ${t}!<br>+25 🪙`;
-                aziramWinTime = 3.0;
-                showSpeech("Τα καταφέραμε! 🎉", 2800);
+
+                // ===== CELEBRATION: FIREWORKS, CONFETTI, CLAPPING, SOUNDS =====
+                playWinSound(audioCtx);
+                for (let i = 0; i < 30; i++) {
+                    setTimeout(() => {
+                        const x = (Math.random() - 0.5) * 14;
+                        const y = (Math.random() - 0.5) * 10 + 2;
+                        spawnBurst(x, y, 0, 'confetti', 15);
+                        spawnBurst(x, y, 0, 'explode', 10);
+                    }, i * 120);
+                }
+                aziramWinTime = 6.0;
+                showSpeech("Τα καταφέραμε! 🎉", 3800);
                 speak("Μπράβο! Τα καταφέραμε!");
+
                 if (winTimer) clearTimeout(winTimer);
                 winTimer = setTimeout(() => { document.getElementById("winModal").classList.remove("hidden");
-                    winTimer = null; }, 3000);
+                    winTimer = null; }, 3500);
                 return true;
             }
 
@@ -2670,7 +2880,6 @@
                 if (tabChanged === 'sounds') toast("Ο ήχος άλλαξε!");
             }
 
-            /* ===== SHOP TABS ===== */
             document.querySelectorAll('.shop-tab').forEach(btn => {
                 btn.onclick = (e) => {
                     document.querySelectorAll('.shop-tab').forEach(b => b.classList.remove('active'));
@@ -2688,7 +2897,6 @@
                 };
             });
 
-            /* ===== HUD UPDATE ===== */
             function updateHUD() {
                 document.getElementById("hudLevel").textContent = level + 1;
                 document.getElementById("hudScore").textContent = score;
@@ -2706,6 +2914,15 @@
                 clearTimeout(toastTimer);
                 toastTimer = setTimeout(() => t.style.opacity = 0, 1800);
             }
+
+            /* ===== MISSION BAR (every 10s) ===== */
+            function showMissionBar() {
+                const bar = document.getElementById('missionBar');
+                bar.classList.add('show');
+                setTimeout(() => bar.classList.remove('show'), 3000);
+            }
+            setInterval(showMissionBar, 10000);
+            setTimeout(showMissionBar, 500);
 
             /* ===== MOOD SYSTEM ===== */
             let lastSmokeTime = 0;
@@ -2734,7 +2951,6 @@
                 updateParticles(dt);
                 updateStarfield(0.8);
 
-                // Update Tamagotchi stats periodically (every 3s)
                 if (Math.floor(t / 3000) > Math.floor((t - dt * 1000) / 3000)) {
                     updateTamagotchiStats();
                 }
@@ -2749,8 +2965,11 @@
                         core.position.y = Math.abs(Math.sin(t * 0.008)) * 1.2;
                         aziramPet.rotation.x -= 0.15;
                         aziramPet.rotation.y += 0.1;
-                        sockets.handL.position.y = 0.8 + Math.sin(t * 0.01) * 0.2;
-                        sockets.handR.position.y = 0.8 + Math.cos(t * 0.01) * 0.2;
+                        // CLAPPING
+                        sockets.handL.position.y = 0.8 + Math.sin(t * 0.015) * 0.2;
+                        sockets.handR.position.y = 0.8 + Math.cos(t * 0.015) * 0.2;
+                        sockets.handL.position.x = -0.3 + Math.sin(t * 0.015) * 0.2;
+                        sockets.handR.position.x = 0.3 - Math.sin(t * 0.015) * 0.2;
                         mouthMesh.scale.set(0.85, 0.85, 0.35);
                         if (Math.random() < 0.25) {
                             let wp = new THREE.Vector3();
@@ -2901,9 +3120,9 @@
 
             /* ===== INIT ===== */
             (async function() {
-                // Clear old saves
                 const keys = ['drop2048-save-pure', 'drop2048-save-v2', 'drop2048-save-v3', 'drop2048-save-v4',
-                    'drop2048-v5', 'drop2048-frankly-v1', 'drop2048-frankly-v2', 'drop2048-frankly-v3'
+                    'drop2048-v5', 'drop2048-frankly-v1', 'drop2048-frankly-v2', 'drop2048-frankly-v3',
+                    'drop2048-frankly-v4'
                 ];
                 keys.forEach(k => localStorage.removeItem(k));
 
@@ -2912,11 +3131,11 @@
                 document.getElementById('btnCloseShop').onclick = () => { document.getElementById('shopModal')
                     .classList.add('hidden'); };
 
-                // Home
                 document.getElementById('btnHome').onclick = () => {
                     updateTamagotchiStats();
                     renderHomeStats();
                     updateFurniture();
+                    renderHomeAvatar();
                     document.getElementById('homeModal').classList.remove('hidden');
                 };
                 document.getElementById('btnCloseHome').onclick = () => { document.getElementById('homeModal')
@@ -2924,6 +3143,19 @@
                 document.getElementById('btnSleep').onclick = doSleep;
                 document.getElementById('btnFeed').onclick = doFeed;
                 document.getElementById('btnWash').onclick = doWash;
+                document.getElementById('btnToilet').onclick = doToilet;
+
+                // Room tabs
+                document.querySelectorAll('.room-tab').forEach(tab => {
+                    tab.onclick = (e) => {
+                        document.querySelectorAll('.room-tab').forEach(t => t.classList.remove('active'));
+                        e.target.classList.add('active');
+                        const room = e.target.dataset.room;
+                        document.querySelectorAll('.room-panel').forEach(p => p.classList.remove('active'));
+                        document.getElementById('room' + room.charAt(0).toUpperCase() + room.slice(1))
+                            .classList.add('active');
+                    };
+                });
 
                 document.addEventListener('pointerdown', () => { if (audioCtx.state === 'suspended') audioCtx
                         .resume(); }, { once: true });
@@ -2939,10 +3171,10 @@
                 best = save.best || 0;
                 score = save.score || 0;
 
-                // Ensure tamagotchi stats exist
                 if (save.energy === undefined) save.energy = 70;
                 if (save.hunger === undefined) save.hunger = 30;
                 if (save.cleanliness === undefined) save.cleanliness = 80;
+                if (save.toilet === undefined) save.toilet = 0;
                 if (!save.lastUpdate) save.lastUpdate = Date.now();
 
                 initThree();
@@ -2960,6 +3192,7 @@
                 equipPetSlot('pet_feet', save.equippedPetFeet);
                 equipClothes(save.equippedClothes);
                 updateFurniture();
+                renderHomeAvatar();
 
                 const cvs = document.getElementById("game");
                 cvs.addEventListener("pointermove", (e) => { if (!busy) setAim((e.touches ? e.touches[0].clientX : e
@@ -2977,11 +3210,6 @@
                     newBoard();
                 };
 
-                // Mission bar auto-show
-                setTimeout(() => { document.getElementById("missionBar").classList.add("show"); }, 600);
-                setTimeout(() => { document.getElementById("missionBar").classList.remove("show"); }, 4000);
-
-                // Start tamagotchi ticker
                 tamagotchiInterval = setInterval(() => { updateTamagotchiStats(); }, 3000);
             })();
         })();
