@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Drop 2048 · Full Edition</title>
+<title>Drop 2048 · FranklyGames Edition</title>
 <style>
   :root{
     --bg:#0B0C10; --panel:#8C6A4F; --panel-deep:#4A3423;
@@ -23,7 +23,7 @@
   #missionBar{position:fixed;top:65px;left:50%;transform:translateX(-50%);z-index:5;pointer-events:none;background:var(--cream);border:3px solid var(--panel-deep);color:var(--ink);border-radius:16px;padding:7px 16px;font-weight:700;font-size:14px;box-shadow:0 4px 0 rgba(0,0,0,.3);white-space:nowrap;}
   #missionBar b{color:#C2542F}
   
-  /* Κουμπιά Βοήθειας - Κάτω Αριστερά (ώστε ο AZIRAM να είναι Κάτω Δεξιά ελεύθερος) */
+  /* Κουμπιά Βοήθειας (Κάτω Αριστερά) */
   .powerbar{position:fixed;bottom:18px;left:14px;display:flex;justify-content:flex-start;gap:10px;z-index:5}
   .pbtn{pointer-events:auto;border:none;cursor:pointer;width:66px;height:66px;border-radius:18px;background:var(--good);box-shadow:0 4px 0 #5c7a3a;color:#fff;font-size:26px;line-height:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;font-family:inherit;transition:transform .08s;}
   .pbtn:active{transform:translateY(3px);box-shadow:0 1px 0 #5c7a3a}
@@ -35,7 +35,7 @@
   .shop-tab { flex:1; padding:8px 12px; font-weight:800; font-size:13px; border-radius:10px; background:#E4D7BC; color:#8C6A4F; border:none; cursor:pointer; white-space:nowrap;}
   .shop-tab.active { background:var(--accent); color:#fff; box-shadow:0 3px 0 #b8742a; transform:translateY(-2px);}
   
-  /* Υποκατηγορίες Pet - Εμφανίζονται όταν είναι ενεργό το Pet tab */
+  /* Υποκατηγορίες Pet */
   .pet-subtabs { display:none; flex-wrap:wrap; gap:5px; margin-bottom:10px; background:#f0e5d1; padding:8px; border-radius:10px; justify-content:center;}
   .pet-subtabs.active { display:flex; }
   .pet-subtab { padding:6px 10px; font-weight:800; font-size:11px; border-radius:8px; background:#C2542F; color:#fff; border:none; cursor:pointer; }
@@ -86,7 +86,6 @@
   <div class="card">
     <h2 style="margin-bottom:15px;">🛍️ Εξατομίκευση</h2>
     
-    <!-- Κύριες Κατηγορίες -->
     <div class="shop-tabs" id="mainTabs">
       <button class="shop-tab active" data-maintab="cubes">Κύβοι</button>
       <button class="shop-tab" data-maintab="boards">Ταμπλό</button>
@@ -95,7 +94,7 @@
       <button class="shop-tab" data-maintab="pets">Pet</button>
     </div>
 
-    <!-- Υποκατηγορίες Pet (μέσα στο shop) -->
+    <!-- Υποκατηγορίες Pet (Ανοίγουν όταν πατάς Pet) -->
     <div class="pet-subtabs" id="petSubTabs">
       <button class="pet-subtab active" data-subtab="pet_color">Χρώμα</button>
       <button class="pet-subtab" data-subtab="pet_head">Κεφάλι</button>
@@ -132,7 +131,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script>
 /* =====================================================
-   DROP 2048 · FULL EDITION 
+   DROP 2048 · FRANKLYGAMES EDITION (Full Working Code)
 ===================================================== */
 
 const COLS = 5, ROWS = 6, CELL = 1.0, GAP = 0.12; 
@@ -148,7 +147,7 @@ const LEVELS = [
   { target: 1024, preset: 12, text: "Φτιάξε κύβο 1024" }
 ];
 
-// OΛΑ ΤΑ ΑΝΤΙΚΕΙΜΕΝΑ
+// Όλα τα αντικείμενα του καταστήματος
 const SHOP = {
   cubes: [
     { id: 'wood', name: 'Ξύλο', price: 0, icon: '🪵' },
@@ -250,13 +249,14 @@ const DEFAULT_SAVE = {
 
 let save = { ...DEFAULT_SAVE };
 
+// Φόρτωση και Αποθήκευση Δεδομένων
 async function loadSave(){
   try { 
-      const r = localStorage.getItem("drop2048-v-final"); 
+      const r = localStorage.getItem("drop2048-frankly-v1"); 
       if(r) save = Object.assign({}, DEFAULT_SAVE, JSON.parse(r)); 
   } catch(e) {}
 }
-function persist(){ try{ localStorage.setItem("drop2048-v-final", JSON.stringify(save)); }catch(e){} }
+function persist(){ try{ localStorage.setItem("drop2048-frankly-v1", JSON.stringify(save)); }catch(e){} }
 
 /* ----- AUDIO & PARTICLES ----- */
 const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -319,10 +319,10 @@ function updateStarfield(speed) {
   starField.geometry.attributes.position.needsUpdate = true;
 }
 
-/* ----- AZIRAM PET SYSTEM (ΚΑΤΩ ΔΕΞΙΑ) ----- */
+/* ----- AZIRAM PET SYSTEM ----- */
 let aziramPet, aziramBodyMesh, sockets = {};
 let aziramReactionTime = 0, aziramWinTime = 0; 
-let aziramTargetPos = new THREE.Vector3(2.3, -3.5, 0.5); // Τέλεια θέση Κάτω Δεξιά δίπλα στα κουμπιά
+let aziramTargetPos = new THREE.Vector3(2.5, -3.8, 0.5); // Τέλεια θέση Κάτω Δεξιά δίπλα στα κουμπιά
 
 function createAziram() {
     const petGroup = new THREE.Group();
@@ -731,15 +731,17 @@ function loop(t){
 }
 
 (async function(){
-  // Clear old conflicting saves
+  // Clear any old conflicting saves to guarantee a fresh start
   localStorage.removeItem("drop2048-save-pure");
   localStorage.removeItem("drop2048-save-v2");
   localStorage.removeItem("drop2048-save-v3");
   localStorage.removeItem("drop2048-save-v4");
+  localStorage.removeItem("drop2048-v5");
   
   document.getElementById('btnShop').onclick = () => { renderShop(); document.getElementById('shopModal').classList.remove('hidden'); };
   document.getElementById('btnCloseShop').onclick = () => { document.getElementById('shopModal').classList.add('hidden'); };
   document.addEventListener('pointerdown', ()=> { if(audioCtx.state === 'suspended') audioCtx.resume(); }, {once:true});
+  
   await loadSave(); coins = save.coins; level = save.level; best = save.best;
   initThree(); if(!renderer) return; newBoard(); updateHUD();
   
