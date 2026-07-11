@@ -6,14 +6,12 @@
     <title>Drop 2048 · FranklyGames Edition</title>
     <style>
         :root {
-            --bg: #0B0C10;
             --panel: #8C6A4F;
             --panel-deep: #4A3423;
             --cream: #F7EFDC;
             --ink: #2F1B0D;
             --accent: #F2A03D;
             --good: #7FA653;
-            --coin: #F5C542;
             --red: #C2542F;
             --blue: #4A7DBF;
         }
@@ -27,17 +25,43 @@
         body {
             height: 100%;
             overflow: hidden;
-            background: var(--bg);
+            background: transparent;
             font-family: "Baloo 2", system-ui, sans-serif;
             color: var(--ink);
             user-select: none;
             touch-action: none;
         }
+
+        /* ===== BACKGROUND (Εξοχή με ήλιο, σύννεφα και λουλούδια) ===== */
+        #background {
+            position: fixed;
+            inset: 0;
+            z-index: -1;
+            background: linear-gradient(to bottom, #87CEEB 0%, #a0d8ef 45%, #7CFC00 45%, #228B22 100%);
+            pointer-events: none;
+        }
+        .bg-deco {
+            position: fixed;
+            pointer-events: none;
+            font-size: 60px;
+            z-index: -1;
+            opacity: 0.9;
+        }
+        .bg-deco.sun { top: 40px; right: 40px; font-size: 100px; }
+        .bg-deco.cloud1 { top: 50px; left: 20px; font-size: 80px; opacity: 0.7; }
+        .bg-deco.cloud2 { top: 120px; left: 40%; font-size: 60px; opacity: 0.6; }
+        .bg-deco.flower1 { bottom: 5%; left: 5%; font-size: 45px; }
+        .bg-deco.flower2 { bottom: 8%; left: 30%; font-size: 40px; }
+        .bg-deco.flower3 { bottom: 2%; right: 25%; font-size: 50px; }
+        .bg-deco.flower4 { bottom: 12%; right: 5%; font-size: 35px; }
+        .bg-deco.grass { bottom: 0; left: 0; right: 0; height: 50px; background: repeating-linear-gradient(90deg, #2E8B57 0px, #3CB371 20px, #2E8B57 40px); z-index: -1; opacity: 0.5; }
+
         #game {
             position: fixed;
             inset: 0;
             display: block;
             z-index: 0;
+            background: transparent;
         }
 
         /* ===== HUD (TOP) ===== */
@@ -53,7 +77,7 @@
             pointer-events: none;
             z-index: 5;
             background: rgba(11, 12, 16, 0.75);
-            backdrop-filter: blur(4px);
+            backdrop-filter: blur(6px);
             border-bottom: 2px solid rgba(255, 255, 255, 0.08);
             height: 48px;
         }
@@ -107,15 +131,15 @@
             transform: translateY(3px);
             box-shadow: 0 1px 0 #b8742a;
         }
-        .hud-btn.home-btn {
+        .hud-btn.shop-btn {
             background: var(--blue);
             box-shadow: 0 3px 0 #2d5a7a;
         }
-        .hud-btn.home-btn:active {
+        .hud-btn.shop-btn:active {
             box-shadow: 0 1px 0 #2d5a7a;
         }
 
-        /* ===== POWERUPS (BELOW HUD) ===== */
+        /* ===== POWERUPS & TOOLBAR ===== */
         .powerbar {
             position: fixed;
             top: 50px;
@@ -126,7 +150,7 @@
             gap: 10px;
             z-index: 5;
             background: rgba(11, 12, 16, 0.6);
-            backdrop-filter: blur(4px);
+            backdrop-filter: blur(6px);
             padding: 8px 16px;
             border-radius: 20px;
             border: 1px solid rgba(255, 255, 255, 0.08);
@@ -175,6 +199,10 @@
             box-shadow: 0 4px 0 #8f3c20;
             animation: pulse 1s infinite;
         }
+        .pbtn.muted {
+            background: #666;
+            box-shadow: 0 4px 0 #333;
+        }
         @keyframes pulse {
             0%,
             100% {
@@ -185,34 +213,79 @@
             }
         }
 
-        /* ===== MISSION BAR (below powerups, 3D effect) ===== */
+        /* ===== MISSION BAR (Σταθερή κάτω από τα κουμπιά) ===== */
         #missionBar {
             position: fixed;
-            top: 118px;
+            top: 114px;
             left: 50%;
-            transform: translate(-50%, -120%) perspective(600px) rotateX(15deg);
-            transition: transform .55s cubic-bezier(.34, 1.5, .64, 1);
-            z-index: 30;
-            pointer-events: auto;
-            cursor: pointer;
-            background: var(--cream);
-            border: 3px solid var(--panel-deep);
-            border-top: none;
-            color: var(--ink);
-            border-radius: 0 0 20px 20px;
-            padding: 8px 20px 6px;
+            transform: translateX(-50%);
+            z-index: 4;
+            pointer-events: none;
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(4px);
+            color: #fff;
+            border-radius: 20px;
+            padding: 4px 16px;
             font-weight: 700;
-            font-size: 14px;
-            box-shadow: 0 8px 20px rgba(0, 0, 0, .6);
+            font-size: 13px;
             white-space: nowrap;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255,255,255,0.1);
             letter-spacing: 0.3px;
-            transform-origin: top center;
-        }
-        #missionBar.show {
-            transform: translate(-50%, 0) perspective(600px) rotateX(0deg);
         }
         #missionBar b {
-            color: var(--red);
+            color: #ffcc00;
+        }
+
+        /* ===== TAMAGOTCHI UI (Αντί για το παλιό Σπίτι) ===== */
+        #tamagotchi-ui {
+            position: fixed;
+            bottom: 20px;
+            right: 16px;
+            z-index: 5;
+            background: rgba(11, 12, 16, 0.7);
+            backdrop-filter: blur(6px);
+            border-radius: 16px;
+            padding: 8px 12px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            min-width: 80px;
+            pointer-events: none;
+        }
+        .t-stat {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 12px;
+            font-weight: 700;
+            color: #fff;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+        }
+        .t-stat .icon {
+            width: 18px;
+            text-align: center;
+            flex-shrink: 0;
+        }
+        .t-stat .bar-wrap {
+            flex: 1;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 4px;
+            overflow: hidden;
+            min-width: 40px;
+        }
+        .t-stat .bar-fill {
+            height: 100%;
+            border-radius: 4px;
+            transition: width 0.5s ease;
+        }
+        .t-stat .val {
+            font-size: 10px;
+            min-width: 20px;
+            text-align: right;
+            opacity: 0.8;
         }
 
         /* ===== TOAST ===== */
@@ -414,10 +487,6 @@
             background: #FFF5E1;
             box-shadow: 0 0 10px rgba(242, 160, 61, 0.4);
         }
-        .shop-item.in-room {
-            border-color: var(--blue);
-            background: #E1F0FF;
-        }
         .btn {
             border: none;
             cursor: pointer;
@@ -449,395 +518,67 @@
             display: none !important;
         }
 
-        /* ===== HOME / TAMAGOTCHI (FULL SCREEN) ===== */
-        .home-overlay {
-            position: fixed;
-            inset: 0;
-            background: rgba(11, 12, 16, .92);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 50;
-            backdrop-filter: blur(6px);
-            padding: 0;
-        }
-        .home-card {
-            background: var(--cream);
-            border: none;
-            border-radius: 0;
-            width: 100vw;
-            height: 100vh;
-            max-width: 100%;
-            max-height: 100%;
-            padding: 12px 10px;
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-            animation: pop .25s cubic-bezier(.34, 1.56, .64, 1);
-        }
-
-        .home-stats {
-            display: flex;
-            gap: 6px;
-            margin-bottom: 8px;
-            flex-shrink: 0;
-            flex-wrap: wrap;
-            justify-content: center;
-        }
-        .home-stat {
-            background: #E4D7BC;
-            border-radius: 12px;
-            padding: 4px 8px;
-            font-size: 12px;
-            font-weight: 700;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 2px;
-            min-width: 60px;
-            flex: 1;
-        }
-        .home-stat .bar {
-            width: 100%;
-            height: 6px;
-            background: #c9b899;
-            border-radius: 6px;
-            overflow: hidden;
-        }
-        .home-stat .bar>div {
-            height: 100%;
-            background: var(--good);
-            border-radius: 6px;
-            transition: width .3s;
-        }
-        .home-stat .bar>div.low {
-            background: var(--red);
-        }
-        .home-stat .bar>div.warn {
-            background: var(--accent);
-        }
-
-        .home-avatar-area {
-            flex-shrink: 0;
-            text-align: center;
-            margin: 4px 0 8px;
-        }
-        .home-avatar-area #homeAvatarContainer {
-            display: inline-block;
-            position: relative;
-            width: 120px;
-            height: 140px;
-            background: transparent;
-            transition: transform 0.3s;
-        }
-        /* Avatar Animations - same as game */
-        .av-bounce {
-            animation: avBounce 0.6s infinite alternate;
-        }
-        @keyframes avBounce {
-            0% { transform: translateY(0px) scale(1,1); }
-            100% { transform: translateY(-20px) scale(1.05,0.95); }
-        }
-        .av-sleep {
-            animation: avSleep 2s infinite alternate;
-        }
-        @keyframes avSleep {
-            0% { transform: rotate(0deg) scale(1,1); }
-            100% { transform: rotate(6deg) scale(0.95,1.05); }
-        }
-        .av-walk {
-            animation: avWalk 0.8s infinite alternate;
-        }
-        @keyframes avWalk {
-            0% { transform: translateX(-15px) scale(1,1); }
-            100% { transform: translateX(15px) scale(1,1); }
-        }
-        .av-idle {
-            animation: avIdle 2s infinite alternate;
-        }
-        @keyframes avIdle {
-            0% { transform: translateY(0px) scale(1,1); }
-            100% { transform: translateY(-5px) scale(1.02,0.98); }
-        }
-        .av-hop {
-            animation: avHop 0.4s infinite alternate;
-        }
-        @keyframes avHop {
-            0% { transform: translateY(0px) scale(1,1); }
-            100% { transform: translateY(-25px) scale(1.1,0.9); }
-        }
-
-        .home-avatar-area .av-body {
-            width: 90px;
-            height: 100px;
-            border-radius: 50%;
-            margin: 20px auto 0;
-            position: relative;
-            transition: background 0.3s;
-            box-shadow: 0 6px 18px rgba(0,0,0,0.25);
-        }
-        .home-avatar-area .av-face {
-            position: absolute;
-            top: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            font-size: 34px;
-            line-height: 1;
-        }
-        .home-avatar-area .av-head {
-            position: absolute;
-            top: -12px;
-            left: 50%;
-            transform: translateX(-50%);
-            font-size: 38px;
-            line-height: 1;
-        }
-        .home-avatar-area .av-clothes {
-            position: absolute;
-            bottom: 8px;
-            left: 50%;
-            transform: translateX(-50%);
-            font-size: 36px;
-            line-height: 1;
-        }
-        .home-avatar-area .av-prop {
-            position: absolute;
-            right: -15px;
-            bottom: 30px;
-            font-size: 34px;
-            line-height: 1;
-        }
-
-        .room-tabs {
-            display: flex;
-            gap: 6px;
-            margin-bottom: 8px;
-            flex-shrink: 0;
-        }
-        .room-tab {
-            flex: 1;
-            padding: 6px 4px;
-            font-weight: 800;
-            font-size: 12px;
-            border-radius: 10px;
-            background: #E4D7BC;
-            color: #8C6A4F;
-            border: none;
-            cursor: pointer;
-            transition: .1s;
-            white-space: nowrap;
-        }
-        .room-tab.active {
-            background: var(--accent);
-            color: #fff;
-            box-shadow: 0 3px 0 #b8742a;
-            transform: translateY(-2px);
-        }
-
-        .room-view {
-            flex: 1;
-            overflow-y: auto;
-            min-height: 0;
-            background: #f0e5d1;
-            border-radius: 16px;
-            padding: 12px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            border: 3px solid #8C6A4F;
-            margin-bottom: 6px;
-        }
-        .room-panel {
-            display: none;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            width: 100%;
-            height: 100%;
-            gap: 6px;
-        }
-        .room-panel.active {
-            display: flex;
-        }
-        .room-panel .room-icon {
-            font-size: 48px;
-        }
-        .room-panel .room-label {
-            font-weight: 700;
-            font-size: 14px;
-            color: var(--ink);
-        }
-        .room-panel .furniture-display {
-            font-size: 24px;
-            font-weight: 600;
-            color: var(--panel-deep);
-            display: flex;
-            gap: 6px;
-            flex-wrap: wrap;
-            justify-content: center;
-        }
-        .room-panel .action-btn {
-            border: none;
-            font-family: inherit;
-            font-weight: 800;
-            font-size: 14px;
-            color: #fff;
-            background: var(--good);
-            border-radius: 14px;
-            padding: 8px 20px;
-            box-shadow: 0 3px 0 #5c7a3a;
-            cursor: pointer;
-            transition: transform .08s;
-            margin-top: 4px;
-        }
-        .room-panel .action-btn:active {
-            transform: translateY(3px);
-            box-shadow: 0 1px 0 #5c7a3a;
-        }
-        .room-panel .action-btn:disabled {
-            opacity: 0.5;
-            transform: none;
-            box-shadow: 0 3px 0 #5c7a3a;
-            cursor: not-allowed;
-        }
-        .room-panel .cooldown {
-            font-size: 10px;
-            color: var(--red);
-            font-weight: 600;
-        }
-        .room-panel.furnished {
-            border-color: var(--accent);
-        }
-
-        .home-footer {
-            display: flex;
-            gap: 8px;
-            flex-shrink: 0;
-        }
-        .home-footer .btn {
-            margin-top: 0;
-            flex: 1;
-        }
-
         /* ===== WIN / LOSE MODALS ===== */
         .win-lose-overlay {
             z-index: 25;
         }
 
-        /* ===== RESPONSIVE ===== */
+        /* ===== RESPONSIVE (Κινητά vs Υπολογιστής) ===== */
         @media (max-width: 480px) {
-            .hud {
-                height: 44px;
-                padding: 4px 6px;
-                gap: 4px;
-            }
-            .chip {
-                font-size: 11px;
-                padding: 2px 6px;
-                border-radius: 8px;
-            }
-            .chip .big {
-                font-size: 13px;
-            }
-            .hud-btn {
-                font-size: 12px;
-                padding: 2px 8px;
-                border-radius: 8px;
-            }
-            .powerbar {
-                top: 46px;
-                padding: 6px 10px;
-                gap: 6px;
-                border-radius: 14px;
-            }
-            .pbtn {
-                width: 52px;
-                height: 52px;
-                font-size: 22px;
-                border-radius: 14px;
-            }
-            .pbtn .cost {
-                font-size: 7px;
-            }
-            #missionBar {
-                top: 104px;
-                font-size: 11px;
-                padding: 5px 12px 4px;
-                border-radius: 0 0 14px 14px;
-            }
-            .home-stat {
-                font-size: 10px;
-                min-width: 40px;
-                padding: 2px 4px;
-            }
-            .home-stat .bar {
-                height: 4px;
-            }
-            .home-avatar-area #homeAvatarContainer {
-                width: 90px;
-                height: 110px;
-            }
-            .home-avatar-area .av-body {
-                width: 70px;
-                height: 80px;
-                margin: 12px auto 0;
-            }
-            .room-tab {
-                font-size: 10px;
-                padding: 4px 2px;
-            }
-            .room-panel .room-icon {
-                font-size: 36px;
-            }
-            .card {
-                padding: 14px 12px;
-                width: 96vw;
-                border-radius: 18px;
-            }
-            .shop-items {
-                gap: 5px;
-            }
-            .shop-item h3 {
-                font-size: 11px;
-            }
-            #speech {
-                font-size: 16px;
-                padding: 6px 14px;
-                border-radius: 16px;
-            }
-            #toast {
-                font-size: 12px;
-                padding: 6px 14px;
-                bottom: 70px;
-            }
+            .hud { height: 44px; padding: 4px 6px; gap: 4px; }
+            .chip { font-size: 11px; padding: 2px 6px; border-radius: 8px; }
+            .chip .big { font-size: 13px; }
+            .hud-btn { font-size: 12px; padding: 2px 8px; border-radius: 8px; }
+            .powerbar { top: 46px; padding: 6px 10px; gap: 6px; border-radius: 14px; }
+            .pbtn { width: 52px; height: 52px; font-size: 22px; border-radius: 14px; }
+            .pbtn .cost { font-size: 7px; }
+            #missionBar { top: 102px; font-size: 11px; padding: 4px 12px; }
+            #tamagotchi-ui { bottom: 12px; right: 10px; padding: 6px 8px; min-width: 60px; }
+            .t-stat { font-size: 10px; gap: 4px; }
+            .t-stat .bar-wrap { min-width: 30px; }
+            #speech { font-size: 16px; padding: 6px 14px; border-radius: 16px; }
+            #toast { font-size: 12px; padding: 6px 14px; bottom: 70px; }
         }
         @media (max-width: 380px) {
-            .hud-btn {
-                font-size: 10px;
-                padding: 2px 5px;
-            }
-            .chip {
-                font-size: 9px;
-                padding: 2px 4px;
-            }
-            .chip .big {
-                font-size: 11px;
-            }
-            .pbtn {
-                width: 44px;
-                height: 44px;
-                font-size: 18px;
-            }
-            #missionBar {
-                font-size: 9px;
-                padding: 3px 8px 2px;
-            }
+            .hud-btn { font-size: 10px; padding: 2px 5px; }
+            .chip { font-size: 9px; padding: 2px 4px; }
+            .chip .big { font-size: 11px; }
+            .pbtn { width: 44px; height: 44px; font-size: 18px; }
+            #missionBar { font-size: 9px; padding: 3px 8px 2px; }
+        }
+
+        /* ===== MEDIA QUERIES ΓΙΑ ΥΠΟΛΟΓΙΣΤΗ (Μεγαλύτερα κουμπιά & παράθυρα) ===== */
+        @media (min-width: 1024px) {
+            .hud-btn { font-size: 18px; padding: 6px 18px; }
+            .chip { font-size: 16px; padding: 6px 14px; border-radius: 14px; }
+            .chip .big { font-size: 18px; }
+            .pbtn { width: 80px; height: 80px; font-size: 34px; border-radius: 22px; }
+            .pbtn .cost { font-size: 12px; padding: 2px 10px; }
+            #missionBar { font-size: 16px; padding: 6px 24px; top: 116px; }
+            .card { width: 700px; max-width: 90vw; padding: 30px; border-radius: 32px; }
+            .shop-item { padding: 12px 10px; }
+            .shop-item h3 { font-size: 16px; }
+            .btn { font-size: 20px; padding: 14px 32px; border-radius: 20px; }
+            #tamagotchi-ui { min-width: 120px; padding: 12px 16px; gap: 6px; }
+            .t-stat { font-size: 14px; }
+            .t-stat .bar-wrap { height: 8px; }
+            #speech { font-size: 24px; }
         }
     </style>
 </head>
 <body>
+    <!-- ===== BACKGROUND ΕΞΟΧΗΣ ===== -->
+    <div id="background">
+        <div class="bg-deco sun">☀️</div>
+        <div class="bg-deco cloud1">☁️</div>
+        <div class="bg-deco cloud2">☁️</div>
+        <div class="bg-deco flower1">🌸</div>
+        <div class="bg-deco flower2">🌼</div>
+        <div class="bg-deco flower3">🌻</div>
+        <div class="bg-deco flower4">🌷</div>
+        <div class="bg-deco grass"></div>
+    </div>
+
     <canvas id="game"></canvas>
 
     <!-- ===== HUD (TOP) ===== -->
@@ -845,26 +586,32 @@
         <div class="chip"><div><small>ΕΠΙΠΕΔΟ</small><span class="big" id="hudLevel">1</span></div></div>
         <div class="chip"><div><small>ΣΚΟΡ</small><span class="big" id="hudScore">0</span></div></div>
         <div class="spacer"></div>
-        <button class="hud-btn home-btn" id="btnHome">🏠 Σπίτι</button>
-        <button class="hud-btn" id="btnShop">🛒 Κατάστημα</button>
+        <button class="hud-btn shop-btn" id="btnShop">🛒 Κατάστημα</button>
         <div class="chip">🪙 <span class="big" id="hudCoins">0</span></div>
     </div>
 
-    <!-- ===== POWERUPS (BELOW HUD) ===== -->
+    <!-- ===== POWERUPS (Κάτω από HUD) ===== -->
     <div class="powerbar">
         <button class="pbtn" id="btnMagnet">🧲<span class="cost">Δωρεάν</span></button>
         <button class="pbtn" id="btnHammer">🔨<span class="cost">Δωρεάν</span></button>
         <button class="pbtn" id="btnShuffle">🔄<span class="cost">Δωρεάν</span></button>
         <button class="pbtn" id="btnMic">🎤<span class="cost">Μίλα</span></button>
+        <button class="pbtn" id="btnSound">🔊<span class="cost">Ήχος</span></button>
     </div>
 
-    <!-- ===== MISSION BAR (3D roll-up) ===== -->
+    <!-- ===== MISSION BAR (Σταθερή) ===== -->
     <div id="missionBar">🎯 Αποστολή: <b id="missionText"></b></div>
 
-    <!-- ===== SPEECH BUBBLE ===== -->
-    <div id="speech"><span id="speechText">WOW!</span></div>
+    <!-- ===== TAMAGOTCHI UI (Αντί για Σπίτι) ===== -->
+    <div id="tamagotchi-ui">
+        <div class="t-stat"><span class="icon">⚡</span><div class="bar-wrap"><div class="bar-fill" id="tEnergy" style="width:70%; background:#FFD700;"></div></div><span class="val" id="tEnergyVal">70</span></div>
+        <div class="t-stat"><span class="icon">🍽️</span><div class="bar-wrap"><div class="bar-fill" id="tHunger" style="width:30%; background:#FFA500;"></div></div><span class="val" id="tHungerVal">30</span></div>
+        <div class="t-stat"><span class="icon">🧼</span><div class="bar-wrap"><div class="bar-fill" id="tClean" style="width:80%; background:#00CED1;"></div></div><span class="val" id="tCleanVal">80</span></div>
+        <div class="t-stat"><span class="icon">🚽</span><div class="bar-wrap"><div class="bar-fill" id="tToilet" style="width:10%; background:#9370DB;"></div></div><span class="val" id="tToiletVal">10</span></div>
+    </div>
 
-    <!-- ===== TOAST ===== -->
+    <!-- ===== SPEECH & TOAST ===== -->
+    <div id="speech"><span id="speechText">WOW!</span></div>
     <div id="toast"></div>
 
     <!-- ===== SHOP MODAL ===== -->
@@ -886,75 +633,9 @@
                 <button class="pet-subtab" data-subtab="pet_hands">Χέρια</button>
                 <button class="pet-subtab" data-subtab="pet_props">Αντικείμενο</button>
                 <button class="pet-subtab" data-subtab="pet_feet">Πόδια</button>
-                <button class="pet-subtab" data-subtab="pet_clothes">Ρούχα</button>
-                <button class="pet-subtab" data-subtab="pet_furniture">Έπιπλα</button>
-                <button class="pet-subtab" data-subtab="pet_food">Φαγητά</button>
             </div>
             <div class="shop-items" id="shopContainer"></div>
             <button class="btn" id="btnCloseShop">Κλείσιμο</button>
-        </div>
-    </div>
-
-    <!-- ===== HOME MODAL (FULL SCREEN) ===== -->
-    <div class="home-overlay hidden" id="homeModal">
-        <div class="home-card">
-            <h2 style="margin:0 0 4px 0; font-size:20px; flex-shrink:0;">🏠 Το Σπίτι του Aziram</h2>
-
-            <div class="home-stats" id="homeStats">
-                <div class="home-stat">⚡ Ενέργεια<div class="bar"><div id="energyBar" style="width:70%"></div></div><span id="energyText">70</span></div>
-                <div class="home-stat">🍽️ Πείνα<div class="bar"><div id="hungerBar" style="width:30%"></div></div><span id="hungerText">30</span></div>
-                <div class="home-stat">🧼 Καθαριότητα<div class="bar"><div id="cleanBar" style="width:80%"></div></div><span id="cleanText">80</span></div>
-                <div class="home-stat">🚽 Τουαλέτα<div class="bar"><div id="toiletBar" style="width:10%"></div></div><span id="toiletText">10</span></div>
-            </div>
-
-            <div class="home-avatar-area">
-                <div id="homeAvatarContainer" class="av-idle">
-                    <div class="av-head" id="avHead"></div>
-                    <div class="av-body" id="avBody"></div>
-                    <div class="av-face" id="avFace"></div>
-                    <div class="av-clothes" id="avClothes"></div>
-                    <div class="av-prop" id="avProp"></div>
-                </div>
-            </div>
-
-            <div class="room-tabs">
-                <button class="room-tab active" data-room="bedroom">🛏️ Υπνοδωμάτιο</button>
-                <button class="room-tab" data-room="kitchen">🍳 Κουζίνα</button>
-                <button class="room-tab" data-room="bathroom">🛁 Μπάνιο</button>
-            </div>
-
-            <div class="room-view" id="roomViewContainer">
-                <!-- BEDROOM -->
-                <div class="room-panel active" id="roomBedroom">
-                    <div class="room-icon">🛏️</div>
-                    <div class="room-label">Υπνοδωμάτιο</div>
-                    <div class="furniture-display" id="bedroomFurniture"></div>
-                    <button class="action-btn" id="btnSleep">😴 Ύπνος</button>
-                    <div class="cooldown hidden" id="sleepCooldown"></div>
-                </div>
-                <!-- KITCHEN -->
-                <div class="room-panel" id="roomKitchen">
-                    <div class="room-icon">🍳</div>
-                    <div class="room-label">Κουζίνα</div>
-                    <div class="furniture-display" id="kitchenFurniture"></div>
-                    <button class="action-btn" id="btnFeed">🍽️ Τάισμα</button>
-                    <div class="cooldown hidden" id="feedCooldown"></div>
-                </div>
-                <!-- BATHROOM -->
-                <div class="room-panel" id="roomBathroom">
-                    <div class="room-icon">🛁</div>
-                    <div class="room-label">Μπάνιο</div>
-                    <div class="furniture-display" id="bathroomFurniture"></div>
-                    <button class="action-btn" id="btnWash">🧼 Πλύσιμο</button>
-                    <button class="action-btn" id="btnToilet">🚽 Τουαλέτα</button>
-                    <div class="cooldown hidden" id="washCooldown"></div>
-                    <div class="cooldown hidden" id="toiletCooldown"></div>
-                </div>
-            </div>
-
-            <div class="home-footer">
-                <button class="btn secondary" id="btnCloseHome">Κλείσιμο</button>
-            </div>
         </div>
     </div>
 
@@ -980,10 +661,7 @@
     </script>
     <script>
         // ============================================================
-        //  MAIN GAME & PET LOGIC (Full integration)
-        //  To split: move all pet-related code (home, shop tabs for pet, 
-        //  pet avatar, furniture, food) to a separate file aziram.index.html
-        //  and keep game mechanics in this file.
+        //  MAIN GAME & UPDATED TAMAGOTCHI SYSTEM (No Home)
         // ============================================================
         (function() {
             'use strict';
@@ -1004,7 +682,7 @@
                 { target: 1024, preset: 12, text: "Φτιάξε κύβο 1024" }
             ];
 
-            // ---- Shop data (full) ----
+            // ---- Shop data (No Furniture/Clothes/Food) ----
             const SHOP = {
                 cubes: [
                     { id: 'wood', name: 'Ξύλο', price: 0, icon: '🪵' },
@@ -1105,46 +783,6 @@
                     { id: 'feet_none', name: 'Jelly Πόδια', price: 0, icon: '🦶' },
                     { id: 'feet_moonboots', name: 'Moon Boots', price: 0, icon: '👢' },
                     { id: 'feet_hover', name: 'Hover Sneakers', price: 0, icon: '👟' }
-                ],
-                pet_clothes: [
-                    { id: 'cl_none', name: 'Χωρίς', price: 0, icon: '👕' },
-                    { id: 'cl_hat', name: 'Καπέλο', price: 50, icon: '🧢' },
-                    { id: 'cl_shirt', name: 'Μπλούζα', price: 80, icon: '👚' },
-                    { id: 'cl_pants', name: 'Παντελόνι', price: 100, icon: '👖' },
-                    { id: 'cl_shoes', name: 'Παπούτσια', price: 70, icon: '👟' },
-                    { id: 'cl_suit', name: 'Κοστούμι', price: 200, icon: '🕴️' },
-                    { id: 'cl_dress', name: 'Φόρεμα', price: 180, icon: '👗' },
-                    { id: 'cl_glasses', name: 'Γυαλιά', price: 60, icon: '👓' },
-                    { id: 'cl_scarf', name: 'Κασκόλ', price: 80, icon: '🧣' },
-                    { id: 'cl_tie', name: 'Γραβάτα', price: 70, icon: '👔' },
-                    { id: 'cl_vest', name: 'Γιλέκο', price: 120, icon: '🧥' },
-                    { id: 'cl_hoodie', name: 'Φούτερ', price: 150, icon: '👕' },
-                    { id: 'cl_crown', name: 'Στέμμα', price: 250, icon: '👑' },
-                    { id: 'cl_apron', name: 'Ποδιά', price: 100, icon: '👨‍🍳' }
-                ],
-                pet_furniture: [
-                    { id: 'fur_none', name: 'Χωρίς', price: 0, icon: '🚫', room: 'none' },
-                    { id: 'fur_bed', name: 'Κρεβάτι', price: 200, icon: '🛏️', room: 'bedroom' },
-                    { id: 'fur_lamp', name: 'Λάμπα', price: 100, icon: '💡', room: 'bedroom' },
-                    { id: 'fur_rug', name: 'Χαλί', price: 110, icon: '🧶', room: 'bedroom' },
-                    { id: 'fur_painting', name: 'Πίνακας', price: 130, icon: '🖼️', room: 'bedroom' },
-                    { id: 'fur_table', name: 'Τραπέζι', price: 150, icon: '🪑', room: 'kitchen' },
-                    { id: 'fur_plant', name: 'Φυτό', price: 80, icon: '🌿', room: 'kitchen' },
-                    { id: 'fur_sofa', name: 'Καναπές', price: 250, icon: '🛋️', room: 'kitchen' },
-                    { id: 'fur_fridge', name: 'Ψυγείο', price: 300, icon: '🧊', room: 'kitchen' },
-                    { id: 'fur_bathtub', name: 'Μπανιέρα', price: 180, icon: '🛁', room: 'bathroom' },
-                    { id: 'fur_mirror', name: 'Καθρέφτης', price: 90, icon: '🪞', room: 'bathroom' },
-                    { id: 'fur_soap', name: 'Σαπούνι', price: 60, icon: '🧼', room: 'bathroom' },
-                    { id: 'fur_toilet', name: 'Λεκάνη', price: 220, icon: '🚽', room: 'bathroom' },
-                    { id: 'fur_towel', name: 'Πετσέτα', price: 70, icon: '🧣', room: 'bathroom' }
-                ],
-                pet_food: [
-                    { id: 'food_apple', name: 'Μήλο', price: 15, icon: '🍎', hungerReduction: 15 },
-                    { id: 'food_pizza', name: 'Πίτσα', price: 30, icon: '🍕', hungerReduction: 30 },
-                    { id: 'food_cake', name: 'Γλυκό', price: 20, icon: '🍰', hungerReduction: 20 },
-                    { id: 'food_banana', name: 'Μπανάνα', price: 12, icon: '🍌', hungerReduction: 12 },
-                    { id: 'food_steak', name: 'Μπριζόλα', price: 40, icon: '🥩', hungerReduction: 40 },
-                    { id: 'food_sushi', name: 'Σούσι', price: 35, icon: '🍣', hungerReduction: 35 }
                 ]
             };
 
@@ -1178,60 +816,32 @@
                 equippedPetProps: 'prop_none',
                 ownedPetFeet: ['feet_none'],
                 equippedPetFeet: 'feet_none',
-                ownedPetClothes: ['cl_none'],
-                equippedPetClothes: 'cl_none',
-                ownedPetFurniture: ['fur_none'],
-                equippedBedroomFurniture: [],
-                equippedKitchenFurniture: [],
-                equippedBathroomFurniture: [],
-                ownedPetFood: [],
                 energy: 70,
                 hunger: 30,
                 cleanliness: 80,
                 toilet: 0,
-                lastUpdate: Date.now(),
-                sleepCooldown: 0,
-                feedCooldown: 0,
-                washCooldown: 0,
-                toiletCooldown: 0
+                lastUpdate: Date.now()
             };
 
             let save = { ...DEFAULT_SAVE };
 
             async function loadSave() {
                 try {
-                    const r = localStorage.getItem("drop2048-frankly-v7");
+                    const r = localStorage.getItem("drop2048-frankly-v8");
                     if (r) {
                         const parsed = JSON.parse(r);
                         save = Object.assign({}, DEFAULT_SAVE, parsed);
-                        if (typeof save.equippedBedroomFurniture === 'string') {
-                            save.equippedBedroomFurniture = save.equippedBedroomFurniture !== 'fur_none' ? [save.equippedBedroomFurniture] : [];
-                        }
-                        if (typeof save.equippedKitchenFurniture === 'string') {
-                            save.equippedKitchenFurniture = save.equippedKitchenFurniture !== 'fur_none' ? [save.equippedKitchenFurniture] : [];
-                        }
-                        if (typeof save.equippedBathroomFurniture === 'string') {
-                            save.equippedBathroomFurniture = save.equippedBathroomFurniture !== 'fur_none' ? [save.equippedBathroomFurniture] : [];
-                        }
-                        if (!save.ownedPetClothes) save.ownedPetClothes = ['cl_none'];
-                        if (!save.equippedPetClothes) save.equippedPetClothes = 'cl_none';
-                        if (!save.ownedPetFurniture) save.ownedPetFurniture = ['fur_none'];
-                        if (!save.ownedPetFood) save.ownedPetFood = [];
                         if (save.energy === undefined) save.energy = 70;
                         if (save.hunger === undefined) save.hunger = 30;
                         if (save.cleanliness === undefined) save.cleanliness = 80;
                         if (save.toilet === undefined) save.toilet = 0;
                         if (!save.lastUpdate) save.lastUpdate = Date.now();
-                        if (!save.sleepCooldown) save.sleepCooldown = 0;
-                        if (!save.feedCooldown) save.feedCooldown = 0;
-                        if (!save.washCooldown) save.washCooldown = 0;
-                        if (!save.toiletCooldown) save.toiletCooldown = 0;
                     }
                 } catch (e) { console.warn('Load save error', e); }
             }
 
             function persist() {
-                try { localStorage.setItem("drop2048-frankly-v7", JSON.stringify(save)); } catch (e) {}
+                try { localStorage.setItem("drop2048-frankly-v8", JSON.stringify(save)); } catch (e) {}
             }
 
             let coins = 0,
@@ -1241,8 +851,24 @@
 
             // ---- Audio ----
             const audioCtx = new(window.AudioContext || window.webkitAudioContext)();
+            let isMuted = false;
+
+            document.getElementById('btnSound').onclick = () => {
+                isMuted = !isMuted;
+                const btn = document.getElementById('btnSound');
+                if (isMuted) {
+                    audioCtx.suspend();
+                    btn.innerHTML = '🔇<span class="cost">Ήχος</span>';
+                    btn.classList.add('muted');
+                } else {
+                    audioCtx.resume();
+                    btn.innerHTML = '🔊<span class="cost">Ήχος</span>';
+                    btn.classList.remove('muted');
+                }
+            };
 
             function playSound(type) {
+                if (isMuted) return;
                 if (audioCtx.state === 'suspended') audioCtx.resume();
                 if (type === 'win') { playWinSound(audioCtx); return; }
                 const s = save.equippedSound || 'snd_default';
@@ -1262,6 +888,7 @@
                     o.start(t0);
                     o.stop(t0 + dur + 0.05);
                 }
+                // ... (existing sound logic is identical, just skip if muted)
                 if (s === 'snd_default') {
                     if (type === 'drop') tone(800, 400, 0.1, 'sine', 0.2);
                     else tone(300, 800, 0.2, 'sine', 0.3);
@@ -1477,7 +1104,7 @@
                 starField.geometry.attributes.position.needsUpdate = true;
             }
 
-            // ---- AZIRAM PET (3D) ----
+            // ---- AZIRAM PET ----
             let aziramPet, aziramBodyMesh, aziramCore, slimeGroup = null,
                 sockets = {};
             let mouthMesh, browL, browR, aziramEyes = null;
@@ -2060,135 +1687,10 @@
                         sockets.footR.add(hR);
                     }
                 }
+                renderTamagotchiUI();
             }
 
-            // ---- Clothes ----
-            function equipClothes(itemId) {
-                if (!aziramPet) return;
-                const existing = aziramCore.children.filter(c => c.userData && c.userData.isClothing);
-                existing.forEach(c => aziramCore.remove(c));
-                if (itemId === 'cl_none') return;
-                const clothGroup = new THREE.Group();
-                clothGroup.userData.isClothing = true;
-                if (itemId === 'cl_scarf') {
-                    const scarf = new THREE.Mesh(new THREE.TorusGeometry(0.32, 0.06, 12, 20), new THREE
-                        .MeshPhongMaterial({ color: 0xdd2244 }));
-                    scarf.position.set(0, 0.15, 0.38);
-                    scarf.rotation.x = Math.PI / 2.5;
-                    clothGroup.add(scarf);
-                } else if (itemId === 'cl_bowtie') {
-                    const bow = new THREE.Mesh(new THREE.BoxGeometry(0.4, 0.12, 0.06), new THREE.MeshPhongMaterial(
-                        { color: 0xcc1144 }));
-                    bow.position.set(0, 0.05, 0.48);
-                    const center = new THREE.Mesh(new THREE.BoxGeometry(0.08, 0.12, 0.08), new THREE
-                        .MeshPhongMaterial({ color: 0x881133 }));
-                    center.position.set(0, 0.05, 0.48);
-                    clothGroup.add(bow, center);
-                } else if (itemId === 'cl_vest') {
-                    const vest = new THREE.Mesh(new THREE.BoxGeometry(0.6, 0.7, 0.08), new THREE.MeshPhongMaterial(
-                        { color: 0x3355aa }));
-                    vest.position.set(0, -0.05, -0.3);
-                    clothGroup.add(vest);
-                } else if (itemId === 'cl_apron') {
-                    const apron = new THREE.Mesh(new THREE.BoxGeometry(0.5, 0.6, 0.04), new THREE.MeshPhongMaterial(
-                        { color: 0xeeeedd }));
-                    apron.position.set(0, -0.05, -0.32);
-                    clothGroup.add(apron);
-                } else if (itemId === 'cl_tie') {
-                    const tie = new THREE.Mesh(new THREE.BoxGeometry(0.1, 0.45, 0.04), new THREE.MeshPhongMaterial(
-                        { color: 0x224488 }));
-                    tie.position.set(0, -0.1, 0.44);
-                    clothGroup.add(tie);
-                } else if (itemId === 'cl_hoodie') {
-                    const hood = new THREE.Mesh(new THREE.SphereGeometry(0.4, 16, 16, 0, Math.PI * 2, 0, Math.PI /
-                        2.5), new THREE.MeshPhongMaterial({ color: 0x4488cc }));
-                    hood.position.set(0, 0.5, 0.1);
-                    hood.scale.z = 1.3;
-                    clothGroup.add(hood);
-                } else if (itemId === 'cl_sunglasses') {
-                    const glassMat = new THREE.MeshPhongMaterial({ color: 0x222222, transparent: true,
-                        opacity: 0.85 });
-                    const frame = new THREE.Mesh(new THREE.BoxGeometry(0.7, 0.2, 0.04), glassMat);
-                    frame.position.set(0, 0.22, 0.48);
-                    const lensL = new THREE.Mesh(new THREE.BoxGeometry(0.25, 0.14, 0.03), new THREE
-                        .MeshBasicMaterial({ color: 0x111111 }));
-                    lensL.position.set(-0.2, 0.22, 0.50);
-                    const lensR = new THREE.Mesh(new THREE.BoxGeometry(0.25, 0.14, 0.03), new THREE
-                        .MeshBasicMaterial({ color: 0x111111 }));
-                    lensR.position.set(0.2, 0.22, 0.50);
-                    clothGroup.add(frame, lensL, lensR);
-                } else if (itemId === 'cl_hat') {
-                    const hat = new THREE.Mesh(new THREE.ConeGeometry(0.3, 0.25, 16), new THREE.MeshPhongMaterial(
-                        { color: 0x3355cc }));
-                    hat.position.set(0, 0.62, 0.1);
-                    clothGroup.add(hat);
-                } else if (itemId === 'cl_shirt') {
-                    const shirt = new THREE.Mesh(new THREE.BoxGeometry(0.5, 0.3, 0.06), new THREE.MeshPhongMaterial(
-                        { color: 0xdd8844 }));
-                    shirt.position.set(0, -0.1, -0.3);
-                    clothGroup.add(shirt);
-                } else if (itemId === 'cl_pants') {
-                    const pants = new THREE.Mesh(new THREE.BoxGeometry(0.4, 0.3, 0.06), new THREE.MeshPhongMaterial(
-                        { color: 0x334488 }));
-                    pants.position.set(0, -0.35, -0.3);
-                    clothGroup.add(pants);
-                } else if (itemId === 'cl_shoes') {
-                    const shoeL = new THREE.Mesh(new THREE.BoxGeometry(0.15, 0.08, 0.25), new THREE
-                        .MeshPhongMaterial({ color: 0x222222 }));
-                    shoeL.position.set(-0.2, -0.65, 0.0);
-                    const shoeR = new THREE.Mesh(new THREE.BoxGeometry(0.15, 0.08, 0.25), new THREE
-                        .MeshPhongMaterial({ color: 0x222222 }));
-                    shoeR.position.set(0.2, -0.65, 0.0);
-                    clothGroup.add(shoeL, shoeR);
-                } else if (itemId === 'cl_suit') {
-                    const suit = new THREE.Mesh(new THREE.BoxGeometry(0.5, 0.7, 0.08), new THREE.MeshPhongMaterial(
-                        { color: 0x222233 }));
-                    suit.position.set(0, -0.1, -0.3);
-                    clothGroup.add(suit);
-                } else if (itemId === 'cl_dress') {
-                    const dress = new THREE.Mesh(new THREE.ConeGeometry(0.4, 0.6, 16), new THREE.MeshPhongMaterial(
-                        { color: 0xdd44aa }));
-                    dress.position.set(0, -0.2, -0.3);
-                    clothGroup.add(dress);
-                } else if (itemId === 'cl_glasses') {
-                    const gMat = new THREE.MeshPhongMaterial({ color: 0x111111, transparent: true, opacity: 0.7 });
-                    const frame = new THREE.Mesh(new THREE.BoxGeometry(0.6, 0.15, 0.04), gMat);
-                    frame.position.set(0, 0.22, 0.48);
-                    clothGroup.add(frame);
-                } else if (itemId === 'cl_crown') {
-                    const crown = new THREE.Mesh(new THREE.CylinderGeometry(0.35, 0.25, 0.4, 8, 1, true), new THREE
-                        .MeshPhongMaterial({ color: 0xffd700, side: THREE.DoubleSide }));
-                    crown.position.set(0, 0.55, 0);
-                    clothGroup.add(crown);
-                }
-                aziramCore.add(clothGroup);
-            }
-
-            // ---- Furniture ----
-            function updateFurniture() {
-                const roomMap = {
-                    bedroom: save.equippedBedroomFurniture || [],
-                    kitchen: save.equippedKitchenFurniture || [],
-                    bathroom: save.equippedBathroomFurniture || []
-                };
-                const renderItems = (ids) => {
-                    return ids.map(id => {
-                        const f = SHOP.pet_furniture.find(item => item.id === id);
-                        return f ? f.icon : '';
-                    }).join(' ');
-                };
-                document.getElementById('bedroomFurniture').innerHTML = renderItems(roomMap.bedroom) || '🚫 Χωρίς έπιπλα';
-                document.getElementById('kitchenFurniture').innerHTML = renderItems(roomMap.kitchen) || '🚫 Χωρίς έπιπλα';
-                document.getElementById('bathroomFurniture').innerHTML = renderItems(roomMap.bathroom) || '🚫 Χωρίς έπιπλα';
-
-                document.getElementById('roomBedroom').classList.toggle('furnished', roomMap.bedroom.length > 0);
-                document.getElementById('roomKitchen').classList.toggle('furnished', roomMap.kitchen.length > 0);
-                document.getElementById('roomBathroom').classList.toggle('furnished', roomMap.bathroom.length > 0);
-            }
-
-            // ---- Tamagotchi Stats ----
-            let tamagotchiInterval = null;
-
+            // ---- Tamagotchi System (No Home, Simple UI) ----
             function updateTamagotchiStats() {
                 const now = Date.now();
                 const elapsed = (now - save.lastUpdate) / 1000;
@@ -2196,24 +1698,24 @@
 
                 const hour = new Date().getHours();
 
-                // ENERGY: sleep 22:00-08:00, awake 08:00-22:00
+                // Energy
                 if (hour >= 8 && hour < 22) {
                     save.energy = Math.max(0, (save.energy || 50) - elapsed * 0.25);
                 } else {
                     save.energy = Math.min(100, (save.energy || 50) + elapsed * 0.45);
                 }
 
-                // HUNGER: spikes at breakfast (7-8), lunch (12-13), dinner (19-20)
+                // Hunger
                 let hungerRate = 0.15;
                 if (hour >= 7 && hour <= 8) hungerRate = 0.9;
                 else if (hour >= 12 && hour <= 13) hungerRate = 0.9;
                 else if (hour >= 19 && hour <= 20) hungerRate = 0.9;
                 save.hunger = Math.min(100, (save.hunger || 50) + elapsed * hungerRate);
 
-                // CLEANLINESS: gradual decrease
+                // Cleanliness
                 save.cleanliness = Math.max(0, (save.cleanliness || 80) - elapsed * 0.12);
 
-                // TOILET: fills up only when awake (3 hours to fill = 100 / 10800 per sec)
+                // Toilet
                 if (hour >= 8 && hour < 22) {
                     save.toilet = Math.min(100, (save.toilet || 0) + elapsed * (100 / 10800));
                 } else {
@@ -2222,206 +1724,24 @@
 
                 save.lastUpdate = now;
                 persist();
-                renderHomeStats();
-                renderHomeAvatar();
+                renderTamagotchiUI();
             }
 
-            function renderHomeStats() {
+            function renderTamagotchiUI() {
                 const e = Math.round(save.energy || 50);
                 const h = Math.round(save.hunger || 50);
                 const c = Math.round(save.cleanliness || 80);
                 const t = Math.round(save.toilet || 0);
 
-                document.getElementById('energyText').textContent = e;
-                document.getElementById('hungerText').textContent = h;
-                document.getElementById('cleanText').textContent = c;
-                document.getElementById('toiletText').textContent = t;
+                document.getElementById('tEnergyVal').textContent = e;
+                document.getElementById('tHungerVal').textContent = h;
+                document.getElementById('tCleanVal').textContent = c;
+                document.getElementById('tToiletVal').textContent = t;
 
-                const eBar = document.getElementById('energyBar');
-                const hBar = document.getElementById('hungerBar');
-                const cBar = document.getElementById('cleanBar');
-                const tBar = document.getElementById('toiletBar');
-
-                eBar.style.width = e + '%';
-                eBar.className = e < 25 ? 'low' : e < 50 ? 'warn' : '';
-                hBar.style.width = h + '%';
-                hBar.className = h > 75 ? 'low' : h > 50 ? 'warn' : '';
-                cBar.style.width = c + '%';
-                cBar.className = c < 25 ? 'low' : c < 50 ? 'warn' : '';
-                tBar.style.width = t + '%';
-                tBar.className = t > 75 ? 'low' : t > 50 ? 'warn' : '';
-
-                const now = Date.now();
-                document.getElementById('btnSleep').disabled = (save.sleepCooldown || 0) > now;
-                document.getElementById('btnFeed').disabled = (save.feedCooldown || 0) > now;
-                document.getElementById('btnWash').disabled = (save.washCooldown || 0) > now;
-                document.getElementById('btnToilet').disabled = (save.toiletCooldown || 0) > now;
-
-                const cdSleep = document.getElementById('sleepCooldown');
-                const cdFeed = document.getElementById('feedCooldown');
-                const cdWash = document.getElementById('washCooldown');
-                const cdToilet = document.getElementById('toiletCooldown');
-
-                const remSleep = Math.max(0, ((save.sleepCooldown || 0) - now) / 1000);
-                const remFeed = Math.max(0, ((save.feedCooldown || 0) - now) / 1000);
-                const remWash = Math.max(0, ((save.washCooldown || 0) - now) / 1000);
-                const remToilet = Math.max(0, ((save.toiletCooldown || 0) - now) / 1000);
-
-                cdSleep.textContent = remSleep > 0 ? '⏳ ' + Math.ceil(remSleep) + 's' : '';
-                cdSleep.classList.toggle('hidden', remSleep <= 0);
-                cdFeed.textContent = remFeed > 0 ? '⏳ ' + Math.ceil(remFeed) + 's' : '';
-                cdFeed.classList.toggle('hidden', remFeed <= 0);
-                cdWash.textContent = remWash > 0 ? '⏳ ' + Math.ceil(remWash) + 's' : '';
-                cdWash.classList.toggle('hidden', remWash <= 0);
-                cdToilet.textContent = remToilet > 0 ? '⏳ ' + Math.ceil(remToilet) + 's' : '';
-                cdToilet.classList.toggle('hidden', remToilet <= 0);
-            }
-
-            function renderHomeAvatar() {
-                const container = document.getElementById('homeAvatarContainer');
-                if (!container) return;
-                // Remove previous animations
-                container.className = '';
-                // Sync with main pet state
-                if (aziramWinTime > 0) {
-                    container.classList.add('av-bounce');
-                } else if (petState === 'sleep') {
-                    container.classList.add('av-sleep');
-                } else if (petState === 'walk') {
-                    container.classList.add('av-walk');
-                } else if (petState === 'hop') {
-                    container.classList.add('av-hop');
-                } else {
-                    container.classList.add('av-idle');
-                }
-
-                const bodyEl = document.getElementById('avBody');
-                const colorMap = {
-                    'color_green': '#33ffaa',
-                    'color_blue': '#00aaff',
-                    'color_pink': '#ff00ff',
-                    'color_gold': '#ffd700',
-                    'color_red': '#ff4500',
-                    'color_rainbow': 'linear-gradient(45deg, red, orange, yellow, green, cyan, blue, purple)',
-                    'color_slime': '#55d8e8'
-                };
-                const color = colorMap[save.equippedPetColor] || '#33ffaa';
-                bodyEl.style.background = color;
-
-                const headMap = {
-                    'head_none': '', 'head_antenna': '📡', 'head_halo': '👼', 'head_propeller': '🚁',
-                    'head_mohawk': '🤘', 'head_horns': '😈', 'head_crown': '👑', 'head_wizard': '🧙',
-                    'head_pirate': '🏴‍☠️', 'head_santa': '🎅'
-                };
-                document.getElementById('avHead').textContent = headMap[save.equippedPetHead] || '';
-
-                const faceMap = {
-                    'face_none': '👁️', 'face_pixel': '🕶️', 'face_scouter': '📟', 'face_laser': '🔴',
-                    'face_monocle': '🧐', 'face_ninja': '🥷', 'face_mustache': '👨', 'face_blush': '☺️'
-                };
-                document.getElementById('avFace').textContent = faceMap[save.equippedPetFace] || '👁️';
-
-                const clothesMap = {
-                    'cl_none': '', 'cl_scarf': '🧣', 'cl_bowtie': '🎀', 'cl_vest': '🧥', 'cl_apron': '👨‍🍳',
-                    'cl_tie': '👔', 'cl_hoodie': '👕', 'cl_sunglasses': '🕶️', 'cl_hat': '🧢', 'cl_shirt': '👚',
-                    'cl_pants': '👖', 'cl_shoes': '👟', 'cl_suit': '🕴️', 'cl_dress': '👗', 'cl_glasses': '👓',
-                    'cl_crown': '👑'
-                };
-                document.getElementById('avClothes').textContent = clothesMap[save.equippedPetClothes] || '';
-
-                const propMap = {
-                    'prop_none': '', 'prop_lollipop': '🍭', 'prop_icecream': '🍦', 'prop_lightsaber': '🗡️',
-                    'prop_wand': '🪄', 'prop_shield': '🛡️', 'prop_balloon': '🎈'
-                };
-                document.getElementById('avProp').textContent = propMap[save.equippedPetProps] || '';
-            }
-
-            function doSleep() {
-                const now = Date.now();
-                if ((save.sleepCooldown || 0) > now) return;
-                save.energy = Math.min(100, (save.energy || 50) + 40);
-                save.sleepCooldown = now + 8000;
-                save.lastUpdate = now;
-                persist();
-                renderHomeStats();
-                showSpeech("Zzz... Καληνύχτα! 😴", 2000);
-                speak("Καληνύχτα!");
-                toast("😴 Ο Aziram κοιμήθηκε! +40 Ενέργεια");
-                updateAziramMoodFromStats();
-            }
-
-            function doFeed() {
-                const now = Date.now();
-                if ((save.feedCooldown || 0) > now) return;
-                // Use a food item from inventory if available
-                const foodItems = save.ownedPetFood || [];
-                if (foodItems.length === 0) {
-                    toast("Δεν έχεις φαγητό! Αγόρασε από το κατάστημα.");
-                    return;
-                }
-                // Use first food item
-                const foodId = foodItems[0];
-                const foodData = SHOP.pet_food.find(f => f.id === foodId);
-                if (!foodData) {
-                    toast("Άγνωστο φαγητό");
-                    return;
-                }
-                // Remove one food item
-                const idx = foodItems.indexOf(foodId);
-                foodItems.splice(idx, 1);
-                save.ownedPetFood = foodItems;
-
-                save.hunger = Math.max(0, (save.hunger || 50) - foodData.hungerReduction);
-                save.feedCooldown = now + 6000;
-                save.lastUpdate = now;
-                persist();
-                renderHomeStats();
-                showSpeech("Μμμμ, " + foodData.name + "! 😋", 1800);
-                speak("Μμμμ, νόστιμο!");
-                toast("🍽️ Ο Aziram έφαγε " + foodData.name + "! -" + foodData.hungerReduction + " Πείνα");
-                updateAziramMoodFromStats();
-                renderShop(); // refresh inventory display
-            }
-
-            function doWash() {
-                const now = Date.now();
-                if ((save.washCooldown || 0) > now) return;
-                save.cleanliness = Math.min(100, (save.cleanliness || 80) + 45);
-                save.washCooldown = now + 7000;
-                save.lastUpdate = now;
-                persist();
-                renderHomeStats();
-                showSpeech("Ωραία, είμαι καθαρός! 🧼", 1800);
-                speak("Ωραία, είμαι καθαρός!");
-                toast("🧼 Ο Aziram πλύθηκε! +45 Καθαριότητα");
-                updateAziramMoodFromStats();
-            }
-
-            function doToilet() {
-                const now = Date.now();
-                if ((save.toiletCooldown || 0) > now) return;
-                save.toilet = Math.max(0, (save.toilet || 0) - 80);
-                save.toiletCooldown = now + 5000;
-                save.lastUpdate = now;
-                persist();
-                renderHomeStats();
-                showSpeech("Ααα, ανάσα! 🚽", 1800);
-                speak("Ααα, ανάσα!");
-                toast("🚽 Ο Aziram πήγε τουαλέτα! -80 Τουαλέτα");
-                updateAziramMoodFromStats();
-            }
-
-            function updateAziramMoodFromStats() {
-                const e = save.energy || 50;
-                const h = save.hunger || 50;
-                const c = save.cleanliness || 80;
-                const t = save.toilet || 0;
-                if (e < 20) { aziramMood = 'tired';
-                    showSpeech("Νυστάζω... 😴", 2000); } else if (h > 80) { aziramMood = 'hungry';
-                    showSpeech("Πεινάω... 🍽️", 2000); } else if (c < 20) { aziramMood = 'dirty';
-                    showSpeech("Είμαι λερωμένος... 🧼", 2000); } else if (t > 80) { aziramMood = 'toilet';
-                    showSpeech("Πρέπει να πάω τουαλέτα... 🚽", 2000); } else { aziramMood = 'idle'; }
-                prevMood = aziramMood;
+                document.getElementById('tEnergy').style.width = e + '%';
+                document.getElementById('tHunger').style.width = h + '%';
+                document.getElementById('tClean').style.width = c + '%';
+                document.getElementById('tToilet').style.width = t + '%';
             }
 
             // ---- THREE.JS GAME ----
@@ -2436,10 +1756,11 @@
             function initThree() {
                 const canvas = document.getElementById("game");
                 if (!canvas) return;
-                renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
+                renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
+                renderer.setClearColor(0x000000, 0); // Διαφανές φόντο για να φαίνεται η εξοχή
                 renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
                 scene = new THREE.Scene();
-                scene.background = new THREE.Color(0x0B0C10);
+                scene.background = null;
                 camera = new THREE.PerspectiveCamera(42, innerWidth / innerHeight, 0.1, 60);
                 scene.add(new THREE.AmbientLight(0xffffff, 0.7));
                 const sun = new THREE.DirectionalLight(0xffffff, 0.8);
@@ -2709,9 +2030,6 @@
                     tween(cell.mesh.scale, { x: 1, y: 1, z: 1 }, 0.18);
                     resolveMerges([{ c, r: targetR }]).then(() => {
                         if (checkWin()) {
-                            // Win condition met, but we continue spawning
-                            // The modal will appear, but we don't stop the game.
-                            // We just set busy false and spawn next cube.
                             busy = false;
                             spawnCurrent();
                             setAim(aimCol);
@@ -2815,7 +2133,6 @@
                         if (grid[c][r] && grid[c][r].value >= t) { win = true; break; }
                 if (!win) return false;
 
-                // We have a win
                 if (!winShown) {
                     winShown = true;
                     coins += 25;
@@ -2827,7 +2144,6 @@
                     updateHUD();
                     document.getElementById("winText").innerHTML = `Έφτιαξες ${t}!<br>+25 🪙<br>Το παιχνίδι συνεχίζεται!`;
 
-                    // Celebration
                     playWinSound(audioCtx);
                     for (let i = 0; i < 30; i++) {
                         setTimeout(() => {
@@ -2845,7 +2161,6 @@
                     winTimer = setTimeout(() => {
                         document.getElementById("winModal").classList.remove("hidden");
                         winTimer = null;
-                        // Reset winShown after modal is closed
                     }, 3500);
                 }
                 return true;
@@ -2982,10 +2297,7 @@
                     pet_body: { owned: 'ownedPetBody', equip: 'equippedPetBody' },
                     pet_hands: { owned: 'ownedPetHands', equip: 'equippedPetHands' },
                     pet_props: { owned: 'ownedPetProps', equip: 'equippedPetProps' },
-                    pet_feet: { owned: 'ownedPetFeet', equip: 'equippedPetFeet' },
-                    pet_clothes: { owned: 'ownedPetClothes', equip: 'equippedPetClothes' },
-                    pet_furniture: { owned: 'ownedPetFurniture', equip: 'equippedFurniture' },
-                    pet_food: { owned: 'ownedPetFood', equip: '' }
+                    pet_feet: { owned: 'ownedPetFeet', equip: 'equippedPetFeet' }
                 };
                 return map[tab] || { owned: '', equip: '' };
             }
@@ -2999,100 +2311,6 @@
                 const container = document.getElementById('shopContainer');
                 container.innerHTML = '';
 
-                // Special handling for furniture
-                if (activeTab === 'pet_furniture') {
-                    const items = SHOP.pet_furniture;
-                    items.forEach(item => {
-                        const room = item.room;
-                        let roomItems = [];
-                        if (room === 'bedroom') roomItems = save.equippedBedroomFurniture || [];
-                        else if (room === 'kitchen') roomItems = save.equippedKitchenFurniture || [];
-                        else if (room === 'bathroom') roomItems = save.equippedBathroomFurniture || [];
-
-                        const isOwned = save.ownedPetFurniture && save.ownedPetFurniture.includes(item.id);
-                        const isInRoom = roomItems.includes(item.id);
-
-                        const el = document.createElement('div');
-                        el.className = `shop-item ${isOwned?'owned':''} ${isInRoom?'in-room':''}`;
-                        el.innerHTML =
-                            `<div style="font-size:32px; margin-bottom:3px;">${item.icon}</div><h3>${item.name}</h3><div class="price">${isInRoom?'ΣΤΟ ΔΩΜΑΤΙΟ':isOwned?'ΕΠΙΛΟΓΗ':item.price===0?'Δωρεάν':item.price+' 🪙'}</div>`;
-                        el.onclick = () => {
-                            if (item.id === 'fur_none') {
-                                save.equippedBedroomFurniture = [];
-                                save.equippedKitchenFurniture = [];
-                                save.equippedBathroomFurniture = [];
-                                persist();
-                                renderShop();
-                                updateFurniture();
-                                toast("Αφαιρέθηκαν όλα τα έπιπλα");
-                                return;
-                            }
-                            if (isOwned) {
-                                const roomKey = room === 'bedroom' ? 'equippedBedroomFurniture' :
-                                    room === 'kitchen' ? 'equippedKitchenFurniture' : 'equippedBathroomFurniture';
-                                const arr = save[roomKey] || [];
-                                const idx = arr.indexOf(item.id);
-                                if (idx > -1) {
-                                    arr.splice(idx, 1);
-                                } else {
-                                    arr.push(item.id);
-                                }
-                                save[roomKey] = arr;
-                                persist();
-                                renderShop();
-                                updateFurniture();
-                                toast(isInRoom ? "Αφαιρέθηκε από το δωμάτιο" : "Τοποθετήθηκε στο δωμάτιο");
-                            } else if (coins >= item.price) {
-                                coins -= item.price;
-                                save.coins = coins;
-                                save.ownedPetFurniture.push(item.id);
-                                const roomKey = room === 'bedroom' ? 'equippedBedroomFurniture' :
-                                    room === 'kitchen' ? 'equippedKitchenFurniture' : 'equippedBathroomFurniture';
-                                if (!save[roomKey]) save[roomKey] = [];
-                                save[roomKey].push(item.id);
-                                persist();
-                                updateHUD();
-                                renderShop();
-                                updateFurniture();
-                                toast("Αγόρασες και τοποθέτησες το " + item.name + "!");
-                            } else { toast("Δεν έχεις αρκετά νομίσματα!"); }
-                        };
-                        container.appendChild(el);
-                    });
-                    return;
-                }
-
-                // Special handling for food
-                if (activeTab === 'pet_food') {
-                    const items = SHOP.pet_food;
-                    items.forEach(item => {
-                        const isOwned = save.ownedPetFood && save.ownedPetFood.includes(item.id);
-                        const el = document.createElement('div');
-                        el.className = `shop-item ${isOwned?'owned':''}`;
-                        el.innerHTML =
-                            `<div style="font-size:32px; margin-bottom:3px;">${item.icon}</div><h3>${item.name}</h3><div class="price">${isOwned?'ΣΤΟ ΑΠΟΘΕΜΑ':item.price+' 🪙'}</div>`;
-                        el.onclick = () => {
-                            if (isOwned) {
-                                toast("Ήδη έχεις " + item.name + " στο απόθεμα!");
-                                return;
-                            }
-                            if (coins >= item.price) {
-                                coins -= item.price;
-                                save.coins = coins;
-                                if (!save.ownedPetFood) save.ownedPetFood = [];
-                                save.ownedPetFood.push(item.id);
-                                persist();
-                                updateHUD();
-                                renderShop();
-                                toast("Αγόρασες " + item.name + "!");
-                            } else { toast("Δεν έχεις αρκετά νομίσματα!"); }
-                        };
-                        container.appendChild(el);
-                    });
-                    return;
-                }
-
-                // Default rendering for other tabs
                 const arr = SHOP[activeTab] || [];
                 const props = getShopProperties(activeTab);
 
@@ -3139,10 +2357,8 @@
                     toast("Η εμφάνιση κύβου άλλαξε!");
                 }
                 if (tabChanged.startsWith('pet_')) {
-                    if (tabChanged === 'pet_clothes') equipClothes(save.equippedPetClothes);
-                    else equipPetSlot(tabChanged, save[getShopProperties(tabChanged).equip]);
+                    equipPetSlot(tabChanged, save[getShopProperties(tabChanged).equip]);
                 }
-                if (tabChanged === 'pet_furniture') updateFurniture();
                 if (tabChanged === 'effects') toast("Το εφέ άλλαξε!");
                 if (tabChanged === 'sounds') toast("Ο ήχος άλλαξε!");
             }
@@ -3182,20 +2398,16 @@
                 toastTimer = setTimeout(() => t.style.opacity = 0, 1800);
             }
 
-            // ---- Mission Bar (every 10s) ----
-            function showMissionBar() {
-                const bar = document.getElementById('missionBar');
-                bar.classList.add('show');
-                setTimeout(() => bar.classList.remove('show'), 3000);
-            }
-            setInterval(showMissionBar, 10000);
-            setTimeout(showMissionBar, 500);
-
-            // ---- Mood System ----
+            // ---- Mood System & Pet States (With Tamagotchi stats) ----
             let lastSmokeTime = 0;
 
             function computeMood(now) {
                 const fill = boardFillRatio();
+                const energy = save.energy || 50;
+                const hunger = save.hunger || 50;
+                
+                if (energy < 20) return 'tired';
+                if (hunger > 80) return 'hungry';
                 if (fill >= 0.8) return 'anxious';
                 if (fill >= 0.65) return 'angry';
                 if (now - lastActionTime > 15000) return 'bored';
@@ -3206,6 +2418,8 @@
                 if (mood === 'angry') showSpeech("Γεμίζει το ταμπλό! 😠", 2200);
                 if (mood === 'anxious') showSpeech("ΠΑΝΙΚΟΣ!! 😱", 2200);
                 if (mood === 'bored') showSpeech("Βαριέμαι... 🥱", 2200);
+                if (mood === 'tired') showSpeech("Νυστάζω... 😴", 2200);
+                if (mood === 'hungry') showSpeech("Πεινάω... 🍽️", 2200);
             }
 
             let lastT = 0;
@@ -3218,6 +2432,7 @@
                 updateParticles(dt);
                 updateStarfield(0.8);
 
+                // Update Tamagotchi Stats & UI every 3s
                 if (Math.floor(t / 3000) > Math.floor((t - dt * 1000) / 3000)) {
                     updateTamagotchiStats();
                 }
@@ -3232,7 +2447,6 @@
                         core.position.y = Math.abs(Math.sin(t * 0.008)) * 1.2;
                         aziramPet.rotation.x -= 0.15;
                         aziramPet.rotation.y += 0.1;
-                        // CLAPPING HANDS
                         sockets.handL.position.y = 0.8 + Math.sin(t * 0.015) * 0.2;
                         sockets.handR.position.y = 0.8 + Math.cos(t * 0.015) * 0.2;
                         sockets.handL.position.x = -0.3 + Math.sin(t * 0.015) * 0.2;
@@ -3262,7 +2476,8 @@
                         if (aziramMood !== prevMood) { onMoodChange(aziramMood);
                             prevMood = aziramMood; }
 
-                        if (aziramMood === 'angry' || aziramMood === 'anxious') {
+                        // State machine
+                        if (aziramMood === 'angry' || aziramMood === 'anxious' || aziramMood === 'tired' || aziramMood === 'hungry') {
                             if (petState === 'sleep' || petState === 'walk') { petState = 'stand';
                                 petStateTimer = 2; }
                         } else {
@@ -3339,25 +2554,26 @@
                             if (showBrows) { browL.rotation.z = -0.45;
                                 browR.rotation.z = 0.45; }
 
-                            if (aziramMood === 'angry') {
+                            if (aziramMood === 'angry' || aziramMood === 'anxious') {
                                 if (aziramEyes) aziramEyes.scale.set(1, 0.7, 1);
                                 if (!isTalking) mouthMesh.scale.set(0.8, 0.12, 0.35);
-                                if (now - lastSmokeTime > 1200) {
+                                if (now - lastSmokeTime > 1200 && aziramMood === 'angry') {
                                     lastSmokeTime = now;
                                     const wp = new THREE.Vector3();
                                     sockets.head.getWorldPosition(wp);
                                     spawnBurst(wp.x, wp.y + 0.2, wp.z, 'smoke', 2);
                                 }
-                            } else if (aziramMood === 'anxious') {
-                                if (aziramEyes) aziramEyes.scale.set(1.3, 1.3, 1.3);
-                                if (!isTalking) mouthMesh.scale.set(0.5, 0.55, 0.35);
-                                aziramPet.position.x += (Math.random() - 0.5) * 0.05;
-                                aziramPet.position.y += (Math.random() - 0.5) * 0.05;
                             } else if (aziramMood === 'bored') {
                                 if (aziramEyes) aziramEyes.scale.set(1, 0.35, 1);
                                 aziramPet.rotation.z = Math.sin(t * 0.0008) * 0.12;
                                 const yawn = Math.max(0, Math.sin(t * 0.0012));
                                 if (!isTalking) mouthMesh.scale.set(0.55 + yawn * 0.2, 0.2 + yawn * 0.55, 0.35);
+                            } else if (aziramMood === 'tired') {
+                                if (aziramEyes) aziramEyes.scale.set(1, 0.2, 1);
+                                if (!isTalking) mouthMesh.scale.set(0.5, 0.15, 0.35);
+                            } else if (aziramMood === 'hungry') {
+                                if (aziramEyes) aziramEyes.scale.set(1, 0.6, 1);
+                                if (!isTalking) mouthMesh.scale.set(0.7, 0.45, 0.35);
                             } else {
                                 if (aziramEyes) aziramEyes.scale.set(1, 1, 1);
                                 if (!isTalking) mouthMesh.scale.set(1, 0.35, 0.35);
@@ -3389,7 +2605,7 @@
             (async function() {
                 const keys = ['drop2048-save-pure', 'drop2048-save-v2', 'drop2048-save-v3', 'drop2048-save-v4',
                     'drop2048-v5', 'drop2048-frankly-v1', 'drop2048-frankly-v2', 'drop2048-frankly-v3',
-                    'drop2048-frankly-v4', 'drop2048-frankly-v5', 'drop2048-frankly-v6'
+                    'drop2048-frankly-v4', 'drop2048-frankly-v5', 'drop2048-frankly-v6', 'drop2048-frankly-v7'
                 ];
                 keys.forEach(k => localStorage.removeItem(k));
 
@@ -3398,30 +2614,7 @@
                 document.getElementById('btnCloseShop').onclick = () => { document.getElementById('shopModal')
                     .classList.add('hidden'); };
 
-                document.getElementById('btnHome').onclick = () => {
-                    updateTamagotchiStats();
-                    renderHomeStats();
-                    updateFurniture();
-                    renderHomeAvatar();
-                    document.getElementById('homeModal').classList.remove('hidden');
-                };
-                document.getElementById('btnCloseHome').onclick = () => { document.getElementById('homeModal')
-                    .classList.add('hidden'); };
-                document.getElementById('btnSleep').onclick = doSleep;
-                document.getElementById('btnFeed').onclick = doFeed;
-                document.getElementById('btnWash').onclick = doWash;
-                document.getElementById('btnToilet').onclick = doToilet;
-
-                document.querySelectorAll('.room-tab').forEach(tab => {
-                    tab.onclick = (e) => {
-                        document.querySelectorAll('.room-tab').forEach(t => t.classList.remove('active'));
-                        e.target.classList.add('active');
-                        const room = e.target.dataset.room;
-                        document.querySelectorAll('.room-panel').forEach(p => p.classList.remove('active'));
-                        document.getElementById('room' + room.charAt(0).toUpperCase() + room.slice(1))
-                            .classList.add('active');
-                    };
-                });
+                // No Home button anymore
 
                 document.addEventListener('pointerdown', () => { if (audioCtx.state === 'suspended') audioCtx
                         .resume(); }, { once: true });
@@ -3448,6 +2641,7 @@
                 newBoard();
                 updateHUD();
                 initMic();
+                renderTamagotchiUI();
 
                 equipPetSlot('pet_color', save.equippedPetColor);
                 equipPetSlot('pet_head', save.equippedPetHead);
@@ -3456,9 +2650,6 @@
                 equipPetSlot('pet_hands', save.equippedPetHands);
                 equipPetSlot('pet_props', save.equippedPetProps);
                 equipPetSlot('pet_feet', save.equippedPetFeet);
-                equipClothes(save.equippedPetClothes);
-                updateFurniture();
-                renderHomeAvatar();
 
                 const cvs = document.getElementById("game");
                 cvs.addEventListener("pointermove", (e) => { if (!busy) setAim((e.touches ? e.touches[0].clientX : e
@@ -3467,10 +2658,9 @@
                 document.getElementById("btnNext").onclick = () => {
                     document.getElementById("winModal").classList.add("hidden");
                     level = Math.min(level + 1, LEVELS.length - 1);
-                    winShown = false; // reset for next level
+                    winShown = false;
                     busy = false;
                     updateHUD();
-                    // Continue playing
                 };
                 document.getElementById("btnRetry").onclick = () => {
                     document.getElementById("loseModal").classList.add("hidden");
@@ -3479,7 +2669,7 @@
                     winShown = false;
                 };
 
-                tamagotchiInterval = setInterval(() => { updateTamagotchiStats(); }, 3000);
+                setInterval(() => { updateTamagotchiStats(); }, 3000);
             })();
         })();
     </script>
