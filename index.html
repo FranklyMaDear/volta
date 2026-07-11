@@ -16,8 +16,9 @@
             --coin: #F5C542;
             --red: #C2542F;
             --blue: #4A7DBF;
-            --hud-height: 64px;
-            --btn-size: 48px;
+            /* ΑΥΞΗΣΗ 100% ΣΤΑ ΜΕΓΕΘΗ */
+            --hud-height: 90px; 
+            --btn-size: 80px;
         }
         * {
             margin: 0;
@@ -49,73 +50,81 @@
             left: 0;
             right: 0;
             top: 0;
-            padding: 8px 14px 6px;
+            padding: 12px 18px 10px;
             display: flex;
-            gap: 10px;
+            gap: 14px;
             align-items: center;
             pointer-events: none;
             z-index: 5;
-            background: rgba(11, 12, 16, 0.80);
-            backdrop-filter: blur(6px);
-            border-bottom: 2px solid rgba(255, 255, 255, 0.10);
+            background: rgba(11, 12, 16, 0.92);
+            backdrop-filter: blur(8px);
+            border-bottom: 3px solid rgba(255, 255, 255, 0.10);
             height: var(--hud-height);
         }
         .chip {
             background: var(--panel-deep);
             color: var(--cream);
-            border-radius: 16px;
-            padding: 8px 16px;
+            border-radius: 24px;
+            padding: 10px 22px;
             font-weight: 800;
-            font-size: 18px;
+            font-size: 22px;
             box-shadow: 0 4px 0 rgba(0, 0, 0, .4);
             display: flex;
             align-items: center;
-            gap: 6px;
+            gap: 8px;
             pointer-events: auto;
             line-height: 1.2;
+            white-space: nowrap;
         }
         .chip small {
-            font-weight: 600;
-            opacity: .8;
-            font-size: 11px;
+            font-weight: 700;
+            opacity: .85;
+            font-size: 14px;
             display: block;
             line-height: 1;
         }
         .chip .big {
-            font-size: 22px;
+            font-size: 28px;
             line-height: 1.1;
         }
         .spacer {
             flex: 1;
         }
         .hud-btn {
-            background: var(--accent);
             border: none;
             cursor: pointer;
             color: #fff;
-            border-radius: 16px;
-            padding: 8px 18px;
+            border-radius: 20px;
+            padding: 12px 28px;
             font-weight: 800;
-            font-size: 18px;
-            box-shadow: 0 4px 0 #b8742a;
+            font-size: 22px;
+            box-shadow: 0 5px 0 #b8742a;
             pointer-events: auto;
             transition: transform .08s;
             font-family: inherit;
             display: flex;
             align-items: center;
-            gap: 4px;
+            gap: 6px;
             line-height: 1.3;
+            background: var(--accent);
         }
         .hud-btn:active {
-            transform: translateY(3px);
+            transform: translateY(4px);
             box-shadow: 0 1px 0 #b8742a;
         }
+        /* ΒΕΛΤΙΩΜΕΝΟ ΚΟΥΜΠΙ ΚΑΤΑΣΤΗΜΑΤΟΣ */
         .hud-btn.shop-btn {
-            background: var(--blue);
-            box-shadow: 0 4px 0 #2d5a7a;
+            background: linear-gradient(145deg, #5a92d9, #2d5a7a);
+            box-shadow: 0 6px 0 #1a3a50, inset 0 2px 6px rgba(255,255,255,0.2);
+            border: 1px solid rgba(255,255,255,0.15);
+            font-size: 24px;
+            padding: 10px 30px;
+            border-radius: 24px;
+            letter-spacing: 0.5px;
         }
         .hud-btn.shop-btn:active {
-            box-shadow: 0 1px 0 #2d5a7a;
+            transform: translateY(4px);
+            box-shadow: 0 2px 0 #1a3a50, inset 0 2px 6px rgba(255,255,255,0.2);
         }
 
         /* ===== NEW CUBE BUTTONS (TOP, BELOW HUD) ===== */
@@ -126,14 +135,14 @@
             right: 0;
             display: flex;
             justify-content: center;
-            gap: 16px;
-            padding: 8px 12px;
+            gap: 24px;
+            padding: 12px 20px;
             z-index: 4;
-            background: rgba(11, 12, 16, 0.45);
-            backdrop-filter: blur(4px);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+            background: rgba(11, 12, 16, 0.6);
+            backdrop-filter: blur(6px);
+            border-bottom: 2px solid rgba(255, 255, 255, 0.06);
             pointer-events: none;
-            height: 70px;
+            height: 105px; /* Αυξημένο λόγω μεγαλύτερων κουμπιών */
             align-items: center;
         }
         .cbtn {
@@ -142,11 +151,11 @@
             cursor: pointer;
             width: var(--btn-size);
             height: var(--btn-size);
-            border-radius: 10px;
+            border-radius: 16px;
             background: var(--accent);
-            box-shadow: 0 5px 0 #b8742a;
+            box-shadow: 0 7px 0 #b8742a;
             color: #fff;
-            font-size: 28px;
+            font-size: 36px;
             line-height: 1;
             display: flex;
             align-items: center;
@@ -154,23 +163,22 @@
             font-family: inherit;
             transition: transform .08s;
             transform: perspective(400px) rotateX(16deg);
-            /* cube shape */
         }
         .cbtn:active {
-            transform: perspective(400px) rotateX(16deg) translateY(4px);
+            transform: perspective(400px) rotateX(16deg) translateY(6px);
             box-shadow: 0 1px 0 #b8742a;
         }
         .cbtn .label {
-            font-size: 9px;
+            font-size: 14px;
             font-weight: 800;
             position: absolute;
-            bottom: -22px;
+            bottom: -30px;
             color: #fff;
-            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.6);
+            text-shadow: 0 3px 6px rgba(0, 0, 0, 0.8);
             white-space: nowrap;
-            background: rgba(0, 0, 0, 0.4);
-            padding: 1px 6px;
-            border-radius: 6px;
+            background: rgba(0, 0, 0, 0.5);
+            padding: 4px 10px;
+            border-radius: 10px;
         }
         .cbtn-wrap {
             position: relative;
@@ -182,7 +190,7 @@
         /* ===== TOAST ===== */
         #toast {
             position: fixed;
-            bottom: 80px;
+            bottom: 100px;
             left: 50%;
             transform: translateX(-50%);
             z-index: 15;
@@ -190,15 +198,15 @@
             background: var(--panel-deep);
             color: var(--cream);
             font-weight: 700;
-            font-size: 16px;
-            border-radius: 16px;
-            padding: 12px 24px;
+            font-size: 20px;
+            border-radius: 20px;
+            padding: 16px 32px;
             opacity: 0;
             transition: opacity .25s;
             max-width: 90vw;
             text-align: center;
             white-space: normal;
-            box-shadow: 0 6px 16px rgba(0, 0, 0, .5);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, .6);
         }
 
         /* ===== SPEECH BUBBLE ===== */
@@ -207,46 +215,46 @@
             z-index: 10;
             pointer-events: none;
             font-weight: 800;
-            font-size: 22px;
+            font-size: 26px;
             background: #ffffff;
             color: #333;
-            padding: 10px 22px;
-            border-radius: 24px;
-            border: 4px solid var(--panel-deep);
-            box-shadow: 0 4px 0 var(--panel-deep);
+            padding: 14px 28px;
+            border-radius: 30px;
+            border: 5px solid var(--panel-deep);
+            box-shadow: 0 6px 0 var(--panel-deep);
             transform: translate(-50%, -120%);
             opacity: 0;
             transition: opacity 0.2s ease-in-out, transform 0.2s ease-in-out;
-            max-width: 75vw;
+            max-width: 80vw;
             white-space: normal;
             text-align: center;
         }
         #speech.visible {
             opacity: 1;
-            transform: translate(-50%, -140%);
+            transform: translate(-50%, -150%);
         }
         #speech::after {
             content: "";
             position: absolute;
             top: 100%;
             left: 50%;
-            margin-left: -12px;
-            border-width: 14px;
+            margin-left: -16px;
+            border-width: 18px;
             border-style: solid;
             border-color: #ffffff transparent transparent transparent;
-            filter: drop-shadow(0 4px 0 var(--panel-deep));
+            filter: drop-shadow(0 6px 0 var(--panel-deep));
         }
 
         /* ===== SHOP (FULL SCREEN) ===== */
         .overlay {
             position: fixed;
             inset: 0;
-            background: rgba(11, 12, 16, .92);
+            background: rgba(11, 12, 16, .94);
             display: flex;
             align-items: center;
             justify-content: center;
             z-index: 20;
-            backdrop-filter: blur(6px);
+            backdrop-filter: blur(8px);
             padding: 0;
         }
         .card {
@@ -257,7 +265,7 @@
             height: 100%;
             max-width: 100%;
             max-height: 100%;
-            padding: 24px 20px;
+            padding: 30px 24px;
             text-align: center;
             box-shadow: none;
             animation: pop .25s cubic-bezier(.34, 1.56, .64, 1);
@@ -272,27 +280,27 @@
             }
         }
         .card h2 {
-            font-size: 28px;
-            margin-bottom: 12px;
+            font-size: 34px;
+            margin-bottom: 16px;
             font-weight: 800;
             flex-shrink: 0;
         }
         .shop-tabs {
             display: flex;
-            gap: 8px;
-            margin-bottom: 14px;
+            gap: 12px;
+            margin-bottom: 18px;
             border-bottom: 2px solid rgba(0, 0, 0, 0.10);
-            padding-bottom: 12px;
+            padding-bottom: 14px;
             overflow-x: auto;
             flex-shrink: 0;
             flex-wrap: nowrap;
         }
         .shop-tab {
             flex: 0 0 auto;
-            padding: 10px 16px;
+            padding: 12px 20px;
             font-weight: 800;
-            font-size: 15px;
-            border-radius: 14px;
+            font-size: 17px;
+            border-radius: 16px;
             background: #E4D7BC;
             color: #8C6A4F;
             border: none;
@@ -303,30 +311,30 @@
         .shop-tab.active {
             background: var(--accent);
             color: #fff;
-            box-shadow: 0 3px 0 #b8742a;
+            box-shadow: 0 4px 0 #b8742a;
             transform: translateY(-2px);
         }
         .shop-items {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 12px;
+            gap: 16px;
             overflow-y: auto;
-            padding-right: 4px;
+            padding-right: 6px;
             flex: 1;
             min-height: 0;
         }
         .shop-items::-webkit-scrollbar {
-            width: 4px;
+            width: 5px;
         }
         .shop-items::-webkit-scrollbar-thumb {
             background: var(--panel-deep);
-            border-radius: 4px;
+            border-radius: 6px;
         }
         .shop-item {
             background: #E4D7BC;
-            border: 3px solid #8C6A4F;
-            border-radius: 18px;
-            padding: 12px 8px;
+            border: 4px solid #8C6A4F;
+            border-radius: 22px;
+            padding: 16px 10px;
             cursor: pointer;
             transition: transform 0.1s;
             text-align: center;
@@ -335,7 +343,7 @@
             transform: scale(0.95);
         }
         .shop-item h3 {
-            font-size: 16px;
+            font-size: 18px;
             margin-bottom: 4px;
             color: var(--ink);
             line-height: 1.2;
@@ -343,7 +351,7 @@
         .shop-item .price {
             font-weight: 800;
             color: #b8742a;
-            font-size: 14px;
+            font-size: 16px;
         }
         .shop-item.owned .price {
             color: var(--good);
@@ -351,34 +359,34 @@
         .shop-item.equipped {
             border-color: var(--accent);
             background: #FFF5E1;
-            box-shadow: 0 0 10px rgba(242, 160, 61, 0.4);
+            box-shadow: 0 0 15px rgba(242, 160, 61, 0.5);
         }
         .btn {
             border: none;
             cursor: pointer;
             font-family: inherit;
             font-weight: 800;
-            font-size: 20px;
+            font-size: 24px;
             color: #fff;
             background: var(--accent);
-            border-radius: 20px;
-            padding: 14px 28px;
-            box-shadow: 0 5px 0 #b8742a;
+            border-radius: 24px;
+            padding: 18px 32px;
+            box-shadow: 0 6px 0 #b8742a;
             transition: transform .08s;
-            margin-top: 16px;
+            margin-top: 20px;
             width: 100%;
             flex-shrink: 0;
         }
         .btn:active {
-            transform: translateY(3px);
-            box-shadow: 0 1px 0 #b8742a;
+            transform: translateY(4px);
+            box-shadow: 0 2px 0 #b8742a;
         }
         .btn.secondary {
             background: var(--blue);
-            box-shadow: 0 5px 0 #2d5a7a;
+            box-shadow: 0 6px 0 #2d5a7a;
         }
         .btn.secondary:active {
-            box-shadow: 0 1px 0 #2d5a7a;
+            box-shadow: 0 2px 0 #2d5a7a;
         }
         .hidden {
             display: none !important;
@@ -389,96 +397,46 @@
             z-index: 25;
         }
         .win-lose-overlay .card {
-            border-radius: 32px;
-            width: min(420px, 92vw);
+            border-radius: 40px;
+            width: min(500px, 92vw);
             height: auto;
-            max-height: 92vh;
-            padding: 30px 24px;
-            box-shadow: 0 12px 0 rgba(0, 0, 0, .5);
-            border: 4px solid var(--panel-deep);
+            max-height: 90vh;
+            padding: 40px 30px;
+            box-shadow: 0 16px 0 rgba(0, 0, 0, .5);
+            border: 6px solid var(--panel-deep);
         }
 
         /* ===== RESPONSIVE ===== */
         @media (max-width: 480px) {
             :root {
-                --hud-height: 56px;
-                --btn-size: 40px;
+                --hud-height: 80px;
+                --btn-size: 64px;
             }
-            .hud {
-                padding: 6px 8px;
-                gap: 6px;
-                height: var(--hud-height);
-            }
-            .chip {
-                font-size: 14px;
-                padding: 6px 10px;
-                border-radius: 12px;
-            }
-            .chip .big {
-                font-size: 17px;
-            }
-            .hud-btn {
-                font-size: 15px;
-                padding: 6px 12px;
-                border-radius: 12px;
-            }
-            .cube-bar {
-                top: var(--hud-height);
-                height: 60px;
-                gap: 12px;
-            }
-            .cbtn {
-                width: var(--btn-size);
-                height: var(--btn-size);
-                font-size: 22px;
-                border-radius: 8px;
-            }
-            .cbtn .label {
-                font-size: 7px;
-                bottom: -18px;
-            }
-            #toast {
-                font-size: 14px;
-                padding: 10px 18px;
-                bottom: 60px;
-            }
-            #speech {
-                font-size: 18px;
-                padding: 8px 16px;
-                border-radius: 20px;
-            }
-            .card h2 {
-                font-size: 24px;
-            }
-            .shop-item h3 {
-                font-size: 14px;
-            }
-            .win-lose-overlay .card {
-                width: 95vw;
-                padding: 20px 16px;
-            }
+            .hud { padding: 8px 12px; gap: 8px; }
+            .chip { font-size: 17px; padding: 8px 14px; border-radius: 18px; }
+            .chip .big { font-size: 22px; }
+            .chip small { font-size: 12px; }
+            .hud-btn { font-size: 18px; padding: 8px 18px; border-radius: 16px; }
+            .hud-btn.shop-btn { font-size: 20px; padding: 8px 20px; }
+            .cube-bar { height: 90px; gap: 16px; padding: 8px; }
+            .cbtn { font-size: 28px; border-radius: 12px; }
+            .cbtn .label { font-size: 11px; bottom: -24px; padding: 2px 8px; }
+            #toast { font-size: 16px; padding: 12px 20px; bottom: 80px; }
+            #speech { font-size: 20px; padding: 10px 18px; border-radius: 22px; }
+            .card h2 { font-size: 26px; }
+            .shop-item h3 { font-size: 15px; }
+            .win-lose-overlay .card { width: 95vw; padding: 24px 18px; }
         }
         @media (max-width: 380px) {
             :root {
-                --hud-height: 50px;
-                --btn-size: 36px;
+                --hud-height: 70px;
+                --btn-size: 56px;
             }
-            .chip {
-                font-size: 12px;
-                padding: 4px 8px;
-            }
-            .chip .big {
-                font-size: 15px;
-            }
-            .hud-btn {
-                font-size: 13px;
-                padding: 4px 8px;
-            }
-            .cbtn {
-                width: var(--btn-size);
-                height: var(--btn-size);
-                font-size: 20px;
-            }
+            .chip { font-size: 14px; padding: 6px 10px; }
+            .chip .big { font-size: 18px; }
+            .hud-btn { font-size: 15px; padding: 6px 12px; }
+            .hud-btn.shop-btn { font-size: 16px; padding: 6px 14px; }
+            .cbtn { font-size: 24px; }
         }
     </style>
 </head>
@@ -508,7 +466,7 @@
     </div>
 
     <!-- ===== SPEECH BUBBLE ===== -->
-    <div id="speech"><span id="speechText">WOW!</span></div>
+    <div id="speech"><span id="speechText">Γεια σας!</span></div>
 
     <!-- ===== TOAST ===== -->
     <div id="toast"></div>
@@ -531,7 +489,7 @@
     <!-- ===== WIN / LOSE MODALS ===== -->
     <div class="overlay hidden win-lose-overlay" id="winModal">
         <div class="card">
-            <div style="font-size:48px; margin-bottom:6px;">🎉</div>
+            <div style="font-size:56px; margin-bottom:6px;">🎉</div>
             <h2>Επίπεδο Ολοκληρώθηκε!</h2>
             <p id="winText"></p>
             <button class="btn" id="btnNext">Συνέχεια ➜</button>
@@ -539,7 +497,7 @@
     </div>
     <div class="overlay hidden win-lose-overlay" id="loseModal">
         <div class="card">
-            <div style="font-size:48px; margin-bottom:6px;">😵</div>
+            <div style="font-size:56px; margin-bottom:6px;">😵</div>
             <h2>Γέμισε το ταμπλό!</h2>
             <p id="loseText"></p>
             <button class="btn" id="btnRetry">Ξαναπροσπάθησε</button>
@@ -550,9 +508,7 @@
     </script>
     <script>
         // ============================================================
-        //  DROP 2048 – FranklyGames Edition
-        //  Full game with infinite levels, new cube buttons,
-        //  full-screen shop, Aziram on grass, sun & clouds.
+        //  DROP 2048 – FranklyGames Edition (New UI & Avatar)
         // ============================================================
         (function() {
             'use strict';
@@ -566,7 +522,6 @@
             const BOARD_H = ROWS * (CELL + GAP) - GAP;
             const launchY = -BOARD_H / 2 - 0.4;
 
-            // Dynamic level system
             function getLevelTarget(level) {
                 return 64 * Math.pow(2, level);
             }
@@ -645,7 +600,7 @@
 
             function loadSave() {
                 try {
-                    const r = localStorage.getItem("drop2048-frankly-v9");
+                    const r = localStorage.getItem("drop2048-frankly-v10");
                     if (r) {
                         const parsed = JSON.parse(r);
                         save = Object.assign({}, DEFAULT_SAVE, parsed);
@@ -654,7 +609,7 @@
             }
 
             function persist() {
-                try { localStorage.setItem("drop2048-frankly-v9", JSON.stringify(save)); } catch (e) {}
+                try { localStorage.setItem("drop2048-frankly-v10", JSON.stringify(save)); } catch (e) {}
             }
 
             let coins = 0,
@@ -662,59 +617,65 @@
                 score = 0,
                 best = 0;
 
-            // ---------- AUDIO ----------
+            // ---------- AUDIO (Διορθωμένο) ----------
             const audioCtx = new(window.AudioContext || window.webkitAudioContext)();
 
             function playSound(type) {
                 if (audioCtx.state === 'suspended') audioCtx.resume();
-                if (type === 'win') { playWinSound(audioCtx); return; }
                 const s = save.equippedSound || 'snd_default';
                 const now = audioCtx.currentTime;
 
-                function tone(freq0, freq1, dur, wave, vol, delay) {
+                // Generic tone generator
+                function tone(freq, dur, wave, vol, delay, glideTo) {
                     const o = audioCtx.createOscillator();
                     const g = audioCtx.createGain();
                     o.connect(g);
                     g.connect(audioCtx.destination);
                     o.type = wave;
                     const t0 = now + (delay || 0);
-                    o.frequency.setValueAtTime(freq0, t0);
-                    if (freq1) o.frequency.exponentialRampToValueAtTime(freq1, t0 + dur);
-                    g.gain.setValueAtTime(vol, t0);
-                    g.gain.exponentialRampToValueAtTime(0.01, t0 + dur);
+                    o.frequency.setValueAtTime(freq, t0);
+                    if (glideTo) o.frequency.exponentialRampToValueAtTime(glideTo, t0 + dur);
+                    g.gain.setValueAtTime(vol || 0.15, t0);
+                    g.gain.exponentialRampToValueAtTime(0.001, t0 + dur);
                     o.start(t0);
                     o.stop(t0 + dur + 0.05);
                 }
+
                 if (s === 'snd_default') {
-                    if (type === 'drop') tone(800, 400, 0.1, 'sine', 0.2);
-                    else tone(300, 800, 0.2, 'sine', 0.3);
+                    if (type === 'drop') tone(800, 0.12, 'sine', 0.20);
+                    else if (type === 'merge') { tone(400, 0.08, 'sine', 0.25);
+                        setTimeout(() => tone(800, 0.08, 'sine', 0.25), 60); } else tone(300, 0.25, 'sine', 0.3);
                 } else if (s === 'snd_bass') {
-                    if (type === 'drop') tone(150, 60, 0.18, 'sawtooth', 0.3);
-                    else { tone(70, 200, 0.3, 'sawtooth', 0.35);
-                        tone(140, 400, 0.3, 'sine', 0.2); }
+                    if (type === 'drop') tone(120, 0.2, 'sawtooth', 0.35);
+                    else if (type === 'merge') { tone(80, 0.15, 'sawtooth', 0.4);
+                        setTimeout(() => tone(160, 0.15, 'sawtooth', 0.3), 70); } else { tone(90, 0.3, 'sawtooth', 0.3);
+                        tone(180, 0.25, 'sine', 0.15, 0.05); }
                 } else if (s === 'snd_bell') {
-                    if (type === 'drop') { tone(880, null, 0.35, 'sine', 0.15);
-                        tone(1760, null, 0.25, 'sine', 0.06); } else { tone(1046, null, 0.55, 'sine', 0.2);
-                        tone(2093, null, 0.4, 'sine', 0.08);
-                        tone(1568, null, 0.45, 'sine', 0.06, 0.05); }
+                    if (type === 'drop') { tone(880, 0.3, 'sine', 0.15);
+                        tone(1760, 0.25, 'sine', 0.08, 0.05); } else if (type === 'merge') { tone(1047, 0.4, 'sine', 0.2);
+                        tone(2093, 0.3, 'sine', 0.12, 0.08);
+                        tone(1568, 0.35, 'sine', 0.1, 0.1); } else { tone(784, 0.5, 'sine', 0.15);
+                        tone(1568, 0.4, 'sine', 0.08, 0.1); }
                 } else if (s === 'snd_echo') {
                     const f = type === 'drop' ? 600 : 900;
-                    for (let i = 0; i < 3; i++) tone(f, f * 0.8, 0.12, 'sine', 0.22 / (i + 1), i * 0.13);
+                    for (let i = 0; i < 3; i++) tone(f, 0.12, 'sine', 0.22 / (i + 1), i * 0.12, f * 0.8);
                 } else if (s === 'snd_retro') {
-                    if (type === 'drop') tone(440, 220, 0.08, 'square', 0.12);
-                    else { tone(523, null, 0.07, 'square', 0.12);
-                        tone(659, null, 0.07, 'square', 0.12, 0.07);
-                        tone(784, null, 0.1, 'square', 0.12, 0.14); }
+                    if (type === 'drop') tone(440, 0.1, 'square', 0.12, 0, 220);
+                    else if (type === 'merge') { tone(523, 0.08, 'square', 0.15);
+                        tone(659, 0.08, 'square', 0.12, 0.06);
+                        tone(784, 0.12, 'square', 0.15, 0.12); } else { tone(392, 0.15, 'square', 0.15); }
                 } else if (s === 'snd_pop') {
-                    if (type === 'drop') tone(1200, 300, 0.06, 'sine', 0.3);
-                    else { tone(400, 1600, 0.09, 'sine', 0.32);
-                        tone(600, 2000, 0.08, 'sine', 0.15, 0.06); }
+                    if (type === 'drop') tone(1200, 0.07, 'sine', 0.25, 0, 400);
+                    else if (type === 'merge') { tone(600, 0.1, 'sine', 0.3, 0, 1800);
+                        tone(800, 0.08, 'sine', 0.15, 0.06, 2400); } else { tone(400, 0.12, 'sine', 0.3, 0, 1600); }
                 } else if (s === 'snd_laser') {
-                    if (type === 'drop') tone(1800, 200, 0.15, 'sawtooth', 0.13);
-                    else tone(200, 2200, 0.2, 'sawtooth', 0.17);
+                    if (type === 'drop') tone(1800, 0.18, 'sawtooth', 0.15, 0, 150);
+                    else if (type === 'merge') { tone(250, 0.12, 'sawtooth', 0.2, 0, 2500);
+                        setTimeout(() => tone(400, 0.08, 'sawtooth', 0.15), 50); } else tone(200, 0.25, 'sawtooth', 0.2, 0,
+                        2200);
                 } else if (s === 'snd_magic') {
-                    const base = type === 'drop' ? 700 : 950;
-                    for (let i = 0; i < 4; i++) tone(base + i * 180, null, 0.16, 'triangle', 0.11, i * 0.05);
+                    const base = type === 'drop' ? 700 : 900;
+                    for (let i = 0; i < 4; i++) tone(base + i * 180, 0.16, 'triangle', 0.12, i * 0.06);
                 }
             }
 
@@ -726,12 +687,12 @@
                         osc.connect(gain);
                         gain.connect(ctx.destination);
                         osc.type = 'sine';
-                        osc.frequency.setValueAtTime(600 + (i * 200), ctx.currentTime);
+                        osc.frequency.setValueAtTime(600 + (i * 180), ctx.currentTime);
                         gain.gain.setValueAtTime(0.15, ctx.currentTime);
                         gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.2);
                         osc.start();
                         osc.stop(ctx.currentTime + 0.2);
-                    }, i * 80);
+                    }, i * 90);
                 }
             }
 
@@ -808,12 +769,12 @@
                 }
             }
 
-            // ---------- BACKGROUND ELEMENTS ----------
+            // ---------- BACKGROUND ELEMENTS (Repositioned) ----------
             let grassGroup, flowers = [],
                 sunMesh, cloudMeshes = [];
 
             function createBackground() {
-                // Grass at bottom
+                // Grass at the BOTTOM
                 grassGroup = new THREE.Group();
                 const grassMat = new THREE.MeshLambertMaterial({ color: 0x4caf50 });
                 const bladeGeo = new THREE.ConeGeometry(0.05, 0.25, 4);
@@ -821,7 +782,7 @@
                     const blade = new THREE.Mesh(bladeGeo, grassMat);
                     const x = (Math.random() - 0.5) * 20;
                     const z = (Math.random() - 0.5) * 8 - 6;
-                    blade.position.set(x, -BOARD_H / 2 - 0.5, z);
+                    blade.position.set(x, -BOARD_H / 2 - 0.4, z);
                     blade.rotation.x = (Math.random() - 0.5) * 0.2;
                     blade.rotation.z = (Math.random() - 0.5) * 0.3;
                     blade.scale.y = 0.5 + Math.random() * 0.7;
@@ -829,7 +790,7 @@
                 }
                 scene.add(grassGroup);
 
-                // Flowers on grass
+                // Flowers at the BOTTOM
                 const flowerColors = [0xff69b4, 0xff6347, 0xffd700, 0xff1493, 0xffa500, 0xda70d6];
                 for (let i = 0; i < 35; i++) {
                     const group = new THREE.Group();
@@ -842,13 +803,13 @@
                     group.add(head);
                     const x = (Math.random() - 0.5) * 18;
                     const z = (Math.random() - 0.5) * 6 - 5.5;
-                    group.position.set(x, -BOARD_H / 2 - 0.3, z);
+                    group.position.set(x, -BOARD_H / 2 - 0.2, z);
                     group.userData = { phase: Math.random() * 100, speed: 0.5 + Math.random() * 0.5 };
                     scene.add(group);
                     flowers.push(group);
                 }
 
-                // Sun (smiling, bright, large)
+                // Sun (TOP RIGHT, above the game)
                 const sunGroup = new THREE.Group();
                 const sunMat = new THREE.MeshLambertMaterial({ color: 0xffdd00, emissive: 0xffaa00, emissiveIntensity: 0.3 });
                 const sunCore = new THREE.Mesh(new THREE.SphereGeometry(0.9, 32, 32), sunMat);
@@ -868,7 +829,7 @@
                 smile.rotation.x = Math.PI / 2;
                 smile.rotation.z = 0.1;
                 sunGroup.add(smile);
-                // rays (brighter)
+                // rays
                 const rayMat = new THREE.MeshBasicMaterial({ color: 0xffdd00, transparent: true, opacity: 0.7 });
                 for (let i = 0; i < 14; i++) {
                     const angle = (i / 14) * Math.PI * 2;
@@ -878,14 +839,15 @@
                     ray.rotation.x = Math.PI / 2;
                     sunGroup.add(ray);
                 }
-                sunGroup.position.set(5.5, 4.5, -3.5);
+                // Move Sun high up and to the right, visible on all mobile screens
+                sunGroup.position.set(4.8, 6.5, -4.5); 
                 sunGroup.scale.set(1.4, 1.4, 1.4);
                 scene.add(sunGroup);
                 sunMesh = sunGroup;
 
-                // Clouds (moving from top)
+                // Clouds (TOP, in line with the sun)
                 const cloudMat = new THREE.MeshLambertMaterial({ color: 0xffffff, transparent: true, opacity: 0.85 });
-                for (let i = 0; i < 5; i++) {
+                for (let i = 0; i < 6; i++) {
                     const cloud = new THREE.Group();
                     const p1 = new THREE.Mesh(new THREE.SphereGeometry(0.6, 12, 12), cloudMat);
                     p1.position.set(0, 0, 0);
@@ -902,9 +864,10 @@
                     const p5 = new THREE.Mesh(new THREE.SphereGeometry(0.4, 12, 12), cloudMat);
                     p5.position.set(-0.25, 0.25, 0);
                     cloud.add(p5);
-                    cloud.position.set(-8 + i * 4.5, 3.0 + Math.random() * 2, -3.5 - Math.random() * 2);
+                    // Start far left, move across top
+                    cloud.position.set(-10 + i * 4.0, 5.0 + Math.random() * 1.5, -4.5 - Math.random() * 1.5);
                     cloud.scale.set(1 + Math.random() * 0.6, 1 + Math.random() * 0.4, 1);
-                    cloud.userData = { speed: 0.25 + Math.random() * 0.35, dir: Math.random() > 0.5 ? 1 : -1 };
+                    cloud.userData = { speed: 0.2 + Math.random() * 0.3, dir: Math.random() > 0.5 ? 1 : -1 };
                     scene.add(cloud);
                     cloudMeshes.push(cloud);
                 }
@@ -917,7 +880,7 @@
                     const speed = f.userData.speed;
                     f.rotation.z = Math.sin(performance.now() * 0.001 * speed + phase) * 0.12;
                 });
-                // move clouds faster
+                // move clouds along the top
                 cloudMeshes.forEach(c => {
                     c.position.x += c.userData.speed * c.userData.dir * dt * 0.8;
                     if (c.position.x > 12) c.position.x = -12;
@@ -925,27 +888,26 @@
                 });
                 // sun rotation
                 if (sunMesh) {
-                    sunMesh.rotation.y += dt * 0.08;
+                    sunMesh.rotation.y += dt * 0.06;
                 }
             }
 
-            // ---------- AZIRAM PET (3D) ----------
-            let aziramPet, aziramBodyMesh, aziramCore, sockets = {};
-            let mouthMesh, browL, browR, aziramEyes = null;
+            // ---------- NEW AVATAR (Η ΑΖΙΡΑΜ - Little Girl with Blonde Hair) ----------
+            let aziramPet, aziramCore = null;
+            let mouthMesh = null, browL = null, browR = null;
             let aziramReactionTime = 0,
                 aziramWinTime = 0;
             let aziramBasePosition = new THREE.Vector3(2.5, -BOARD_H / 2 - 0.6, 0.5);
             let aziramMood = 'idle',
                 prevMood = 'idle';
             let lastActionTime = 0;
-            const aziramBaseColor = new THREE.Color(0x33ffaa);
-            const angryColor = new THREE.Color(0xff5544);
 
             let aziramNdcX = 0.5,
                 wanderTargetX = -0.2,
                 petState = 'stand',
                 petStateTimer = 3,
                 faceDir = -1;
+            let aziramEyes = null;
 
             function pickNextState() {
                 const r = Math.random();
@@ -967,7 +929,6 @@
             }
 
             let speechTimer = null;
-
             function showSpeech(text, duration) {
                 const el = document.getElementById("speechText");
                 const bbl = document.getElementById("speech");
@@ -995,66 +956,76 @@
 
             function createAziram() {
                 const petGroup = new THREE.Group();
-                petGroup.scale.set(0.35, 0.35, 0.35);
-                const jellyCore = new THREE.Group();
-                const bodyMat = new THREE.MeshPhongMaterial({ color: 0x33ffaa, shininess: 160, transparent: true,
-                    opacity: 0.88 });
-                aziramBodyMesh = new THREE.Mesh(new THREE.SphereGeometry(0.7, 32, 32), bodyMat);
-                aziramBodyMesh.scale.set(0.82, 1.18, 0.72);
-                jellyCore.add(aziramBodyMesh);
-                const innerGlow = new THREE.Mesh(new THREE.SphereGeometry(0.35, 16, 16), new THREE.MeshBasicMaterial(
-                    { color: 0xffffff, transparent: true, opacity: 0.15 }));
-                innerGlow.position.set(0, 0.15, 0);
-                innerGlow.scale.set(1, 1.3, 0.8);
-                jellyCore.add(innerGlow);
+                petGroup.scale.set(0.40, 0.40, 0.40);
+                
+                const core = new THREE.Group();
+                // Skin body
+                const skinMat = new THREE.MeshPhongMaterial({ color: 0xffe0bd, shininess: 80 });
+                const bodyMesh = new THREE.Mesh(new THREE.SphereGeometry(0.7, 32, 32), skinMat);
+                bodyMesh.scale.set(0.82, 0.9, 0.72);
+                core.add(bodyMesh);
 
-                mouthMesh = new THREE.Mesh(new THREE.SphereGeometry(0.16, 24, 16), new THREE.MeshBasicMaterial(
-                    { color: 0x5a1a1a }));
-                mouthMesh.position.set(0, -0.18, 0.47);
-                mouthMesh.scale.set(1, 0.35, 0.35);
-                jellyCore.add(mouthMesh);
+                // Blonde Hair
+                const hairMat = new THREE.MeshPhongMaterial({ color: 0xffd700 });
+                // Hair base (bob cut)
+                const hairBase = new THREE.Mesh(new THREE.SphereGeometry(0.65, 32, 32), hairMat);
+                hairBase.position.set(0, 0.55, 0);
+                hairBase.scale.set(1.2, 0.25, 1.2);
+                core.add(hairBase);
+                // Hair top bun/pony
+                const hairTop = new THREE.Mesh(new THREE.SphereGeometry(0.3, 16, 16), hairMat);
+                hairTop.position.set(0, 0.85, 0);
+                core.add(hairTop);
+                // Hair bangs
+                const hairBangs = new THREE.Mesh(new THREE.SphereGeometry(0.15, 16, 16), hairMat);
+                hairBangs.position.set(-0.25, 0.45, 0.45);
+                core.add(hairBangs);
+                const hairBangs2 = new THREE.Mesh(new THREE.SphereGeometry(0.15, 16, 16), hairMat);
+                hairBangs2.position.set(0.25, 0.45, 0.45);
+                core.add(hairBangs2);
 
-                const browMat = new THREE.MeshBasicMaterial({ color: 0x113322 });
-                browL = new THREE.Mesh(new THREE.BoxGeometry(0.26, 0.06, 0.05), browMat);
-                browL.position.set(-0.26, 0.46, 0.42);
-                browL.visible = false;
-                jellyCore.add(browL);
-                browR = new THREE.Mesh(new THREE.BoxGeometry(0.26, 0.06, 0.05), browMat);
-                browR.position.set(0.26, 0.46, 0.42);
-                browR.visible = false;
-                jellyCore.add(browR);
+                // Eyes
+                const whiteMat = new THREE.MeshBasicMaterial({ color: 0xffffff });
+                const pupilMat = new THREE.MeshBasicMaterial({ color: 0x222222 });
+                const eyeL = new THREE.Group();
+                const eL = new THREE.Mesh(new THREE.SphereGeometry(0.12, 16, 16), whiteMat);
+                const pL = new THREE.Mesh(new THREE.SphereGeometry(0.06, 16, 16), pupilMat);
+                pL.position.set(0.03, 0.02, 0.1);
+                eyeL.add(eL, pL);
+                eyeL.position.set(-0.22, 0.20, 0.48);
+                core.add(eyeL);
 
-                sockets.head = new THREE.Group();
-                sockets.head.position.set(0, 0.8, 0);
-                jellyCore.add(sockets.head);
-                sockets.face = new THREE.Group();
-                jellyCore.add(sockets.face);
-                sockets.body = new THREE.Group();
-                jellyCore.add(sockets.body);
+                const eyeR = new THREE.Group();
+                const eR = new THREE.Mesh(new THREE.SphereGeometry(0.12, 16, 16), whiteMat);
+                const pR = new THREE.Mesh(new THREE.SphereGeometry(0.06, 16, 16), pupilMat);
+                pR.position.set(-0.03, 0.02, 0.1);
+                eyeR.add(eR, pR);
+                eyeR.position.set(0.22, 0.20, 0.48);
+                core.add(eyeR);
+                
+                aziramEyes = new THREE.Group();
+                aziramEyes.add(eyeL, eyeR);
+                core.add(aziramEyes);
 
-                sockets.hands = new THREE.Group();
-                sockets.handL = new THREE.Group();
-                sockets.handL.position.set(-0.62, -0.1, 0);
-                sockets.hands.add(sockets.handL);
-                sockets.handR = new THREE.Group();
-                sockets.handR.position.set(0.62, -0.1, 0);
-                sockets.hands.add(sockets.handR);
-                sockets.prop = new THREE.Group();
-                sockets.prop.position.set(0.15, 0.1, 0.35);
-                sockets.handR.add(sockets.prop);
-                jellyCore.add(sockets.hands);
+                // Mouth
+                const mouthMat = new THREE.MeshBasicMaterial({ color: 0x882222 });
+                mouthMesh = new THREE.Mesh(new THREE.TorusGeometry(0.1, 0.04, 8, 12, Math.PI), mouthMat);
+                mouthMesh.position.set(0, -0.1, 0.48);
+                mouthMesh.rotation.x = Math.PI / 2;
+                mouthMesh.rotation.z = 0.1;
+                core.add(mouthMesh);
 
-                sockets.feet = new THREE.Group();
-                sockets.footL = new THREE.Group();
-                sockets.footL.position.set(-0.3, -0.88, 0.05);
-                sockets.feet.add(sockets.footL);
-                sockets.footR = new THREE.Group();
-                sockets.footR.position.set(0.3, -0.88, 0.05);
-                sockets.feet.add(sockets.footR);
-                jellyCore.add(sockets.feet);
+                // Blush (just a nice detail)
+                const blushMat = new THREE.MeshBasicMaterial({ color: 0xffb6c1, transparent: true, opacity: 0.4 });
+                const blushL = new THREE.Mesh(new THREE.SphereGeometry(0.08, 8, 8), blushMat);
+                blushL.position.set(-0.32, -0.02, 0.42);
+                core.add(blushL);
+                const blushR = new THREE.Mesh(new THREE.SphereGeometry(0.08, 8, 8), blushMat);
+                blushR.position.set(0.32, -0.02, 0.42);
+                core.add(blushR);
 
-                petGroup.add(jellyCore);
-                aziramCore = jellyCore;
+                petGroup.add(core);
+                aziramCore = core;
                 petGroup.rotation.y = -0.3;
                 petGroup.rotation.x = 0.2;
                 return petGroup;
@@ -1062,31 +1033,13 @@
 
             function updateAziramScreenPosition() {
                 if (!aziramPet || !camera) return;
-                // Position at bottom of screen (on grass)
-                const ndc = new THREE.Vector3(aziramNdcX, -0.90, 0.1);
+                const ndc = new THREE.Vector3(aziramNdcX, -0.88, 0.1);
                 ndc.unproject(camera);
                 const dir = ndc.clone().sub(camera.position).normalize();
                 const pos = camera.position.clone().add(dir.multiplyScalar(5.5));
                 aziramBasePosition.copy(pos);
                 aziramPet.position.copy(aziramBasePosition);
                 updateSpeechPosition();
-            }
-
-            function addExpressiveEyes(color) {
-                const g = new THREE.Group();
-                const ballMat = new THREE.MeshBasicMaterial({ color: color || 0x111111 });
-                const hlMat = new THREE.MeshBasicMaterial({ color: 0xffffff });
-                [-0.24, 0.24].forEach(x => {
-                    const eye = new THREE.Group();
-                    const ball = new THREE.Mesh(new THREE.SphereGeometry(0.15, 16, 16), ballMat);
-                    const hl = new THREE.Mesh(new THREE.SphereGeometry(0.05, 8, 8), hlMat);
-                    hl.position.set(0.05, 0.06, 0.11);
-                    eye.add(ball, hl);
-                    eye.position.set(x, 0.22, 0.44);
-                    g.add(eye);
-                });
-                sockets.face.add(g);
-                aziramEyes = g;
             }
 
             // ---------- THREE.JS GAME ----------
@@ -1263,9 +1216,10 @@
                     }
                 updateBoardColorsLive();
 
-                // Background elements
+                // Background elements (Grass, Flowers, Sun, Clouds)
                 createBackground();
 
+                // New Avatar "Azira"
                 aziramPet = createAziram();
                 scene.add(aziramPet);
                 updateAziramScreenPosition();
@@ -1317,7 +1271,6 @@
                 }
                 spawnCurrent();
                 lastActionTime = performance.now();
-                // Announce mission via speech
                 const mission = getLevelText(level);
                 setTimeout(() => showSpeech("🎯 Αποστολή: " + mission + "!", 3500), 500);
                 speak("Αποστολή: " + mission);
@@ -1577,7 +1530,6 @@
 
             function handleShuffle() {
                 if (busy) return;
-                // Collect all cubes
                 let cubes = [];
                 for (let c = 0; c < COLS; c++)
                     for (let r = 0; r < ROWS; r++) {
@@ -1587,16 +1539,13 @@
                             grid[c][r] = null;
                         }
                     }
-                // Shuffle positions
                 let positions = [];
                 for (let c = 0; c < COLS; c++)
                     for (let r = 0; r < ROWS; r++) positions.push({ c, r });
-                // Fisher-Yates shuffle
                 for (let i = cubes.length - 1; i > 0; i--) {
                     const j = Math.floor(Math.random() * (i + 1));
                     [cubes[i], cubes[j]] = [cubes[j], cubes[i]];
                 }
-                // Place back
                 for (let i = 0; i < cubes.length; i++) {
                     const pos = positions[i];
                     const cube = cubes[i];
@@ -1605,7 +1554,6 @@
                     boardGroup.add(cube.mesh);
                     grid[pos.c][pos.r] = { value: cube.value, mesh: cube.mesh };
                 }
-                // Apply gravity and merges
                 const moved = applyGravity();
                 resolveMerges(moved).then(() => {
                     updateHUD();
@@ -1645,7 +1593,7 @@
                             return;
                         }
                         aziramReactionTime = 1.0;
-                        const greetings = ["Γεια σου! 😊", "Χι χι! 😄", "Παίζουμε; 🎮", "Είμαι ο Aziram! 💚"];
+                        const greetings = ["Γεια σου! 😊", "Χι χι! 😄", "Παίζουμε; 🎮", "Είμαι η Αζίραμ! 💛"];
                         const pick = greetings[Math.floor(Math.random() * greetings.length)];
                         showSpeech(pick, 1800);
                         speak(pick.replace(/[^\u0370-\u03FF\u1F00-\u1FFFa-zA-Z; !?]/g, '').trim());
@@ -1739,7 +1687,6 @@
             }
 
             let toastTimer;
-
             function toast(msg) {
                 const t = document.getElementById("toast");
                 t.textContent = msg;
@@ -1777,19 +1724,12 @@
 
                 if (aziramPet) {
                     const core = aziramPet.children[0];
-                    if (aziramBodyMesh.userData.isRainbow) aziramBodyMesh.material.color.setHSL((t * 0.0005) % 1, 1,
-                        0.5);
-
+                    // Handle win dance / reaction states
                     if (aziramWinTime > 0) {
                         aziramWinTime -= dt;
                         core.position.y = Math.abs(Math.sin(t * 0.008)) * 1.2;
                         aziramPet.rotation.x -= 0.15;
                         aziramPet.rotation.y += 0.1;
-                        sockets.handL.position.y = 0.8 + Math.sin(t * 0.015) * 0.2;
-                        sockets.handR.position.y = 0.8 + Math.cos(t * 0.015) * 0.2;
-                        sockets.handL.position.x = -0.3 + Math.sin(t * 0.015) * 0.2;
-                        sockets.handR.position.x = 0.3 - Math.sin(t * 0.015) * 0.2;
-                        mouthMesh.scale.set(0.85, 0.85, 0.35);
                         if (Math.random() < 0.25) {
                             let wp = new THREE.Vector3();
                             core.getWorldPosition(wp);
@@ -1803,11 +1743,7 @@
                         aziramPet.rotation.y = -0.3 + Math.sin(t * 0.15) * 0.1;
                         core.scale.x = 1 + Math.sin(t * 0.2) * 0.1;
                         core.scale.y = 1 + Math.cos(t * 0.2) * 0.1;
-                        sockets.handL.position.y = Math.sin(t * 0.25) * 0.5;
-                        sockets.handR.position.y = Math.cos(t * 0.25) * 0.5;
-                        mouthMesh.scale.set(0.7, 0.7, 0.35);
-                        browL.visible = false;
-                        browR.visible = false;
+                        if (mouthMesh) mouthMesh.scale.set(0.7, 0.7, 0.35);
                     } else {
                         const now = performance.now();
                         aziramMood = computeMood(now);
@@ -1833,7 +1769,6 @@
                         }
                         updateAziramScreenPosition();
 
-                        core.position.x = 0;
                         aziramPet.rotation.x = 0.2;
 
                         if (petState === 'sleep') {
@@ -1842,12 +1777,8 @@
                             core.scale.y = 1 + Math.sin(t * 0.0015) * 0.05;
                             core.scale.x = 1 + Math.cos(t * 0.0015) * 0.05;
                             core.position.y = -0.15;
-                            sockets.handL.position.y = -0.1;
-                            sockets.handR.position.y = -0.1;
                             if (aziramEyes) aziramEyes.scale.set(1, 0.1, 1);
-                            if (!isTalking) mouthMesh.scale.set(0.4, 0.18, 0.35);
-                            browL.visible = false;
-                            browR.visible = false;
+                            if (!isTalking && mouthMesh) mouthMesh.scale.set(0.4, 0.18, 0.35);
                             if (Math.random() < 0.004) showSpeech("Zzz 💤", 1600);
                         } else if (petState === 'hop') {
                             aziramPet.rotation.z += (0 - aziramPet.rotation.z) * 0.15;
@@ -1855,81 +1786,54 @@
                             core.position.y = Math.abs(Math.sin(t * 0.012)) * 0.5;
                             core.scale.y = 1 + Math.sin(t * 0.012) * 0.08;
                             core.scale.x = 1;
-                            sockets.handL.position.y = Math.abs(Math.sin(t * 0.012)) * 0.3;
-                            sockets.handR.position.y = Math.abs(Math.sin(t * 0.012)) * 0.3;
                             if (aziramEyes) aziramEyes.scale.set(1, 1, 1);
-                            if (!isTalking) mouthMesh.scale.set(0.8, 0.5, 0.35);
-                            browL.visible = false;
-                            browR.visible = false;
+                            if (!isTalking && mouthMesh) mouthMesh.scale.set(0.8, 0.5, 0.35);
                         } else if (petState === 'walk') {
                             aziramPet.rotation.z += (0 - aziramPet.rotation.z) * 0.15;
                             aziramPet.rotation.y += ((faceDir > 0 ? 0.55 : -1.1) - aziramPet.rotation.y) * 0.08;
                             core.position.y = Math.abs(Math.sin(t * 0.012)) * 0.12;
                             core.scale.set(1, 1, 1);
-                            sockets.footL.position.y = -0.88 + Math.max(0, Math.sin(t * 0.012)) * 0.18;
-                            sockets.footR.position.y = -0.88 + Math.max(0, -Math.sin(t * 0.012)) * 0.18;
-                            sockets.handL.position.y = Math.sin(t * 0.012) * 0.12;
-                            sockets.handR.position.y = -Math.sin(t * 0.012) * 0.12;
                             if (aziramEyes) aziramEyes.scale.set(1, 1, 1);
-                            if (!isTalking) mouthMesh.scale.set(1, 0.35, 0.35);
-                            browL.visible = false;
-                            browR.visible = false;
+                            if (!isTalking && mouthMesh) mouthMesh.scale.set(1, 0.35, 0.35);
                         } else {
                             aziramPet.rotation.z += (0 - aziramPet.rotation.z) * 0.1;
                             aziramPet.rotation.y += (-0.3 - aziramPet.rotation.y) * 0.1;
                             core.scale.y = 1 + Math.sin(t * 0.004) * 0.04;
                             core.scale.x = 1 + Math.cos(t * 0.004) * 0.04;
                             core.position.y = Math.sin(t * 0.002) * 0.15;
-                            sockets.handL.position.y = Math.sin(t * 0.003) * 0.1;
-                            sockets.handR.position.y = Math.cos(t * 0.003) * 0.1;
-                            sockets.footL.position.y = -0.88 + Math.cos(t * 0.004) * 0.05;
-                            sockets.footR.position.y = -0.88 + Math.sin(t * 0.004) * 0.05;
-
-                            const showBrows = aziramMood === 'angry';
-                            browL.visible = showBrows;
-                            browR.visible = showBrows;
-                            if (showBrows) { browL.rotation.z = -0.45;
-                                browR.rotation.z = 0.45; }
 
                             if (aziramMood === 'angry') {
                                 if (aziramEyes) aziramEyes.scale.set(1, 0.7, 1);
-                                if (!isTalking) mouthMesh.scale.set(0.8, 0.12, 0.35);
+                                if (!isTalking && mouthMesh) mouthMesh.scale.set(0.8, 0.12, 0.35);
                                 if (now - lastSmokeTime > 1200) {
                                     lastSmokeTime = now;
                                     const wp = new THREE.Vector3();
-                                    sockets.head.getWorldPosition(wp);
+                                    core.getWorldPosition(wp);
                                     spawnBurst(wp.x, wp.y + 0.2, wp.z, 'smoke', 2);
                                 }
                             } else if (aziramMood === 'anxious') {
                                 if (aziramEyes) aziramEyes.scale.set(1.3, 1.3, 1.3);
-                                if (!isTalking) mouthMesh.scale.set(0.5, 0.55, 0.35);
+                                if (!isTalking && mouthMesh) mouthMesh.scale.set(0.5, 0.55, 0.35);
                                 aziramPet.position.x += (Math.random() - 0.5) * 0.05;
                                 aziramPet.position.y += (Math.random() - 0.5) * 0.05;
                             } else if (aziramMood === 'bored') {
                                 if (aziramEyes) aziramEyes.scale.set(1, 0.35, 1);
                                 aziramPet.rotation.z = Math.sin(t * 0.0008) * 0.12;
                                 const yawn = Math.max(0, Math.sin(t * 0.0012));
-                                if (!isTalking) mouthMesh.scale.set(0.55 + yawn * 0.2, 0.2 + yawn * 0.55, 0.35);
+                                if (!isTalking && mouthMesh) mouthMesh.scale.set(0.55 + yawn * 0.2, 0.2 + yawn * 0.55, 0.35);
                             } else {
                                 if (aziramEyes) aziramEyes.scale.set(1, 1, 1);
-                                if (!isTalking) mouthMesh.scale.set(1, 0.35, 0.35);
+                                if (!isTalking && mouthMesh) mouthMesh.scale.set(1, 0.35, 0.35);
                             }
                         }
 
-                        if (!aziramBodyMesh.userData.isRainbow) {
-                            const target = (aziramMood === 'angry' || aziramMood === 'anxious') ? angryColor :
-                                aziramBaseColor;
-                            aziramBodyMesh.material.color.lerp(target, 0.06);
-                        }
+                        // She doesn't change color, she's a human! \o/
                     }
 
                     if (isTalking && mouthMesh) {
                         mouthMesh.scale.y = 0.25 + Math.abs(Math.sin(t * 0.025)) * 0.55;
                         mouthMesh.scale.x = 0.7 + Math.abs(Math.cos(t * 0.02)) * 0.2;
                     }
-
-                    core.traverse(child => { if (child.userData && child.userData.onUpdate) child.userData
-                            .onUpdate(t); });
                 }
 
                 if (currentCube && !busy) currentCube.rotation.y = Math.sin(t * 0.002) * 0.12;
@@ -1943,7 +1847,7 @@
                 const keys = ['drop2048-save-pure', 'drop2048-save-v2', 'drop2048-save-v3', 'drop2048-save-v4',
                     'drop2048-v5', 'drop2048-frankly-v1', 'drop2048-frankly-v2', 'drop2048-frankly-v3',
                     'drop2048-frankly-v4', 'drop2048-frankly-v5', 'drop2048-frankly-v6', 'drop2048-frankly-v7',
-                    'drop2048-frankly-v8'
+                    'drop2048-frankly-v8', 'drop2048-frankly-v9'
                 ];
                 keys.forEach(k => localStorage.removeItem(k));
 
@@ -1952,7 +1856,6 @@
                 document.getElementById('btnCloseShop').onclick = () => { document.getElementById('shopModal')
                     .classList.add('hidden'); };
 
-                // New cube buttons
                 document.getElementById('btnSkip').onclick = handleSkip;
                 document.getElementById('btnShuffle').onclick = handleShuffle;
                 document.getElementById('btnChange').onclick = handleChange;
@@ -1976,9 +1879,6 @@
                 newBoard();
                 updateHUD();
 
-                // Add expressive eyes
-                addExpressiveEyes(0x111111);
-
                 const cvs = document.getElementById("game");
                 cvs.addEventListener("pointermove", (e) => {
                     if (!busy) {
@@ -1990,11 +1890,11 @@
                 cvs.addEventListener("pointerdown", onTap);
                 document.getElementById("btnNext").onclick = () => {
                     document.getElementById("winModal").classList.add("hidden");
-                    level = save.level; // already incremented
+                    level = save.level;
                     winShown = false;
                     busy = false;
                     updateHUD();
-                    newBoard(); // reset board for new level
+                    newBoard();
                 };
                 document.getElementById("btnRetry").onclick = () => {
                     document.getElementById("loseModal").classList.add("hidden");
