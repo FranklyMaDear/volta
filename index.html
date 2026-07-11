@@ -123,12 +123,12 @@
             transform: translateX(-50%);
             display: flex;
             justify-content: center;
-            gap: 8px;
+            gap: 10px;
             z-index: 5;
             background: rgba(11, 12, 16, 0.6);
             backdrop-filter: blur(4px);
-            padding: 6px 12px;
-            border-radius: 18px;
+            padding: 8px 16px;
+            border-radius: 20px;
             border: 1px solid rgba(255, 255, 255, 0.08);
             pointer-events: none;
         }
@@ -136,13 +136,13 @@
             pointer-events: auto;
             border: none;
             cursor: pointer;
-            width: 56px;
-            height: 56px;
-            border-radius: 16px;
+            width: 64px;
+            height: 64px;
+            border-radius: 18px;
             background: var(--good);
             box-shadow: 0 4px 0 #5c7a3a;
             color: #fff;
-            font-size: 24px;
+            font-size: 28px;
             line-height: 1;
             display: flex;
             flex-direction: column;
@@ -157,11 +157,11 @@
             box-shadow: 0 1px 0 #5c7a3a;
         }
         .pbtn .cost {
-            font-size: 8px;
+            font-size: 9px;
             font-weight: 800;
             background: rgba(0, 0, 0, .25);
             border-radius: 6px;
-            padding: 1px 6px;
+            padding: 1px 7px;
             margin-top: -2px;
         }
         .pbtn.armed {
@@ -185,12 +185,12 @@
             }
         }
 
-        /* ===== MISSION BAR (roll-up) ===== */
+        /* ===== MISSION BAR (below powerups, 3D effect) ===== */
         #missionBar {
             position: fixed;
-            top: 0;
+            top: 118px;
             left: 50%;
-            transform: translate(-50%, -120%);
+            transform: translate(-50%, -120%) perspective(600px) rotateX(15deg);
             transition: transform .55s cubic-bezier(.34, 1.5, .64, 1);
             z-index: 30;
             pointer-events: auto;
@@ -200,15 +200,16 @@
             border-top: none;
             color: var(--ink);
             border-radius: 0 0 20px 20px;
-            padding: 10px 22px 8px;
+            padding: 8px 20px 6px;
             font-weight: 700;
-            font-size: 15px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, .5);
+            font-size: 14px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, .6);
             white-space: nowrap;
             letter-spacing: 0.3px;
+            transform-origin: top center;
         }
         #missionBar.show {
-            transform: translate(-50%, 0);
+            transform: translate(-50%, 0) perspective(600px) rotateX(0deg);
         }
         #missionBar b {
             color: var(--red);
@@ -413,6 +414,10 @@
             background: #FFF5E1;
             box-shadow: 0 0 10px rgba(242, 160, 61, 0.4);
         }
+        .shop-item.in-room {
+            border-color: var(--blue);
+            background: #E1F0FF;
+        }
         .btn {
             border: none;
             cursor: pointer;
@@ -520,48 +525,86 @@
         .home-avatar-area #homeAvatarContainer {
             display: inline-block;
             position: relative;
-            width: 90px;
-            height: 110px;
+            width: 120px;
+            height: 140px;
             background: transparent;
+            transition: transform 0.3s;
         }
+        /* Avatar Animations - same as game */
+        .av-bounce {
+            animation: avBounce 0.6s infinite alternate;
+        }
+        @keyframes avBounce {
+            0% { transform: translateY(0px) scale(1,1); }
+            100% { transform: translateY(-20px) scale(1.05,0.95); }
+        }
+        .av-sleep {
+            animation: avSleep 2s infinite alternate;
+        }
+        @keyframes avSleep {
+            0% { transform: rotate(0deg) scale(1,1); }
+            100% { transform: rotate(6deg) scale(0.95,1.05); }
+        }
+        .av-walk {
+            animation: avWalk 0.8s infinite alternate;
+        }
+        @keyframes avWalk {
+            0% { transform: translateX(-15px) scale(1,1); }
+            100% { transform: translateX(15px) scale(1,1); }
+        }
+        .av-idle {
+            animation: avIdle 2s infinite alternate;
+        }
+        @keyframes avIdle {
+            0% { transform: translateY(0px) scale(1,1); }
+            100% { transform: translateY(-5px) scale(1.02,0.98); }
+        }
+        .av-hop {
+            animation: avHop 0.4s infinite alternate;
+        }
+        @keyframes avHop {
+            0% { transform: translateY(0px) scale(1,1); }
+            100% { transform: translateY(-25px) scale(1.1,0.9); }
+        }
+
         .home-avatar-area .av-body {
-            width: 70px;
-            height: 80px;
+            width: 90px;
+            height: 100px;
             border-radius: 50%;
-            margin: 15px auto 0;
+            margin: 20px auto 0;
             position: relative;
             transition: background 0.3s;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            box-shadow: 0 6px 18px rgba(0,0,0,0.25);
         }
         .home-avatar-area .av-face {
             position: absolute;
-            top: 15px;
+            top: 20px;
             left: 50%;
             transform: translateX(-50%);
-            font-size: 28px;
+            font-size: 34px;
             line-height: 1;
         }
         .home-avatar-area .av-head {
             position: absolute;
-            top: -10px;
+            top: -12px;
             left: 50%;
             transform: translateX(-50%);
-            font-size: 32px;
+            font-size: 38px;
             line-height: 1;
         }
         .home-avatar-area .av-clothes {
             position: absolute;
-            bottom: 5px;
+            bottom: 8px;
             left: 50%;
             transform: translateX(-50%);
-            font-size: 30px;
+            font-size: 36px;
             line-height: 1;
         }
         .home-avatar-area .av-prop {
             position: absolute;
-            right: -10px;
-            bottom: 25px;
-            font-size: 28px;
+            right: -15px;
+            bottom: 30px;
+            font-size: 34px;
             line-height: 1;
         }
 
@@ -627,9 +670,13 @@
             color: var(--ink);
         }
         .room-panel .furniture-display {
-            font-size: 28px;
+            font-size: 24px;
             font-weight: 600;
             color: var(--panel-deep);
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+            justify-content: center;
         }
         .room-panel .action-btn {
             border: none;
@@ -701,22 +748,23 @@
             }
             .powerbar {
                 top: 46px;
-                padding: 4px 8px;
-                gap: 5px;
+                padding: 6px 10px;
+                gap: 6px;
                 border-radius: 14px;
             }
             .pbtn {
-                width: 48px;
-                height: 48px;
-                font-size: 20px;
-                border-radius: 12px;
+                width: 52px;
+                height: 52px;
+                font-size: 22px;
+                border-radius: 14px;
             }
             .pbtn .cost {
                 font-size: 7px;
             }
             #missionBar {
-                font-size: 12px;
-                padding: 6px 14px 5px;
+                top: 104px;
+                font-size: 11px;
+                padding: 5px 12px 4px;
                 border-radius: 0 0 14px 14px;
             }
             .home-stat {
@@ -728,13 +776,13 @@
                 height: 4px;
             }
             .home-avatar-area #homeAvatarContainer {
-                width: 70px;
-                height: 90px;
+                width: 90px;
+                height: 110px;
             }
             .home-avatar-area .av-body {
-                width: 55px;
-                height: 65px;
-                margin: 10px auto 0;
+                width: 70px;
+                height: 80px;
+                margin: 12px auto 0;
             }
             .room-tab {
                 font-size: 10px;
@@ -778,13 +826,13 @@
                 font-size: 11px;
             }
             .pbtn {
-                width: 40px;
-                height: 40px;
-                font-size: 17px;
+                width: 44px;
+                height: 44px;
+                font-size: 18px;
             }
             #missionBar {
-                font-size: 10px;
-                padding: 4px 10px 3px;
+                font-size: 9px;
+                padding: 3px 8px 2px;
             }
         }
     </style>
@@ -810,7 +858,7 @@
         <button class="pbtn" id="btnMic">🎤<span class="cost">Μίλα</span></button>
     </div>
 
-    <!-- ===== MISSION BAR ===== -->
+    <!-- ===== MISSION BAR (3D roll-up) ===== -->
     <div id="missionBar">🎯 Αποστολή: <b id="missionText"></b></div>
 
     <!-- ===== SPEECH BUBBLE ===== -->
@@ -829,8 +877,6 @@
                 <button class="shop-tab" data-maintab="effects">Εφέ</button>
                 <button class="shop-tab" data-maintab="sounds">Ήχοι</button>
                 <button class="shop-tab" data-maintab="pets">Pet</button>
-                <button class="shop-tab" data-maintab="clothes">Ρούχα</button>
-                <button class="shop-tab" data-maintab="furniture">Έπιπλα</button>
             </div>
             <div class="pet-subtabs" id="petSubTabs">
                 <button class="pet-subtab active" data-subtab="pet_color">Χρώμα</button>
@@ -840,6 +886,9 @@
                 <button class="pet-subtab" data-subtab="pet_hands">Χέρια</button>
                 <button class="pet-subtab" data-subtab="pet_props">Αντικείμενο</button>
                 <button class="pet-subtab" data-subtab="pet_feet">Πόδια</button>
+                <button class="pet-subtab" data-subtab="pet_clothes">Ρούχα</button>
+                <button class="pet-subtab" data-subtab="pet_furniture">Έπιπλα</button>
+                <button class="pet-subtab" data-subtab="pet_food">Φαγητά</button>
             </div>
             <div class="shop-items" id="shopContainer"></div>
             <button class="btn" id="btnCloseShop">Κλείσιμο</button>
@@ -859,7 +908,7 @@
             </div>
 
             <div class="home-avatar-area">
-                <div id="homeAvatarContainer">
+                <div id="homeAvatarContainer" class="av-idle">
                     <div class="av-head" id="avHead"></div>
                     <div class="av-body" id="avBody"></div>
                     <div class="av-face" id="avFace"></div>
@@ -915,7 +964,7 @@
             <div style="font-size:40px; margin-bottom:6px;">🎉</div>
             <h2>Επίπεδο Ολοκληρώθηκε!</h2>
             <p id="winText"></p>
-            <button class="btn" id="btnNext">Επόμενο επίπεδο ➜</button>
+            <button class="btn" id="btnNext">Συνέχεια ➜</button>
         </div>
     </div>
     <div class="overlay hidden win-lose-overlay" id="loseModal">
@@ -930,13 +979,15 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js">
     </script>
     <script>
+        // ============================================================
+        //  MAIN GAME & PET LOGIC (Full integration)
+        //  To split: move all pet-related code (home, shop tabs for pet, 
+        //  pet avatar, furniture, food) to a separate file aziram.index.html
+        //  and keep game mechanics in this file.
+        // ============================================================
         (function() {
             'use strict';
 
-            /* ============================================================
-               DROP 2048 · FRANKLYGAMES EDITION
-               (Full Tamagotchi + Home + Shop + Effects Fix + Daily Schedule)
-            ============================================================ */
             const COLS = 5,
                 ROWS = 6,
                 CELL = 1.0,
@@ -953,14 +1004,22 @@
                 { target: 1024, preset: 12, text: "Φτιάξε κύβο 1024" }
             ];
 
+            // ---- Shop data (full) ----
             const SHOP = {
-                cubes: [{ id: 'wood', name: 'Ξύλο', price: 0, icon: '🪵' }, { id: 'whitered', name: 'Άσπρο-Κόκκινο', price: 0,
-                        icon: '🍬' }, { id: 'whitegreen', name: 'Άσπρο-Πράσινο', price: 0, icon: '🍵' }, { id: 'zebra',
-                        name: 'Ζέβρα', price: 0, icon: '🦓' }, { id: 'neon', name: 'Cyber Neon', price: 0, icon: '⚡' },
-                    { id: 'rainbow', name: 'Ουράνιο Τόξο', price: 0, icon: '🌈' }, { id: 'gold', name: 'Καθαρός Χρυσός',
-                        price: 0, icon: '🏆' }, { id: 'galaxy', name: 'Γαλαξίας', price: 0, icon: '🌌' }, { id: 'ice',
-                        name: 'Παγωμένος', price: 0, icon: '🧊' }, { id: 'lava', name: 'Λάβα', price: 0, icon: '🌋' }],
-                boards: [{ id: 'board_wood', name: 'Ξύλινο', price: 0, icon: '🟫', back: '#4A3423', cell: '#2F1B0D' },
+                cubes: [
+                    { id: 'wood', name: 'Ξύλο', price: 0, icon: '🪵' },
+                    { id: 'whitered', name: 'Άσπρο-Κόκκινο', price: 0, icon: '🍬' },
+                    { id: 'whitegreen', name: 'Άσπρο-Πράσινο', price: 0, icon: '🍵' },
+                    { id: 'zebra', name: 'Ζέβρα', price: 0, icon: '🦓' },
+                    { id: 'neon', name: 'Cyber Neon', price: 0, icon: '⚡' },
+                    { id: 'rainbow', name: 'Ουράνιο Τόξο', price: 0, icon: '🌈' },
+                    { id: 'gold', name: 'Καθαρός Χρυσός', price: 0, icon: '🏆' },
+                    { id: 'galaxy', name: 'Γαλαξίας', price: 0, icon: '🌌' },
+                    { id: 'ice', name: 'Παγωμένος', price: 0, icon: '🧊' },
+                    { id: 'lava', name: 'Λάβα', price: 0, icon: '🌋' }
+                ],
+                boards: [
+                    { id: 'board_wood', name: 'Ξύλινο', price: 0, icon: '🟫', back: '#4A3423', cell: '#2F1B0D' },
                     { id: 'board_space', name: 'Βαθύ Διάστημα', price: 0, icon: '🟦', back: '#0B132B', cell: '#4A5A8A' },
                     { id: 'board_crimson', name: 'Πορφυρό', price: 0, icon: '🟥', back: '#3A0CA3', cell: '#A47CFF' },
                     { id: 'board_emerald', name: 'Σμαράγδι', price: 0, icon: '🟩', back: '#004B23', cell: '#7BDF4B' },
@@ -971,78 +1030,121 @@
                     { id: 'board_sunset', name: 'Ηλιοβασίλεμα', price: 150, icon: '🌅', back: '#C2542F', cell: '#6E2410' },
                     { id: 'board_royal', name: 'Βασιλικό', price: 200, icon: '👑', back: '#3B2A6E', cell: '#221545' }
                 ],
-                effects: [{ id: 'eff_none', name: 'Χωρίς Εφέ', price: 0, icon: '✖️' }, { id: 'eff_flame', name: 'Φλόγα',
-                        price: 0, icon: '🔥' }, { id: 'eff_sparkle', name: 'Αστερόσκονη', price: 0, icon: '✨' },
-                    { id: 'eff_smoke', name: 'Καπνός', price: 0, icon: '💨' }, { id: 'eff_explode', name: 'Έκρηξη',
-                        price: 0, icon: '💥' }, { id: 'eff_confetti', name: 'Κομφετί', price: 0, icon: '🎊' }
+                effects: [
+                    { id: 'eff_none', name: 'Χωρίς Εφέ', price: 0, icon: '✖️' },
+                    { id: 'eff_flame', name: 'Φλόγα', price: 0, icon: '🔥' },
+                    { id: 'eff_sparkle', name: 'Αστερόσκονη', price: 0, icon: '✨' },
+                    { id: 'eff_smoke', name: 'Καπνός', price: 0, icon: '💨' },
+                    { id: 'eff_explode', name: 'Έκρηξη', price: 0, icon: '💥' },
+                    { id: 'eff_confetti', name: 'Κομφετί', price: 0, icon: '🎊' }
                 ],
-                sounds: [{ id: 'snd_default', name: 'Default', price: 0, icon: '🔊' }, { id: 'snd_bass', name: 'Bass Drop',
-                        price: 0, icon: '🎛️' }, { id: 'snd_bell', name: 'Καμπάνα', price: 0, icon: '🔔' },
-                    { id: 'snd_echo', name: 'Echo', price: 0, icon: '🌌' }, { id: 'snd_retro', name: 'Retro 8-bit',
-                        price: 100, icon: '👾' }, { id: 'snd_pop', name: 'Bubble Pop', price: 100, icon: '🫧' },
-                    { id: 'snd_laser', name: 'Laser', price: 150, icon: '🔫' }, { id: 'snd_magic', name: 'Μαγικό',
-                        price: 200, icon: '✨' }
+                sounds: [
+                    { id: 'snd_default', name: 'Default', price: 0, icon: '🔊' },
+                    { id: 'snd_bass', name: 'Bass Drop', price: 0, icon: '🎛️' },
+                    { id: 'snd_bell', name: 'Καμπάνα', price: 0, icon: '🔔' },
+                    { id: 'snd_echo', name: 'Echo', price: 0, icon: '🌌' },
+                    { id: 'snd_retro', name: 'Retro 8-bit', price: 100, icon: '👾' },
+                    { id: 'snd_pop', name: 'Bubble Pop', price: 100, icon: '🫧' },
+                    { id: 'snd_laser', name: 'Laser', price: 150, icon: '🔫' },
+                    { id: 'snd_magic', name: 'Μαγικό', price: 200, icon: '✨' }
                 ],
-                pet_color: [{ id: 'color_green', name: 'Πράσινο (Jelly)', price: 0, icon: '🟢' },
-                    { id: 'color_blue', name: 'Διαστημικό Μπλε', price: 0, icon: '🔵' }, { id: 'color_pink',
-                        name: 'Neon Ροζ', price: 0, icon: '🌸' }, { id: 'color_gold', name: 'Καθαρός Χρυσός', price: 0,
-                        icon: '🟡' }, { id: 'color_red', name: 'Κόκκινο Λάβας', price: 0, icon: '🔴' },
-                    { id: 'color_rainbow', name: 'RGB (Ουρ. Τόξο)', price: 0, icon: '🌈' }, { id: 'color_slime',
-                        name: 'Slime Γαλαξίας', price: 400, icon: '🪼' }
+                pet_color: [
+                    { id: 'color_green', name: 'Πράσινο (Jelly)', price: 0, icon: '🟢' },
+                    { id: 'color_blue', name: 'Διαστημικό Μπλε', price: 0, icon: '🔵' },
+                    { id: 'color_pink', name: 'Neon Ροζ', price: 0, icon: '🌸' },
+                    { id: 'color_gold', name: 'Καθαρός Χρυσός', price: 0, icon: '🟡' },
+                    { id: 'color_red', name: 'Κόκκινο Λάβας', price: 0, icon: '🔴' },
+                    { id: 'color_rainbow', name: 'RGB (Ουρ. Τόξο)', price: 0, icon: '🌈' },
+                    { id: 'color_slime', name: 'Slime Γαλαξίας', price: 400, icon: '🪼' }
                 ],
-                pet_head: [{ id: 'head_none', name: 'Τίποτα', price: 0, icon: '🚫' }, { id: 'head_antenna',
-                        name: 'Κεραία', price: 0, icon: '📡' }, { id: 'head_halo', name: 'Φωτοστέφανο', price: 0,
-                        icon: '👼' }, { id: 'head_propeller', name: 'Έλικας', price: 0, icon: '🚁' },
-                    { id: 'head_mohawk', name: 'Neon Μοϊκάνα', price: 0, icon: '🤘' }, { id: 'head_horns', name: 'Κέρατα',
-                        price: 0, icon: '😈' }, { id: 'head_crown', name: 'Στέμμα', price: 0, icon: '👑' },
-                    { id: 'head_wizard', name: 'Καπέλο Μάγου', price: 150, icon: '🧙' }, { id: 'head_pirate',
-                        name: 'Πειρατική Μπαντάνα', price: 120, icon: '🏴‍☠️' }, { id: 'head_santa',
-                        name: 'Σκούφος Άγ. Βασίλη', price: 200, icon: '🎅' }
+                pet_head: [
+                    { id: 'head_none', name: 'Τίποτα', price: 0, icon: '🚫' },
+                    { id: 'head_antenna', name: 'Κεραία', price: 0, icon: '📡' },
+                    { id: 'head_halo', name: 'Φωτοστέφανο', price: 0, icon: '👼' },
+                    { id: 'head_propeller', name: 'Έλικας', price: 0, icon: '🚁' },
+                    { id: 'head_mohawk', name: 'Neon Μοϊκάνα', price: 0, icon: '🤘' },
+                    { id: 'head_horns', name: 'Κέρατα', price: 0, icon: '😈' },
+                    { id: 'head_crown', name: 'Στέμμα', price: 0, icon: '👑' },
+                    { id: 'head_wizard', name: 'Καπέλο Μάγου', price: 150, icon: '🧙' },
+                    { id: 'head_pirate', name: 'Πειρατική Μπαντάνα', price: 120, icon: '🏴‍☠️' },
+                    { id: 'head_santa', name: 'Σκούφος Άγ. Βασίλη', price: 200, icon: '🎅' }
                 ],
-                pet_face: [{ id: 'face_none', name: 'Κανονικά Μάτια', price: 0, icon: '👁️' }, { id: 'face_pixel',
-                        name: 'Deal With It', price: 0, icon: '🕶️' }, { id: 'face_scouter', name: 'Ανιχνευτής',
-                        price: 0, icon: '📟' }, { id: 'face_laser', name: 'Laser Μάτια', price: 0, icon: '🔴' },
-                    { id: 'face_monocle', name: 'Μονόκλ', price: 100, icon: '🧐' }, { id: 'face_ninja',
-                        name: 'Μάσκα Νίντζα', price: 150, icon: '🥷' }, { id: 'face_mustache', name: 'Μουστάκι',
-                        price: 80, icon: '👨' }, { id: 'face_blush', name: 'Ροζ Μάγουλα', price: 60, icon: '☺️' }
+                pet_face: [
+                    { id: 'face_none', name: 'Κανονικά Μάτια', price: 0, icon: '👁️' },
+                    { id: 'face_pixel', name: 'Deal With It', price: 0, icon: '🕶️' },
+                    { id: 'face_scouter', name: 'Ανιχνευτής', price: 0, icon: '📟' },
+                    { id: 'face_laser', name: 'Laser Μάτια', price: 0, icon: '🔴' },
+                    { id: 'face_monocle', name: 'Μονόκλ', price: 100, icon: '🧐' },
+                    { id: 'face_ninja', name: 'Μάσκα Νίντζα', price: 150, icon: '🥷' },
+                    { id: 'face_mustache', name: 'Μουστάκι', price: 80, icon: '👨' },
+                    { id: 'face_blush', name: 'Ροζ Μάγουλα', price: 60, icon: '☺️' }
                 ],
-                pet_body: [{ id: 'body_none', name: 'Τίποτα', price: 0, icon: '🚫' }, { id: 'body_orbits',
-                        name: 'Δακτύλιοι', price: 0, icon: '🪐' }, { id: 'body_cape', name: 'Κόκκινη Κάπα', price: 0,
-                        icon: '🦸' }, { id: 'body_angelwings', name: 'Φτερά Αγγέλου', price: 300, icon: '🕊️' },
-                    { id: 'body_batwings', name: 'Φτερά Νυχτερίδας', price: 300, icon: '🦇' }, { id: 'body_jetpack',
-                        name: 'Jetpack', price: 500, icon: '🚀' }
+                pet_body: [
+                    { id: 'body_none', name: 'Τίποτα', price: 0, icon: '🚫' },
+                    { id: 'body_orbits', name: 'Δακτύλιοι', price: 0, icon: '🪐' },
+                    { id: 'body_cape', name: 'Κόκκινη Κάπα', price: 0, icon: '🦸' },
+                    { id: 'body_angelwings', name: 'Φτερά Αγγέλου', price: 300, icon: '🕊️' },
+                    { id: 'body_batwings', name: 'Φτερά Νυχτερίδας', price: 300, icon: '🦇' },
+                    { id: 'body_jetpack', name: 'Jetpack', price: 500, icon: '🚀' }
                 ],
-                pet_hands: [{ id: 'hands_none', name: 'Jelly Χέρια', price: 0, icon: '👋' }, { id: 'hands_energy',
-                        name: 'Ενέργεια', price: 0, icon: '🔵' }, { id: 'hands_boxing', name: 'Γάντια Μποξ', price: 0,
-                        icon: '🥊' }
+                pet_hands: [
+                    { id: 'hands_none', name: 'Jelly Χέρια', price: 0, icon: '👋' },
+                    { id: 'hands_energy', name: 'Ενέργεια', price: 0, icon: '🔵' },
+                    { id: 'hands_boxing', name: 'Γάντια Μποξ', price: 0, icon: '🥊' }
                 ],
-                pet_props: [{ id: 'prop_none', name: 'Τίποτα', price: 0, icon: '🚫' }, { id: 'prop_lollipop',
-                        name: 'Γλειφιτζούρι', price: 0, icon: '🍭' }, { id: 'prop_icecream', name: 'Παγωτό', price: 0,
-                        icon: '🍦' }, { id: 'prop_lightsaber', name: 'Laser Σπαθί', price: 0, icon: '🗡️' },
-                    { id: 'prop_wand', name: 'Μαγικό Ραβδί', price: 150, icon: '🪄' }, { id: 'prop_shield',
-                        name: 'Ασπίδα', price: 120, icon: '🛡️' }, { id: 'prop_balloon', name: 'Μπαλόνι', price: 100,
-                        icon: '🎈' }
+                pet_props: [
+                    { id: 'prop_none', name: 'Τίποτα', price: 0, icon: '🚫' },
+                    { id: 'prop_lollipop', name: 'Γλειφιτζούρι', price: 0, icon: '🍭' },
+                    { id: 'prop_icecream', name: 'Παγωτό', price: 0, icon: '🍦' },
+                    { id: 'prop_lightsaber', name: 'Laser Σπαθί', price: 0, icon: '🗡️' },
+                    { id: 'prop_wand', name: 'Μαγικό Ραβδί', price: 150, icon: '🪄' },
+                    { id: 'prop_shield', name: 'Ασπίδα', price: 120, icon: '🛡️' },
+                    { id: 'prop_balloon', name: 'Μπαλόνι', price: 100, icon: '🎈' }
                 ],
-                pet_feet: [{ id: 'feet_none', name: 'Jelly Πόδια', price: 0, icon: '🦶' }, { id: 'feet_moonboots',
-                        name: 'Moon Boots', price: 0, icon: '👢' }, { id: 'feet_hover', name: 'Hover Sneakers',
-                        price: 0, icon: '👟' }
+                pet_feet: [
+                    { id: 'feet_none', name: 'Jelly Πόδια', price: 0, icon: '🦶' },
+                    { id: 'feet_moonboots', name: 'Moon Boots', price: 0, icon: '👢' },
+                    { id: 'feet_hover', name: 'Hover Sneakers', price: 0, icon: '👟' }
                 ],
-                clothes: [{ id: 'cl_none', name: 'Χωρίς', price: 0, icon: '👕' }, { id: 'cl_scarf', name: 'Κασκόλ',
-                        price: 80, icon: '🧣' }, { id: 'cl_bowtie', name: 'Παπιγιόν', price: 60, icon: '🎀' },
-                    { id: 'cl_vest', name: 'Γιλέκο', price: 120, icon: '🧥' }, { id: 'cl_apron', name: 'Ποδιά',
-                        price: 100, icon: '👨‍🍳' }, { id: 'cl_tie', name: 'Γραβάτα', price: 70, icon: '👔' },
-                    { id: 'cl_hoodie', name: 'Φούτερ', price: 150, icon: '👕' }, { id: 'cl_sunglasses',
-                        name: 'Γυαλιά Ηλίου', price: 90, icon: '🕶️' }
+                pet_clothes: [
+                    { id: 'cl_none', name: 'Χωρίς', price: 0, icon: '👕' },
+                    { id: 'cl_hat', name: 'Καπέλο', price: 50, icon: '🧢' },
+                    { id: 'cl_shirt', name: 'Μπλούζα', price: 80, icon: '👚' },
+                    { id: 'cl_pants', name: 'Παντελόνι', price: 100, icon: '👖' },
+                    { id: 'cl_shoes', name: 'Παπούτσια', price: 70, icon: '👟' },
+                    { id: 'cl_suit', name: 'Κοστούμι', price: 200, icon: '🕴️' },
+                    { id: 'cl_dress', name: 'Φόρεμα', price: 180, icon: '👗' },
+                    { id: 'cl_glasses', name: 'Γυαλιά', price: 60, icon: '👓' },
+                    { id: 'cl_scarf', name: 'Κασκόλ', price: 80, icon: '🧣' },
+                    { id: 'cl_tie', name: 'Γραβάτα', price: 70, icon: '👔' },
+                    { id: 'cl_vest', name: 'Γιλέκο', price: 120, icon: '🧥' },
+                    { id: 'cl_hoodie', name: 'Φούτερ', price: 150, icon: '👕' },
+                    { id: 'cl_crown', name: 'Στέμμα', price: 250, icon: '👑' },
+                    { id: 'cl_apron', name: 'Ποδιά', price: 100, icon: '👨‍🍳' }
                 ],
-                furniture: [{ id: 'fur_none', name: 'Χωρίς', price: 0, icon: '🚫' }, { id: 'fur_bed', name: 'Κρεβάτι',
-                        price: 200, icon: '🛏️', room: 'bedroom' }, { id: 'fur_table', name: 'Τραπέζι', price: 150,
-                        icon: '🪑', room: 'kitchen' }, { id: 'fur_bathtub', name: 'Μπανιέρα', price: 180, icon: '🛁',
-                        room: 'bathroom' }, { id: 'fur_lamp', name: 'Λάμπα', price: 100, icon: '💡', room: 'bedroom' },
-                    { id: 'fur_plant', name: 'Φυτό', price: 80, icon: '🌿', room: 'kitchen' }, { id: 'fur_mirror',
-                        name: 'Καθρέφτης', price: 90, icon: '🪞', room: 'bathroom' }, { id: 'fur_rug', name: 'Χαλί',
-                        price: 110, icon: '🧶', room: 'bedroom' }, { id: 'fur_painting', name: 'Πίνακας', price: 130,
-                        icon: '🖼️', room: 'kitchen' }, { id: 'fur_soap', name: 'Σαπούνι', price: 60, icon: '🧼',
-                        room: 'bathroom' }
+                pet_furniture: [
+                    { id: 'fur_none', name: 'Χωρίς', price: 0, icon: '🚫', room: 'none' },
+                    { id: 'fur_bed', name: 'Κρεβάτι', price: 200, icon: '🛏️', room: 'bedroom' },
+                    { id: 'fur_lamp', name: 'Λάμπα', price: 100, icon: '💡', room: 'bedroom' },
+                    { id: 'fur_rug', name: 'Χαλί', price: 110, icon: '🧶', room: 'bedroom' },
+                    { id: 'fur_painting', name: 'Πίνακας', price: 130, icon: '🖼️', room: 'bedroom' },
+                    { id: 'fur_table', name: 'Τραπέζι', price: 150, icon: '🪑', room: 'kitchen' },
+                    { id: 'fur_plant', name: 'Φυτό', price: 80, icon: '🌿', room: 'kitchen' },
+                    { id: 'fur_sofa', name: 'Καναπές', price: 250, icon: '🛋️', room: 'kitchen' },
+                    { id: 'fur_fridge', name: 'Ψυγείο', price: 300, icon: '🧊', room: 'kitchen' },
+                    { id: 'fur_bathtub', name: 'Μπανιέρα', price: 180, icon: '🛁', room: 'bathroom' },
+                    { id: 'fur_mirror', name: 'Καθρέφτης', price: 90, icon: '🪞', room: 'bathroom' },
+                    { id: 'fur_soap', name: 'Σαπούνι', price: 60, icon: '🧼', room: 'bathroom' },
+                    { id: 'fur_toilet', name: 'Λεκάνη', price: 220, icon: '🚽', room: 'bathroom' },
+                    { id: 'fur_towel', name: 'Πετσέτα', price: 70, icon: '🧣', room: 'bathroom' }
+                ],
+                pet_food: [
+                    { id: 'food_apple', name: 'Μήλο', price: 15, icon: '🍎', hungerReduction: 15 },
+                    { id: 'food_pizza', name: 'Πίτσα', price: 30, icon: '🍕', hungerReduction: 30 },
+                    { id: 'food_cake', name: 'Γλυκό', price: 20, icon: '🍰', hungerReduction: 20 },
+                    { id: 'food_banana', name: 'Μπανάνα', price: 12, icon: '🍌', hungerReduction: 12 },
+                    { id: 'food_steak', name: 'Μπριζόλα', price: 40, icon: '🥩', hungerReduction: 40 },
+                    { id: 'food_sushi', name: 'Σούσι', price: 35, icon: '🍣', hungerReduction: 35 }
                 ]
             };
 
@@ -1076,13 +1178,13 @@
                 equippedPetProps: 'prop_none',
                 ownedPetFeet: ['feet_none'],
                 equippedPetFeet: 'feet_none',
-                ownedClothes: ['cl_none'],
-                equippedClothes: 'cl_none',
-                ownedFurniture: ['fur_none'],
-                equippedFurniture: 'fur_none',
-                equippedBedroomFurniture: 'fur_none',
-                equippedKitchenFurniture: 'fur_none',
-                equippedBathroomFurniture: 'fur_none',
+                ownedPetClothes: ['cl_none'],
+                equippedPetClothes: 'cl_none',
+                ownedPetFurniture: ['fur_none'],
+                equippedBedroomFurniture: [],
+                equippedKitchenFurniture: [],
+                equippedBathroomFurniture: [],
+                ownedPetFood: [],
                 energy: 70,
                 hunger: 30,
                 cleanliness: 80,
@@ -1098,18 +1200,23 @@
 
             async function loadSave() {
                 try {
-                    const r = localStorage.getItem("drop2048-frankly-v5");
+                    const r = localStorage.getItem("drop2048-frankly-v7");
                     if (r) {
                         const parsed = JSON.parse(r);
                         save = Object.assign({}, DEFAULT_SAVE, parsed);
-                        // Ensure new fields
-                        if (!save.ownedClothes) save.ownedClothes = ['cl_none'];
-                        if (!save.equippedClothes) save.equippedClothes = 'cl_none';
-                        if (!save.ownedFurniture) save.ownedFurniture = ['fur_none'];
-                        if (!save.equippedFurniture) save.equippedFurniture = 'fur_none';
-                        if (!save.equippedBedroomFurniture) save.equippedBedroomFurniture = 'fur_none';
-                        if (!save.equippedKitchenFurniture) save.equippedKitchenFurniture = 'fur_none';
-                        if (!save.equippedBathroomFurniture) save.equippedBathroomFurniture = 'fur_none';
+                        if (typeof save.equippedBedroomFurniture === 'string') {
+                            save.equippedBedroomFurniture = save.equippedBedroomFurniture !== 'fur_none' ? [save.equippedBedroomFurniture] : [];
+                        }
+                        if (typeof save.equippedKitchenFurniture === 'string') {
+                            save.equippedKitchenFurniture = save.equippedKitchenFurniture !== 'fur_none' ? [save.equippedKitchenFurniture] : [];
+                        }
+                        if (typeof save.equippedBathroomFurniture === 'string') {
+                            save.equippedBathroomFurniture = save.equippedBathroomFurniture !== 'fur_none' ? [save.equippedBathroomFurniture] : [];
+                        }
+                        if (!save.ownedPetClothes) save.ownedPetClothes = ['cl_none'];
+                        if (!save.equippedPetClothes) save.equippedPetClothes = 'cl_none';
+                        if (!save.ownedPetFurniture) save.ownedPetFurniture = ['fur_none'];
+                        if (!save.ownedPetFood) save.ownedPetFood = [];
                         if (save.energy === undefined) save.energy = 70;
                         if (save.hunger === undefined) save.hunger = 30;
                         if (save.cleanliness === undefined) save.cleanliness = 80;
@@ -1124,7 +1231,7 @@
             }
 
             function persist() {
-                try { localStorage.setItem("drop2048-frankly-v5", JSON.stringify(save)); } catch (e) {}
+                try { localStorage.setItem("drop2048-frankly-v7", JSON.stringify(save)); } catch (e) {}
             }
 
             let coins = 0,
@@ -1132,7 +1239,7 @@
                 score = 0,
                 best = 0;
 
-            /* ===== AUDIO ===== */
+            // ---- Audio ----
             const audioCtx = new(window.AudioContext || window.webkitAudioContext)();
 
             function playSound(type) {
@@ -1292,6 +1399,7 @@
                 };
             }
 
+            // ---- Particles ----
             const particles = [];
             const pGeo = new THREE.BoxGeometry(0.08, 0.08, 0.08);
             const pMats = {
@@ -1369,7 +1477,7 @@
                 starField.geometry.attributes.position.needsUpdate = true;
             }
 
-            /* ===== AZIRAM PET ===== */
+            // ---- AZIRAM PET (3D) ----
             let aziramPet, aziramBodyMesh, aziramCore, slimeGroup = null,
                 sockets = {};
             let mouthMesh, browL, browR, aziramEyes = null;
@@ -1954,7 +2062,7 @@
                 }
             }
 
-            /* ===== CLOTHES ===== */
+            // ---- Clothes ----
             function equipClothes(itemId) {
                 if (!aziramPet) return;
                 const existing = aziramCore.children.filter(c => c.userData && c.userData.isClothing);
@@ -2009,35 +2117,76 @@
                         .MeshBasicMaterial({ color: 0x111111 }));
                     lensR.position.set(0.2, 0.22, 0.50);
                     clothGroup.add(frame, lensL, lensR);
+                } else if (itemId === 'cl_hat') {
+                    const hat = new THREE.Mesh(new THREE.ConeGeometry(0.3, 0.25, 16), new THREE.MeshPhongMaterial(
+                        { color: 0x3355cc }));
+                    hat.position.set(0, 0.62, 0.1);
+                    clothGroup.add(hat);
+                } else if (itemId === 'cl_shirt') {
+                    const shirt = new THREE.Mesh(new THREE.BoxGeometry(0.5, 0.3, 0.06), new THREE.MeshPhongMaterial(
+                        { color: 0xdd8844 }));
+                    shirt.position.set(0, -0.1, -0.3);
+                    clothGroup.add(shirt);
+                } else if (itemId === 'cl_pants') {
+                    const pants = new THREE.Mesh(new THREE.BoxGeometry(0.4, 0.3, 0.06), new THREE.MeshPhongMaterial(
+                        { color: 0x334488 }));
+                    pants.position.set(0, -0.35, -0.3);
+                    clothGroup.add(pants);
+                } else if (itemId === 'cl_shoes') {
+                    const shoeL = new THREE.Mesh(new THREE.BoxGeometry(0.15, 0.08, 0.25), new THREE
+                        .MeshPhongMaterial({ color: 0x222222 }));
+                    shoeL.position.set(-0.2, -0.65, 0.0);
+                    const shoeR = new THREE.Mesh(new THREE.BoxGeometry(0.15, 0.08, 0.25), new THREE
+                        .MeshPhongMaterial({ color: 0x222222 }));
+                    shoeR.position.set(0.2, -0.65, 0.0);
+                    clothGroup.add(shoeL, shoeR);
+                } else if (itemId === 'cl_suit') {
+                    const suit = new THREE.Mesh(new THREE.BoxGeometry(0.5, 0.7, 0.08), new THREE.MeshPhongMaterial(
+                        { color: 0x222233 }));
+                    suit.position.set(0, -0.1, -0.3);
+                    clothGroup.add(suit);
+                } else if (itemId === 'cl_dress') {
+                    const dress = new THREE.Mesh(new THREE.ConeGeometry(0.4, 0.6, 16), new THREE.MeshPhongMaterial(
+                        { color: 0xdd44aa }));
+                    dress.position.set(0, -0.2, -0.3);
+                    clothGroup.add(dress);
+                } else if (itemId === 'cl_glasses') {
+                    const gMat = new THREE.MeshPhongMaterial({ color: 0x111111, transparent: true, opacity: 0.7 });
+                    const frame = new THREE.Mesh(new THREE.BoxGeometry(0.6, 0.15, 0.04), gMat);
+                    frame.position.set(0, 0.22, 0.48);
+                    clothGroup.add(frame);
+                } else if (itemId === 'cl_crown') {
+                    const crown = new THREE.Mesh(new THREE.CylinderGeometry(0.35, 0.25, 0.4, 8, 1, true), new THREE
+                        .MeshPhongMaterial({ color: 0xffd700, side: THREE.DoubleSide }));
+                    crown.position.set(0, 0.55, 0);
+                    clothGroup.add(crown);
                 }
                 aziramCore.add(clothGroup);
             }
 
-            /* ===== FURNITURE ===== */
-            let furnitureObjects = { bedroom: null, kitchen: null, bathroom: null };
-
+            // ---- Furniture ----
             function updateFurniture() {
                 const roomMap = {
-                    bedroom: save.equippedBedroomFurniture || 'fur_none',
-                    kitchen: save.equippedKitchenFurniture || 'fur_none',
-                    bathroom: save.equippedBathroomFurniture || 'fur_none'
+                    bedroom: save.equippedBedroomFurniture || [],
+                    kitchen: save.equippedKitchenFurniture || [],
+                    bathroom: save.equippedBathroomFurniture || []
                 };
-                document.getElementById('bedroomFurniture').textContent =
-                    roomMap.bedroom === 'fur_none' ? '🚫 Χωρίς έπιπλο' : '🪑 ' + (SHOP.furniture.find(f => f.id ===
-                        roomMap.bedroom)?.name || '');
-                document.getElementById('kitchenFurniture').textContent =
-                    roomMap.kitchen === 'fur_none' ? '🚫 Χωρίς έπιπλο' : '🪑 ' + (SHOP.furniture.find(f => f.id ===
-                        roomMap.kitchen)?.name || '');
-                document.getElementById('bathroomFurniture').textContent =
-                    roomMap.bathroom === 'fur_none' ? '🚫 Χωρίς έπιπλο' : '🪑 ' + (SHOP.furniture.find(f => f.id ===
-                        roomMap.bathroom)?.name || '');
+                const renderItems = (ids) => {
+                    return ids.map(id => {
+                        const f = SHOP.pet_furniture.find(item => item.id === id);
+                        return f ? f.icon : '';
+                    }).join(' ');
+                };
+                document.getElementById('bedroomFurniture').innerHTML = renderItems(roomMap.bedroom) || '🚫 Χωρίς έπιπλα';
+                document.getElementById('kitchenFurniture').innerHTML = renderItems(roomMap.kitchen) || '🚫 Χωρίς έπιπλα';
+                document.getElementById('bathroomFurniture').innerHTML = renderItems(roomMap.bathroom) || '🚫 Χωρίς έπιπλα';
 
-                document.getElementById('roomBedroom').classList.toggle('furnished', roomMap.bedroom !== 'fur_none');
-                document.getElementById('roomKitchen').classList.toggle('furnished', roomMap.kitchen !== 'fur_none');
-                document.getElementById('roomBathroom').classList.toggle('furnished', roomMap.bathroom !== 'fur_none');
+                document.getElementById('roomBedroom').classList.toggle('furnished', roomMap.bedroom.length > 0);
+                document.getElementById('roomKitchen').classList.toggle('furnished', roomMap.kitchen.length > 0);
+                document.getElementById('roomBathroom').classList.toggle('furnished', roomMap.bathroom.length > 0);
             }
 
-            /* ===== TAMAGOTCHI STATS ===== */
+            // ---- Tamagotchi Stats ----
             let tamagotchiInterval = null;
 
             function updateTamagotchiStats() {
@@ -2068,7 +2217,6 @@
                 if (hour >= 8 && hour < 22) {
                     save.toilet = Math.min(100, (save.toilet || 0) + elapsed * (100 / 10800));
                 } else {
-                    // decreases slowly during sleep
                     save.toilet = Math.max(0, (save.toilet || 0) - elapsed * 0.3);
                 }
 
@@ -2132,7 +2280,21 @@
             function renderHomeAvatar() {
                 const container = document.getElementById('homeAvatarContainer');
                 if (!container) return;
-                // Body color
+                // Remove previous animations
+                container.className = '';
+                // Sync with main pet state
+                if (aziramWinTime > 0) {
+                    container.classList.add('av-bounce');
+                } else if (petState === 'sleep') {
+                    container.classList.add('av-sleep');
+                } else if (petState === 'walk') {
+                    container.classList.add('av-walk');
+                } else if (petState === 'hop') {
+                    container.classList.add('av-hop');
+                } else {
+                    container.classList.add('av-idle');
+                }
+
                 const bodyEl = document.getElementById('avBody');
                 const colorMap = {
                     'color_green': '#33ffaa',
@@ -2146,56 +2308,30 @@
                 const color = colorMap[save.equippedPetColor] || '#33ffaa';
                 bodyEl.style.background = color;
 
-                // Head
                 const headMap = {
-                    'head_none': '',
-                    'head_antenna': '📡',
-                    'head_halo': '👼',
-                    'head_propeller': '🚁',
-                    'head_mohawk': '🤘',
-                    'head_horns': '😈',
-                    'head_crown': '👑',
-                    'head_wizard': '🧙',
-                    'head_pirate': '🏴‍☠️',
-                    'head_santa': '🎅'
+                    'head_none': '', 'head_antenna': '📡', 'head_halo': '👼', 'head_propeller': '🚁',
+                    'head_mohawk': '🤘', 'head_horns': '😈', 'head_crown': '👑', 'head_wizard': '🧙',
+                    'head_pirate': '🏴‍☠️', 'head_santa': '🎅'
                 };
                 document.getElementById('avHead').textContent = headMap[save.equippedPetHead] || '';
 
-                // Face
                 const faceMap = {
-                    'face_none': '👁️',
-                    'face_pixel': '🕶️',
-                    'face_scouter': '📟',
-                    'face_laser': '🔴',
-                    'face_monocle': '🧐',
-                    'face_ninja': '🥷',
-                    'face_mustache': '👨',
-                    'face_blush': '☺️'
+                    'face_none': '👁️', 'face_pixel': '🕶️', 'face_scouter': '📟', 'face_laser': '🔴',
+                    'face_monocle': '🧐', 'face_ninja': '🥷', 'face_mustache': '👨', 'face_blush': '☺️'
                 };
                 document.getElementById('avFace').textContent = faceMap[save.equippedPetFace] || '👁️';
 
-                // Clothes
                 const clothesMap = {
-                    'cl_none': '',
-                    'cl_scarf': '🧣',
-                    'cl_bowtie': '🎀',
-                    'cl_vest': '🧥',
-                    'cl_apron': '👨‍🍳',
-                    'cl_tie': '👔',
-                    'cl_hoodie': '👕',
-                    'cl_sunglasses': '🕶️'
+                    'cl_none': '', 'cl_scarf': '🧣', 'cl_bowtie': '🎀', 'cl_vest': '🧥', 'cl_apron': '👨‍🍳',
+                    'cl_tie': '👔', 'cl_hoodie': '👕', 'cl_sunglasses': '🕶️', 'cl_hat': '🧢', 'cl_shirt': '👚',
+                    'cl_pants': '👖', 'cl_shoes': '👟', 'cl_suit': '🕴️', 'cl_dress': '👗', 'cl_glasses': '👓',
+                    'cl_crown': '👑'
                 };
-                document.getElementById('avClothes').textContent = clothesMap[save.equippedClothes] || '';
+                document.getElementById('avClothes').textContent = clothesMap[save.equippedPetClothes] || '';
 
-                // Prop
                 const propMap = {
-                    'prop_none': '',
-                    'prop_lollipop': '🍭',
-                    'prop_icecream': '🍦',
-                    'prop_lightsaber': '🗡️',
-                    'prop_wand': '🪄',
-                    'prop_shield': '🛡️',
-                    'prop_balloon': '🎈'
+                    'prop_none': '', 'prop_lollipop': '🍭', 'prop_icecream': '🍦', 'prop_lightsaber': '🗡️',
+                    'prop_wand': '🪄', 'prop_shield': '🛡️', 'prop_balloon': '🎈'
                 };
                 document.getElementById('avProp').textContent = propMap[save.equippedPetProps] || '';
             }
@@ -2217,15 +2353,34 @@
             function doFeed() {
                 const now = Date.now();
                 if ((save.feedCooldown || 0) > now) return;
-                save.hunger = Math.max(0, (save.hunger || 50) - 35);
+                // Use a food item from inventory if available
+                const foodItems = save.ownedPetFood || [];
+                if (foodItems.length === 0) {
+                    toast("Δεν έχεις φαγητό! Αγόρασε από το κατάστημα.");
+                    return;
+                }
+                // Use first food item
+                const foodId = foodItems[0];
+                const foodData = SHOP.pet_food.find(f => f.id === foodId);
+                if (!foodData) {
+                    toast("Άγνωστο φαγητό");
+                    return;
+                }
+                // Remove one food item
+                const idx = foodItems.indexOf(foodId);
+                foodItems.splice(idx, 1);
+                save.ownedPetFood = foodItems;
+
+                save.hunger = Math.max(0, (save.hunger || 50) - foodData.hungerReduction);
                 save.feedCooldown = now + 6000;
                 save.lastUpdate = now;
                 persist();
                 renderHomeStats();
-                showSpeech("Μμμμ, νόστιμο! 😋", 1800);
+                showSpeech("Μμμμ, " + foodData.name + "! 😋", 1800);
                 speak("Μμμμ, νόστιμο!");
-                toast("🍽️ Ο Aziram έφαγε! -35 Πείνα");
+                toast("🍽️ Ο Aziram έφαγε " + foodData.name + "! -" + foodData.hungerReduction + " Πείνα");
                 updateAziramMoodFromStats();
+                renderShop(); // refresh inventory display
             }
 
             function doWash() {
@@ -2269,7 +2424,7 @@
                 prevMood = aziramMood;
             }
 
-            /* ===== THREE.JS GAME ===== */
+            // ---- THREE.JS GAME ----
             let scene, camera, renderer, boardGroup, raycaster, pointer;
             let backMesh, cellMat, grid = [],
                 currentCube = null,
@@ -2553,7 +2708,15 @@
                     cell.mesh.scale.set(1.15, 0.85, 1.15);
                     tween(cell.mesh.scale, { x: 1, y: 1, z: 1 }, 0.18);
                     resolveMerges([{ c, r: targetR }]).then(() => {
-                        if (checkWin()) return;
+                        if (checkWin()) {
+                            // Win condition met, but we continue spawning
+                            // The modal will appear, but we don't stop the game.
+                            // We just set busy false and spawn next cube.
+                            busy = false;
+                            spawnCurrent();
+                            setAim(aimCol);
+                            return;
+                        }
                         if (isBoardFull()) { gameOver(); return; }
                         busy = false;
                         spawnCurrent();
@@ -2642,6 +2805,7 @@
             }
 
             let winTimer = null;
+            let winShown = false;
 
             function checkWin() {
                 const t = LEVELS[Math.min(level, LEVELS.length - 1)].target;
@@ -2651,33 +2815,39 @@
                         if (grid[c][r] && grid[c][r].value >= t) { win = true; break; }
                 if (!win) return false;
 
-                busy = true;
-                coins += 25;
-                save.coins = coins;
-                best = Math.max(best, score);
-                save.best = best;
-                save.level = Math.min(level + 1, LEVELS.length - 1);
-                persist();
-                updateHUD();
-                document.getElementById("winText").innerHTML = `Έφτιαξες ${t}!<br>+25 🪙`;
+                // We have a win
+                if (!winShown) {
+                    winShown = true;
+                    coins += 25;
+                    save.coins = coins;
+                    best = Math.max(best, score);
+                    save.best = best;
+                    save.level = Math.min(level + 1, LEVELS.length - 1);
+                    persist();
+                    updateHUD();
+                    document.getElementById("winText").innerHTML = `Έφτιαξες ${t}!<br>+25 🪙<br>Το παιχνίδι συνεχίζεται!`;
 
-                // ===== CELEBRATION: FIREWORKS, CONFETTI, CLAPPING, SOUNDS =====
-                playWinSound(audioCtx);
-                for (let i = 0; i < 30; i++) {
-                    setTimeout(() => {
-                        const x = (Math.random() - 0.5) * 14;
-                        const y = (Math.random() - 0.5) * 10 + 2;
-                        spawnBurst(x, y, 0, 'confetti', 15);
-                        spawnBurst(x, y, 0, 'explode', 10);
-                    }, i * 120);
+                    // Celebration
+                    playWinSound(audioCtx);
+                    for (let i = 0; i < 30; i++) {
+                        setTimeout(() => {
+                            const x = (Math.random() - 0.5) * 14;
+                            const y = (Math.random() - 0.5) * 10 + 2;
+                            spawnBurst(x, y, 0, 'confetti', 15);
+                            spawnBurst(x, y, 0, 'explode', 10);
+                        }, i * 120);
+                    }
+                    aziramWinTime = 6.0;
+                    showSpeech("Τα καταφέραμε! 🎉", 3800);
+                    speak("Μπράβο! Τα καταφέραμε!");
+
+                    if (winTimer) clearTimeout(winTimer);
+                    winTimer = setTimeout(() => {
+                        document.getElementById("winModal").classList.remove("hidden");
+                        winTimer = null;
+                        // Reset winShown after modal is closed
+                    }, 3500);
                 }
-                aziramWinTime = 6.0;
-                showSpeech("Τα καταφέραμε! 🎉", 3800);
-                speak("Μπράβο! Τα καταφέραμε!");
-
-                if (winTimer) clearTimeout(winTimer);
-                winTimer = setTimeout(() => { document.getElementById("winModal").classList.remove("hidden");
-                    winTimer = null; }, 3500);
                 return true;
             }
 
@@ -2745,7 +2915,6 @@
                 launch();
             }
 
-            /* ===== POWERUP BUTTONS ===== */
             document.getElementById("btnHammer").onclick = () => { if (busy) return;
                 hammerMode = true;
                 updateHUD();
@@ -2800,7 +2969,7 @@
                         persist(); }); }, 250);
             }
 
-            /* ===== SHOP SYSTEM ===== */
+            // ---- Shop System ----
             function getShopProperties(tab) {
                 const map = {
                     cubes: { owned: 'ownedCubes', equip: 'equippedCube' },
@@ -2814,8 +2983,9 @@
                     pet_hands: { owned: 'ownedPetHands', equip: 'equippedPetHands' },
                     pet_props: { owned: 'ownedPetProps', equip: 'equippedPetProps' },
                     pet_feet: { owned: 'ownedPetFeet', equip: 'equippedPetFeet' },
-                    clothes: { owned: 'ownedClothes', equip: 'equippedClothes' },
-                    furniture: { owned: 'ownedFurniture', equip: 'equippedFurniture' }
+                    pet_clothes: { owned: 'ownedPetClothes', equip: 'equippedPetClothes' },
+                    pet_furniture: { owned: 'ownedPetFurniture', equip: 'equippedFurniture' },
+                    pet_food: { owned: 'ownedPetFood', equip: '' }
                 };
                 return map[tab] || { owned: '', equip: '' };
             }
@@ -2828,6 +2998,101 @@
                 const activeTab = currentMainTab === 'pets' ? currentPetSubTab : currentMainTab;
                 const container = document.getElementById('shopContainer');
                 container.innerHTML = '';
+
+                // Special handling for furniture
+                if (activeTab === 'pet_furniture') {
+                    const items = SHOP.pet_furniture;
+                    items.forEach(item => {
+                        const room = item.room;
+                        let roomItems = [];
+                        if (room === 'bedroom') roomItems = save.equippedBedroomFurniture || [];
+                        else if (room === 'kitchen') roomItems = save.equippedKitchenFurniture || [];
+                        else if (room === 'bathroom') roomItems = save.equippedBathroomFurniture || [];
+
+                        const isOwned = save.ownedPetFurniture && save.ownedPetFurniture.includes(item.id);
+                        const isInRoom = roomItems.includes(item.id);
+
+                        const el = document.createElement('div');
+                        el.className = `shop-item ${isOwned?'owned':''} ${isInRoom?'in-room':''}`;
+                        el.innerHTML =
+                            `<div style="font-size:32px; margin-bottom:3px;">${item.icon}</div><h3>${item.name}</h3><div class="price">${isInRoom?'ΣΤΟ ΔΩΜΑΤΙΟ':isOwned?'ΕΠΙΛΟΓΗ':item.price===0?'Δωρεάν':item.price+' 🪙'}</div>`;
+                        el.onclick = () => {
+                            if (item.id === 'fur_none') {
+                                save.equippedBedroomFurniture = [];
+                                save.equippedKitchenFurniture = [];
+                                save.equippedBathroomFurniture = [];
+                                persist();
+                                renderShop();
+                                updateFurniture();
+                                toast("Αφαιρέθηκαν όλα τα έπιπλα");
+                                return;
+                            }
+                            if (isOwned) {
+                                const roomKey = room === 'bedroom' ? 'equippedBedroomFurniture' :
+                                    room === 'kitchen' ? 'equippedKitchenFurniture' : 'equippedBathroomFurniture';
+                                const arr = save[roomKey] || [];
+                                const idx = arr.indexOf(item.id);
+                                if (idx > -1) {
+                                    arr.splice(idx, 1);
+                                } else {
+                                    arr.push(item.id);
+                                }
+                                save[roomKey] = arr;
+                                persist();
+                                renderShop();
+                                updateFurniture();
+                                toast(isInRoom ? "Αφαιρέθηκε από το δωμάτιο" : "Τοποθετήθηκε στο δωμάτιο");
+                            } else if (coins >= item.price) {
+                                coins -= item.price;
+                                save.coins = coins;
+                                save.ownedPetFurniture.push(item.id);
+                                const roomKey = room === 'bedroom' ? 'equippedBedroomFurniture' :
+                                    room === 'kitchen' ? 'equippedKitchenFurniture' : 'equippedBathroomFurniture';
+                                if (!save[roomKey]) save[roomKey] = [];
+                                save[roomKey].push(item.id);
+                                persist();
+                                updateHUD();
+                                renderShop();
+                                updateFurniture();
+                                toast("Αγόρασες και τοποθέτησες το " + item.name + "!");
+                            } else { toast("Δεν έχεις αρκετά νομίσματα!"); }
+                        };
+                        container.appendChild(el);
+                    });
+                    return;
+                }
+
+                // Special handling for food
+                if (activeTab === 'pet_food') {
+                    const items = SHOP.pet_food;
+                    items.forEach(item => {
+                        const isOwned = save.ownedPetFood && save.ownedPetFood.includes(item.id);
+                        const el = document.createElement('div');
+                        el.className = `shop-item ${isOwned?'owned':''}`;
+                        el.innerHTML =
+                            `<div style="font-size:32px; margin-bottom:3px;">${item.icon}</div><h3>${item.name}</h3><div class="price">${isOwned?'ΣΤΟ ΑΠΟΘΕΜΑ':item.price+' 🪙'}</div>`;
+                        el.onclick = () => {
+                            if (isOwned) {
+                                toast("Ήδη έχεις " + item.name + " στο απόθεμα!");
+                                return;
+                            }
+                            if (coins >= item.price) {
+                                coins -= item.price;
+                                save.coins = coins;
+                                if (!save.ownedPetFood) save.ownedPetFood = [];
+                                save.ownedPetFood.push(item.id);
+                                persist();
+                                updateHUD();
+                                renderShop();
+                                toast("Αγόρασες " + item.name + "!");
+                            } else { toast("Δεν έχεις αρκετά νομίσματα!"); }
+                        };
+                        container.appendChild(el);
+                    });
+                    return;
+                }
+
+                // Default rendering for other tabs
                 const arr = SHOP[activeTab] || [];
                 const props = getShopProperties(activeTab);
 
@@ -2873,9 +3138,11 @@
                         currentCube.material.needsUpdate = true; }
                     toast("Η εμφάνιση κύβου άλλαξε!");
                 }
-                if (tabChanged.startsWith('pet_')) equipPetSlot(tabChanged, save[getShopProperties(tabChanged).equip]);
-                if (tabChanged === 'clothes') equipClothes(save.equippedClothes);
-                if (tabChanged === 'furniture') updateFurniture();
+                if (tabChanged.startsWith('pet_')) {
+                    if (tabChanged === 'pet_clothes') equipClothes(save.equippedPetClothes);
+                    else equipPetSlot(tabChanged, save[getShopProperties(tabChanged).equip]);
+                }
+                if (tabChanged === 'pet_furniture') updateFurniture();
                 if (tabChanged === 'effects') toast("Το εφέ άλλαξε!");
                 if (tabChanged === 'sounds') toast("Ο ήχος άλλαξε!");
             }
@@ -2915,7 +3182,7 @@
                 toastTimer = setTimeout(() => t.style.opacity = 0, 1800);
             }
 
-            /* ===== MISSION BAR (every 10s) ===== */
+            // ---- Mission Bar (every 10s) ----
             function showMissionBar() {
                 const bar = document.getElementById('missionBar');
                 bar.classList.add('show');
@@ -2924,7 +3191,7 @@
             setInterval(showMissionBar, 10000);
             setTimeout(showMissionBar, 500);
 
-            /* ===== MOOD SYSTEM ===== */
+            // ---- Mood System ----
             let lastSmokeTime = 0;
 
             function computeMood(now) {
@@ -2965,7 +3232,7 @@
                         core.position.y = Math.abs(Math.sin(t * 0.008)) * 1.2;
                         aziramPet.rotation.x -= 0.15;
                         aziramPet.rotation.y += 0.1;
-                        // CLAPPING
+                        // CLAPPING HANDS
                         sockets.handL.position.y = 0.8 + Math.sin(t * 0.015) * 0.2;
                         sockets.handR.position.y = 0.8 + Math.cos(t * 0.015) * 0.2;
                         sockets.handL.position.x = -0.3 + Math.sin(t * 0.015) * 0.2;
@@ -3118,11 +3385,11 @@
                 requestAnimationFrame(loop);
             }
 
-            /* ===== INIT ===== */
+            // ---- INIT ----
             (async function() {
                 const keys = ['drop2048-save-pure', 'drop2048-save-v2', 'drop2048-save-v3', 'drop2048-save-v4',
                     'drop2048-v5', 'drop2048-frankly-v1', 'drop2048-frankly-v2', 'drop2048-frankly-v3',
-                    'drop2048-frankly-v4'
+                    'drop2048-frankly-v4', 'drop2048-frankly-v5', 'drop2048-frankly-v6'
                 ];
                 keys.forEach(k => localStorage.removeItem(k));
 
@@ -3145,7 +3412,6 @@
                 document.getElementById('btnWash').onclick = doWash;
                 document.getElementById('btnToilet').onclick = doToilet;
 
-                // Room tabs
                 document.querySelectorAll('.room-tab').forEach(tab => {
                     tab.onclick = (e) => {
                         document.querySelectorAll('.room-tab').forEach(t => t.classList.remove('active'));
@@ -3190,7 +3456,7 @@
                 equipPetSlot('pet_hands', save.equippedPetHands);
                 equipPetSlot('pet_props', save.equippedPetProps);
                 equipPetSlot('pet_feet', save.equippedPetFeet);
-                equipClothes(save.equippedClothes);
+                equipClothes(save.equippedPetClothes);
                 updateFurniture();
                 renderHomeAvatar();
 
@@ -3201,13 +3467,16 @@
                 document.getElementById("btnNext").onclick = () => {
                     document.getElementById("winModal").classList.add("hidden");
                     level = Math.min(level + 1, LEVELS.length - 1);
+                    winShown = false; // reset for next level
                     busy = false;
-                    newBoard();
+                    updateHUD();
+                    // Continue playing
                 };
                 document.getElementById("btnRetry").onclick = () => {
                     document.getElementById("loseModal").classList.add("hidden");
                     busy = false;
                     newBoard();
+                    winShown = false;
                 };
 
                 tamagotchiInterval = setInterval(() => { updateTamagotchiStats(); }, 3000);
