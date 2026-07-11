@@ -46,29 +46,29 @@
             left: 0;
             right: 0;
             top: 0;
-            padding: 8px 12px 6px;
+            padding: 14px 18px 12px;
             display: flex;
-            gap: 8px;
+            gap: 12px;
             align-items: center;
             pointer-events: none;
             z-index: 5;
-            background: rgba(11, 12, 16, 0.8);
-            backdrop-filter: blur(6px);
+            background: rgba(11, 12, 16, 0.85);
+            backdrop-filter: blur(8px);
             border-bottom: 2px solid rgba(255, 255, 255, 0.1);
-            height: 58px;
+            height: 76px;
             flex-wrap: nowrap;
         }
         .chip {
             background: var(--panel-deep);
             color: var(--cream);
-            border-radius: 14px;
-            padding: 6px 12px;
+            border-radius: 18px;
+            padding: 8px 16px;
             font-weight: 800;
-            font-size: 14px;
-            box-shadow: 0 3px 0 rgba(0, 0, 0, .3);
+            font-size: 18px;
+            box-shadow: 0 4px 0 rgba(0, 0, 0, .3);
             display: flex;
             align-items: center;
-            gap: 5px;
+            gap: 6px;
             pointer-events: auto;
             line-height: 1.2;
             white-space: nowrap;
@@ -76,12 +76,12 @@
         .chip small {
             font-weight: 600;
             opacity: .75;
-            font-size: 10px;
+            font-size: 12px;
             display: block;
             line-height: 1;
         }
         .chip .big {
-            font-size: 17px;
+            font-size: 24px;
             line-height: 1.1;
         }
         .spacer {
@@ -92,11 +92,11 @@
             border: none;
             cursor: pointer;
             color: #fff;
-            border-radius: 14px;
-            padding: 7px 14px;
+            border-radius: 18px;
+            padding: 10px 18px;
             font-weight: 800;
-            font-size: 15px;
-            box-shadow: 0 4px 0 #b8742a;
+            font-size: 18px;
+            box-shadow: 0 5px 0 #b8742a;
             pointer-events: auto;
             transition: transform .08s;
             font-family: inherit;
@@ -112,39 +112,39 @@
         }
         .hud-btn.aziram-btn {
             background: #7c3aed;
-            box-shadow: 0 4px 0 #5b21b6;
+            box-shadow: 0 5px 0 #5b21b6;
         }
         .hud-btn.aziram-btn:active {
             box-shadow: 0 1px 0 #5b21b6;
         }
         .hud-btn.mode-btn {
             background: #0ea5e9;
-            box-shadow: 0 4px 0 #0369a1;
-            font-size: 12px;
-            padding: 5px 10px;
+            box-shadow: 0 5px 0 #0369a1;
+            font-size: 16px;
+            padding: 8px 14px;
         }
         .hud-btn.mode-btn:active {
             box-shadow: 0 1px 0 #0369a1;
         }
         .hud-btn.mode-btn.missions-active {
             background: #f59e0b;
-            box-shadow: 0 4px 0 #b45309;
+            box-shadow: 0 5px 0 #b45309;
         }
 
-        /* ===== POWERUPS (BELOW HUD) - ΜΕΓΑΛΩΜΕΝΑ ===== */
+        /* ===== POWERUPS - ΜΕΓΑΛΩΜΕΝΑ ===== */
         .powerbar {
             position: fixed;
-            top: 62px;
+            top: 82px;
             left: 50%;
             transform: translateX(-50%);
             display: flex;
             justify-content: center;
-            gap: 10px;
+            gap: 14px;
             z-index: 5;
-            background: rgba(11, 12, 16, 0.65);
-            backdrop-filter: blur(6px);
-            padding: 8px 14px;
-            border-radius: 20px;
+            background: rgba(11, 12, 16, 0.75);
+            backdrop-filter: blur(8px);
+            padding: 14px 20px;
+            border-radius: 26px;
             border: 1px solid rgba(255, 255, 255, 0.1);
             pointer-events: none;
         }
@@ -152,13 +152,13 @@
             pointer-events: auto;
             border: none;
             cursor: pointer;
-            width: 62px;
-            height: 62px;
-            border-radius: 18px;
+            width: 76px;
+            height: 76px;
+            border-radius: 24px;
             background: var(--good);
-            box-shadow: 0 5px 0 #5c7a3a;
+            box-shadow: 0 6px 0 #5c7a3a;
             color: #fff;
-            font-size: 26px;
+            font-size: 34px;
             line-height: 1;
             display: flex;
             flex-direction: column;
@@ -170,30 +170,30 @@
         }
         .pbtn:active {
             transform: translateY(4px);
-            box-shadow: 0 1px 0 #5c7a3a;
+            box-shadow: 0 2px 0 #5c7a3a;
         }
         .pbtn .cost {
-            font-size: 9px;
+            font-size: 12px;
             font-weight: 800;
             background: rgba(0, 0, 0, .25);
-            border-radius: 7px;
-            padding: 2px 7px;
-            margin-top: -1px;
+            border-radius: 8px;
+            padding: 3px 10px;
+            margin-top: -2px;
         }
         .pbtn.armed {
-            outline: 3px solid var(--accent);
+            outline: 4px solid var(--accent);
             background: var(--red);
-            box-shadow: 0 5px 0 #8f3c20;
+            box-shadow: 0 6px 0 #8f3c20;
         }
         .pbtn.listening {
-            outline: 3px solid #ff5555;
+            outline: 4px solid #ff5555;
             background: var(--red);
-            box-shadow: 0 5px 0 #8f3c20;
+            box-shadow: 0 6px 0 #8f3c20;
             animation: pulse 1s infinite;
         }
         .pbtn.sound-muted {
             background: #888;
-            box-shadow: 0 5px 0 #555;
+            box-shadow: 0 6px 0 #555;
             opacity: 0.7;
         }
         @keyframes pulse {
@@ -209,7 +209,7 @@
         /* ===== TOAST ===== */
         #toast {
             position: fixed;
-            bottom: 90px;
+            bottom: 100px;
             left: 50%;
             transform: translateX(-50%);
             z-index: 15;
@@ -217,13 +217,13 @@
             background: var(--panel-deep);
             color: var(--cream);
             font-weight: 700;
-            font-size: 15px;
-            border-radius: 16px;
-            padding: 10px 22px;
+            font-size: 18px;
+            border-radius: 20px;
+            padding: 14px 28px;
             opacity: 0;
             transition: opacity .25s;
             white-space: nowrap;
-            box-shadow: 0 5px 16px rgba(0, 0, 0, .5);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, .5);
         }
 
         /* ===== SPEECH BUBBLE ===== */
@@ -232,17 +232,17 @@
             z-index: 10;
             pointer-events: none;
             font-weight: 800;
-            font-size: 21px;
+            font-size: 26px;
             background: #ffffff;
             color: #333;
-            padding: 10px 20px;
-            border-radius: 22px;
-            border: 3px solid var(--panel-deep);
-            box-shadow: 0 5px 0 var(--panel-deep);
+            padding: 14px 24px;
+            border-radius: 28px;
+            border: 4px solid var(--panel-deep);
+            box-shadow: 0 6px 0 var(--panel-deep);
             transform: translate(-50%, -120%);
             opacity: 0;
             transition: opacity 0.2s ease-in-out, transform 0.2s ease-in-out;
-            max-width: 75vw;
+            max-width: 85vw;
             white-space: normal;
             text-align: center;
         }
@@ -255,33 +255,33 @@
             position: absolute;
             top: 100%;
             left: 50%;
-            margin-left: -12px;
-            border-width: 14px;
+            margin-left: -14px;
+            border-width: 16px;
             border-style: solid;
             border-color: #ffffff transparent transparent transparent;
             filter: drop-shadow(0 5px 0 var(--panel-deep));
         }
 
-        /* ===== FULL-SCREEN OVERLAYS ===== */
+        /* ===== FULL-SCREEN OVERLAYS (Shop & Aziram) ===== */
         .full-overlay {
             position: fixed;
             inset: 0;
-            background: rgba(11, 12, 16, .93);
+            background: rgba(11, 12, 16, .92);
             display: flex;
             align-items: center;
             justify-content: center;
             z-index: 20;
-            backdrop-filter: blur(8px);
+            backdrop-filter: blur(10px);
         }
         .full-card {
             background: var(--cream);
-            border: 5px solid var(--panel-deep);
+            border: 6px solid var(--panel-deep);
             border-radius: 0;
             width: 100vw;
             height: 100vh;
             max-width: 100%;
             max-height: 100%;
-            padding: 16px 12px;
+            padding: 20px 16px;
             display: flex;
             flex-direction: column;
             overflow: hidden;
@@ -289,33 +289,33 @@
         }
         @keyframes pop {
             from {
-                transform: scale(.7);
+                transform: scale(.8);
                 opacity: 0;
             }
         }
         .full-card h2 {
-            font-size: 24px;
-            margin-bottom: 8px;
+            font-size: 30px;
+            margin-bottom: 12px;
             font-weight: 800;
             flex-shrink: 0;
             text-align: center;
         }
         .shop-tabs {
             display: flex;
-            gap: 5px;
-            margin-bottom: 10px;
+            gap: 8px;
+            margin-bottom: 12px;
             border-bottom: 2px solid rgba(0, 0, 0, 0.08);
-            padding-bottom: 10px;
+            padding-bottom: 12px;
             overflow-x: auto;
             flex-shrink: 0;
             flex-wrap: nowrap;
         }
         .shop-tab {
             flex: 0 0 auto;
-            padding: 8px 13px;
+            padding: 10px 16px;
             font-weight: 800;
-            font-size: 13px;
-            border-radius: 12px;
+            font-size: 15px;
+            border-radius: 14px;
             background: #E4D7BC;
             color: #8C6A4F;
             border: none;
@@ -332,11 +332,11 @@
         .pet-subtabs {
             display: none;
             flex-wrap: wrap;
-            gap: 5px;
-            margin-bottom: 10px;
+            gap: 6px;
+            margin-bottom: 12px;
             background: #f0e5d1;
-            padding: 8px 10px;
-            border-radius: 12px;
+            padding: 10px 12px;
+            border-radius: 14px;
             justify-content: center;
             flex-shrink: 0;
         }
@@ -344,10 +344,10 @@
             display: flex;
         }
         .pet-subtab {
-            padding: 5px 10px;
+            padding: 6px 14px;
             font-weight: 800;
-            font-size: 11px;
-            border-radius: 10px;
+            font-size: 13px;
+            border-radius: 12px;
             background: var(--red);
             color: #fff;
             border: none;
@@ -362,24 +362,24 @@
         .shop-items {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 10px;
+            gap: 12px;
             overflow-y: auto;
-            padding-right: 6px;
+            padding-right: 8px;
             flex: 1;
             min-height: 0;
         }
         .shop-items::-webkit-scrollbar {
-            width: 5px;
+            width: 6px;
         }
         .shop-items::-webkit-scrollbar-thumb {
             background: var(--panel-deep);
-            border-radius: 5px;
+            border-radius: 6px;
         }
         .shop-item {
             background: #E4D7BC;
             border: 3px solid #8C6A4F;
-            border-radius: 16px;
-            padding: 10px 8px;
+            border-radius: 18px;
+            padding: 12px 10px;
             cursor: pointer;
             transition: transform 0.1s;
             text-align: center;
@@ -388,7 +388,7 @@
             transform: scale(0.95);
         }
         .shop-item h3 {
-            font-size: 14px;
+            font-size: 16px;
             margin-bottom: 4px;
             color: var(--ink);
             line-height: 1.2;
@@ -396,7 +396,7 @@
         .shop-item .price {
             font-weight: 800;
             color: #b8742a;
-            font-size: 13px;
+            font-size: 15px;
         }
         .shop-item.owned .price {
             color: var(--good);
@@ -404,72 +404,72 @@
         .shop-item.equipped {
             border-color: var(--accent);
             background: #FFF5E1;
-            box-shadow: 0 0 14px rgba(242, 160, 61, 0.5);
+            box-shadow: 0 0 16px rgba(242, 160, 61, 0.6);
         }
         .btn {
             border: none;
             cursor: pointer;
             font-family: inherit;
             font-weight: 800;
-            font-size: 17px;
+            font-size: 20px;
             color: #fff;
             background: var(--accent);
-            border-radius: 18px;
-            padding: 12px 28px;
-            box-shadow: 0 5px 0 #b8742a;
+            border-radius: 22px;
+            padding: 14px 32px;
+            box-shadow: 0 6px 0 #b8742a;
             transition: transform .08s;
-            margin-top: 12px;
+            margin-top: 14px;
             width: 100%;
             flex-shrink: 0;
         }
         .btn:active {
             transform: translateY(3px);
-            box-shadow: 0 1px 0 #b8742a;
+            box-shadow: 0 2px 0 #b8742a;
         }
         .btn.secondary {
             background: var(--blue);
-            box-shadow: 0 5px 0 #2d5a7a;
+            box-shadow: 0 6px 0 #2d5a7a;
         }
         .btn.secondary:active {
-            box-shadow: 0 1px 0 #2d5a7a;
+            box-shadow: 0 2px 0 #2d5a7a;
         }
         .hidden {
             display: none !important;
         }
 
-        /* ===== AZIRAM TAMAGOTCHI FULL-SCREEN ===== */
+        /* ===== AZIRAM TAMAGOTCHI ===== */
         .aziram-stats {
             display: flex;
-            gap: 8px;
-            margin-bottom: 10px;
+            gap: 10px;
+            margin-bottom: 12px;
             flex-shrink: 0;
             flex-wrap: wrap;
             justify-content: center;
         }
         .aziram-stat {
             background: #E4D7BC;
-            border-radius: 14px;
-            padding: 6px 10px;
-            font-size: 13px;
+            border-radius: 16px;
+            padding: 8px 12px;
+            font-size: 14px;
             font-weight: 700;
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 3px;
-            min-width: 65px;
+            gap: 4px;
+            min-width: 70px;
             flex: 1;
         }
         .aziram-stat .bar {
             width: 100%;
-            height: 7px;
+            height: 8px;
             background: #c9b899;
-            border-radius: 7px;
+            border-radius: 8px;
             overflow: hidden;
         }
         .aziram-stat .bar>div {
             height: 100%;
             background: var(--good);
-            border-radius: 7px;
+            border-radius: 8px;
             transition: width .3s;
         }
         .aziram-stat .bar>div.low {
@@ -481,79 +481,85 @@
         .aziram-avatar-zone {
             flex-shrink: 0;
             text-align: center;
-            margin: 6px 0 10px;
+            margin: 10px 0 14px;
             position: relative;
-            min-height: 120px;
+            min-height: 160px;
         }
         .aziram-avatar-zone #aziramAvatarContainer {
             display: inline-block;
             position: relative;
-            width: 100px;
-            height: 120px;
+            width: 120px;
+            height: 140px;
             background: transparent;
+            animation: floatAziram 4s ease-in-out infinite;
+        }
+        @keyframes floatAziram {
+            0% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-12px) rotate(2deg); }
+            100% { transform: translateY(0px) rotate(0deg); }
         }
         .aziram-avatar-zone .av-body {
-            width: 75px;
-            height: 85px;
+            width: 85px;
+            height: 95px;
             border-radius: 50%;
-            margin: 18px auto 0;
+            margin: 22px auto 0;
             position: relative;
             transition: background 0.3s;
-            box-shadow: 0 5px 16px rgba(0, 0, 0, 0.25);
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
         }
         .aziram-avatar-zone .av-face {
             position: absolute;
-            top: 18px;
-            left: 50%;
-            transform: translateX(-50%);
-            font-size: 30px;
-            line-height: 1;
-        }
-        .aziram-avatar-zone .av-head {
-            position: absolute;
-            top: -8px;
+            top: 22px;
             left: 50%;
             transform: translateX(-50%);
             font-size: 34px;
             line-height: 1;
         }
-        .aziram-avatar-zone .av-clothes {
+        .aziram-avatar-zone .av-head {
             position: absolute;
-            bottom: 8px;
+            top: -6px;
             left: 50%;
             transform: translateX(-50%);
-            font-size: 32px;
+            font-size: 38px;
+            line-height: 1;
+        }
+        .aziram-avatar-zone .av-clothes {
+            position: absolute;
+            bottom: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 36px;
             line-height: 1;
         }
         .aziram-avatar-zone .av-prop {
             position: absolute;
-            right: -8px;
-            bottom: 28px;
-            font-size: 30px;
+            right: -10px;
+            bottom: 32px;
+            font-size: 34px;
             line-height: 1;
         }
         .aziram-actions {
             display: flex;
-            gap: 8px;
+            gap: 10px;
             flex-shrink: 0;
             flex-wrap: wrap;
             justify-content: center;
-            margin-bottom: 8px;
+            margin-bottom: 10px;
         }
         .aziram-action-btn {
             border: none;
             font-family: inherit;
             font-weight: 800;
-            font-size: 14px;
+            font-size: 16px;
             color: #fff;
             background: var(--good);
-            border-radius: 14px;
-            padding: 10px 18px;
-            box-shadow: 0 4px 0 #5c7a3a;
+            border-radius: 16px;
+            padding: 12px 20px;
+            box-shadow: 0 5px 0 #5c7a3a;
             cursor: pointer;
             transition: transform .08s;
             flex: 1;
-            min-width: 70px;
+            min-width: 80px;
             text-align: center;
         }
         .aziram-action-btn:active {
@@ -563,150 +569,150 @@
         .aziram-action-btn:disabled {
             opacity: 0.5;
             transform: none;
-            box-shadow: 0 4px 0 #5c7a3a;
+            box-shadow: 0 5px 0 #5c7a3a;
             cursor: not-allowed;
         }
         .cooldown-text {
-            font-size: 11px;
+            font-size: 13px;
             color: var(--red);
             font-weight: 600;
             text-align: center;
-            min-height: 16px;
+            min-height: 20px;
         }
 
-        /* ===== WIN / LOSE MODALS (FULL-SCREEN) ===== */
+        /* ===== WIN / LOSE MODALS (Μεγάλα για κινητά) ===== */
         .win-lose-card {
             background: var(--cream);
-            border: 5px solid var(--panel-deep);
-            border-radius: 24px;
-            width: min(95vw, 480px);
-            max-height: 90vh;
-            padding: 28px 22px;
+            border: 6px solid var(--panel-deep);
+            border-radius: 32px;
+            width: min(92vw, 600px);
+            max-height: 85vh;
+            padding: 32px 28px;
             text-align: center;
-            box-shadow: 0 12px 0 rgba(0, 0, 0, .5);
+            box-shadow: 0 16px 0 rgba(0, 0, 0, .5);
             animation: pop .35s cubic-bezier(.34, 1.56, .64, 1);
         }
         .win-lose-card h2 {
-            font-size: 26px;
-            margin-bottom: 10px;
+            font-size: 32px;
+            margin-bottom: 12px;
             font-weight: 800;
         }
         .win-lose-card p {
-            font-size: 18px;
-            margin-bottom: 14px;
+            font-size: 22px;
+            margin-bottom: 16px;
         }
         .win-lose-card .big-emoji {
-            font-size: 60px;
-            margin-bottom: 8px;
+            font-size: 72px;
+            margin-bottom: 10px;
         }
 
         /* ===== RESPONSIVE ===== */
         @media (max-width: 480px) {
             .hud {
-                height: 50px;
-                padding: 5px 8px;
-                gap: 5px;
+                height: 64px;
+                padding: 8px 12px;
+                gap: 8px;
             }
             .chip {
-                font-size: 11px;
-                padding: 4px 8px;
-                border-radius: 10px;
-            }
-            .chip .big {
                 font-size: 14px;
-            }
-            .hud-btn {
-                font-size: 12px;
-                padding: 5px 9px;
-                border-radius: 10px;
-            }
-            .hud-btn.mode-btn {
-                font-size: 10px;
-                padding: 4px 7px;
-            }
-            .powerbar {
-                top: 54px;
                 padding: 6px 10px;
-                gap: 7px;
-                border-radius: 16px;
-            }
-            .pbtn {
-                width: 52px;
-                height: 52px;
-                font-size: 22px;
                 border-radius: 14px;
             }
-            .pbtn .cost {
-                font-size: 7px;
+            .chip .big {
+                font-size: 18px;
             }
-            .aziram-stat {
-                font-size: 10px;
-                min-width: 45px;
-                padding: 4px 6px;
+            .hud-btn {
+                font-size: 14px;
+                padding: 6px 12px;
+                border-radius: 14px;
             }
-            .aziram-stat .bar {
-                height: 5px;
-            }
-            .aziram-avatar-zone #aziramAvatarContainer {
-                width: 75px;
-                height: 95px;
-            }
-            .aziram-avatar-zone .av-body {
-                width: 58px;
-                height: 68px;
-                margin: 12px auto 0;
-            }
-            .full-card {
-                padding: 10px 8px;
-            }
-            .shop-items {
-                gap: 6px;
-            }
-            .shop-item h3 {
+            .hud-btn.mode-btn {
                 font-size: 12px;
+                padding: 5px 10px;
             }
-            #speech {
-                font-size: 17px;
-                padding: 7px 16px;
+            .powerbar {
+                top: 68px;
+                padding: 10px 14px;
+                gap: 10px;
+                border-radius: 20px;
+            }
+            .pbtn {
+                width: 60px;
+                height: 60px;
+                font-size: 28px;
                 border-radius: 18px;
             }
+            .pbtn .cost {
+                font-size: 10px;
+            }
+            .aziram-stat {
+                font-size: 12px;
+                min-width: 60px;
+                padding: 6px 8px;
+            }
+            .aziram-stat .bar {
+                height: 6px;
+            }
+            .aziram-avatar-zone #aziramAvatarContainer {
+                width: 90px;
+                height: 110px;
+            }
+            .aziram-avatar-zone .av-body {
+                width: 65px;
+                height: 75px;
+                margin: 16px auto 0;
+            }
+            .full-card {
+                padding: 12px 10px;
+            }
+            .shop-items {
+                gap: 8px;
+            }
+            .shop-item h3 {
+                font-size: 14px;
+            }
+            #speech {
+                font-size: 20px;
+                padding: 10px 18px;
+                border-radius: 22px;
+            }
             #toast {
-                font-size: 13px;
-                padding: 8px 16px;
+                font-size: 16px;
+                padding: 10px 20px;
                 bottom: 80px;
             }
             .win-lose-card {
                 width: 94vw;
-                padding: 20px 16px;
-                border-radius: 20px;
+                padding: 24px 18px;
+                border-radius: 28px;
             }
             .win-lose-card h2 {
-                font-size: 22px;
+                font-size: 26px;
             }
             .win-lose-card .big-emoji {
-                font-size: 48px;
+                font-size: 60px;
             }
         }
         @media (max-width: 380px) {
             .hud-btn {
-                font-size: 10px;
-                padding: 3px 6px;
+                font-size: 12px;
+                padding: 4px 8px;
             }
             .chip {
-                font-size: 9px;
-                padding: 3px 5px;
+                font-size: 11px;
+                padding: 4px 8px;
             }
             .chip .big {
-                font-size: 12px;
+                font-size: 14px;
             }
             .pbtn {
-                width: 44px;
-                height: 44px;
-                font-size: 18px;
+                width: 50px;
+                height: 50px;
+                font-size: 22px;
             }
             .aziram-action-btn {
-                font-size: 12px;
-                padding: 7px 12px;
+                font-size: 14px;
+                padding: 8px 14px;
             }
         }
     </style>
@@ -787,7 +793,7 @@
                     <div class="av-clothes" id="avClothes"></div>
                     <div class="av-prop" id="avProp"></div>
                 </div>
-                <div style="font-size:12px; color:#8C6A4F; margin-top:4px; font-weight:600;" id="petMoodText">😊 Χαρούμενο</div>
+                <div style="font-size:14px; color:#8C6A4F; margin-top:6px; font-weight:600;" id="petMoodText">😊 Χαρούμενο</div>
             </div>
 
             <div class="aziram-actions">
@@ -2628,7 +2634,7 @@
                         if (grid[c][r] && grid[c][r].value >= target) { win = true; break; }
                 if (!win) return false;
 
-                // CELEBRATION with celestial objects
+                // CELEBRATION with celestial objects (Αστέρια, πλανήτες, UFO κ.λπ.)
                 playWinSound(audioCtx);
                 const wp = new THREE.Vector3();
                 aziramPet.getWorldPosition(wp);
