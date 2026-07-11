@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Aziram · Pet Module</title>
+  <style>
+    :root{
+      --bg:#0B0C10; --panel:#8C6A4F; --panel-deep:#4A3423;
+      --cream:#F7EFDC; --ink:#2F1B0D; --accent:#F2A03D;
+      --good:#7FA653; --red:#C2542F; --glass: rgba(255,255,255,0.06);
+    }
+    html,body{height:100%;margin:0;font-family:"Baloo 2",system-ui,sans-serif;background:transparent;color:var(--ink);} 
+    .root{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:12px}
+    .home-card{
+      width: min(420px,92vw); max-height:92vh; background:var(--cream);
+      border:4px solid var(--panel-deep); border-radius:18px; padding:14px; box-shadow:0 10px 0 rgba(0,0,0,0.35);
+      display:flex; flex-direction:column; gap:10px; overflow:auto;
+    }
+    .home-stats{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
+    .home-stat{background:#E4D7BC;border-radius:12px;padding:6px 8px;font-weight:700;display:flex;flex-direction:column;align-items:center;min-width:64px}
+    .home-stat .bar{width:100%;height:8px;background:#c9b899;border-radius:8px;overflow:hidden}
+    .home-stat .bar>div{height:100%;background:var(--good);width:50%}
+    .home-avatar-area{text-align:center}
+    #homeAvatarContainer{position:relative;width:120px;height:140px;margin:0 auto}
+    .av-body{width:92px;height:100px;border-radius:50%;margin:24px auto 0;box-shadow:0 8px 16px rgba(0,0,0,0.2);background:linear-gradient(180deg,#9be58a,#3a7a3a);position:relative}
+    .av-head{position:absolute;top:-12px;left:50%;transform:translateX(-50%);font-size:40px}
+    .av-face{position:absolute;top:22px;left:50%;transform:translateX(-50%);font-size:26px}
+    .av-clothes{position:absolute;bottom:6px; left:50%; transform:translateX(-50%); font-size:26px}
+    .actions{display:flex;gap:8px;justify-content:center;margin-top:6px}
+    .btn{border:none;background:var(--accent);color:white;padding:10px 14px;border-radius:12px;font-weight:800;cursor:pointer;box-shadow:0 6px 0 rgba(0,0,0,0.15)}
+    .btn.secondary{background:#4A7DBF}
+    .speech {position:fixed; right:14px; bottom:14px; max-width:320px; background:var(--cream); color:var(--ink); padding:10px 14px; border-radius:16px; border:3px solid var(--panel-deep); box-shadow:0 8px 0 var(--panel-deep); font-weight:800; display:none}
+    .speech.visible{display:block; animation:petSpeak .18s ease both}
+    @keyframes petSpeak{from{transform:translateY(8px); opacity:.0} to{transform:translateY(0);opacity:1}}
+    .pet-footer{display:flex;gap:8px;justify-content:center;margin-top:8px}
+    .pet-tabs{display:flex; gap:6px; justify-content:center; flex-wrap:wrap}
+    .pet-tab{padding:6px 8px;border-radius:10px;background:var(--panel-deep);color:var(--cream);font-weight:800;cursor:pointer}
+    .hidden{display:none}
+
+    /* Missions list inside pet */
+    .missions{display:flex;flex-direction:column;gap:8px;margin-top:6px}
+    .mission{background:#FFF5E1;border:2px solid var(--panel-deep);padding:8px;border-radius:10px;display:flex;justify-content:space-between;align-items:center}
+    .mission .meta{font-weight:800;color:var(--ink)}
+    .mission .controls{display:flex;gap:6px}
+    .small{font-size:12px;opacity:.85}
+  </style>
+</head>
+<body>
+  <!-- Pet module. Owned by iframe. Communicates via postMessage with parent. -->
+  <div class="root" id="root">
+    <div class="home-card" role="dialog" aria-label="Aziram Home">
+      <h2 style="margin:0; font-size:20px">🏠 Το Σπίτι του Aziram</h2>
+
+      <div class="home-stats" id="homeStats">
+        <div class="home-stat">⚡ Ενέργεια<div class="bar"><div id="energyBar" style="width:70%"></div></div><span id="energyText">70</span></div>
+        <div class="home-stat">🍽️ Πείνα<div class="bar"><div id="hungerBar" style="width:30%"></div></div><span id="hungerText">30</span></div>
+        <div class="home-stat">🧼 Καθαριότητα<div class="bar"><div id="cleanBar" style="width:80%"></div></div><span id="cleanText">80</span></div>
+        <div class="home-stat">🚽 Τουαλέτα<div class="bar"><div id="toiletBar" style="width:10%"></div></div><span id="toiletText">10</span></div>
+      </div>
+
+      <div class="home-avatar-area">
+        <div id="homeAvatarContainer">
+          <div class="av-head" id="avHead">👑</div>
+          <div class="av-body" id="avBody"></div>
+          <div class="av-face" id="avFace">😃</div>
+          <div class="av-clothes" id="avClothes">🧥</div>
+        </div>
+      </div>
+
+      <div class="pet-tabs" id="petTabs">
+        <div class="pet-tab" data-action="color">Χρώμα</div>
+        <div class="pet-tab" data-action="head">Κεφάλι</div>
+        <div class="pet-tab" data-action="face">Πρόσωπο</div>
+        <div class="pet-tab" data-action="body">Σώμα</div>
+        <div class="pet-tab" data-action="props">Αντικείμενα</div>
+      </div>
+
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:8px">
+        <div class="small">Αποστολές</div>
+        <div style="display:flex;gap:6px;align-items:center">
+          <button class="btn" id="btnNewMission">+ Mission</button>
+          <button class="btn secondary" id="btnClose">Κλείσιμο</button>
+        </div>
+      </div>
+
+      <div class="missions" id="missionsList" aria-live="polite"></div>
+
+      <div class="actions">
+        <button class="btn" id="btnSleep">😴 Ύπνος</button>
+        <button class="btn" id="btnFeed">🍽️ Τάισμα</button>
+      </div>
+
+      <div class="pet-footer"><small style="opacity:.8">Aziram · Pet Module</small></div>
+    </div>
+  </div>
+
+  <div id="speech" class="speech" aria-live="polite"><span id="speechText"></span></div>
+
+  <script>
+    (function(){
+      const LS_KEY = 'fg_pet_missions_v1';
+      const MODE_KEY = 'fg_mode_v1';
+      const COINS_KEY = 'fg_coins_v1';
+
+      // state
+      const state = {
+        energy:70, hunger:30, clean:80, toilet:10,
+        missions: loadMissions(),
+      };
+
+      function loadMissions(){
+        try{ const raw = localStorage.getItem(LS_KEY); return raw ? JSON.parse(raw) : []; }catch(e){return []}
+      }
+      function saveMissions(){ localStorage.setItem(LS_KEY, JSON.stringify(state.missions)); }
+
+      // helper: pet speak
+      const speechEl = document.getElementById('speech');
+      const speechText = document.getElementById('speechText');
+      function petSpeak(text, duration=3000){
+        speechText.textContent = text; speechEl.classList.add('visible');
+        clearTimeout(petSpeak._t);
+        petSpeak._t = setTimeout(()=> speechEl.classList.remove('visible'), duration);
+      }
+
+      function updateBars(){
+        document.getElementById('energyBar').style.width = state.energy + '%';
+        document.getElementById('energyText').textContent = state.energy;
+        document.getElementById('hungerBar').style.width = state.hunger + '%';
+        document.getElementById('hungerText').textContent = state.hunger;
+        document.getElementById('cleanBar').style.width = state.clean + '%';
+        document.getElementById('cleanText').textContent = state.clean;
+        document.getElementById('toiletBar').style.width = state.toilet + '%';
+        document.getElementById('toiletText').textContent = state.toilet;
+      }
+      updateBars();
+
+      // mission UI
+      const missionsListEl = document.getElementById('missionsList');
+      function renderMissions(){
+        missionsListEl.innerHTML = '';
+        if(state.missions.length===0){
+          missionsListEl.innerHTML = '<div class="small" style="opacity:.7">Δεν υπάρχουν ενεργές αποστολές</div>';
+          return;
+        }
+        state.missions.forEach(m => {
+          const el = document.createElement('div'); el.className='mission';
+          const meta = document.createElement('div'); meta.className='meta';
+          meta.innerHTML = `<div>${m.text}</div><div class="small">Έπαθλο: ${m.reward} 🪙</div>`;
+          const ctr = document.createElement('div'); ctr.className='controls';
+          const btnComplete = document.createElement('button'); btnComplete.className='btn'; btnComplete.textContent='Ολοκλήρωση';
+          btnComplete.addEventListener('click', ()=> completeMission(m.id));
+          const btnAbandon = document.createElement('button'); btnAbandon.className='btn secondary'; btnAbandon.textContent='Παράτησε';
+          btnAbandon.addEventListener('click', ()=> abandonMission(m.id));
+          ctr.appendChild(btnComplete); ctr.appendChild(btnAbandon);
+          el.appendChild(meta); el.appendChild(ctr);
+          missionsListEl.appendChild(el);
+        });
+      }
+
+      function addMission(m){
+        // if already exists skip
+        if(state.missions.find(x=>x.id===m.id)) return;
+        state.missions.push(Object.assign({createdAt:Date.now(), completed:false}, m));
+        saveMissions(); renderMissions();
+      }
+
+      function completeMission(id){
+        const idx = state.missions.findIndex(x=>x.id===id); if(idx===-1) return;
+        const m = state.missions[idx]; m.completed = true;
+        // notify parent to award reward
+        postParent({ type:'missionCompleted', id:m.id, reward:m.reward });
+        // remove from list
+        state.missions.splice(idx,1); saveMissions(); renderMissions();
+        petSpeak('Ευχαριστώ! Λαμβάνεις το έπαθλο.');
+      }
+      function abandonMission(id){
+        const idx = state.missions.findIndex(x=>x.id===id); if(idx===-1) return;
+        state.missions.splice(idx,1); saveMissions(); renderMissions(); petSpeak('Εντάξει, παράτησες την αποστολή.');
+      }
+
+      // add button for testing new mission locally
+      document.getElementById('btnNewMission').addEventListener('click', ()=>{
+        const id = 'm_' + Math.random().toString(36).slice(2,9);
+        const sample = { id, text: 'Δημιουργημένη Αποστολή: ' + id.slice(-4), reward: Math.floor(Math.random()*150)+50 };
+        addMission(sample);
+        petSpeak('Νέα αποστολή αποθηκεύτηκε!');
+      });
+
+      // actions
+      document.getElementById('btnSleep').addEventListener('click', ()=>{
+        state.energy = Math.min(100, state.energy + 25); updateBars(); petSpeak('Zzz... νιώθω ανανεωμένος!');
+        postParent({ type:'action', action:'sleep', state: getState() });
+      });
+      document.getElementById('btnFeed').addEventListener('click', ()=>{
+        state.hunger = Math.max(0, state.hunger - 30); updateBars(); petSpeak('Να σου έτοιμο! 🍲');
+        postParent({ type:'action', action:'feed', state: getState() });
+      });
+      document.getElementById('btnClose').addEventListener('click', ()=>{
+        // tell parent to hide iframe if it wants
+        postParent({ type:'homeClosedByUser' });
+      });
+
+      function getState(){ return { energy: state.energy, hunger: state.hunger, clean: state.clean, toilet: state.toilet } }
+
+      // messaging
+      function postParent(msg){ try{ parent.postMessage(msg, '*'); }catch(e){} }
+      function onMessage(ev){
+        const msg = ev.data || {};
+        if(!msg || !msg.type) return;
+        switch(msg.type){
+          case 'mission':
+            // accept missions from parent; payload can be { id,text,reward }
+            if(msg.mission) addMission(msg.mission);
+            else if(msg.text) addMission({ id:'m_'+Math.random().toString(36).slice(2,9), text:msg.text, reward: msg.reward||100 });
+            petSpeak(msg.text || 'Νέα αποστολή!');
+            break;
+          case 'openHome':
+            // parent asks us to open home UI - visible by default here
+            // focus and speak
+            petSpeak('Άνοιξα το σπίτι μου!');
+            break;
+          case 'requestStatus':
+            postParent({ type:'status', status: getState(), missions: state.missions });
+            break;
+          case 'clearMissions':
+            state.missions = []; saveMissions(); renderMissions();
+            break;
+          default:
+            break;
+        }
+      }
+
+      window.addEventListener('message', onMessage, false);
+
+      // initial render
+      renderMissions();
+
+      // expose for debug
+      window.aziram = { addMission, completeMission, getState };
+
+      // auto-speak a welcome
+      setTimeout(()=> petSpeak('Γεια! Είμαι ο Aziram — έτοιμος για αποστολές.'), 800);
+
+    })();
+  </script>
+</body>
+</html>
