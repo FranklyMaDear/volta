@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Drop 2048 AziRaM </title>
+    <title>Drop 2048 · FranklyGames Edition</title>
     <style>
         :root {
             --bg: #0B0C10;
@@ -40,46 +40,48 @@
             z-index: 0;
         }
 
-        /* ===== HUD (TOP) ===== */
+        /* ===== HUD (TOP) - ΜΕΓΑΛΩΜΕΝΟ ===== */
         .hud {
             position: fixed;
             left: 0;
             right: 0;
             top: 0;
-            padding: 6px 10px 4px;
+            padding: 8px 12px 6px;
             display: flex;
-            gap: 6px;
+            gap: 8px;
             align-items: center;
             pointer-events: none;
             z-index: 5;
-            background: rgba(11, 12, 16, 0.75);
-            backdrop-filter: blur(4px);
-            border-bottom: 2px solid rgba(255, 255, 255, 0.08);
-            height: 48px;
+            background: rgba(11, 12, 16, 0.8);
+            backdrop-filter: blur(6px);
+            border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+            height: 58px;
+            flex-wrap: nowrap;
         }
         .chip {
             background: var(--panel-deep);
             color: var(--cream);
-            border-radius: 12px;
-            padding: 4px 10px;
+            border-radius: 14px;
+            padding: 6px 12px;
             font-weight: 800;
-            font-size: 13px;
+            font-size: 14px;
             box-shadow: 0 3px 0 rgba(0, 0, 0, .3);
             display: flex;
             align-items: center;
-            gap: 4px;
+            gap: 5px;
             pointer-events: auto;
             line-height: 1.2;
+            white-space: nowrap;
         }
         .chip small {
             font-weight: 600;
             opacity: .75;
-            font-size: 9px;
+            font-size: 10px;
             display: block;
             line-height: 1;
         }
         .chip .big {
-            font-size: 15px;
+            font-size: 17px;
             line-height: 1.1;
         }
         .spacer {
@@ -90,59 +92,73 @@
             border: none;
             cursor: pointer;
             color: #fff;
-            border-radius: 12px;
-            padding: 4px 12px;
+            border-radius: 14px;
+            padding: 7px 14px;
             font-weight: 800;
-            font-size: 14px;
-            box-shadow: 0 3px 0 #b8742a;
+            font-size: 15px;
+            box-shadow: 0 4px 0 #b8742a;
             pointer-events: auto;
             transition: transform .08s;
             font-family: inherit;
             display: flex;
             align-items: center;
-            gap: 4px;
+            gap: 5px;
             line-height: 1.3;
+            white-space: nowrap;
         }
         .hud-btn:active {
             transform: translateY(3px);
             box-shadow: 0 1px 0 #b8742a;
         }
-        .hud-btn.home-btn {
-            background: var(--blue);
-            box-shadow: 0 3px 0 #2d5a7a;
+        .hud-btn.aziram-btn {
+            background: #7c3aed;
+            box-shadow: 0 4px 0 #5b21b6;
         }
-        .hud-btn.home-btn:active {
-            box-shadow: 0 1px 0 #2d5a7a;
+        .hud-btn.aziram-btn:active {
+            box-shadow: 0 1px 0 #5b21b6;
+        }
+        .hud-btn.mode-btn {
+            background: #0ea5e9;
+            box-shadow: 0 4px 0 #0369a1;
+            font-size: 12px;
+            padding: 5px 10px;
+        }
+        .hud-btn.mode-btn:active {
+            box-shadow: 0 1px 0 #0369a1;
+        }
+        .hud-btn.mode-btn.missions-active {
+            background: #f59e0b;
+            box-shadow: 0 4px 0 #b45309;
         }
 
-        /* ===== POWERUPS (BELOW HUD) ===== */
+        /* ===== POWERUPS (BELOW HUD) - ΜΕΓΑΛΩΜΕΝΑ ===== */
         .powerbar {
             position: fixed;
-            top: 50px;
+            top: 62px;
             left: 50%;
             transform: translateX(-50%);
             display: flex;
             justify-content: center;
-            gap: 8px;
+            gap: 10px;
             z-index: 5;
-            background: rgba(11, 12, 16, 0.6);
-            backdrop-filter: blur(4px);
-            padding: 6px 12px;
-            border-radius: 18px;
-            border: 1px solid rgba(255, 255, 255, 0.08);
+            background: rgba(11, 12, 16, 0.65);
+            backdrop-filter: blur(6px);
+            padding: 8px 14px;
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
             pointer-events: none;
         }
         .pbtn {
             pointer-events: auto;
             border: none;
             cursor: pointer;
-            width: 56px;
-            height: 56px;
-            border-radius: 16px;
+            width: 62px;
+            height: 62px;
+            border-radius: 18px;
             background: var(--good);
-            box-shadow: 0 4px 0 #5c7a3a;
+            box-shadow: 0 5px 0 #5c7a3a;
             color: #fff;
-            font-size: 24px;
+            font-size: 26px;
             line-height: 1;
             display: flex;
             flex-direction: column;
@@ -157,23 +173,28 @@
             box-shadow: 0 1px 0 #5c7a3a;
         }
         .pbtn .cost {
-            font-size: 8px;
+            font-size: 9px;
             font-weight: 800;
             background: rgba(0, 0, 0, .25);
-            border-radius: 6px;
-            padding: 1px 6px;
-            margin-top: -2px;
+            border-radius: 7px;
+            padding: 2px 7px;
+            margin-top: -1px;
         }
         .pbtn.armed {
             outline: 3px solid var(--accent);
             background: var(--red);
-            box-shadow: 0 4px 0 #8f3c20;
+            box-shadow: 0 5px 0 #8f3c20;
         }
         .pbtn.listening {
             outline: 3px solid #ff5555;
             background: var(--red);
-            box-shadow: 0 4px 0 #8f3c20;
+            box-shadow: 0 5px 0 #8f3c20;
             animation: pulse 1s infinite;
+        }
+        .pbtn.sound-muted {
+            background: #888;
+            box-shadow: 0 5px 0 #555;
+            opacity: 0.7;
         }
         @keyframes pulse {
             0%,
@@ -185,39 +206,10 @@
             }
         }
 
-        /* ===== MISSION BAR (roll-up) ===== */
-        #missionBar {
-            position: fixed;
-            top: 0;
-            left: 50%;
-            transform: translate(-50%, -120%);
-            transition: transform .55s cubic-bezier(.34, 1.5, .64, 1);
-            z-index: 30;
-            pointer-events: auto;
-            cursor: pointer;
-            background: var(--cream);
-            border: 3px solid var(--panel-deep);
-            border-top: none;
-            color: var(--ink);
-            border-radius: 0 0 20px 20px;
-            padding: 10px 22px 8px;
-            font-weight: 700;
-            font-size: 15px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, .5);
-            white-space: nowrap;
-            letter-spacing: 0.3px;
-        }
-        #missionBar.show {
-            transform: translate(-50%, 0);
-        }
-        #missionBar b {
-            color: var(--red);
-        }
-
         /* ===== TOAST ===== */
         #toast {
             position: fixed;
-            bottom: 80px;
+            bottom: 90px;
             left: 50%;
             transform: translateX(-50%);
             z-index: 15;
@@ -225,13 +217,13 @@
             background: var(--panel-deep);
             color: var(--cream);
             font-weight: 700;
-            font-size: 14px;
-            border-radius: 14px;
-            padding: 8px 18px;
+            font-size: 15px;
+            border-radius: 16px;
+            padding: 10px 22px;
             opacity: 0;
             transition: opacity .25s;
             white-space: nowrap;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, .4);
+            box-shadow: 0 5px 16px rgba(0, 0, 0, .5);
         }
 
         /* ===== SPEECH BUBBLE ===== */
@@ -240,17 +232,17 @@
             z-index: 10;
             pointer-events: none;
             font-weight: 800;
-            font-size: 20px;
+            font-size: 21px;
             background: #ffffff;
             color: #333;
-            padding: 8px 18px;
-            border-radius: 20px;
+            padding: 10px 20px;
+            border-radius: 22px;
             border: 3px solid var(--panel-deep);
-            box-shadow: 0 4px 0 var(--panel-deep);
+            box-shadow: 0 5px 0 var(--panel-deep);
             transform: translate(-50%, -120%);
             opacity: 0;
             transition: opacity 0.2s ease-in-out, transform 0.2s ease-in-out;
-            max-width: 70vw;
+            max-width: 75vw;
             white-space: normal;
             text-align: center;
         }
@@ -263,37 +255,37 @@
             position: absolute;
             top: 100%;
             left: 50%;
-            margin-left: -10px;
-            border-width: 12px;
+            margin-left: -12px;
+            border-width: 14px;
             border-style: solid;
             border-color: #ffffff transparent transparent transparent;
-            filter: drop-shadow(0 4px 0 var(--panel-deep));
+            filter: drop-shadow(0 5px 0 var(--panel-deep));
         }
 
-        /* ===== SHOP ===== */
-        .overlay {
+        /* ===== FULL-SCREEN OVERLAYS ===== */
+        .full-overlay {
             position: fixed;
             inset: 0;
-            background: rgba(11, 12, 16, .85);
+            background: rgba(11, 12, 16, .93);
             display: flex;
             align-items: center;
             justify-content: center;
             z-index: 20;
-            backdrop-filter: blur(4px);
+            backdrop-filter: blur(8px);
         }
-        .card {
+        .full-card {
             background: var(--cream);
-            border: 4px solid var(--panel-deep);
-            border-radius: 26px;
-            padding: 20px 18px;
-            width: min(400px, 92vw);
-            max-height: 92vh;
-            text-align: center;
-            box-shadow: 0 10px 0 rgba(0, 0, 0, .4);
-            animation: pop .25s cubic-bezier(.34, 1.56, .64, 1);
+            border: 5px solid var(--panel-deep);
+            border-radius: 0;
+            width: 100vw;
+            height: 100vh;
+            max-width: 100%;
+            max-height: 100%;
+            padding: 16px 12px;
             display: flex;
             flex-direction: column;
             overflow: hidden;
+            animation: pop .3s cubic-bezier(.34, 1.56, .64, 1);
         }
         @keyframes pop {
             from {
@@ -301,28 +293,29 @@
                 opacity: 0;
             }
         }
-        .card h2 {
-            font-size: 22px;
-            margin-bottom: 6px;
+        .full-card h2 {
+            font-size: 24px;
+            margin-bottom: 8px;
             font-weight: 800;
             flex-shrink: 0;
+            text-align: center;
         }
         .shop-tabs {
             display: flex;
-            gap: 4px;
-            margin-bottom: 8px;
+            gap: 5px;
+            margin-bottom: 10px;
             border-bottom: 2px solid rgba(0, 0, 0, 0.08);
-            padding-bottom: 8px;
+            padding-bottom: 10px;
             overflow-x: auto;
             flex-shrink: 0;
             flex-wrap: nowrap;
         }
         .shop-tab {
             flex: 0 0 auto;
-            padding: 6px 10px;
+            padding: 8px 13px;
             font-weight: 800;
-            font-size: 12px;
-            border-radius: 10px;
+            font-size: 13px;
+            border-radius: 12px;
             background: #E4D7BC;
             color: #8C6A4F;
             border: none;
@@ -333,17 +326,17 @@
         .shop-tab.active {
             background: var(--accent);
             color: #fff;
-            box-shadow: 0 3px 0 #b8742a;
+            box-shadow: 0 4px 0 #b8742a;
             transform: translateY(-2px);
         }
         .pet-subtabs {
             display: none;
             flex-wrap: wrap;
-            gap: 4px;
-            margin-bottom: 8px;
+            gap: 5px;
+            margin-bottom: 10px;
             background: #f0e5d1;
-            padding: 6px 8px;
-            border-radius: 10px;
+            padding: 8px 10px;
+            border-radius: 12px;
             justify-content: center;
             flex-shrink: 0;
         }
@@ -351,10 +344,10 @@
             display: flex;
         }
         .pet-subtab {
-            padding: 4px 8px;
+            padding: 5px 10px;
             font-weight: 800;
-            font-size: 10px;
-            border-radius: 8px;
+            font-size: 11px;
+            border-radius: 10px;
             background: var(--red);
             color: #fff;
             border: none;
@@ -363,30 +356,30 @@
         }
         .pet-subtab.active {
             background: #5c7a3a;
-            box-shadow: 0 2px 0 #3a4d25;
+            box-shadow: 0 3px 0 #3a4d25;
             transform: translateY(-1px);
         }
         .shop-items {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 8px;
+            gap: 10px;
             overflow-y: auto;
-            padding-right: 4px;
+            padding-right: 6px;
             flex: 1;
             min-height: 0;
         }
         .shop-items::-webkit-scrollbar {
-            width: 4px;
+            width: 5px;
         }
         .shop-items::-webkit-scrollbar-thumb {
             background: var(--panel-deep);
-            border-radius: 4px;
+            border-radius: 5px;
         }
         .shop-item {
             background: #E4D7BC;
             border: 3px solid #8C6A4F;
-            border-radius: 14px;
-            padding: 8px 6px;
+            border-radius: 16px;
+            padding: 10px 8px;
             cursor: pointer;
             transition: transform 0.1s;
             text-align: center;
@@ -395,15 +388,15 @@
             transform: scale(0.95);
         }
         .shop-item h3 {
-            font-size: 13px;
-            margin-bottom: 3px;
+            font-size: 14px;
+            margin-bottom: 4px;
             color: var(--ink);
             line-height: 1.2;
         }
         .shop-item .price {
             font-weight: 800;
             color: #b8742a;
-            font-size: 12px;
+            font-size: 13px;
         }
         .shop-item.owned .price {
             color: var(--good);
@@ -411,21 +404,21 @@
         .shop-item.equipped {
             border-color: var(--accent);
             background: #FFF5E1;
-            box-shadow: 0 0 10px rgba(242, 160, 61, 0.4);
+            box-shadow: 0 0 14px rgba(242, 160, 61, 0.5);
         }
         .btn {
             border: none;
             cursor: pointer;
             font-family: inherit;
             font-weight: 800;
-            font-size: 16px;
+            font-size: 17px;
             color: #fff;
             background: var(--accent);
-            border-radius: 16px;
-            padding: 10px 24px;
-            box-shadow: 0 4px 0 #b8742a;
+            border-radius: 18px;
+            padding: 12px 28px;
+            box-shadow: 0 5px 0 #b8742a;
             transition: transform .08s;
-            margin-top: 10px;
+            margin-top: 12px;
             width: 100%;
             flex-shrink: 0;
         }
@@ -435,7 +428,7 @@
         }
         .btn.secondary {
             background: var(--blue);
-            box-shadow: 0 4px 0 #2d5a7a;
+            box-shadow: 0 5px 0 #2d5a7a;
         }
         .btn.secondary:active {
             box-shadow: 0 1px 0 #2d5a7a;
@@ -444,194 +437,110 @@
             display: none !important;
         }
 
-        /* ===== HOME / TAMAGOTCHI (FULL SCREEN) ===== */
-        .home-overlay {
-            position: fixed;
-            inset: 0;
-            background: rgba(11, 12, 16, .92);
+        /* ===== AZIRAM TAMAGOTCHI FULL-SCREEN ===== */
+        .aziram-stats {
             display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 50;
-            backdrop-filter: blur(6px);
-            padding: 0;
-        }
-        .home-card {
-            background: var(--cream);
-            border: none;
-            border-radius: 0;
-            width: 100vw;
-            height: 100vh;
-            max-width: 100%;
-            max-height: 100%;
-            padding: 12px 10px;
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-            animation: pop .25s cubic-bezier(.34, 1.56, .64, 1);
-        }
-
-        .home-stats {
-            display: flex;
-            gap: 6px;
-            margin-bottom: 8px;
+            gap: 8px;
+            margin-bottom: 10px;
             flex-shrink: 0;
             flex-wrap: wrap;
             justify-content: center;
         }
-        .home-stat {
+        .aziram-stat {
             background: #E4D7BC;
-            border-radius: 12px;
-            padding: 4px 8px;
-            font-size: 12px;
+            border-radius: 14px;
+            padding: 6px 10px;
+            font-size: 13px;
             font-weight: 700;
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 2px;
-            min-width: 60px;
+            gap: 3px;
+            min-width: 65px;
             flex: 1;
         }
-        .home-stat .bar {
+        .aziram-stat .bar {
             width: 100%;
-            height: 6px;
+            height: 7px;
             background: #c9b899;
-            border-radius: 6px;
+            border-radius: 7px;
             overflow: hidden;
         }
-        .home-stat .bar>div {
+        .aziram-stat .bar>div {
             height: 100%;
             background: var(--good);
-            border-radius: 6px;
+            border-radius: 7px;
             transition: width .3s;
         }
-        .home-stat .bar>div.low {
+        .aziram-stat .bar>div.low {
             background: var(--red);
         }
-        .home-stat .bar>div.warn {
+        .aziram-stat .bar>div.warn {
             background: var(--accent);
         }
-
-        .home-avatar-area {
+        .aziram-avatar-zone {
             flex-shrink: 0;
             text-align: center;
-            margin: 4px 0 8px;
+            margin: 6px 0 10px;
+            position: relative;
+            min-height: 120px;
         }
-        .home-avatar-area #homeAvatarContainer {
+        .aziram-avatar-zone #aziramAvatarContainer {
             display: inline-block;
             position: relative;
-            width: 90px;
-            height: 110px;
+            width: 100px;
+            height: 120px;
             background: transparent;
         }
-        .home-avatar-area .av-body {
-            width: 70px;
-            height: 80px;
+        .aziram-avatar-zone .av-body {
+            width: 75px;
+            height: 85px;
             border-radius: 50%;
-            margin: 15px auto 0;
+            margin: 18px auto 0;
             position: relative;
             transition: background 0.3s;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            box-shadow: 0 5px 16px rgba(0, 0, 0, 0.25);
         }
-        .home-avatar-area .av-face {
+        .aziram-avatar-zone .av-face {
             position: absolute;
-            top: 15px;
-            left: 50%;
-            transform: translateX(-50%);
-            font-size: 28px;
-            line-height: 1;
-        }
-        .home-avatar-area .av-head {
-            position: absolute;
-            top: -10px;
-            left: 50%;
-            transform: translateX(-50%);
-            font-size: 32px;
-            line-height: 1;
-        }
-        .home-avatar-area .av-clothes {
-            position: absolute;
-            bottom: 5px;
+            top: 18px;
             left: 50%;
             transform: translateX(-50%);
             font-size: 30px;
             line-height: 1;
         }
-        .home-avatar-area .av-prop {
+        .aziram-avatar-zone .av-head {
             position: absolute;
-            right: -10px;
-            bottom: 25px;
-            font-size: 28px;
+            top: -8px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 34px;
             line-height: 1;
         }
-
-        .room-tabs {
+        .aziram-avatar-zone .av-clothes {
+            position: absolute;
+            bottom: 8px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 32px;
+            line-height: 1;
+        }
+        .aziram-avatar-zone .av-prop {
+            position: absolute;
+            right: -8px;
+            bottom: 28px;
+            font-size: 30px;
+            line-height: 1;
+        }
+        .aziram-actions {
             display: flex;
-            gap: 6px;
-            margin-bottom: 8px;
-            flex-shrink: 0;
-        }
-        .room-tab {
-            flex: 1;
-            padding: 6px 4px;
-            font-weight: 800;
-            font-size: 12px;
-            border-radius: 10px;
-            background: #E4D7BC;
-            color: #8C6A4F;
-            border: none;
-            cursor: pointer;
-            transition: .1s;
-            white-space: nowrap;
-        }
-        .room-tab.active {
-            background: var(--accent);
-            color: #fff;
-            box-shadow: 0 3px 0 #b8742a;
-            transform: translateY(-2px);
-        }
-
-        .room-view {
-            flex: 1;
-            overflow-y: auto;
-            min-height: 0;
-            background: #f0e5d1;
-            border-radius: 16px;
-            padding: 12px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
             gap: 8px;
-            border: 3px solid #8C6A4F;
-            margin-bottom: 6px;
-        }
-        .room-panel {
-            display: none;
-            flex-direction: column;
-            align-items: center;
+            flex-shrink: 0;
+            flex-wrap: wrap;
             justify-content: center;
-            width: 100%;
-            height: 100%;
-            gap: 6px;
+            margin-bottom: 8px;
         }
-        .room-panel.active {
-            display: flex;
-        }
-        .room-panel .room-icon {
-            font-size: 48px;
-        }
-        .room-panel .room-label {
-            font-weight: 700;
-            font-size: 14px;
-            color: var(--ink);
-        }
-        .room-panel .furniture-display {
-            font-size: 28px;
-            font-weight: 600;
-            color: var(--panel-deep);
-        }
-        .room-panel .action-btn {
+        .aziram-action-btn {
             border: none;
             font-family: inherit;
             font-weight: 800;
@@ -639,152 +548,165 @@
             color: #fff;
             background: var(--good);
             border-radius: 14px;
-            padding: 8px 20px;
-            box-shadow: 0 3px 0 #5c7a3a;
+            padding: 10px 18px;
+            box-shadow: 0 4px 0 #5c7a3a;
             cursor: pointer;
             transition: transform .08s;
-            margin-top: 4px;
+            flex: 1;
+            min-width: 70px;
+            text-align: center;
         }
-        .room-panel .action-btn:active {
+        .aziram-action-btn:active {
             transform: translateY(3px);
             box-shadow: 0 1px 0 #5c7a3a;
         }
-        .room-panel .action-btn:disabled {
+        .aziram-action-btn:disabled {
             opacity: 0.5;
             transform: none;
-            box-shadow: 0 3px 0 #5c7a3a;
+            box-shadow: 0 4px 0 #5c7a3a;
             cursor: not-allowed;
         }
-        .room-panel .cooldown {
-            font-size: 10px;
+        .cooldown-text {
+            font-size: 11px;
             color: var(--red);
             font-weight: 600;
-        }
-        .room-panel.furnished {
-            border-color: var(--accent);
-        }
-
-        .home-footer {
-            display: flex;
-            gap: 8px;
-            flex-shrink: 0;
-        }
-        .home-footer .btn {
-            margin-top: 0;
-            flex: 1;
+            text-align: center;
+            min-height: 16px;
         }
 
-        /* ===== WIN / LOSE MODALS ===== */
-        .win-lose-overlay {
-            z-index: 25;
+        /* ===== WIN / LOSE MODALS (FULL-SCREEN) ===== */
+        .win-lose-card {
+            background: var(--cream);
+            border: 5px solid var(--panel-deep);
+            border-radius: 24px;
+            width: min(95vw, 480px);
+            max-height: 90vh;
+            padding: 28px 22px;
+            text-align: center;
+            box-shadow: 0 12px 0 rgba(0, 0, 0, .5);
+            animation: pop .35s cubic-bezier(.34, 1.56, .64, 1);
+        }
+        .win-lose-card h2 {
+            font-size: 26px;
+            margin-bottom: 10px;
+            font-weight: 800;
+        }
+        .win-lose-card p {
+            font-size: 18px;
+            margin-bottom: 14px;
+        }
+        .win-lose-card .big-emoji {
+            font-size: 60px;
+            margin-bottom: 8px;
         }
 
         /* ===== RESPONSIVE ===== */
         @media (max-width: 480px) {
             .hud {
-                height: 44px;
-                padding: 4px 6px;
-                gap: 4px;
+                height: 50px;
+                padding: 5px 8px;
+                gap: 5px;
             }
             .chip {
                 font-size: 11px;
-                padding: 2px 6px;
-                border-radius: 8px;
+                padding: 4px 8px;
+                border-radius: 10px;
             }
             .chip .big {
-                font-size: 13px;
+                font-size: 14px;
             }
             .hud-btn {
                 font-size: 12px;
-                padding: 2px 8px;
-                border-radius: 8px;
+                padding: 5px 9px;
+                border-radius: 10px;
+            }
+            .hud-btn.mode-btn {
+                font-size: 10px;
+                padding: 4px 7px;
             }
             .powerbar {
-                top: 46px;
-                padding: 4px 8px;
-                gap: 5px;
-                border-radius: 14px;
+                top: 54px;
+                padding: 6px 10px;
+                gap: 7px;
+                border-radius: 16px;
             }
             .pbtn {
-                width: 48px;
-                height: 48px;
-                font-size: 20px;
-                border-radius: 12px;
+                width: 52px;
+                height: 52px;
+                font-size: 22px;
+                border-radius: 14px;
             }
             .pbtn .cost {
                 font-size: 7px;
             }
-            #missionBar {
-                font-size: 12px;
-                padding: 6px 14px 5px;
-                border-radius: 0 0 14px 14px;
-            }
-            .home-stat {
+            .aziram-stat {
                 font-size: 10px;
-                min-width: 40px;
-                padding: 2px 4px;
+                min-width: 45px;
+                padding: 4px 6px;
             }
-            .home-stat .bar {
-                height: 4px;
+            .aziram-stat .bar {
+                height: 5px;
             }
-            .home-avatar-area #homeAvatarContainer {
-                width: 70px;
-                height: 90px;
+            .aziram-avatar-zone #aziramAvatarContainer {
+                width: 75px;
+                height: 95px;
             }
-            .home-avatar-area .av-body {
-                width: 55px;
-                height: 65px;
-                margin: 10px auto 0;
+            .aziram-avatar-zone .av-body {
+                width: 58px;
+                height: 68px;
+                margin: 12px auto 0;
             }
-            .room-tab {
-                font-size: 10px;
-                padding: 4px 2px;
-            }
-            .room-panel .room-icon {
-                font-size: 36px;
-            }
-            .card {
-                padding: 14px 12px;
-                width: 96vw;
-                border-radius: 18px;
+            .full-card {
+                padding: 10px 8px;
             }
             .shop-items {
-                gap: 5px;
+                gap: 6px;
             }
             .shop-item h3 {
-                font-size: 11px;
+                font-size: 12px;
             }
             #speech {
-                font-size: 16px;
-                padding: 6px 14px;
-                border-radius: 16px;
+                font-size: 17px;
+                padding: 7px 16px;
+                border-radius: 18px;
             }
             #toast {
-                font-size: 12px;
-                padding: 6px 14px;
-                bottom: 70px;
+                font-size: 13px;
+                padding: 8px 16px;
+                bottom: 80px;
+            }
+            .win-lose-card {
+                width: 94vw;
+                padding: 20px 16px;
+                border-radius: 20px;
+            }
+            .win-lose-card h2 {
+                font-size: 22px;
+            }
+            .win-lose-card .big-emoji {
+                font-size: 48px;
             }
         }
         @media (max-width: 380px) {
             .hud-btn {
                 font-size: 10px;
-                padding: 2px 5px;
+                padding: 3px 6px;
             }
             .chip {
                 font-size: 9px;
-                padding: 2px 4px;
+                padding: 3px 5px;
             }
             .chip .big {
-                font-size: 11px;
+                font-size: 12px;
             }
             .pbtn {
-                width: 40px;
-                height: 40px;
-                font-size: 17px;
+                width: 44px;
+                height: 44px;
+                font-size: 18px;
             }
-            #missionBar {
-                font-size: 10px;
-                padding: 4px 10px 3px;
+            .aziram-action-btn {
+                font-size: 12px;
+                padding: 7px 12px;
             }
         }
     </style>
@@ -792,26 +714,26 @@
 <body>
     <canvas id="game"></canvas>
 
-    <!-- ===== HUD (TOP) ===== -->
+    <!-- ===== HUD (TOP) - ΜΕΓΑΛΩΜΕΝΟ ===== -->
     <div class="hud">
         <div class="chip"><div><small>ΕΠΙΠΕΔΟ</small><span class="big" id="hudLevel">1</span></div></div>
         <div class="chip"><div><small>ΣΚΟΡ</small><span class="big" id="hudScore">0</span></div></div>
+        <div class="chip">🎯<span class="big" id="hudTarget">64</span></div>
         <div class="spacer"></div>
-        <button class="hud-btn home-btn" id="btnHome">🏠 Σπίτι</button>
-        <button class="hud-btn" id="btnShop">🛒 Κατάστημα</button>
+        <button class="hud-btn mode-btn" id="btnModeToggle" title="Εναλλαγή λειτουργίας">🎮 Games</button>
+        <button class="hud-btn aziram-btn" id="btnAziram">🧪 Aziram</button>
+        <button class="hud-btn" id="btnShop">🛒 Shop</button>
         <div class="chip">🪙 <span class="big" id="hudCoins">0</span></div>
     </div>
 
-    <!-- ===== POWERUPS (BELOW HUD) ===== -->
+    <!-- ===== POWERUPS (BELOW HUD) - ΜΕΓΑΛΩΜΕΝΑ ===== -->
     <div class="powerbar">
         <button class="pbtn" id="btnMagnet">🧲<span class="cost">Δωρεάν</span></button>
         <button class="pbtn" id="btnHammer">🔨<span class="cost">Δωρεάν</span></button>
         <button class="pbtn" id="btnShuffle">🔄<span class="cost">Δωρεάν</span></button>
         <button class="pbtn" id="btnMic">🎤<span class="cost">Μίλα</span></button>
+        <button class="pbtn" id="btnSound">🔊<span class="cost">Ήχος</span></button>
     </div>
-
-    <!-- ===== MISSION BAR ===== -->
-    <div id="missionBar">🎯 Αποστολή: <b id="missionText"></b></div>
 
     <!-- ===== SPEECH BUBBLE ===== -->
     <div id="speech"><span id="speechText">WOW!</span></div>
@@ -819,10 +741,10 @@
     <!-- ===== TOAST ===== -->
     <div id="toast"></div>
 
-    <!-- ===== SHOP MODAL ===== -->
-    <div class="overlay hidden" id="shopModal">
-        <div class="card">
-            <h2 style="margin-bottom:10px;">🛍️ Εξατομίκευση</h2>
+    <!-- ===== SHOP MODAL (FULL-SCREEN) ===== -->
+    <div class="full-overlay hidden" id="shopModal">
+        <div class="full-card">
+            <h2>🛍️ Εξατομίκευση</h2>
             <div class="shop-tabs" id="mainTabs">
                 <button class="shop-tab active" data-maintab="cubes">Κύβοι</button>
                 <button class="shop-tab" data-maintab="boards">Ταμπλό</button>
@@ -830,7 +752,6 @@
                 <button class="shop-tab" data-maintab="sounds">Ήχοι</button>
                 <button class="shop-tab" data-maintab="pets">Pet</button>
                 <button class="shop-tab" data-maintab="clothes">Ρούχα</button>
-                <button class="shop-tab" data-maintab="furniture">Έπιπλα</button>
             </div>
             <div class="pet-subtabs" id="petSubTabs">
                 <button class="pet-subtab active" data-subtab="pet_color">Χρώμα</button>
@@ -846,81 +767,53 @@
         </div>
     </div>
 
-    <!-- ===== HOME MODAL (FULL SCREEN) ===== -->
-    <div class="home-overlay hidden" id="homeModal">
-        <div class="home-card">
-            <h2 style="margin:0 0 4px 0; font-size:20px; flex-shrink:0;">🏠 Το Σπίτι του Aziram</h2>
+    <!-- ===== AZIRAM TAMAGOTCHI MODAL (FULL-SCREEN) ===== -->
+    <div class="full-overlay hidden" id="aziramModal">
+        <div class="full-card" style="justify-content:space-between;">
+            <h2>🧪 Aziram - Το Slime σου</h2>
 
-            <div class="home-stats" id="homeStats">
-                <div class="home-stat">⚡ Ενέργεια<div class="bar"><div id="energyBar" style="width:70%"></div></div><span id="energyText">70</span></div>
-                <div class="home-stat">🍽️ Πείνα<div class="bar"><div id="hungerBar" style="width:30%"></div></div><span id="hungerText">30</span></div>
-                <div class="home-stat">🧼 Καθαριότητα<div class="bar"><div id="cleanBar" style="width:80%"></div></div><span id="cleanText">80</span></div>
-                <div class="home-stat">🚽 Τουαλέτα<div class="bar"><div id="toiletBar" style="width:10%"></div></div><span id="toiletText">10</span></div>
+            <div class="aziram-stats" id="aziramStats">
+                <div class="aziram-stat">⚡ Ενέργεια<div class="bar"><div id="energyBar" style="width:70%"></div></div><span id="energyText">70</span></div>
+                <div class="aziram-stat">🍽️ Πείνα<div class="bar"><div id="hungerBar" style="width:30%"></div></div><span id="hungerText">30</span></div>
+                <div class="aziram-stat">🧼 Καθαριότητα<div class="bar"><div id="cleanBar" style="width:80%"></div></div><span id="cleanText">80</span></div>
+                <div class="aziram-stat">🚽 Τουαλέτα<div class="bar"><div id="toiletBar" style="width:10%"></div></div><span id="toiletText">10</span></div>
             </div>
 
-            <div class="home-avatar-area">
-                <div id="homeAvatarContainer">
+            <div class="aziram-avatar-zone">
+                <div id="aziramAvatarContainer">
                     <div class="av-head" id="avHead"></div>
                     <div class="av-body" id="avBody"></div>
                     <div class="av-face" id="avFace"></div>
                     <div class="av-clothes" id="avClothes"></div>
                     <div class="av-prop" id="avProp"></div>
                 </div>
+                <div style="font-size:12px; color:#8C6A4F; margin-top:4px; font-weight:600;" id="petMoodText">😊 Χαρούμενο</div>
             </div>
 
-            <div class="room-tabs">
-                <button class="room-tab active" data-room="bedroom">🛏️ Υπνοδωμάτιο</button>
-                <button class="room-tab" data-room="kitchen">🍳 Κουζίνα</button>
-                <button class="room-tab" data-room="bathroom">🛁 Μπάνιο</button>
+            <div class="aziram-actions">
+                <button class="aziram-action-btn" id="btnSleep">😴 Ύπνος</button>
+                <button class="aziram-action-btn" id="btnFeed">🍽️ Τάισμα</button>
+                <button class="aziram-action-btn" id="btnWash">🧼 Πλύσιμο</button>
+                <button class="aziram-action-btn" id="btnToilet">🚽 Τουαλέτα</button>
             </div>
+            <div class="cooldown-text" id="cooldownDisplay"></div>
 
-            <div class="room-view" id="roomViewContainer">
-                <!-- BEDROOM -->
-                <div class="room-panel active" id="roomBedroom">
-                    <div class="room-icon">🛏️</div>
-                    <div class="room-label">Υπνοδωμάτιο</div>
-                    <div class="furniture-display" id="bedroomFurniture"></div>
-                    <button class="action-btn" id="btnSleep">😴 Ύπνος</button>
-                    <div class="cooldown hidden" id="sleepCooldown"></div>
-                </div>
-                <!-- KITCHEN -->
-                <div class="room-panel" id="roomKitchen">
-                    <div class="room-icon">🍳</div>
-                    <div class="room-label">Κουζίνα</div>
-                    <div class="furniture-display" id="kitchenFurniture"></div>
-                    <button class="action-btn" id="btnFeed">🍽️ Τάισμα</button>
-                    <div class="cooldown hidden" id="feedCooldown"></div>
-                </div>
-                <!-- BATHROOM -->
-                <div class="room-panel" id="roomBathroom">
-                    <div class="room-icon">🛁</div>
-                    <div class="room-label">Μπάνιο</div>
-                    <div class="furniture-display" id="bathroomFurniture"></div>
-                    <button class="action-btn" id="btnWash">🧼 Πλύσιμο</button>
-                    <button class="action-btn" id="btnToilet">🚽 Τουαλέτα</button>
-                    <div class="cooldown hidden" id="washCooldown"></div>
-                    <div class="cooldown hidden" id="toiletCooldown"></div>
-                </div>
-            </div>
-
-            <div class="home-footer">
-                <button class="btn secondary" id="btnCloseHome">Κλείσιμο</button>
-            </div>
+            <button class="btn secondary" id="btnCloseAziram" style="margin-top:4px;">Κλείσιμο</button>
         </div>
     </div>
 
-    <!-- ===== WIN / LOSE MODALS ===== -->
-    <div class="overlay hidden win-lose-overlay" id="winModal">
-        <div class="card">
-            <div style="font-size:40px; margin-bottom:6px;">🎉</div>
-            <h2>Επίπεδο Ολοκληρώθηκε!</h2>
+    <!-- ===== WIN / LOSE MODALS (FULL-SCREEN STYLE) ===== -->
+    <div class="full-overlay hidden" id="winModal" style="z-index:25;">
+        <div class="win-lose-card">
+            <div class="big-emoji">🎉</div>
+            <h2>Αποστολή Ολοκληρώθηκε!</h2>
             <p id="winText"></p>
-            <button class="btn" id="btnNext">Επόμενο επίπεδο ➜</button>
+            <button class="btn" id="btnNext">Επόμενη αποστολή ➜</button>
         </div>
     </div>
-    <div class="overlay hidden win-lose-overlay" id="loseModal">
-        <div class="card">
-            <div style="font-size:40px; margin-bottom:6px;">😵</div>
+    <div class="full-overlay hidden" id="loseModal" style="z-index:25;">
+        <div class="win-lose-card">
+            <div class="big-emoji">😵</div>
             <h2>Γέμισε το ταμπλό!</h2>
             <p id="loseText"></p>
             <button class="btn" id="btnRetry">Ξαναπροσπάθησε</button>
@@ -934,8 +827,8 @@
             'use strict';
 
             /* ============================================================
-               DROP 2048 · FRANKLYGAMES EDITION
-               (Full Tamagotchi + Home + Shop + Effects Fix + Daily Schedule)
+               DROP 2048 · FRANKLYGAMES EDITION v6
+               (Games & Missions · Celestial Celebrations · Tamagotchi Aziram)
             ============================================================ */
             const COLS = 5,
                 ROWS = 6,
@@ -945,7 +838,8 @@
             const BOARD_H = ROWS * (CELL + GAP) - GAP;
             const launchY = -BOARD_H / 2 - 0.4;
 
-            const LEVELS = [
+            // Missions mode levels
+            const MISSION_LEVELS = [
                 { target: 64, preset: 0, text: "Φτιάξε κύβο 64" },
                 { target: 128, preset: 4, text: "Φτιάξε κύβο 128" },
                 { target: 256, preset: 7, text: "Φτιάξε κύβο 256" },
@@ -953,14 +847,42 @@
                 { target: 1024, preset: 12, text: "Φτιάξε κύβο 1024" }
             ];
 
+            // Game mode: 'games' or 'missions'
+            let gameMode = 'games'; // default
+            let gamesProgress = 0; // how many targets reached in games mode (0=64, 1=128, 2=256...)
+
+            function getCurrentTarget() {
+                if (gameMode === 'missions') {
+                    const lvl = Math.min(level, MISSION_LEVELS.length - 1);
+                    return MISSION_LEVELS[lvl].target;
+                } else {
+                    return 64 * Math.pow(2, gamesProgress);
+                }
+            }
+
+            function getPresetCount() {
+                if (gameMode === 'missions') {
+                    return MISSION_LEVELS[Math.min(level, MISSION_LEVELS.length - 1)].preset;
+                } else {
+                    return Math.min(14, 4 + gamesProgress);
+                }
+            }
+
             const SHOP = {
-                cubes: [{ id: 'wood', name: 'Ξύλο', price: 0, icon: '🪵' }, { id: 'whitered', name: 'Άσπρο-Κόκκινο', price: 0,
-                        icon: '🍬' }, { id: 'whitegreen', name: 'Άσπρο-Πράσινο', price: 0, icon: '🍵' }, { id: 'zebra',
-                        name: 'Ζέβρα', price: 0, icon: '🦓' }, { id: 'neon', name: 'Cyber Neon', price: 0, icon: '⚡' },
-                    { id: 'rainbow', name: 'Ουράνιο Τόξο', price: 0, icon: '🌈' }, { id: 'gold', name: 'Καθαρός Χρυσός',
-                        price: 0, icon: '🏆' }, { id: 'galaxy', name: 'Γαλαξίας', price: 0, icon: '🌌' }, { id: 'ice',
-                        name: 'Παγωμένος', price: 0, icon: '🧊' }, { id: 'lava', name: 'Λάβα', price: 0, icon: '🌋' }],
-                boards: [{ id: 'board_wood', name: 'Ξύλινο', price: 0, icon: '🟫', back: '#4A3423', cell: '#2F1B0D' },
+                cubes: [
+                    { id: 'wood', name: 'Ξύλο', price: 0, icon: '🪵' },
+                    { id: 'whitered', name: 'Άσπρο-Κόκκινο', price: 0, icon: '🍬' },
+                    { id: 'whitegreen', name: 'Άσπρο-Πράσινο', price: 0, icon: '🍵' },
+                    { id: 'zebra', name: 'Ζέβρα', price: 0, icon: '🦓' },
+                    { id: 'neon', name: 'Cyber Neon', price: 0, icon: '⚡' },
+                    { id: 'rainbow', name: 'Ουράνιο Τόξο', price: 0, icon: '🌈' },
+                    { id: 'gold', name: 'Καθαρός Χρυσός', price: 0, icon: '🏆' },
+                    { id: 'galaxy', name: 'Γαλαξίας', price: 0, icon: '🌌' },
+                    { id: 'ice', name: 'Παγωμένος', price: 0, icon: '🧊' },
+                    { id: 'lava', name: 'Λάβα', price: 0, icon: '🌋' }
+                ],
+                boards: [
+                    { id: 'board_wood', name: 'Ξύλινο', price: 0, icon: '🟫', back: '#4A3423', cell: '#2F1B0D' },
                     { id: 'board_space', name: 'Βαθύ Διάστημα', price: 0, icon: '🟦', back: '#0B132B', cell: '#4A5A8A' },
                     { id: 'board_crimson', name: 'Πορφυρό', price: 0, icon: '🟥', back: '#3A0CA3', cell: '#A47CFF' },
                     { id: 'board_emerald', name: 'Σμαράγδι', price: 0, icon: '🟩', back: '#004B23', cell: '#7BDF4B' },
@@ -971,78 +893,91 @@
                     { id: 'board_sunset', name: 'Ηλιοβασίλεμα', price: 150, icon: '🌅', back: '#C2542F', cell: '#6E2410' },
                     { id: 'board_royal', name: 'Βασιλικό', price: 200, icon: '👑', back: '#3B2A6E', cell: '#221545' }
                 ],
-                effects: [{ id: 'eff_none', name: 'Χωρίς Εφέ', price: 0, icon: '✖️' }, { id: 'eff_flame', name: 'Φλόγα',
-                        price: 0, icon: '🔥' }, { id: 'eff_sparkle', name: 'Αστερόσκονη', price: 0, icon: '✨' },
-                    { id: 'eff_smoke', name: 'Καπνός', price: 0, icon: '💨' }, { id: 'eff_explode', name: 'Έκρηξη',
-                        price: 0, icon: '💥' }, { id: 'eff_confetti', name: 'Κομφετί', price: 0, icon: '🎊' }
+                effects: [
+                    { id: 'eff_none', name: 'Χωρίς Εφέ', price: 0, icon: '✖️' },
+                    { id: 'eff_flame', name: 'Φλόγα', price: 0, icon: '🔥' },
+                    { id: 'eff_sparkle', name: 'Αστερόσκονη', price: 0, icon: '✨' },
+                    { id: 'eff_smoke', name: 'Καπνός', price: 0, icon: '💨' },
+                    { id: 'eff_explode', name: 'Έκρηξη', price: 0, icon: '💥' },
+                    { id: 'eff_confetti', name: 'Κομφετί', price: 0, icon: '🎊' }
                 ],
-                sounds: [{ id: 'snd_default', name: 'Default', price: 0, icon: '🔊' }, { id: 'snd_bass', name: 'Bass Drop',
-                        price: 0, icon: '🎛️' }, { id: 'snd_bell', name: 'Καμπάνα', price: 0, icon: '🔔' },
-                    { id: 'snd_echo', name: 'Echo', price: 0, icon: '🌌' }, { id: 'snd_retro', name: 'Retro 8-bit',
-                        price: 100, icon: '👾' }, { id: 'snd_pop', name: 'Bubble Pop', price: 100, icon: '🫧' },
-                    { id: 'snd_laser', name: 'Laser', price: 150, icon: '🔫' }, { id: 'snd_magic', name: 'Μαγικό',
-                        price: 200, icon: '✨' }
+                sounds: [
+                    { id: 'snd_default', name: 'Default', price: 0, icon: '🔊' },
+                    { id: 'snd_bass', name: 'Bass Drop', price: 0, icon: '🎛️' },
+                    { id: 'snd_bell', name: 'Καμπάνα', price: 0, icon: '🔔' },
+                    { id: 'snd_echo', name: 'Echo', price: 0, icon: '🌌' },
+                    { id: 'snd_retro', name: 'Retro 8-bit', price: 100, icon: '👾' },
+                    { id: 'snd_pop', name: 'Bubble Pop', price: 100, icon: '🫧' },
+                    { id: 'snd_laser', name: 'Laser', price: 150, icon: '🔫' },
+                    { id: 'snd_magic', name: 'Μαγικό', price: 200, icon: '✨' }
                 ],
-                pet_color: [{ id: 'color_green', name: 'Πράσινο (Jelly)', price: 0, icon: '🟢' },
-                    { id: 'color_blue', name: 'Διαστημικό Μπλε', price: 0, icon: '🔵' }, { id: 'color_pink',
-                        name: 'Neon Ροζ', price: 0, icon: '🌸' }, { id: 'color_gold', name: 'Καθαρός Χρυσός', price: 0,
-                        icon: '🟡' }, { id: 'color_red', name: 'Κόκκινο Λάβας', price: 0, icon: '🔴' },
-                    { id: 'color_rainbow', name: 'RGB (Ουρ. Τόξο)', price: 0, icon: '🌈' }, { id: 'color_slime',
-                        name: 'Slime Γαλαξίας', price: 400, icon: '🪼' }
+                pet_color: [
+                    { id: 'color_green', name: 'Πράσινο (Jelly)', price: 0, icon: '🟢' },
+                    { id: 'color_blue', name: 'Διαστημικό Μπλε', price: 0, icon: '🔵' },
+                    { id: 'color_pink', name: 'Neon Ροζ', price: 0, icon: '🌸' },
+                    { id: 'color_gold', name: 'Καθαρός Χρυσός', price: 0, icon: '🟡' },
+                    { id: 'color_red', name: 'Κόκκινο Λάβας', price: 0, icon: '🔴' },
+                    { id: 'color_rainbow', name: 'RGB (Ουρ. Τόξο)', price: 0, icon: '🌈' },
+                    { id: 'color_slime', name: 'Slime Γαλαξίας', price: 400, icon: '🪼' }
                 ],
-                pet_head: [{ id: 'head_none', name: 'Τίποτα', price: 0, icon: '🚫' }, { id: 'head_antenna',
-                        name: 'Κεραία', price: 0, icon: '📡' }, { id: 'head_halo', name: 'Φωτοστέφανο', price: 0,
-                        icon: '👼' }, { id: 'head_propeller', name: 'Έλικας', price: 0, icon: '🚁' },
-                    { id: 'head_mohawk', name: 'Neon Μοϊκάνα', price: 0, icon: '🤘' }, { id: 'head_horns', name: 'Κέρατα',
-                        price: 0, icon: '😈' }, { id: 'head_crown', name: 'Στέμμα', price: 0, icon: '👑' },
-                    { id: 'head_wizard', name: 'Καπέλο Μάγου', price: 150, icon: '🧙' }, { id: 'head_pirate',
-                        name: 'Πειρατική Μπαντάνα', price: 120, icon: '🏴‍☠️' }, { id: 'head_santa',
-                        name: 'Σκούφος Άγ. Βασίλη', price: 200, icon: '🎅' }
+                pet_head: [
+                    { id: 'head_none', name: 'Τίποτα', price: 0, icon: '🚫' },
+                    { id: 'head_antenna', name: 'Κεραία', price: 0, icon: '📡' },
+                    { id: 'head_halo', name: 'Φωτοστέφανο', price: 0, icon: '👼' },
+                    { id: 'head_propeller', name: 'Έλικας', price: 0, icon: '🚁' },
+                    { id: 'head_mohawk', name: 'Neon Μοϊκάνα', price: 0, icon: '🤘' },
+                    { id: 'head_horns', name: 'Κέρατα', price: 0, icon: '😈' },
+                    { id: 'head_crown', name: 'Στέμμα', price: 0, icon: '👑' },
+                    { id: 'head_wizard', name: 'Καπέλο Μάγου', price: 150, icon: '🧙' },
+                    { id: 'head_pirate', name: 'Πειρατική Μπαντάνα', price: 120, icon: '🏴‍☠️' },
+                    { id: 'head_santa', name: 'Σκούφος Άγ. Βασίλη', price: 200, icon: '🎅' }
                 ],
-                pet_face: [{ id: 'face_none', name: 'Κανονικά Μάτια', price: 0, icon: '👁️' }, { id: 'face_pixel',
-                        name: 'Deal With It', price: 0, icon: '🕶️' }, { id: 'face_scouter', name: 'Ανιχνευτής',
-                        price: 0, icon: '📟' }, { id: 'face_laser', name: 'Laser Μάτια', price: 0, icon: '🔴' },
-                    { id: 'face_monocle', name: 'Μονόκλ', price: 100, icon: '🧐' }, { id: 'face_ninja',
-                        name: 'Μάσκα Νίντζα', price: 150, icon: '🥷' }, { id: 'face_mustache', name: 'Μουστάκι',
-                        price: 80, icon: '👨' }, { id: 'face_blush', name: 'Ροζ Μάγουλα', price: 60, icon: '☺️' }
+                pet_face: [
+                    { id: 'face_none', name: 'Κανονικά Μάτια', price: 0, icon: '👁️' },
+                    { id: 'face_pixel', name: 'Deal With It', price: 0, icon: '🕶️' },
+                    { id: 'face_scouter', name: 'Ανιχνευτής', price: 0, icon: '📟' },
+                    { id: 'face_laser', name: 'Laser Μάτια', price: 0, icon: '🔴' },
+                    { id: 'face_monocle', name: 'Μονόκλ', price: 100, icon: '🧐' },
+                    { id: 'face_ninja', name: 'Μάσκα Νίντζα', price: 150, icon: '🥷' },
+                    { id: 'face_mustache', name: 'Μουστάκι', price: 80, icon: '👨' },
+                    { id: 'face_blush', name: 'Ροζ Μάγουλα', price: 60, icon: '☺️' }
                 ],
-                pet_body: [{ id: 'body_none', name: 'Τίποτα', price: 0, icon: '🚫' }, { id: 'body_orbits',
-                        name: 'Δακτύλιοι', price: 0, icon: '🪐' }, { id: 'body_cape', name: 'Κόκκινη Κάπα', price: 0,
-                        icon: '🦸' }, { id: 'body_angelwings', name: 'Φτερά Αγγέλου', price: 300, icon: '🕊️' },
-                    { id: 'body_batwings', name: 'Φτερά Νυχτερίδας', price: 300, icon: '🦇' }, { id: 'body_jetpack',
-                        name: 'Jetpack', price: 500, icon: '🚀' }
+                pet_body: [
+                    { id: 'body_none', name: 'Τίποτα', price: 0, icon: '🚫' },
+                    { id: 'body_orbits', name: 'Δακτύλιοι', price: 0, icon: '🪐' },
+                    { id: 'body_cape', name: 'Κόκκινη Κάπα', price: 0, icon: '🦸' },
+                    { id: 'body_angelwings', name: 'Φτερά Αγγέλου', price: 300, icon: '🕊️' },
+                    { id: 'body_batwings', name: 'Φτερά Νυχτερίδας', price: 300, icon: '🦇' },
+                    { id: 'body_jetpack', name: 'Jetpack', price: 500, icon: '🚀' }
                 ],
-                pet_hands: [{ id: 'hands_none', name: 'Jelly Χέρια', price: 0, icon: '👋' }, { id: 'hands_energy',
-                        name: 'Ενέργεια', price: 0, icon: '🔵' }, { id: 'hands_boxing', name: 'Γάντια Μποξ', price: 0,
-                        icon: '🥊' }
+                pet_hands: [
+                    { id: 'hands_none', name: 'Jelly Χέρια', price: 0, icon: '👋' },
+                    { id: 'hands_energy', name: 'Ενέργεια', price: 0, icon: '🔵' },
+                    { id: 'hands_boxing', name: 'Γάντια Μποξ', price: 0, icon: '🥊' }
                 ],
-                pet_props: [{ id: 'prop_none', name: 'Τίποτα', price: 0, icon: '🚫' }, { id: 'prop_lollipop',
-                        name: 'Γλειφιτζούρι', price: 0, icon: '🍭' }, { id: 'prop_icecream', name: 'Παγωτό', price: 0,
-                        icon: '🍦' }, { id: 'prop_lightsaber', name: 'Laser Σπαθί', price: 0, icon: '🗡️' },
-                    { id: 'prop_wand', name: 'Μαγικό Ραβδί', price: 150, icon: '🪄' }, { id: 'prop_shield',
-                        name: 'Ασπίδα', price: 120, icon: '🛡️' }, { id: 'prop_balloon', name: 'Μπαλόνι', price: 100,
-                        icon: '🎈' }
+                pet_props: [
+                    { id: 'prop_none', name: 'Τίποτα', price: 0, icon: '🚫' },
+                    { id: 'prop_lollipop', name: 'Γλειφιτζούρι', price: 0, icon: '🍭' },
+                    { id: 'prop_icecream', name: 'Παγωτό', price: 0, icon: '🍦' },
+                    { id: 'prop_lightsaber', name: 'Laser Σπαθί', price: 0, icon: '🗡️' },
+                    { id: 'prop_wand', name: 'Μαγικό Ραβδί', price: 150, icon: '🪄' },
+                    { id: 'prop_shield', name: 'Ασπίδα', price: 120, icon: '🛡️' },
+                    { id: 'prop_balloon', name: 'Μπαλόνι', price: 100, icon: '🎈' }
                 ],
-                pet_feet: [{ id: 'feet_none', name: 'Jelly Πόδια', price: 0, icon: '🦶' }, { id: 'feet_moonboots',
-                        name: 'Moon Boots', price: 0, icon: '👢' }, { id: 'feet_hover', name: 'Hover Sneakers',
-                        price: 0, icon: '👟' }
+                pet_feet: [
+                    { id: 'feet_none', name: 'Jelly Πόδια', price: 0, icon: '🦶' },
+                    { id: 'feet_moonboots', name: 'Moon Boots', price: 0, icon: '👢' },
+                    { id: 'feet_hover', name: 'Hover Sneakers', price: 0, icon: '👟' }
                 ],
-                clothes: [{ id: 'cl_none', name: 'Χωρίς', price: 0, icon: '👕' }, { id: 'cl_scarf', name: 'Κασκόλ',
-                        price: 80, icon: '🧣' }, { id: 'cl_bowtie', name: 'Παπιγιόν', price: 60, icon: '🎀' },
-                    { id: 'cl_vest', name: 'Γιλέκο', price: 120, icon: '🧥' }, { id: 'cl_apron', name: 'Ποδιά',
-                        price: 100, icon: '👨‍🍳' }, { id: 'cl_tie', name: 'Γραβάτα', price: 70, icon: '👔' },
-                    { id: 'cl_hoodie', name: 'Φούτερ', price: 150, icon: '👕' }, { id: 'cl_sunglasses',
-                        name: 'Γυαλιά Ηλίου', price: 90, icon: '🕶️' }
-                ],
-                furniture: [{ id: 'fur_none', name: 'Χωρίς', price: 0, icon: '🚫' }, { id: 'fur_bed', name: 'Κρεβάτι',
-                        price: 200, icon: '🛏️', room: 'bedroom' }, { id: 'fur_table', name: 'Τραπέζι', price: 150,
-                        icon: '🪑', room: 'kitchen' }, { id: 'fur_bathtub', name: 'Μπανιέρα', price: 180, icon: '🛁',
-                        room: 'bathroom' }, { id: 'fur_lamp', name: 'Λάμπα', price: 100, icon: '💡', room: 'bedroom' },
-                    { id: 'fur_plant', name: 'Φυτό', price: 80, icon: '🌿', room: 'kitchen' }, { id: 'fur_mirror',
-                        name: 'Καθρέφτης', price: 90, icon: '🪞', room: 'bathroom' }, { id: 'fur_rug', name: 'Χαλί',
-                        price: 110, icon: '🧶', room: 'bedroom' }, { id: 'fur_painting', name: 'Πίνακας', price: 130,
-                        icon: '🖼️', room: 'kitchen' }, { id: 'fur_soap', name: 'Σαπούνι', price: 60, icon: '🧼',
-                        room: 'bathroom' }
+                clothes: [
+                    { id: 'cl_none', name: 'Χωρίς', price: 0, icon: '👕' },
+                    { id: 'cl_scarf', name: 'Κασκόλ', price: 80, icon: '🧣' },
+                    { id: 'cl_bowtie', name: 'Παπιγιόν', price: 60, icon: '🎀' },
+                    { id: 'cl_vest', name: 'Γιλέκο', price: 120, icon: '🧥' },
+                    { id: 'cl_apron', name: 'Ποδιά', price: 100, icon: '👨‍🍳' },
+                    { id: 'cl_tie', name: 'Γραβάτα', price: 70, icon: '👔' },
+                    { id: 'cl_hoodie', name: 'Φούτερ', price: 150, icon: '👕' },
+                    { id: 'cl_sunglasses', name: 'Γυαλιά Ηλίου', price: 90, icon: '🕶️' }
                 ]
             };
 
@@ -1054,6 +989,8 @@
                 level: 0,
                 best: 0,
                 score: 0,
+                gamesProgress: 0,
+                gameMode: 'games',
                 ownedCubes: ['wood'],
                 equippedCube: 'wood',
                 ownedBoards: ['board_wood'],
@@ -1078,11 +1015,6 @@
                 equippedPetFeet: 'feet_none',
                 ownedClothes: ['cl_none'],
                 equippedClothes: 'cl_none',
-                ownedFurniture: ['fur_none'],
-                equippedFurniture: 'fur_none',
-                equippedBedroomFurniture: 'fur_none',
-                equippedKitchenFurniture: 'fur_none',
-                equippedBathroomFurniture: 'fur_none',
                 energy: 70,
                 hunger: 30,
                 cleanliness: 80,
@@ -1098,18 +1030,12 @@
 
             async function loadSave() {
                 try {
-                    const r = localStorage.getItem("drop2048-frankly-v5");
+                    const r = localStorage.getItem("drop2048-frankly-v6");
                     if (r) {
                         const parsed = JSON.parse(r);
                         save = Object.assign({}, DEFAULT_SAVE, parsed);
-                        // Ensure new fields
                         if (!save.ownedClothes) save.ownedClothes = ['cl_none'];
                         if (!save.equippedClothes) save.equippedClothes = 'cl_none';
-                        if (!save.ownedFurniture) save.ownedFurniture = ['fur_none'];
-                        if (!save.equippedFurniture) save.equippedFurniture = 'fur_none';
-                        if (!save.equippedBedroomFurniture) save.equippedBedroomFurniture = 'fur_none';
-                        if (!save.equippedKitchenFurniture) save.equippedKitchenFurniture = 'fur_none';
-                        if (!save.equippedBathroomFurniture) save.equippedBathroomFurniture = 'fur_none';
                         if (save.energy === undefined) save.energy = 70;
                         if (save.hunger === undefined) save.hunger = 30;
                         if (save.cleanliness === undefined) save.cleanliness = 80;
@@ -1119,12 +1045,14 @@
                         if (!save.feedCooldown) save.feedCooldown = 0;
                         if (!save.washCooldown) save.washCooldown = 0;
                         if (!save.toiletCooldown) save.toiletCooldown = 0;
+                        if (save.gamesProgress === undefined) save.gamesProgress = 0;
+                        if (save.gameMode === undefined) save.gameMode = 'games';
                     }
                 } catch (e) { console.warn('Load save error', e); }
             }
 
             function persist() {
-                try { localStorage.setItem("drop2048-frankly-v5", JSON.stringify(save)); } catch (e) {}
+                try { localStorage.setItem("drop2048-frankly-v6", JSON.stringify(save)); } catch (e) {}
             }
 
             let coins = 0,
@@ -1134,8 +1062,10 @@
 
             /* ===== AUDIO ===== */
             const audioCtx = new(window.AudioContext || window.webkitAudioContext)();
+            let isMuted = false;
 
             function playSound(type) {
+                if (isMuted) return;
                 if (audioCtx.state === 'suspended') audioCtx.resume();
                 if (type === 'win') { playWinSound(audioCtx); return; }
                 const s = save.equippedSound || 'snd_default';
@@ -1189,6 +1119,7 @@
             }
 
             function playWinSound(ctx) {
+                if (isMuted) return;
                 for (let i = 0; i < 4; i++) {
                     setTimeout(() => {
                         const osc = ctx.createOscillator();
@@ -1237,10 +1168,13 @@
                 if (has('πως σε λενε', 'ονομα σου', 'ποιος εισαι', 'τι εισαι')) return "Με λένε Aziram και είμαι το slime φιλαράκι σου!";
                 if (has('τι κανεις', 'πως εισαι', 'εισαι καλα', 'ολα καλα')) return "Τέλεια είμαι! Έτοιμος για κύβους!";
                 if (has('σκορ', 'ποντο')) return "Το σκορ σου είναι " + score + " πόντοι! Συνέχισε!";
-                if (has('επιπεδο', 'πιστα')) return "Είμαστε στο επίπεδο " + (level + 1) + "!";
+                if (has('επιπεδο', 'πιστα', 'στοχος')) {
+                    const t = getCurrentTarget();
+                    if (gameMode === 'games') return "Είμαστε σε συνεχόμενο παιχνίδι! Στόχος: " + t + "!";
+                    return "Αποστολή: Φτιάξε κύβο " + t + "!";
+                }
                 if (has('νομισματα', 'λεφτα', 'χρηματα', 'κερματα')) return "Έχεις " + coins + " νομίσματα! Πάμε για ψώνια;";
-                if (has('αποστολη', 'στοχος', 'τι πρεπει')) return "Η αποστολή μας: " + LEVELS[Math.min(level, LEVELS.length -
-                    1)].text + "!";
+                if (has('αποστολη', 'στοχος', 'τι πρεπει')) return "Ο στόχος μας: κύβος " + getCurrentTarget() + "!";
                 if (has('ανεκδοτο', 'αστειο', 'πες κατι αστειο')) {
                     const jokes = [
                         "Γιατί ο κύβος πήγε σχολείο; Για να γίνει τετράγωνο μυαλό!",
@@ -1252,10 +1186,8 @@
                 }
                 if (has('βοηθεια', 'συμβουλη', 'πως παιζ', 'τι να κανω')) return "Ένωσε ίδιους αριθμούς! Και κράτα τους μεγάλους κύβους στις άκρες!";
                 if (has('σε αγαπω', 'σ αγαπω', 'σε συμπαθω')) return "Κι εγώ σε αγαπώ πάρα πολύ!";
-                if (has('ποσο χρονων', 'ηλικια')) return "Είμαι νεογέννητο slime! Μόλις λίγων λεπτών!";
                 if (has('αντιο', 'τα λεμε', 'φευγω')) return "Γεια σου! Έλα πάλι γρήγορα, θα σε περιμένω!";
                 if (has('ευχαριστω')) return "Παρακαλώ! Ό,τι θες, εδώ είμαι!";
-                if (has('τραγουδ')) return "Λα λα λα! Κύβοι κύβοι παντού! Χι χι!";
                 if (has('γεια', 'καλημερα', 'καλησπερα', 'καληνυχτα', 'χαιρετε')) return "Γεια σου! Χαίρομαι πολύ που σε ακούω!";
                 return "Είπες: " + raw + ". Ωραίο ακούγεται!";
             }
@@ -1292,6 +1224,128 @@
                 };
             }
 
+            /* ===== CELESTIAL CELEBRATION SYSTEM ===== */
+            const celestialObjects = [];
+
+            function createStarMesh() {
+                const g = new THREE.Group();
+                const core = new THREE.Mesh(new THREE.SphereGeometry(0.12, 16, 16), new THREE.MeshBasicMaterial(
+                    { color: 0xffdd44 }));
+                g.add(core);
+                const glow = new THREE.Mesh(new THREE.SphereGeometry(0.2, 16, 16), new THREE.MeshBasicMaterial(
+                    { color: 0xffff88, transparent: true, opacity: 0.4 }));
+                g.add(glow);
+                return g;
+            }
+
+            function createPlanetMesh() {
+                const g = new THREE.Group();
+                const body = new THREE.Mesh(new THREE.SphereGeometry(0.18, 20, 20), new THREE.MeshPhongMaterial(
+                    { color: new THREE.Color().setHSL(Math.random(), 0.7, 0.5) }));
+                g.add(body);
+                const ring = new THREE.Mesh(new THREE.TorusGeometry(0.28, 0.04, 8, 24), new THREE
+                    .MeshBasicMaterial({ color: 0xcccccc }));
+                ring.rotation.x = Math.PI / 3;
+                g.add(ring);
+                return g;
+            }
+
+            function createEarthMesh() {
+                const g = new THREE.Group();
+                const body = new THREE.Mesh(new THREE.SphereGeometry(0.16, 20, 20), new THREE.MeshPhongMaterial(
+                    { color: 0x3388cc }));
+                g.add(body);
+                const land = new THREE.Mesh(new THREE.SphereGeometry(0.17, 16, 16), new THREE
+                .MeshBasicMaterial({ color: 0x33aa44, transparent: true, opacity: 0.5 }));
+                g.add(land);
+                return g;
+            }
+
+            function createUFOMesh() {
+                const g = new THREE.Group();
+                const disc = new THREE.Mesh(new THREE.CylinderGeometry(0.22, 0.22, 0.06, 20), new THREE
+                    .MeshPhongMaterial({ color: 0x888899 }));
+                g.add(disc);
+                const dome = new THREE.Mesh(new THREE.SphereGeometry(0.1, 12, 8), new THREE.MeshBasicMaterial(
+                    { color: 0xccddff, transparent: true, opacity: 0.7 }));
+                dome.position.y = 0.1;
+                dome.scale.y = 0.6;
+                g.add(dome);
+                const light = new THREE.Mesh(new THREE.SphereGeometry(0.04, 8, 8), new THREE.MeshBasicMaterial(
+                    { color: 0x00ff00 }));
+                light.position.set(0.15, -0.04, 0.1);
+                g.add(light);
+                return g;
+            }
+
+            function createSatelliteMesh() {
+                const g = new THREE.Group();
+                const body = new THREE.Mesh(new THREE.BoxGeometry(0.15, 0.06, 0.08), new THREE.MeshPhongMaterial(
+                    { color: 0xcccccc }));
+                g.add(body);
+                const panel1 = new THREE.Mesh(new THREE.BoxGeometry(0.02, 0.01, 0.3), new THREE
+                    .MeshPhongMaterial({ color: 0x3333aa }));
+                panel1.position.z = 0.18;
+                g.add(panel1);
+                const panel2 = new THREE.Mesh(new THREE.BoxGeometry(0.02, 0.01, 0.3), new THREE
+                    .MeshPhongMaterial({ color: 0x3333aa }));
+                panel2.position.z = -0.18;
+                g.add(panel2);
+                const antenna = new THREE.Mesh(new THREE.CylinderGeometry(0.01, 0.01, 0.15), new THREE
+                    .MeshBasicMaterial({ color: 0x888888 }));
+                antenna.position.y = 0.1;
+                g.add(antenna);
+                return g;
+            }
+
+            function spawnCelestial(x, y, z) {
+                const types = [createStarMesh, createPlanetMesh, createEarthMesh, createUFOMesh, createSatelliteMesh];
+                const fn = types[Math.floor(Math.random() * types.length)];
+                const obj = fn();
+                obj.position.set(x, y, z);
+                obj.userData = {
+                    vx: (Math.random() - 0.5) * 4,
+                    vy: Math.random() * 3 + 1,
+                    vz: (Math.random() - 0.5) * 3,
+                    rotSpeed: (Math.random() - 0.5) * 8,
+                    life: 1.0,
+                    decay: 0.4 + Math.random() * 0.6
+                };
+                scene.add(obj);
+                celestialObjects.push(obj);
+            }
+
+            function spawnCelestialBurst(x, y, z, count) {
+                for (let i = 0; i < count; i++) {
+                    setTimeout(() => {
+                        const ox = x + (Math.random() - 0.5) * 2;
+                        const oy = y + (Math.random() - 0.5) * 1;
+                        const oz = z + (Math.random() - 0.5) * 1;
+                        spawnCelestial(ox, oy, oz);
+                    }, i * 60);
+                }
+            }
+
+            function updateCelestialObjects(dt) {
+                for (let i = celestialObjects.length - 1; i >= 0; i--) {
+                    const obj = celestialObjects[i];
+                    obj.userData.life -= obj.userData.decay * dt;
+                    if (obj.userData.life <= 0) {
+                        scene.remove(obj);
+                        celestialObjects.splice(i, 1);
+                    } else {
+                        obj.position.x += obj.userData.vx * dt;
+                        obj.position.y += obj.userData.vy * dt;
+                        obj.position.z += obj.userData.vz * dt;
+                        obj.userData.vy -= dt * 6;
+                        obj.rotation.y += obj.userData.rotSpeed * dt;
+                        obj.rotation.x += obj.userData.rotSpeed * 0.5 * dt;
+                        obj.scale.setScalar(obj.userData.life);
+                    }
+                }
+            }
+
+            /* ===== PARTICLES (for effects) ===== */
             const particles = [];
             const pGeo = new THREE.BoxGeometry(0.08, 0.08, 0.08);
             const pMats = {
@@ -1334,7 +1388,8 @@
                         p.mesh.position.z += p.vz * dt;
                         if (p.type === 'confetti') p.vy -= dt * 10;
                         p.mesh.scale.setScalar(p.life);
-                        if (p.type === 'flame' || p.type === 'explode') p.mesh.material.color.setHSL(0.1 * p.life, 1, 0.5);
+                        if (p.type === 'flame' || p.type === 'explode') p.mesh.material.color.setHSL(0.1 * p.life, 1,
+                            0.5);
                     }
                 }
             }
@@ -1741,7 +1796,7 @@
                     }
                     if (itemId === 'face_blush') {
                         const bMat = new THREE.MeshBasicMaterial({ color: 0xff8899, transparent: true,
-                            opacity: 0.75 });
+                        opacity: 0.75 });
                         const bL = new THREE.Mesh(new THREE.SphereGeometry(0.12, 12, 12), bMat);
                         bL.position.set(-0.42, -0.02, 0.5);
                         bL.scale.z = 0.3;
@@ -1768,7 +1823,8 @@
                         halo.rotation.x = Math.PI / 2;
                         halo.position.y = 0.3;
                         hGroup.add(halo);
-                        hGroup.userData.onUpdate = (t) => { halo.position.y = 0.3 + Math.sin(t * 0.005) * 0.05; };
+                        hGroup.userData.onUpdate = (t) => { halo.position.y = 0.3 + Math.sin(t * 0.005) * 0.
+                        05; };
                     }
                     if (itemId === 'head_propeller') {
                         const base = new THREE.Mesh(new THREE.CylinderGeometry(0.3, 0.3, 0.2), new THREE
@@ -1797,8 +1853,8 @@
                         hGroup.add(hornL, hornR);
                     }
                     if (itemId === 'head_crown') {
-                        const crown = new THREE.Mesh(new THREE.CylinderGeometry(0.4, 0.3, 0.5, 8, 1, true), new THREE
-                            .MeshPhongMaterial({ color: 0xffd700, side: THREE.DoubleSide }));
+                        const crown = new THREE.Mesh(new THREE.CylinderGeometry(0.4, 0.3, 0.5, 8, 1, true),
+                            new THREE.MeshPhongMaterial({ color: 0xffd700, side: THREE.DoubleSide }));
                         crown.position.y = 0.2;
                         hGroup.add(crown);
                     }
@@ -1814,8 +1870,8 @@
                         hGroup.add(brim, cone, star);
                     }
                     if (itemId === 'head_pirate') {
-                        const bandana = new THREE.Mesh(new THREE.SphereGeometry(0.48, 20, 12, 0, Math.PI * 2, 0, Math
-                            .PI / 2.2), new THREE.MeshPhongMaterial({ color: 0xcc2233 }));
+                        const bandana = new THREE.Mesh(new THREE.SphereGeometry(0.48, 20, 12, 0, Math.PI * 2, 0,
+                            Math.PI / 2.2), new THREE.MeshPhongMaterial({ color: 0xcc2233 }));
                         bandana.position.y = -0.05;
                         const knot = new THREE.Mesh(new THREE.BoxGeometry(0.14, 0.3, 0.08), new THREE
                             .MeshPhongMaterial({ color: 0xcc2233 }));
@@ -1954,7 +2010,6 @@
                 }
             }
 
-            /* ===== CLOTHES ===== */
             function equipClothes(itemId) {
                 if (!aziramPet) return;
                 const existing = aziramCore.children.filter(c => c.userData && c.userData.isClothing);
@@ -1999,7 +2054,7 @@
                     clothGroup.add(hood);
                 } else if (itemId === 'cl_sunglasses') {
                     const glassMat = new THREE.MeshPhongMaterial({ color: 0x222222, transparent: true,
-                        opacity: 0.85 });
+                    opacity: 0.85 });
                     const frame = new THREE.Mesh(new THREE.BoxGeometry(0.7, 0.2, 0.04), glassMat);
                     frame.position.set(0, 0.22, 0.48);
                     const lensL = new THREE.Mesh(new THREE.BoxGeometry(0.25, 0.14, 0.03), new THREE
@@ -2013,30 +2068,6 @@
                 aziramCore.add(clothGroup);
             }
 
-            /* ===== FURNITURE ===== */
-            let furnitureObjects = { bedroom: null, kitchen: null, bathroom: null };
-
-            function updateFurniture() {
-                const roomMap = {
-                    bedroom: save.equippedBedroomFurniture || 'fur_none',
-                    kitchen: save.equippedKitchenFurniture || 'fur_none',
-                    bathroom: save.equippedBathroomFurniture || 'fur_none'
-                };
-                document.getElementById('bedroomFurniture').textContent =
-                    roomMap.bedroom === 'fur_none' ? '🚫 Χωρίς έπιπλο' : '🪑 ' + (SHOP.furniture.find(f => f.id ===
-                        roomMap.bedroom)?.name || '');
-                document.getElementById('kitchenFurniture').textContent =
-                    roomMap.kitchen === 'fur_none' ? '🚫 Χωρίς έπιπλο' : '🪑 ' + (SHOP.furniture.find(f => f.id ===
-                        roomMap.kitchen)?.name || '');
-                document.getElementById('bathroomFurniture').textContent =
-                    roomMap.bathroom === 'fur_none' ? '🚫 Χωρίς έπιπλο' : '🪑 ' + (SHOP.furniture.find(f => f.id ===
-                        roomMap.bathroom)?.name || '');
-
-                document.getElementById('roomBedroom').classList.toggle('furnished', roomMap.bedroom !== 'fur_none');
-                document.getElementById('roomKitchen').classList.toggle('furnished', roomMap.kitchen !== 'fur_none');
-                document.getElementById('roomBathroom').classList.toggle('furnished', roomMap.bathroom !== 'fur_none');
-            }
-
             /* ===== TAMAGOTCHI STATS ===== */
             let tamagotchiInterval = null;
 
@@ -2044,56 +2075,44 @@
                 const now = Date.now();
                 const elapsed = (now - save.lastUpdate) / 1000;
                 if (elapsed <= 0) return;
-
                 const hour = new Date().getHours();
-
-                // ENERGY: sleep 22:00-08:00, awake 08:00-22:00
                 if (hour >= 8 && hour < 22) {
                     save.energy = Math.max(0, (save.energy || 50) - elapsed * 0.25);
                 } else {
                     save.energy = Math.min(100, (save.energy || 50) + elapsed * 0.45);
                 }
-
-                // HUNGER: spikes at breakfast (7-8), lunch (12-13), dinner (19-20)
                 let hungerRate = 0.15;
                 if (hour >= 7 && hour <= 8) hungerRate = 0.9;
                 else if (hour >= 12 && hour <= 13) hungerRate = 0.9;
                 else if (hour >= 19 && hour <= 20) hungerRate = 0.9;
                 save.hunger = Math.min(100, (save.hunger || 50) + elapsed * hungerRate);
-
-                // CLEANLINESS: gradual decrease
                 save.cleanliness = Math.max(0, (save.cleanliness || 80) - elapsed * 0.12);
-
-                // TOILET: fills up only when awake (3 hours to fill = 100 / 10800 per sec)
                 if (hour >= 8 && hour < 22) {
                     save.toilet = Math.min(100, (save.toilet || 0) + elapsed * (100 / 10800));
                 } else {
-                    // decreases slowly during sleep
                     save.toilet = Math.max(0, (save.toilet || 0) - elapsed * 0.3);
                 }
-
                 save.lastUpdate = now;
                 persist();
-                renderHomeStats();
-                renderHomeAvatar();
+                renderAziramStats();
+                renderAziramAvatar();
+                updateMoodDisplay();
             }
 
-            function renderHomeStats() {
+            function renderAziramStats() {
                 const e = Math.round(save.energy || 50);
                 const h = Math.round(save.hunger || 50);
                 const c = Math.round(save.cleanliness || 80);
                 const t = Math.round(save.toilet || 0);
-
-                document.getElementById('energyText').textContent = e;
-                document.getElementById('hungerText').textContent = h;
-                document.getElementById('cleanText').textContent = c;
-                document.getElementById('toiletText').textContent = t;
-
                 const eBar = document.getElementById('energyBar');
                 const hBar = document.getElementById('hungerBar');
                 const cBar = document.getElementById('cleanBar');
                 const tBar = document.getElementById('toiletBar');
-
+                if (!eBar) return;
+                document.getElementById('energyText').textContent = e;
+                document.getElementById('hungerText').textContent = h;
+                document.getElementById('cleanText').textContent = c;
+                document.getElementById('toiletText').textContent = t;
                 eBar.style.width = e + '%';
                 eBar.className = e < 25 ? 'low' : e < 50 ? 'warn' : '';
                 hBar.style.width = h + '%';
@@ -2104,36 +2123,27 @@
                 tBar.className = t > 75 ? 'low' : t > 50 ? 'warn' : '';
 
                 const now = Date.now();
-                document.getElementById('btnSleep').disabled = (save.sleepCooldown || 0) > now;
-                document.getElementById('btnFeed').disabled = (save.feedCooldown || 0) > now;
-                document.getElementById('btnWash').disabled = (save.washCooldown || 0) > now;
-                document.getElementById('btnToilet').disabled = (save.toiletCooldown || 0) > now;
-
-                const cdSleep = document.getElementById('sleepCooldown');
-                const cdFeed = document.getElementById('feedCooldown');
-                const cdWash = document.getElementById('washCooldown');
-                const cdToilet = document.getElementById('toiletCooldown');
+                const btnSleep = document.getElementById('btnSleep');
+                const btnFeed = document.getElementById('btnFeed');
+                const btnWash = document.getElementById('btnWash');
+                const btnToilet = document.getElementById('btnToilet');
+                if (btnSleep) btnSleep.disabled = (save.sleepCooldown || 0) > now;
+                if (btnFeed) btnFeed.disabled = (save.feedCooldown || 0) > now;
+                if (btnWash) btnWash.disabled = (save.washCooldown || 0) > now;
+                if (btnToilet) btnToilet.disabled = (save.toiletCooldown || 0) > now;
 
                 const remSleep = Math.max(0, ((save.sleepCooldown || 0) - now) / 1000);
                 const remFeed = Math.max(0, ((save.feedCooldown || 0) - now) / 1000);
                 const remWash = Math.max(0, ((save.washCooldown || 0) - now) / 1000);
                 const remToilet = Math.max(0, ((save.toiletCooldown || 0) - now) / 1000);
-
-                cdSleep.textContent = remSleep > 0 ? '⏳ ' + Math.ceil(remSleep) + 's' : '';
-                cdSleep.classList.toggle('hidden', remSleep <= 0);
-                cdFeed.textContent = remFeed > 0 ? '⏳ ' + Math.ceil(remFeed) + 's' : '';
-                cdFeed.classList.toggle('hidden', remFeed <= 0);
-                cdWash.textContent = remWash > 0 ? '⏳ ' + Math.ceil(remWash) + 's' : '';
-                cdWash.classList.toggle('hidden', remWash <= 0);
-                cdToilet.textContent = remToilet > 0 ? '⏳ ' + Math.ceil(remToilet) + 's' : '';
-                cdToilet.classList.toggle('hidden', remToilet <= 0);
+                const maxRem = Math.max(remSleep, remFeed, remWash, remToilet);
+                const cdDisplay = document.getElementById('cooldownDisplay');
+                if (cdDisplay) {
+                    cdDisplay.textContent = maxRem > 0 ? '⏳ ' + Math.ceil(maxRem) + 's' : '';
+                }
             }
 
-            function renderHomeAvatar() {
-                const container = document.getElementById('homeAvatarContainer');
-                if (!container) return;
-                // Body color
-                const bodyEl = document.getElementById('avBody');
+            function renderAziramAvatar() {
                 const colorMap = {
                     'color_green': '#33ffaa',
                     'color_blue': '#00aaff',
@@ -2143,61 +2153,39 @@
                     'color_rainbow': 'linear-gradient(45deg, red, orange, yellow, green, cyan, blue, purple)',
                     'color_slime': '#55d8e8'
                 };
-                const color = colorMap[save.equippedPetColor] || '#33ffaa';
-                bodyEl.style.background = color;
+                const bodyEl = document.getElementById('avBody');
+                if (bodyEl) bodyEl.style.background = colorMap[save.equippedPetColor] || '#33ffaa';
+                const headMap = { 'head_none': '', 'head_antenna': '📡', 'head_halo': '👼', 'head_propeller': '🚁',
+                    'head_mohawk': '🤘', 'head_horns': '😈', 'head_crown': '👑', 'head_wizard': '🧙',
+                    'head_pirate': '🏴‍☠️', 'head_santa': '🎅' };
+                const headEl = document.getElementById('avHead');
+                if (headEl) headEl.textContent = headMap[save.equippedPetHead] || '';
+                const faceMap = { 'face_none': '👁️', 'face_pixel': '🕶️', 'face_scouter': '📟', 'face_laser': '🔴',
+                    'face_monocle': '🧐', 'face_ninja': '🥷', 'face_mustache': '👨', 'face_blush': '☺️' };
+                const faceEl = document.getElementById('avFace');
+                if (faceEl) faceEl.textContent = faceMap[save.equippedPetFace] || '👁️';
+                const clothesMap = { 'cl_none': '', 'cl_scarf': '🧣', 'cl_bowtie': '🎀', 'cl_vest': '🧥',
+                    'cl_apron': '👨‍🍳', 'cl_tie': '👔', 'cl_hoodie': '👕', 'cl_sunglasses': '🕶️' };
+                const clothesEl = document.getElementById('avClothes');
+                if (clothesEl) clothesEl.textContent = clothesMap[save.equippedClothes] || '';
+                const propMap = { 'prop_none': '', 'prop_lollipop': '🍭', 'prop_icecream': '🍦',
+                    'prop_lightsaber': '🗡️', 'prop_wand': '🪄', 'prop_shield': '🛡️', 'prop_balloon': '🎈' };
+                const propEl = document.getElementById('avProp');
+                if (propEl) propEl.textContent = propMap[save.equippedPetProps] || '';
+            }
 
-                // Head
-                const headMap = {
-                    'head_none': '',
-                    'head_antenna': '📡',
-                    'head_halo': '👼',
-                    'head_propeller': '🚁',
-                    'head_mohawk': '🤘',
-                    'head_horns': '😈',
-                    'head_crown': '👑',
-                    'head_wizard': '🧙',
-                    'head_pirate': '🏴‍☠️',
-                    'head_santa': '🎅'
-                };
-                document.getElementById('avHead').textContent = headMap[save.equippedPetHead] || '';
-
-                // Face
-                const faceMap = {
-                    'face_none': '👁️',
-                    'face_pixel': '🕶️',
-                    'face_scouter': '📟',
-                    'face_laser': '🔴',
-                    'face_monocle': '🧐',
-                    'face_ninja': '🥷',
-                    'face_mustache': '👨',
-                    'face_blush': '☺️'
-                };
-                document.getElementById('avFace').textContent = faceMap[save.equippedPetFace] || '👁️';
-
-                // Clothes
-                const clothesMap = {
-                    'cl_none': '',
-                    'cl_scarf': '🧣',
-                    'cl_bowtie': '🎀',
-                    'cl_vest': '🧥',
-                    'cl_apron': '👨‍🍳',
-                    'cl_tie': '👔',
-                    'cl_hoodie': '👕',
-                    'cl_sunglasses': '🕶️'
-                };
-                document.getElementById('avClothes').textContent = clothesMap[save.equippedClothes] || '';
-
-                // Prop
-                const propMap = {
-                    'prop_none': '',
-                    'prop_lollipop': '🍭',
-                    'prop_icecream': '🍦',
-                    'prop_lightsaber': '🗡️',
-                    'prop_wand': '🪄',
-                    'prop_shield': '🛡️',
-                    'prop_balloon': '🎈'
-                };
-                document.getElementById('avProp').textContent = propMap[save.equippedPetProps] || '';
+            function updateMoodDisplay() {
+                const e = save.energy || 50;
+                const h = save.hunger || 50;
+                const c = save.cleanliness || 80;
+                const t = save.toilet || 0;
+                let moodText = '😊 Χαρούμενο';
+                if (e < 20) moodText = '😴 Νυσταγμένο';
+                else if (h > 80) moodText = '😋 Πεινασμένο';
+                else if (c < 20) moodText = '😣 Λερωμένο';
+                else if (t > 80) moodText = '😰 Πρέπει να πάω...';
+                const el = document.getElementById('petMoodText');
+                if (el) el.textContent = moodText;
             }
 
             function doSleep() {
@@ -2207,11 +2195,11 @@
                 save.sleepCooldown = now + 8000;
                 save.lastUpdate = now;
                 persist();
-                renderHomeStats();
+                renderAziramStats();
+                updateMoodDisplay();
                 showSpeech("Zzz... Καληνύχτα! 😴", 2000);
                 speak("Καληνύχτα!");
                 toast("😴 Ο Aziram κοιμήθηκε! +40 Ενέργεια");
-                updateAziramMoodFromStats();
             }
 
             function doFeed() {
@@ -2221,11 +2209,11 @@
                 save.feedCooldown = now + 6000;
                 save.lastUpdate = now;
                 persist();
-                renderHomeStats();
+                renderAziramStats();
+                updateMoodDisplay();
                 showSpeech("Μμμμ, νόστιμο! 😋", 1800);
                 speak("Μμμμ, νόστιμο!");
                 toast("🍽️ Ο Aziram έφαγε! -35 Πείνα");
-                updateAziramMoodFromStats();
             }
 
             function doWash() {
@@ -2235,11 +2223,11 @@
                 save.washCooldown = now + 7000;
                 save.lastUpdate = now;
                 persist();
-                renderHomeStats();
+                renderAziramStats();
+                updateMoodDisplay();
                 showSpeech("Ωραία, είμαι καθαρός! 🧼", 1800);
                 speak("Ωραία, είμαι καθαρός!");
                 toast("🧼 Ο Aziram πλύθηκε! +45 Καθαριότητα");
-                updateAziramMoodFromStats();
             }
 
             function doToilet() {
@@ -2249,24 +2237,11 @@
                 save.toiletCooldown = now + 5000;
                 save.lastUpdate = now;
                 persist();
-                renderHomeStats();
+                renderAziramStats();
+                updateMoodDisplay();
                 showSpeech("Ααα, ανάσα! 🚽", 1800);
                 speak("Ααα, ανάσα!");
                 toast("🚽 Ο Aziram πήγε τουαλέτα! -80 Τουαλέτα");
-                updateAziramMoodFromStats();
-            }
-
-            function updateAziramMoodFromStats() {
-                const e = save.energy || 50;
-                const h = save.hunger || 50;
-                const c = save.cleanliness || 80;
-                const t = save.toilet || 0;
-                if (e < 20) { aziramMood = 'tired';
-                    showSpeech("Νυστάζω... 😴", 2000); } else if (h > 80) { aziramMood = 'hungry';
-                    showSpeech("Πεινάω... 🍽️", 2000); } else if (c < 20) { aziramMood = 'dirty';
-                    showSpeech("Είμαι λερωμένος... 🧼", 2000); } else if (t > 80) { aziramMood = 'toilet';
-                    showSpeech("Πρέπει να πάω τουαλέτα... 🚽", 2000); } else { aziramMood = 'idle'; }
-                prevMood = aziramMood;
             }
 
             /* ===== THREE.JS GAME ===== */
@@ -2410,7 +2385,8 @@
                     roundRect(g, 4, 4, 120, 120, 22);
                     g.fill(); }
 
-                const badgeSkins = ['whitered', 'whitegreen', 'zebra', 'rainbow', 'galaxy', 'neon', 'ice', 'lava', 'gold'];
+                const badgeSkins = ['whitered', 'whitegreen', 'zebra', 'rainbow', 'galaxy', 'neon', 'ice', 'lava',
+                'gold'];
                 const hasBadge = badgeSkins.includes(skin);
                 if (hasBadge) {
                     g.save();
@@ -2480,7 +2456,8 @@
                 grid = Array.from({ length: COLS }, () => Array(ROWS).fill(null));
                 score = save.score || 0;
                 updateHUD();
-                for (let i = 0; i < LEVELS[Math.min(level, LEVELS.length - 1)].preset; i++) {
+                const preset = getPresetCount();
+                for (let i = 0; i < preset; i++) {
                     const c = Math.floor(Math.random() * COLS);
                     const r = colHeight(c);
                     if (r < 3) placeCube(c, r, [2, 4, 8, 16][Math.floor(Math.random() * 4)], true);
@@ -2644,41 +2621,61 @@
             let winTimer = null;
 
             function checkWin() {
-                const t = LEVELS[Math.min(level, LEVELS.length - 1)].target;
+                const target = getCurrentTarget();
                 let win = false;
                 for (let c = 0; c < COLS; c++)
                     for (let r = 0; r < ROWS; r++)
-                        if (grid[c][r] && grid[c][r].value >= t) { win = true; break; }
+                        if (grid[c][r] && grid[c][r].value >= target) { win = true; break; }
                 if (!win) return false;
 
-                busy = true;
-                coins += 25;
-                save.coins = coins;
-                best = Math.max(best, score);
-                save.best = best;
-                save.level = Math.min(level + 1, LEVELS.length - 1);
-                persist();
-                updateHUD();
-                document.getElementById("winText").innerHTML = `Έφτιαξες ${t}!<br>+25 🪙`;
-
-                // ===== CELEBRATION: FIREWORKS, CONFETTI, CLAPPING, SOUNDS =====
+                // CELEBRATION with celestial objects
                 playWinSound(audioCtx);
-                for (let i = 0; i < 30; i++) {
-                    setTimeout(() => {
-                        const x = (Math.random() - 0.5) * 14;
-                        const y = (Math.random() - 0.5) * 10 + 2;
-                        spawnBurst(x, y, 0, 'confetti', 15);
-                        spawnBurst(x, y, 0, 'explode', 10);
-                    }, i * 120);
-                }
-                aziramWinTime = 6.0;
-                showSpeech("Τα καταφέραμε! 🎉", 3800);
-                speak("Μπράβο! Τα καταφέραμε!");
+                const wp = new THREE.Vector3();
+                aziramPet.getWorldPosition(wp);
+                spawnCelestialBurst(wp.x, wp.y + 1, wp.z, 25);
+                // Also spawn around the board
+                spawnCelestialBurst(0, -1, 0, 15);
 
-                if (winTimer) clearTimeout(winTimer);
-                winTimer = setTimeout(() => { document.getElementById("winModal").classList.remove("hidden");
-                    winTimer = null; }, 3500);
-                return true;
+                if (gameMode === 'games') {
+                    // Continuous play - just advance target
+                    gamesProgress++;
+                    save.gamesProgress = gamesProgress;
+                    coins += 30;
+                    save.coins = coins;
+                    best = Math.max(best, score);
+                    save.best = best;
+                    persist();
+                    updateHUD();
+                    aziramWinTime = 4.0;
+                    showSpeech("Νέος στόχος: " + getCurrentTarget() + "! 🚀", 3500);
+                    speak("Τέλεια! Πάμε για " + getCurrentTarget() + "!");
+                    toast("🎯 Νέος στόχος: " + getCurrentTarget() + "! +30 🪙");
+                    busy = false;
+                    // Don't stop the game, just continue
+                    if (!currentCube) {
+                        spawnCurrent();
+                        setAim(aimCol);
+                    }
+                    return false;
+                } else {
+                    // Missions mode - show win modal
+                    busy = true;
+                    coins += 25;
+                    save.coins = coins;
+                    best = Math.max(best, score);
+                    save.best = best;
+                    save.level = Math.min(level + 1, MISSION_LEVELS.length - 1);
+                    persist();
+                    updateHUD();
+                    document.getElementById("winText").innerHTML = `Έφτιαξες κύβο ${target}!<br>+25 🪙<br>🎯 Επόμενος στόχος: ${MISSION_LEVELS[Math.min(level+1, MISSION_LEVELS.length-1)].target}`;
+                    aziramWinTime = 5.0;
+                    showSpeech("Αποστολή ολοκληρώθηκε! 🎉", 3800);
+                    speak("Μπράβο! Η αποστολή ολοκληρώθηκε!");
+                    if (winTimer) clearTimeout(winTimer);
+                    winTimer = setTimeout(() => { document.getElementById("winModal").classList.remove("hidden");
+                        winTimer = null; }, 3000);
+                    return true;
+                }
             }
 
             function gameOver() {
@@ -2689,12 +2686,12 @@
                 persist();
                 showSpeech("Ωχ όχι! 😭", 2500);
                 speak("Ωχ όχι! Γέμισε το ταμπλό!");
-                document.getElementById("loseText").innerHTML = `Σκορ: <b>${score}</b>`;
+                document.getElementById("loseText").innerHTML = `Σκορ: <b>${score}</b><br>Στόχος: ${getCurrentTarget()}`;
                 document.getElementById("loseModal").classList.remove("hidden");
             }
 
             function onTap(e) {
-                if (document.querySelector(".overlay:not(.hidden)")) return;
+                if (document.querySelector(".full-overlay:not(.hidden)")) return;
                 lastActionTime = performance.now();
                 const x = (e.touches ? e.touches[0].clientX : e.clientX) / innerWidth * 2 - 1;
                 const y = -((e.touches ? e.touches[0].clientY : e.clientY) / innerHeight * 2 - 1);
@@ -2712,10 +2709,12 @@
                             return;
                         }
                         aziramReactionTime = 1.0;
-                        const greetings = ["Γεια σου! 😊", "Χι χι! 😄", "Παίζουμε; 🎮", "Είμαι ο Aziram! 💚"];
+                        const greetings = ["Γεια σου! 😊", "Χι χι! 😄", "Παίζουμε; 🎮", "Είμαι ο Aziram! 💚",
+                            "Ο στόχος είναι " + getCurrentTarget() + "!"
+                        ];
                         const pick = greetings[Math.floor(Math.random() * greetings.length)];
                         showSpeech(pick, 1800);
-                        speak(pick.replace(/[^\u0370-\u03FF\u1F00-\u1FFFa-zA-Z; !?]/g, '').trim());
+                        speak(pick.replace(/[^\u0370-\u03FF\u1F00-\u1FFFa-zA-Z0-9; !?]/g, '').trim());
                         if (audioCtx.state !== 'suspended') playSound('drop');
                         return;
                     }
@@ -2814,8 +2813,7 @@
                     pet_hands: { owned: 'ownedPetHands', equip: 'equippedPetHands' },
                     pet_props: { owned: 'ownedPetProps', equip: 'equippedPetProps' },
                     pet_feet: { owned: 'ownedPetFeet', equip: 'equippedPetFeet' },
-                    clothes: { owned: 'ownedClothes', equip: 'equippedClothes' },
-                    furniture: { owned: 'ownedFurniture', equip: 'equippedFurniture' }
+                    clothes: { owned: 'ownedClothes', equip: 'equippedClothes' }
                 };
                 return map[tab] || { owned: '', equip: '' };
             }
@@ -2824,20 +2822,18 @@
                 const petSubTabs = document.getElementById('petSubTabs');
                 if (currentMainTab === 'pets') petSubTabs.classList.add('active');
                 else petSubTabs.classList.remove('active');
-
                 const activeTab = currentMainTab === 'pets' ? currentPetSubTab : currentMainTab;
                 const container = document.getElementById('shopContainer');
                 container.innerHTML = '';
                 const arr = SHOP[activeTab] || [];
                 const props = getShopProperties(activeTab);
-
                 arr.forEach(item => {
                     const isOwned = save[props.owned] && save[props.owned].includes(item.id);
                     const isEquipped = save[props.equip] === item.id;
                     const el = document.createElement('div');
                     el.className = `shop-item ${isOwned?'owned':''} ${isEquipped?'equipped':''}`;
                     el.innerHTML =
-                        `<div style="font-size:32px; margin-bottom:3px;">${item.icon}</div><h3>${item.name}</h3><div class="price">${isEquipped?'ΕΠΙΛΕΓΜΕΝΟ':isOwned?'ΕΠΙΛΟΓΗ':item.price===0?'Δωρεάν':item.price+' 🪙'}</div>`;
+                        `<div style="font-size:36px; margin-bottom:4px;">${item.icon}</div><h3>${item.name}</h3><div class="price">${isEquipped?'ΕΠΙΛΕΓΜΕΝΟ':isOwned?'ΕΠΙΛΟΓΗ':item.price===0?'Δωρεάν':item.price+' 🪙'}</div>`;
                     el.onclick = () => {
                         if (isOwned) {
                             save[props.equip] = item.id;
@@ -2875,9 +2871,9 @@
                 }
                 if (tabChanged.startsWith('pet_')) equipPetSlot(tabChanged, save[getShopProperties(tabChanged).equip]);
                 if (tabChanged === 'clothes') equipClothes(save.equippedClothes);
-                if (tabChanged === 'furniture') updateFurniture();
                 if (tabChanged === 'effects') toast("Το εφέ άλλαξε!");
                 if (tabChanged === 'sounds') toast("Ο ήχος άλλαξε!");
+                renderAziramAvatar();
             }
 
             document.querySelectorAll('.shop-tab').forEach(btn => {
@@ -2898,11 +2894,30 @@
             });
 
             function updateHUD() {
-                document.getElementById("hudLevel").textContent = level + 1;
+                document.getElementById("hudLevel").textContent = gameMode === 'missions' ? (level + 1) : (gamesProgress +
+                    1);
                 document.getElementById("hudScore").textContent = score;
                 document.getElementById("hudCoins").textContent = coins;
-                document.getElementById("missionText").textContent = LEVELS[Math.min(level, LEVELS.length - 1)].text;
+                document.getElementById("hudTarget").textContent = getCurrentTarget();
                 document.getElementById("btnHammer").classList.toggle("armed", hammerMode);
+                const modeBtn = document.getElementById("btnModeToggle");
+                if (gameMode === 'missions') {
+                    modeBtn.textContent = '📋 Missions';
+                    modeBtn.classList.add('missions-active');
+                } else {
+                    modeBtn.textContent = '🎮 Games';
+                    modeBtn.classList.remove('missions-active');
+                }
+                const soundBtn = document.getElementById("btnSound");
+                if (isMuted) {
+                    soundBtn.textContent = '🔇';
+                    soundBtn.querySelector('.cost').textContent = 'Off';
+                    soundBtn.classList.add('sound-muted');
+                } else {
+                    soundBtn.textContent = '🔊';
+                    soundBtn.querySelector('.cost').textContent = 'Ήχος';
+                    soundBtn.classList.remove('sound-muted');
+                }
             }
 
             let toastTimer;
@@ -2912,17 +2927,37 @@
                 t.textContent = msg;
                 t.style.opacity = 1;
                 clearTimeout(toastTimer);
-                toastTimer = setTimeout(() => t.style.opacity = 0, 1800);
+                toastTimer = setTimeout(() => t.style.opacity = 0, 2000);
             }
 
-            /* ===== MISSION BAR (every 10s) ===== */
-            function showMissionBar() {
-                const bar = document.getElementById('missionBar');
-                bar.classList.add('show');
-                setTimeout(() => bar.classList.remove('show'), 3000);
+            /* ===== PET ANNOUNCES MISSIONS (every 45s) ===== */
+            let missionAnnounceInterval = null;
+
+            function startMissionAnnouncements() {
+                if (missionAnnounceInterval) clearInterval(missionAnnounceInterval);
+                missionAnnounceInterval = setInterval(() => {
+                    if (aziramWinTime > 0 || aziramReactionTime > 0 || isTalking) return;
+                    const target = getCurrentTarget();
+                    if (gameMode === 'missions') {
+                        const lvl = Math.min(level, MISSION_LEVELS.length - 1);
+                        showSpeech("🎯 Αποστολή: " + MISSION_LEVELS[lvl].text + "!", 3000);
+                        speak("Η αποστολή μας: " + MISSION_LEVELS[lvl].text);
+                    } else {
+                        showSpeech("🎯 Στόχος: κύβος " + target + "!", 2800);
+                        speak("Στόχος μας ο κύβος " + target);
+                    }
+                }, 45000);
+                // Initial announcement after 8 seconds
+                setTimeout(() => {
+                    const target = getCurrentTarget();
+                    if (gameMode === 'missions') {
+                        showSpeech("🎯 Αποστολή: " + MISSION_LEVELS[Math.min(level, MISSION_LEVELS.length - 1)]
+                            .text + "!", 3500);
+                    } else {
+                        showSpeech("🎯 Στόχος: κύβος " + target + "!", 3000);
+                    }
+                }, 8000);
             }
-            setInterval(showMissionBar, 10000);
-            setTimeout(showMissionBar, 500);
 
             /* ===== MOOD SYSTEM ===== */
             let lastSmokeTime = 0;
@@ -2949,6 +2984,7 @@
                 if (!lastActionTime) lastActionTime = performance.now();
                 stepAnims(dt);
                 updateParticles(dt);
+                updateCelestialObjects(dt);
                 updateStarfield(0.8);
 
                 if (Math.floor(t / 3000) > Math.floor((t - dt * 1000) / 3000)) {
@@ -2965,17 +3001,11 @@
                         core.position.y = Math.abs(Math.sin(t * 0.008)) * 1.2;
                         aziramPet.rotation.x -= 0.15;
                         aziramPet.rotation.y += 0.1;
-                        // CLAPPING
                         sockets.handL.position.y = 0.8 + Math.sin(t * 0.015) * 0.2;
                         sockets.handR.position.y = 0.8 + Math.cos(t * 0.015) * 0.2;
                         sockets.handL.position.x = -0.3 + Math.sin(t * 0.015) * 0.2;
                         sockets.handR.position.x = 0.3 - Math.sin(t * 0.015) * 0.2;
                         mouthMesh.scale.set(0.85, 0.85, 0.35);
-                        if (Math.random() < 0.25) {
-                            let wp = new THREE.Vector3();
-                            core.getWorldPosition(wp);
-                            spawnBurst(wp.x + (Math.random() - 0.5) * 2, wp.y + 1, wp.z, 'confetti', 4);
-                        }
                     } else if (aziramReactionTime > 0) {
                         aziramReactionTime -= dt;
                         aziramPet.rotation.x = 0.2;
@@ -3120,42 +3150,63 @@
 
             /* ===== INIT ===== */
             (async function() {
+                // Clear old saves
                 const keys = ['drop2048-save-pure', 'drop2048-save-v2', 'drop2048-save-v3', 'drop2048-save-v4',
                     'drop2048-v5', 'drop2048-frankly-v1', 'drop2048-frankly-v2', 'drop2048-frankly-v3',
-                    'drop2048-frankly-v4'
+                    'drop2048-frankly-v4', 'drop2048-frankly-v5'
                 ];
                 keys.forEach(k => localStorage.removeItem(k));
 
+                // Shop modal
                 document.getElementById('btnShop').onclick = () => { renderShop();
                     document.getElementById('shopModal').classList.remove('hidden'); };
                 document.getElementById('btnCloseShop').onclick = () => { document.getElementById('shopModal')
                     .classList.add('hidden'); };
 
-                document.getElementById('btnHome').onclick = () => {
+                // Aziram modal
+                document.getElementById('btnAziram').onclick = () => {
                     updateTamagotchiStats();
-                    renderHomeStats();
-                    updateFurniture();
-                    renderHomeAvatar();
-                    document.getElementById('homeModal').classList.remove('hidden');
+                    renderAziramStats();
+                    renderAziramAvatar();
+                    updateMoodDisplay();
+                    document.getElementById('aziramModal').classList.remove('hidden');
                 };
-                document.getElementById('btnCloseHome').onclick = () => { document.getElementById('homeModal')
+                document.getElementById('btnCloseAziram').onclick = () => { document.getElementById('aziramModal')
                     .classList.add('hidden'); };
+
+                // Tamagotchi actions
                 document.getElementById('btnSleep').onclick = doSleep;
                 document.getElementById('btnFeed').onclick = doFeed;
                 document.getElementById('btnWash').onclick = doWash;
                 document.getElementById('btnToilet').onclick = doToilet;
 
-                // Room tabs
-                document.querySelectorAll('.room-tab').forEach(tab => {
-                    tab.onclick = (e) => {
-                        document.querySelectorAll('.room-tab').forEach(t => t.classList.remove('active'));
-                        e.target.classList.add('active');
-                        const room = e.target.dataset.room;
-                        document.querySelectorAll('.room-panel').forEach(p => p.classList.remove('active'));
-                        document.getElementById('room' + room.charAt(0).toUpperCase() + room.slice(1))
-                            .classList.add('active');
-                    };
-                });
+                // Mode toggle
+                document.getElementById('btnModeToggle').onclick = () => {
+                    if (gameMode === 'games') {
+                        gameMode = 'missions';
+                        level = save.level || 0;
+                        gamesProgress = save.gamesProgress || 0;
+                    } else {
+                        gameMode = 'games';
+                        gamesProgress = save.gamesProgress || 0;
+                        level = save.level || 0;
+                    }
+                    save.gameMode = gameMode;
+                    persist();
+                    updateHUD();
+                    busy = false;
+                    newBoard();
+                    toast(gameMode === 'games' ? '🎮 Λειτουργία: Συνεχόμενο Παιχνίδι' :
+                        '📋 Λειτουργία: Αποστολές');
+                    startMissionAnnouncements();
+                };
+
+                // Sound toggle
+                document.getElementById('btnSound').onclick = () => {
+                    isMuted = !isMuted;
+                    updateHUD();
+                    toast(isMuted ? '🔇 Ήχος απενεργοποιήθηκε' : '🔊 Ήχος ενεργοποιήθηκε');
+                };
 
                 document.addEventListener('pointerdown', () => { if (audioCtx.state === 'suspended') audioCtx
                         .resume(); }, { once: true });
@@ -3170,6 +3221,8 @@
                 level = save.level || 0;
                 best = save.best || 0;
                 score = save.score || 0;
+                gamesProgress = save.gamesProgress || 0;
+                gameMode = save.gameMode || 'games';
 
                 if (save.energy === undefined) save.energy = 70;
                 if (save.hunger === undefined) save.hunger = 30;
@@ -3182,6 +3235,7 @@
                 newBoard();
                 updateHUD();
                 initMic();
+                startMissionAnnouncements();
 
                 equipPetSlot('pet_color', save.equippedPetColor);
                 equipPetSlot('pet_head', save.equippedPetHead);
@@ -3191,8 +3245,8 @@
                 equipPetSlot('pet_props', save.equippedPetProps);
                 equipPetSlot('pet_feet', save.equippedPetFeet);
                 equipClothes(save.equippedClothes);
-                updateFurniture();
-                renderHomeAvatar();
+                renderAziramAvatar();
+                updateMoodDisplay();
 
                 const cvs = document.getElementById("game");
                 cvs.addEventListener("pointermove", (e) => { if (!busy) setAim((e.touches ? e.touches[0].clientX : e
@@ -3200,14 +3254,19 @@
                 cvs.addEventListener("pointerdown", onTap);
                 document.getElementById("btnNext").onclick = () => {
                     document.getElementById("winModal").classList.add("hidden");
-                    level = Math.min(level + 1, LEVELS.length - 1);
+                    level = Math.min(level + 1, MISSION_LEVELS.length - 1);
+                    save.level = level;
+                    persist();
                     busy = false;
                     newBoard();
+                    updateHUD();
+                    startMissionAnnouncements();
                 };
                 document.getElementById("btnRetry").onclick = () => {
                     document.getElementById("loseModal").classList.add("hidden");
                     busy = false;
                     newBoard();
+                    updateHUD();
                 };
 
                 tamagotchiInterval = setInterval(() => { updateTamagotchiStats(); }, 3000);
