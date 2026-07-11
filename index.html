@@ -245,7 +245,7 @@
             function getLevelPreset(level) { return Math.min(level * 2 + 2, 18); }
             function getLevelText(level) { return "Φτιάξε κύβο " + getLevelTarget(level); }
 
-            // ---------- SHOP DATA (FIXED 8 ITEMS PER CATEGORY) ----------
+            // ---------- SHOP DATA (FULLY EXPANDED) ----------
             const SHOP = {
                 cubes: [
                     { id: 'wood', name: 'Ξύλο', price: 0, icon: '🪵' }, { id: 'whitered', name: 'Άσπρο-Κόκκινο', price: 0, icon: '🍬' },
@@ -260,7 +260,7 @@
                     { id: 'board_crimson', name: 'Πορφυρό', price: 0, icon: '🟥', back: '#3A0CA3', cell: '#A47CFF' },
                     { id: 'board_emerald', name: 'Σμαράγδι', price: 0, icon: '🟩', back: '#004B23', cell: '#7BDF4B' },
                     { id: 'board_neon', name: 'Νέον Σκοτάδι', price: 0, icon: '🟪', back: '#0A0A0A', cell: '#FF00FF' },
-                    // +5 NEW COLORS
+                    // +5 ΝΕΑ ΧΡΩΜΑΤΑ
                     { id: 'board_pink', name: 'Neon Pink', price: 50, icon: '🩷', back: '#FF1493', cell: '#C71585' },
                     { id: 'board_void', name: 'Dark Void', price: 50, icon: '🖤', back: '#0C0C0C', cell: '#2F2F2F' },
                     { id: 'board_iceblue', name: 'Ice Blue', price: 60, icon: '🧊', back: '#1E90FF', cell: '#4682B4' },
@@ -273,7 +273,7 @@
                     { id: 'eff_sparkle', name: 'Αστερόσκονη', price: 0, icon: '✨' },
                     { id: 'eff_smoke', name: 'Καπνός', price: 0, icon: '💨' },
                     { id: 'eff_explode', name: 'Έκρηξη', price: 0, icon: '💥' },
-                    // +4 NEW EFFECTS
+                    // +4 ΝΕΑ ΕΦΕ
                     { id: 'eff_glitter', name: 'Glitter', price: 40, icon: '🌟' },
                     { id: 'eff_frost', name: 'Frost', price: 60, icon: '❄️' },
                     { id: 'eff_electric', name: 'Electricity', price: 60, icon: '⚡' },
@@ -284,7 +284,7 @@
                     { id: 'snd_bass', name: 'Bass Drop', price: 0, icon: '🎛️' },
                     { id: 'snd_bell', name: 'Καμπάνα', price: 0, icon: '🔔' },
                     { id: 'snd_echo', name: 'Echo', price: 0, icon: '🌌' },
-                    // +6 NEW SOUNDS
+                    // +6 ΝΕΟΙ ΗΧΟΙ
                     { id: 'snd_drum', name: 'Drum Hit', price: 40, icon: '🥁' },
                     { id: 'snd_synth', name: 'Synth Wave', price: 50, icon: '🎹' },
                     { id: 'snd_harp', name: 'Harp Pluck', price: 60, icon: '🪕' },
@@ -292,13 +292,13 @@
                     { id: 'snd_scifi', name: 'Sci-Fi Beat', price: 80, icon: '👾' },
                     { id: 'snd_echolong', name: 'Echoing Call', price: 100, icon: '📯' }
                 ],
-                // PET ITEMS (EXACTLY 8 ITEMS, 1st is "Without")
+                // PET ITEMS (8 items + "Without" for each category)
                 petItems: {
-                    hats: { label: 'Καπέλα', items: Array.from({ length: 8 }, (_, i) => ({ id: `hat_${i}`, name: i===0?'Χωρίς Καπέλο':`Καπέλο #${i}`, price: i*15, color: i*0.1 })) },
-                    hair: { label: 'Μαλλιά', items: Array.from({ length: 8 }, (_, i) => ({ id: `hair_${i}`, name: i===0?'Χωρίς Μαλλιά':[`Αλογοουρά`,`Δύο Κοτσιδάκια`,`Κοντοκουρεμένο`,`Μακριά Μαλλιά`,`Πλεξούδα`,`Καρέ`,`Κότσος`][i-1], price: i*20, color: i*0.1 })) },
-                    tops: { label: 'Μπλούζες', items: Array.from({ length: 8 }, (_, i) => ({ id: `top_${i}`, name: i===0?'Χωρίς Μπλούζα':`Μπλούζα #${i}`, price: i*20, color: i*0.1 })) },
-                    bottoms: { label: 'Παντελόνια', items: Array.from({ length: 8 }, (_, i) => ({ id: `bot_${i}`, name: i===0?'Χωρίς Παντελόνι':`Παντελόνι #${i}`, price: i*20, color: i*0.1 })) },
-                    accessories: { label: 'Αξεσουάρ', items: Array.from({ length: 8 }, (_, i) => ({ id: `acc_${i}`, name: i===0?'Χωρίς Αξεσουάρ':`Αξεσουάρ #${i}`, price: i*15, color: i*0.1 })) }
+                    hats: { label: 'Καπέλα', items: Array.from({ length: 9 }, (_, i) => ({ id: `hat_${i}`, name: i===0?'Χωρίς Καπέλο':`Καπέλο #${i}`, price: i*15, color: i*0.1 })) },
+                    hair: { label: 'Μαλλιά', items: Array.from({ length: 9 }, (_, i) => ({ id: `hair_${i}`, name: i===0?'Χωρίς Μαλλιά':[`Αλογοουρά`,`Δύο Κοτσιδάκια`,`Κοντά`,`Μακριά`,`Πλεξούδα`,`Καρέ`,`Κότσος`,`Αφέλειες`][i-1], price: i*20, color: i*0.1 })) },
+                    tops: { label: 'Μπλούζες', items: Array.from({ length: 9 }, (_, i) => ({ id: `top_${i}`, name: i===0?'Χωρίς Μπλούζα':`Μπλούζα #${i}`, price: i*20, color: i*0.1 })) },
+                    bottoms: { label: 'Παντελόνια', items: Array.from({ length: 9 }, (_, i) => ({ id: `bot_${i}`, name: i===0?'Χωρίς Παντελόνι':`Παντελόνι #${i}`, price: i*20, color: i*0.1 })) },
+                    accessories: { label: 'Αξεσουάρ', items: Array.from({ length: 9 }, (_, i) => ({ id: `acc_${i}`, name: i===0?'Χωρίς Αξεσουάρ':`Αξεσουάρ #${i}`, price: i*15, color: i*0.1 })) }
                 },
                 // VISITORS SHOP
                 visitors: [
@@ -318,16 +318,14 @@
                 ownedEffects: ['eff_none'], equippedEffect: 'eff_none',
                 ownedSounds: ['snd_default'], equippedSound: 'snd_default',
                 ownedPets: [], equippedPet: { hats: 'hat_0', hair: 'hair_1', tops: 'top_0', bottoms: 'bot_0', accessories: 'acc_0' },
-                ownedVisitors: []
+                ownedVisitors: ['v_gift_1']
             };
-            // Init defaults: first item of each category (the "Without" option)
+            // Init defaults with all "Without" items
             Object.keys(SHOP.petItems).forEach(cat => { DEFAULT_SAVE.ownedPets.push(SHOP.petItems[cat].items[0].id); });
-            // Give default hair_1
-            DEFAULT_SAVE.ownedPets.push('hair_1');
             
             let save = { ...DEFAULT_SAVE };
-            function loadSave() { try { const r = localStorage.getItem("drop2048-v15"); if (r) { const parsed = JSON.parse(r); save = Object.assign({}, DEFAULT_SAVE, parsed); } } catch (e) {} }
-            function persist() { try { localStorage.setItem("drop2048-v15", JSON.stringify(save)); } catch (e) {} }
+            function loadSave() { try { const r = localStorage.getItem("drop2048-v14"); if (r) { const parsed = JSON.parse(r); save = Object.assign({}, DEFAULT_SAVE, parsed); } } catch (e) {} }
+            function persist() { try { localStorage.setItem("drop2048-v14", JSON.stringify(save)); } catch (e) {} }
             let coins = 0, level = 0, score = 0, best = 0, soundEnabled = true;
 
             // ---------- AUDIO ----------
@@ -345,6 +343,7 @@
                     g.gain.setValueAtTime(vol || 0.15, t0); g.gain.exponentialRampToValueAtTime(0.001, t0 + dur);
                     o.start(t0); o.stop(t0 + dur + 0.05);
                 }
+                // New sounds logic
                 if (s === 'snd_default') { if (type === 'drop') tone(800, 0.12, 'sine', 0.20); else if (type === 'merge') { tone(400, 0.08, 'sine', 0.25); setTimeout(() => tone(800, 0.08, 'sine', 0.25), 60); } else tone(300, 0.25, 'sine', 0.3); }
                 else if (s === 'snd_bass') { if (type === 'drop') tone(120, 0.2, 'sawtooth', 0.35); else if (type === 'merge') { tone(80, 0.15, 'sawtooth', 0.4); setTimeout(() => tone(160, 0.15, 'sawtooth', 0.3), 70); } else { tone(90, 0.3, 'sawtooth', 0.3); tone(180, 0.25, 'sine', 0.15, 0.05); } }
                 else if (s === 'snd_bell') { if (type === 'drop') { tone(880, 0.3, 'sine', 0.15); tone(1760, 0.25, 'sine', 0.08, 0.05); } else if (type === 'merge') { tone(1047, 0.4, 'sine', 0.2); tone(2093, 0.3, 'sine', 0.12, 0.08); tone(1568, 0.35, 'sine', 0.1, 0.1); } else { tone(784, 0.5, 'sine', 0.15); tone(1568, 0.4, 'sine', 0.08, 0.1); } }
@@ -395,7 +394,7 @@
             function tween(obj, to, dur, ease, done) { const from = {}; for (const k in to) from[k] = obj[k]; anims.push({ obj, from, to, dur, t: 0, ease: ease || (t => 1 - Math.pow(1 - t, 3)), done }); }
             function stepAnims(dt) { for (let i = anims.length - 1; i >= 0; i--) { const a = anims[i]; a.t += dt / a.dur; const k = a.t >= 1 ? 1 : a.ease(a.t); for (const p in a.to) a.obj[p] = a.from[p] + (a.to[p] - a.from[p]) * k; if (a.t >= 1) { anims.splice(i, 1); a.done && a.done(); } } }
 
-            // ---------- VOXEL AZIRAM (FIXED HAIR & LIMBS) ----------
+            // ---------- VOXEL AZIRAM (UPGRADED 8+1 HAIR) ----------
             let aziramPet, aziramCore = null; let aziramMood = 'idle', prevMood = 'idle'; let lastActionTime = 0;
             let aziramNdcX = 0.5, wanderTargetX = -0.2, petState = 'stand', petStateTimer = 3, faceDir = -1;
             let aziramReactionTime = 0, aziramWinTime = 0; let speechTimer = null; let aziramEyes = null;
@@ -411,59 +410,65 @@
 
             function updatePetAccessories() {
                 if (!aziramCore) return; 
+                // Clear existing meshes
                 Object.values(petItemMeshes).forEach(m => { if (m.parent) m.parent.remove(m); }); 
                 petItemMeshes = {};
                 const getEquip = (cat) => { const id = save.equippedPet[cat]; return SHOP.petItems[cat].items.find(i => i.id === id) || SHOP.petItems[cat].items[0]; };
 
-                // 1. HAIR (Left, Right, Top, Back)
+                // 1. HAIR (8 styles + "Without Hair")
                 const hairData = getEquip('hair');
                 if (hairData.id !== 'hair_0') {
                     const hairMat = new THREE.MeshPhongMaterial({ color: 0xFDD835 });
-                    // Always have base
+                    // Default blonde base texture
                     const hairBase = new THREE.Mesh(new THREE.BoxGeometry(0.7, 0.15, 0.65), hairMat);
                     hairBase.position.set(0, 0.35, 0); petItemMeshes.hairBase = hairBase; aziramCore.add(hairBase);
                     
-                    // 1. Ponytail
+                    // ALOGOURA (Ponytail)
                     if (hairData.id === 'hair_1') {
                         const tail = new THREE.Mesh(new THREE.BoxGeometry(0.15, 0.4, 0.15), hairMat);
                         tail.position.set(0, 0.45, 0.35); petItemMeshes.tail = tail; aziramCore.add(tail);
                     }
-                    // 2. Two Braids (Pigtails)
+                    // DIO KOTSIDAKIA (Two braids)
                     else if (hairData.id === 'hair_2') {
-                        const pigL = new THREE.Mesh(new THREE.BoxGeometry(0.12, 0.35, 0.12), hairMat); pigL.position.set(-0.4, 0.25, 0.1); petItemMeshes.pigL = pigL; aziramCore.add(pigL);
-                        const pigR = new THREE.Mesh(new THREE.BoxGeometry(0.12, 0.35, 0.12), hairMat); pigR.position.set(0.4, 0.25, 0.1); petItemMeshes.pigR = pigR; aziramCore.add(pigR);
+                        const pigL = new THREE.Mesh(new THREE.BoxGeometry(0.12, 0.3, 0.12), hairMat); pigL.position.set(-0.4, 0.25, 0.1); petItemMeshes.pigL = pigL; aziramCore.add(pigL);
+                        const pigR = new THREE.Mesh(new THREE.BoxGeometry(0.12, 0.3, 0.12), hairMat); pigR.position.set(0.4, 0.25, 0.1); petItemMeshes.pigR = pigR; aziramCore.add(pigR);
                         const tieMat = new THREE.MeshPhongMaterial({ color: 0xE53935 });
                         const tL = new THREE.Mesh(new THREE.BoxGeometry(0.2, 0.05, 0.2), tieMat); tL.position.set(-0.4, 0.15, 0.1); petItemMeshes.tL = tL; aziramCore.add(tL);
                         const tR = new THREE.Mesh(new THREE.BoxGeometry(0.2, 0.05, 0.2), tieMat); tR.position.set(0.4, 0.15, 0.1); petItemMeshes.tR = tR; aziramCore.add(tR);
                     }
-                    // 3. Short
+                    // KONTA (Short)
                     else if (hairData.id === 'hair_3') {
                         const sideL = new THREE.Mesh(new THREE.BoxGeometry(0.12, 0.15, 0.12), hairMat); sideL.position.set(-0.35, 0.2, 0); petItemMeshes.sideL = sideL; aziramCore.add(sideL);
                         const sideR = new THREE.Mesh(new THREE.BoxGeometry(0.12, 0.15, 0.12), hairMat); sideR.position.set(0.35, 0.2, 0); petItemMeshes.sideR = sideR; aziramCore.add(sideR);
                     }
-                    // 4. Long
+                    // MAKRIA (Long)
                     else if (hairData.id === 'hair_4') {
-                        const backL = new THREE.Mesh(new THREE.BoxGeometry(0.2, 0.4, 0.2), hairMat); backL.position.set(-0.15, 0.1, 0.3); petItemMeshes.backL = backL; aziramCore.add(backL);
-                        const backR = new THREE.Mesh(new THREE.BoxGeometry(0.2, 0.4, 0.2), hairMat); backR.position.set(0.15, 0.1, 0.3); petItemMeshes.backR = backR; aziramCore.add(backR);
+                        const backL = new THREE.Mesh(new THREE.BoxGeometry(0.2, 0.35, 0.2), hairMat); backL.position.set(-0.15, 0.1, 0.3); petItemMeshes.backL = backL; aziramCore.add(backL);
+                        const backR = new THREE.Mesh(new THREE.BoxGeometry(0.2, 0.35, 0.2), hairMat); backR.position.set(0.15, 0.1, 0.3); petItemMeshes.backR = backR; aziramCore.add(backR);
                     }
-                    // 5. Braid
+                    // PLEXOUDA (Braid)
                     else if (hairData.id === 'hair_5') {
-                        const braid = new THREE.Mesh(new THREE.BoxGeometry(0.15, 0.45, 0.15), hairMat);
+                        const braid = new THREE.Mesh(new THREE.BoxGeometry(0.15, 0.4, 0.15), hairMat);
                         braid.position.set(0, 0.3, 0.35); petItemMeshes.braid = braid; aziramCore.add(braid);
                     }
-                    // 6. Bob
+                    // KARE (Bob)
                     else if (hairData.id === 'hair_6') {
                         const frontL = new THREE.Mesh(new THREE.BoxGeometry(0.15, 0.15, 0.15), hairMat); frontL.position.set(-0.25, 0.25, 0.35); petItemMeshes.frontL = frontL; aziramCore.add(frontL);
                         const frontR = new THREE.Mesh(new THREE.BoxGeometry(0.15, 0.15, 0.15), hairMat); frontR.position.set(0.25, 0.25, 0.35); petItemMeshes.frontR = frontR; aziramCore.add(frontR);
                     }
-                    // 7. Bun
+                    // KOTSOS (Bun)
                     else if (hairData.id === 'hair_7') {
                         const bun = new THREE.Mesh(new THREE.BoxGeometry(0.3, 0.2, 0.3), hairMat);
                         bun.position.set(0, 0.55, 0.25); petItemMeshes.bun = bun; aziramCore.add(bun);
                     }
+                    // AFELIEIS (Bangs)
+                    else if (hairData.id === 'hair_8') {
+                        const bang = new THREE.Mesh(new THREE.BoxGeometry(0.35, 0.12, 0.12), hairMat);
+                        bang.position.set(0, 0.35, 0.35); petItemMeshes.bang = bang; aziramCore.add(bang);
+                    }
                 }
 
-                // 2. HAT (Without Hat is hat_0)
+                // 2. HAT (Without Hat by default 'hat_0')
                 const hatData = getEquip('hats');
                 if (hatData.id !== 'hat_0') {
                     const hatMat = new THREE.MeshPhongMaterial({ color: new THREE.Color().setHSL(hatData.color, 1, 0.5) });
@@ -471,7 +476,7 @@
                     hat.position.set(0, 0.5, 0); petItemMeshes.hat = hat; aziramCore.add(hat);
                 }
 
-                // 3. TOP
+                // 3. TOP (Without Top by default 'top_0')
                 const topData = getEquip('tops');
                 if (topData.id !== 'top_0') {
                     const topMat = new THREE.MeshPhongMaterial({ color: new THREE.Color().setHSL(topData.color, 1, 0.5) });
@@ -479,7 +484,7 @@
                     top.position.set(0, -0.05, 0); petItemMeshes.top = top; aziramCore.add(top);
                 }
 
-                // 4. BOTTOMS
+                // 4. BOTTOMS (Without Bottoms by default 'bot_0')
                 const botData = getEquip('bottoms');
                 if (botData.id !== 'bot_0') {
                     const botMat = new THREE.MeshPhongMaterial({ color: new THREE.Color().setHSL(botData.color, 1, 0.5) });
@@ -487,7 +492,7 @@
                     bot.position.set(0, -0.4, 0); petItemMeshes.bot = bot; aziramCore.add(bot);
                 }
 
-                // 5. ACCESSORIES
+                // 5. ACCESSORIES (Without Acc by default 'acc_0')
                 const accData = getEquip('accessories');
                 if (accData.id !== 'acc_0') {
                     const accMat = new THREE.MeshPhongMaterial({ color: new THREE.Color().setHSL(accData.color, 1, 0.5) });
@@ -515,7 +520,7 @@
                 const faceMesh = new THREE.Mesh(new THREE.BoxGeometry(0.6, 0.6, 0.05), faceMat);
                 faceMesh.position.set(0, 0.5, 0.33); core.add(faceMesh);
 
-                // Arms & Legs (Voxel)
+                // Arms & Legs
                 const armL = new THREE.Mesh(new THREE.BoxGeometry(0.1, 0.3, 0.1), skinMat); armL.position.set(-0.35, 0.2, 0); core.add(armL);
                 const armR = new THREE.Mesh(new THREE.BoxGeometry(0.1, 0.3, 0.1), skinMat); armR.position.set(0.35, 0.2, 0); core.add(armR);
                 const legL = new THREE.Mesh(new THREE.BoxGeometry(0.1, 0.25, 0.1), skinMat); legL.position.set(-0.15, -0.5, 0); core.add(legL);
@@ -535,21 +540,23 @@
                 aziramPet.position.copy(pos); updateSpeechPosition();
             }
 
-            // ---------- BACKGROUND (SUN + SMILING, MOVING CLOUDS, GRASS + FLOWERS) ----------
+            // ---------- BACKGROUND (SUN & CLOUDS UP, GRASS & FLOWERS BOTTOM) ----------
             let sunMesh, cloudMeshes = [], flowers = [];
             function createBackground() {
                 // SUN & CLOUDS (TOP)
-                const sunGroup = new THREE.Group();
                 const sunMat = new THREE.MeshLambertMaterial({ color: 0xffdd00, emissive: 0xffaa00 });
-                const sunCore = new THREE.Mesh(new THREE.SphereGeometry(0.8, 8, 8), sunMat); sunGroup.add(sunCore);
-                // Smiling Sun Eyes & Mouth
+                const sunGroup = new THREE.Group();
+                const core = new THREE.Mesh(new THREE.SphereGeometry(0.8, 8, 8), sunMat); sunGroup.add(core);
+                // Smile
                 const sMat = new THREE.MeshBasicMaterial({ color: 0x222 });
                 const smile = new THREE.Mesh(new THREE.TorusGeometry(0.2, 0.04, 8, 12, Math.PI), sMat);
                 smile.position.set(0, -0.1, 0.85); smile.rotation.x = Math.PI/2; sunGroup.add(smile);
-                const eyeL = new THREE.Mesh(new THREE.SphereGeometry(0.1, 8, 8), sMat);
-                eyeL.position.set(-0.25, 0.2, 0.85); sunGroup.add(eyeL);
-                const eyeR = new THREE.Mesh(new THREE.SphereGeometry(0.1, 8, 8), sMat);
-                eyeR.position.set(0.25, 0.2, 0.85); sunGroup.add(eyeR);
+                // Eyes
+                const eye = new THREE.Mesh(new THREE.SphereGeometry(0.1, 8, 8), sMat);
+                eye.position.set(-0.25, 0.2, 0.85); sunGroup.add(eye);
+                const eye2 = new THREE.Mesh(new THREE.SphereGeometry(0.1, 8, 8), sMat);
+                eye2.position.set(0.25, 0.2, 0.85); sunGroup.add(eye2);
+                
                 sunGroup.position.set(5, 6, -4.5); scene.add(sunGroup); sunMesh = sunGroup;
 
                 const cloudMat = new THREE.MeshLambertMaterial({ color: 0xffffff, transparent: true, opacity: 0.8 });
@@ -564,7 +571,7 @@
                     scene.add(cloud); cloudMeshes.push(cloud);
                 }
 
-                // GRASS & FLOWERS (BOTTOM ONLY, OUTSIDE THE BOARD)
+                // GRASS & FLOWERS (BOTTOM ONLY)
                 const pathY = -BOARD_H / 2 - 1.3;
                 const pathMat = new THREE.MeshLambertMaterial({ color: 0x3b8c3b });
                 const pathPlane = new THREE.Mesh(new THREE.BoxGeometry(5.5, 0.1, 1.0), pathMat);
