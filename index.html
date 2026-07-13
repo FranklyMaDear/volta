@@ -1,4 +1,4 @@
-<!DOCTYPE html> 
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -2039,8 +2039,12 @@
             function initThree() {
                 const canvas = document.getElementById("game");
                 if (!canvas) return;
-                renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true });
-                renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+
+                // ΔΙΟΡΘΩΣΗ 1: Προσθήκη alpha:false και ρητού χρώματος φόντου
+                renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true, alpha: false });
+                renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+                renderer.setClearColor(0x8FD0F5, 1);
+
                 scene = new THREE.Scene();
                 scene.background = new THREE.Color(0x8FD0F5);
                 camera = new THREE.PerspectiveCamera(42, innerWidth / innerHeight, 0.1, 120);
@@ -2083,14 +2087,23 @@
                 backMesh.material.color.set(bData.back);
                 cellMat.color.set(bData.cell); }
 
-            function onResize() { renderer.setSize(innerWidth, innerHeight);
-                camera.aspect = innerWidth / innerHeight; const dist = (BOARD_H / 2 + 3.5) / Math.tan(THREE.MathUtils.degToRad(
-                    camera.fov / 2));
+            function onResize() {
+                const w = window.innerWidth;
+                const h = window.innerHeight;
+                renderer.setSize(w, h);
+                camera.aspect = w / h;
+                
+                // ΔΙΟΡΘΩΣΗ 2: Υπολογισμός απόστασης με fallback για κινητά
+                let dist = (BOARD_H / 2 + 3.5) / Math.tan(THREE.MathUtils.degToRad(camera.fov / 2));
+                if (!isFinite(dist) || dist <= 0) dist = 8.0;
+                
                 camera.position.set(0, -1.8, dist - 1.5);
                 camera.lookAt(0, -1.2, 0);
                 camera.updateProjectionMatrix();
+                
                 layoutScenery();
-                updateGirlScreenPosition(); }
+                updateGirlScreenPosition();
+            }
 
             function cellPos(c, r) { return { x: -BOARD_W / 2 + CELL / 2 + c * (CELL + GAP), y: BOARD_H / 2 - CELL / 2 - r * (
                         CELL + GAP) }; }
