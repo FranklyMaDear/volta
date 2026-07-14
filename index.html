@@ -41,6 +41,45 @@
             z-index: 0;
         }
 
+        .mission-hud {
+            position: fixed;
+            top: 55px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 15;
+            background: #4A3423;
+            color: #F7EFDC;
+            padding: 8px 16px;
+            border-radius: 20px;
+            border: 3px solid rgba(255,255,255,0.3);
+            text-align: center;
+            font-weight: 800;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            pointer-events: none;
+            width: 250px;
+        }
+        .mission-label {
+            font-size: 14px;
+            margin-bottom: 4px;
+            letter-spacing: 1px;
+        }
+        .mission-bar-bg {
+            background: rgba(0,0,0,0.5);
+            border-radius: 10px;
+            height: 12px;
+            width: 100%;
+            overflow: hidden;
+            border: 2px solid #2F1B0D;
+        }
+        .mission-bar-fill {
+            background: linear-gradient(90deg, #F5C542, #F2A03D);
+            height: 100%;
+            width: 0%;
+            border-radius: 10px;
+            transition: width 0.3s ease-out;
+            box-shadow: inset 0 -2px 0 rgba(0,0,0,0.2), inset 0 2px 0 rgba(255,255,255,0.3);
+        }
+
         @keyframes rainbowGlow {
             0% {
                 box-shadow: 0 6px 0 rgba(0, 0, 0, 0.35), 0 0 18px rgba(255, 80, 80, 0.7), 0 0 35px rgba(255, 80, 80, 0.35);
@@ -620,6 +659,8 @@
         }
 
         @media (max-width: 480px) {
+            .mission-hud { top: 45px; width: 200px; padding: 6px 12px; }
+            .mission-label { font-size: 12px; }
             .rollup-tab {
                 font-size: 14px;
                 padding: 8px 14px;
@@ -728,6 +769,13 @@
 </head>
 <body>
     <canvas id="game"></canvas>
+
+    <div id="missionHUD" class="mission-hud">
+        <div class="mission-label">MISSION: <span id="missionTargetVal"></span></div>
+        <div class="mission-bar-bg">
+            <div class="mission-bar-fill" id="missionBarFill"></div>
+        </div>
+    </div>
 
     <div class="rollup-tab" id="shopRollup">
         🛒 SHOP <span class="mini-score" id="miniScore">0</span>
@@ -847,10 +895,10 @@
                     sub_shoes: '👟 Shoes',
                     sub_props: '🎈 Item',
                     win_title: 'Level Complete!',
-                    win_btn: 'Continue ➜',
-                    lose_title: 'The board is full!',
+                    win_btn: 'Watch an ad to continue',
+                    lose_title: 'Sorry',
                     lose_btn: 'Try again',
-                    revive_btn: '📺 Revive',
+                    revive_btn: 'Watch an ad to continue',
                     win_text: function(t) { return 'You made ' + t + '!<br>+25 🪙<br>The game continues!'; },
                     lose_text: function(s) { return 'Score: <b>' + s + '</b>'; },
                     mission: function(t) { return '🎯 Mission: make a ' + t + ' cube!'; },
@@ -905,11 +953,11 @@
                     sub_clothes: '👗 Ρούχα',
                     sub_shoes: '👟 Παπούτσια',
                     sub_props: '🎈 Αντικείμενο',
-                    win_title: 'Επίπεδο Ολοκληρώθηκε!',
-                    win_btn: 'Συνέχεια ➜',
-                    lose_title: 'Γέμισε το ταμπλό!',
+                    win_title: 'Level Complete!',
+                    win_btn: 'Watch an ad to continue',
+                    lose_title: 'Sorry',
                     lose_btn: 'Ξαναπροσπάθησε',
-                    revive_btn: '📺 Συνέχισε',
+                    revive_btn: 'Watch an ad to continue',
                     win_text: function(t) { return 'Έφτιαξες ' + t + '!<br>+25 🪙<br>Το παιχνίδι συνεχίζεται!'; },
                     lose_text: function(s) { return 'Σκορ: <b>' + s + '</b>'; },
                     mission: function(t) { return '🎯 Αποστολή: φτιάξε κύβο ' + t + '!'; },
@@ -1411,8 +1459,7 @@
                 }
             }
 
-            let skyPlane, sunGroup, sunFace, grassPlane;
-            let sunTextures = {};
+            let skyPlane, sunGroup, grassPlane;
             const clouds = [];
             const flowers = [];
 
@@ -1429,122 +1476,29 @@
             function makeSkyTexture() {
                 return canvasTex(64, 512, function(g, w, h) {
                     const grad = g.createLinearGradient(0, 0, 0, h);
-                    grad.addColorStop(0, '#4DA6E8');
-                    grad.addColorStop(0.45, '#8FD0F5');
-                    grad.addColorStop(0.8, '#CFEFFB');
-                    grad.addColorStop(1, '#E9FBEF');
+                    grad.addColorStop(0, '#42A5F5');
+                    grad.addColorStop(0.5, '#90CAF9');
+                    grad.addColorStop(1, '#E3F2FD');
                     g.fillStyle = grad;
                     g.fillRect(0, 0, w, h);
                 });
             }
 
-            function makeSunTexture(mood) {
-                return canvasTex(512, 512, function(g, w, h) {
-                    const cx = 256, cy = 256;
-                    g.save();
-                    g.translate(cx, cy);
-                    for (let i = 0; i < 12; i++) {
-                        g.rotate(Math.PI / 6);
-                        const grad = g.createLinearGradient(0, -150, 0, -250);
-                        if (mood === 'angry') {
-                            grad.addColorStop(0, 'rgba(255,100,50,0.9)');
-                            grad.addColorStop(1, 'rgba(255,100,50,0)');
-                        } else {
-                            grad.addColorStop(0, 'rgba(255,215,80,0.9)');
-                            grad.addColorStop(1, 'rgba(255,215,80,0)');
-                        }
-                        g.fillStyle = grad;
-                        g.beginPath();
-                        g.moveTo(-22, -145); g.lineTo(22, -145); g.lineTo(0, -248);
-                        g.closePath(); g.fill();
-                    }
-                    g.restore();
-                    let glow = g.createRadialGradient(cx, cy, 60, cx, cy, 220);
-                    if (mood === 'angry') glow.addColorStop(0, 'rgba(255,150,100,0.55)');
-                    else glow.addColorStop(0, 'rgba(255,240,150,0.55)');
-                    glow.addColorStop(1, 'rgba(255,240,150,0)');
-                    g.fillStyle = glow;
-                    g.beginPath(); g.arc(cx, cy, 220, 0, Math.PI * 2); g.fill();
-                    
-                    let body = g.createRadialGradient(cx - 45, cy - 55, 20, cx, cy, 150);
-                    if (mood === 'angry') {
-                        body.addColorStop(0, '#FFC4C4'); body.addColorStop(0.55, '#FF4D4D'); body.addColorStop(1, '#D92121');
-                    } else if (mood === 'anxious') {
-                        body.addColorStop(0, '#E0F7FA'); body.addColorStop(0.55, '#80DEEA'); body.addColorStop(1, '#00BCD4');
-                    } else {
-                        body.addColorStop(0, '#FFF6C4'); body.addColorStop(0.55, '#FFD84D'); body.addColorStop(1, '#F5A821');
-                    }
-                    g.fillStyle = body;
-                    g.beginPath(); g.arc(cx, cy, 145, 0, Math.PI * 2); g.fill();
-                    
-                    g.lineWidth = 12; g.strokeStyle = '#7A4A12'; g.lineCap = 'round';
-                    if (mood === 'angry') {
-                        g.beginPath(); g.moveTo(cx - 70, cy - 40); g.lineTo(cx - 30, cy - 20); g.stroke();
-                        g.beginPath(); g.moveTo(cx + 70, cy - 40); g.lineTo(cx + 30, cy - 20); g.stroke();
-                        g.beginPath(); g.arc(cx, cy + 40, 40, Math.PI * 1.2, Math.PI * 1.8); g.stroke();
-                    } else if (mood === 'anxious') {
-                        g.fillStyle = '#fff';
-                        g.beginPath(); g.arc(cx - 52, cy - 25, 24, 0, Math.PI*2); g.fill(); g.stroke();
-                        g.beginPath(); g.arc(cx + 52, cy - 25, 24, 0, Math.PI*2); g.fill(); g.stroke();
-                        g.fillStyle = '#000';
-                        g.beginPath(); g.arc(cx - 52, cy - 25, 8, 0, Math.PI*2); g.fill();
-                        g.beginPath(); g.arc(cx + 52, cy - 25, 8, 0, Math.PI*2); g.fill();
-                        g.beginPath(); g.moveTo(cx-30, cy+30); g.lineTo(cx-15, cy+20); g.lineTo(cx, cy+30); g.lineTo(cx+15, cy+20); g.lineTo(cx+30, cy+30); g.stroke();
-                    } else if (mood === 'bored') {
-                        g.beginPath(); g.moveTo(cx-70, cy-25); g.lineTo(cx-30, cy-25); g.stroke();
-                        g.beginPath(); g.moveTo(cx+70, cy-25); g.lineTo(cx+30, cy-25); g.stroke();
-                        g.beginPath(); g.moveTo(cx-30, cy+20); g.lineTo(cx+30, cy+20); g.stroke();
-                    } else {
-                        g.beginPath(); g.arc(cx - 52, cy - 25, 24, Math.PI * 1.1, Math.PI * 1.9); g.stroke();
-                        g.beginPath(); g.arc(cx + 52, cy - 25, 24, Math.PI * 1.1, Math.PI * 1.9); g.stroke();
-                        g.lineWidth = 14;
-                        g.beginPath(); g.arc(cx, cy + 15, 62, Math.PI * 0.15, Math.PI * 0.85); g.stroke();
-                        g.fillStyle = 'rgba(245,130,90,0.5)';
-                        g.beginPath(); g.arc(cx - 90, cy + 30, 22, 0, Math.PI * 2); g.fill();
-                        g.beginPath(); g.arc(cx + 90, cy + 30, 22, 0, Math.PI * 2); g.fill();
-                    }
-                });
-            }
-
-            function makeCloudTexture(seed) {
-                return canvasTex(512, 256, function(g, w, h) {
-                    function puff(x, y, r) { const grad = g.createRadialGradient(x - r * 0.3, y - r * 0.35, r * 0.15,
-                            x, y, r);
-                        grad.addColorStop(0, 'rgba(255,255,255,0.98)');
-                        grad.addColorStop(0.75, 'rgba(248,250,255,0.92)');
-                        grad.addColorStop(1, 'rgba(225,235,248,0)');
-                        g.fillStyle = grad;
-                        g.beginPath();
-                        g.arc(x, y, r, 0, Math.PI * 2);
-                        g.fill(); }
-                    const rnd = function(a, b) { seed = (seed * 9301 + 49297) % 233280; return a + (seed / 233280) * (
-                            b - a); };
-                    for (let i = 0; i < 9; i++) puff(rnd(90, 420), rnd(105, 165), rnd(45, 85));
-                    puff(256, 120, 95);
-                });
-            }
-
             function makeGrassTexture() {
                 return canvasTex(1024, 300, function(g, w, h) {
-                    const grad = g.createLinearGradient(0, 40, 0, h);
-                    grad.addColorStop(0, '#86D34F');
-                    grad.addColorStop(0.4, '#5FAE33');
-                    grad.addColorStop(1, '#2E6313');
+                    const grad = g.createLinearGradient(0, 0, 0, h);
+                    grad.addColorStop(0, '#8BC34A');
+                    grad.addColorStop(0.4, '#689F38');
+                    grad.addColorStop(1, '#33691E');
                     g.fillStyle = grad;
-                    g.beginPath();
-                    g.moveTo(0, h);
-                    g.lineTo(0, 80);
-                    for (let x = 0; x <= w; x += 64) g.quadraticCurveTo(x + 32, 80 - Math.sin(x * 0.015) * 30 - 20, x + 64, 80 - Math.sin((x + 64) * 0.012) * 22);
-                    g.lineTo(w, h);
-                    g.closePath();
-                    g.fill();
-                    for (let i = 0; i < 200; i++) {
+                    g.fillRect(0, 0, w, h);
+                    for (let i = 0; i < 300; i++) {
                         const x = Math.random() * w;
-                        const y = 85 + Math.random() * (h - 85);
-                        const len = 15 + Math.random() * 35;
-                        const lean = (Math.random() - 0.5) * 15;
-                        g.strokeStyle = 'rgba(' + (20 + Math.random() * 50 | 0) + ',' + (100 + Math.random() * 80 | 0) + ',20,' + (0.4 + Math.random()*0.5) + ')';
-                        g.lineWidth = 1.5 + Math.random() * 3;
+                        const y = Math.random() * h;
+                        const len = 20 + Math.random() * 40;
+                        const lean = (Math.random() - 0.5) * 20;
+                        g.strokeStyle = 'rgba(139, 195, 74, ' + (0.5 + Math.random()*0.5) + ')';
+                        g.lineWidth = 3 + Math.random() * 4;
                         g.lineCap = 'round';
                         g.beginPath();
                         g.moveTo(x, y);
@@ -1560,28 +1514,91 @@
             function viewSizeAt(dist) { const h = 2 * dist * Math.tan(THREE.MathUtils.degToRad(camera.fov / 2)); return { h: h,
                     w: h * camera.aspect }; }
 
+            function create3DSun() {
+                const group = new THREE.Group();
+                const yellow = new THREE.MeshLambertMaterial({color: 0xFFD54F});
+                const center = new THREE.Mesh(new THREE.SphereGeometry(1, 32, 32), yellow);
+                group.add(center);
+
+                const rayGeo = new THREE.ConeGeometry(0.25, 1, 16);
+                for(let i=0; i<12; i++) {
+                    const angle = (i/12) * Math.PI * 2;
+                    const ray = new THREE.Mesh(rayGeo, yellow);
+                    ray.position.set(Math.cos(angle)*1.3, Math.sin(angle)*1.3, 0);
+                    ray.rotation.z = angle - Math.PI/2;
+                    group.add(ray);
+                }
+
+                const eyeMat = new THREE.MeshBasicMaterial({color: 0x333333});
+                const cheekMat = new THREE.MeshBasicMaterial({color: 0xFF8A65});
+
+                const eyeL = new THREE.Mesh(new THREE.SphereGeometry(0.1, 16, 16), eyeMat);
+                eyeL.position.set(-0.35, 0.2, 0.95);
+                group.add(eyeL);
+
+                const eyeR = new THREE.Mesh(new THREE.SphereGeometry(0.1, 16, 16), eyeMat);
+                eyeR.position.set(0.35, 0.2, 0.95);
+                group.add(eyeR);
+
+                const cheekL = new THREE.Mesh(new THREE.SphereGeometry(0.12, 16, 16), cheekMat);
+                cheekL.position.set(-0.55, 0, 0.9);
+                cheekL.scale.z = 0.2;
+                group.add(cheekL);
+
+                const cheekR = new THREE.Mesh(new THREE.SphereGeometry(0.12, 16, 16), cheekMat);
+                cheekR.position.set(0.55, 0, 0.9);
+                cheekR.scale.z = 0.2;
+                group.add(cheekR);
+
+                const smile = new THREE.Mesh(new THREE.TorusGeometry(0.2, 0.04, 16, 32, Math.PI), eyeMat);
+                smile.rotation.z = Math.PI;
+                smile.position.set(0, 0, 0.98);
+                group.add(smile);
+
+                return group;
+            }
+
+            function create3DCloud() {
+                const group = new THREE.Group();
+                const mat = new THREE.MeshLambertMaterial({color: 0xffffff});
+                const geo = new THREE.SphereGeometry(1, 16, 16);
+                const puffs = [
+                    {x: 0, y: 0, z: 0, s: 1},
+                    {x: 0.8, y: -0.2, z: 0, s: 0.7},
+                    {x: -0.8, y: -0.2, z: 0, s: 0.7},
+                    {x: 0.4, y: 0.3, z: 0.2, s: 0.8},
+                    {x: -0.4, y: 0.3, z: -0.2, s: 0.8},
+                ];
+                puffs.forEach(p => {
+                    const mesh = new THREE.Mesh(geo, mat);
+                    mesh.position.set(p.x, p.y, p.z);
+                    mesh.scale.setScalar(p.s);
+                    group.add(mesh);
+                });
+                return group;
+            }
+
             function createDynamicFlower(index) {
                 const fGroup = new THREE.Group();
-                const stemLen = 0.6 + Math.random() * 0.3;
-                const stem = new THREE.Mesh(new THREE.CylinderGeometry(0.02, 0.02, stemLen), new THREE.MeshLambertMaterial({color: 0x2e6b14}));
+                const stemLen = 0.8 + Math.random() * 0.6;
+                const stem = new THREE.Mesh(new THREE.CylinderGeometry(0.04, 0.04, stemLen), new THREE.MeshLambertMaterial({color: 0x4CAF50}));
                 stem.position.y = stemLen / 2;
 
                 const head = new THREE.Group();
                 head.position.y = stemLen;
 
-                const center = new THREE.Mesh(new THREE.SphereGeometry(0.06), new THREE.MeshLambertMaterial({color: 0xf2c53d}));
+                const center = new THREE.Mesh(new THREE.SphereGeometry(0.12), new THREE.MeshLambertMaterial({color: 0xFFC107}));
                 head.add(center);
 
-                const colors = [0xFF6FA0, 0xFFD447, 0xFF8552, 0xC77DFF, 0xFF4D6D, 0xFFFFFF, 0x6FC3FF];
-                const pColor = colors[Math.floor(Math.random() * colors.length)];
+                const colors = [0xFF69B4, 0x2196F3, 0xFFEB3B, 0xF44336]; // Pink, Blue, Yellow, Red
+                const pColor = colors[index % colors.length];
                 const pMat = new THREE.MeshLambertMaterial({color: pColor});
-                for(let i=0; i<6; i++) {
-                    const petal = new THREE.Mesh(new THREE.SphereGeometry(0.07), pMat);
-                    petal.scale.set(1, 0.2, 1.5);
-                    const angle = (i/6) * Math.PI * 2;
-                    petal.position.set(Math.cos(angle)*0.1, 0, Math.sin(angle)*0.1);
+                for(let i=0; i<8; i++) {
+                    const petal = new THREE.Mesh(new THREE.SphereGeometry(0.12), pMat);
+                    petal.scale.set(1, 0.25, 1.4);
+                    const angle = (i/8) * Math.PI * 2;
+                    petal.position.set(Math.cos(angle)*0.16, 0, Math.sin(angle)*0.16);
                     petal.rotation.y = -angle;
-                    petal.rotation.z = 0.2;
                     head.add(petal);
                 }
 
@@ -1590,11 +1607,12 @@
                 pivot.add(head);
 
                 fGroup.add(pivot);
+                fGroup.scale.setScalar(1.5 + Math.random() * 0.5);
                 fGroup.userData = {
                     pivot: pivot,
                     speed: 0.8 + Math.random() * 0.5,
                     phase: Math.random() * Math.PI * 2,
-                    nx: (index / 9) - 0.5 + (Math.random() - 0.5) * 0.1,
+                    nx: (index / 14) - 0.5 + (Math.random() - 0.5) * 0.1,
                     nz: Math.random() * 1.5,
                     nyOffset: Math.random() * 0.4
                 };
@@ -1602,38 +1620,29 @@
             }
 
             function initScenery() {
-                skyPlane = new THREE.Mesh(new THREE.PlaneGeometry(1, 1), new THREE.MeshBasicMaterial({ map: makeSkyTexture(),
-                    depthWrite: false }));
+                skyPlane = new THREE.Mesh(new THREE.PlaneGeometry(1, 1), new THREE.MeshBasicMaterial({ map: makeSkyTexture(), depthWrite: false }));
                 skyPlane.renderOrder = -10;
                 scene.add(skyPlane);
-                
-                sunTextures = {
-                    'idle': makeSunTexture('idle'),
-                    'angry': makeSunTexture('angry'),
-                    'anxious': makeSunTexture('anxious'),
-                    'bored': makeSunTexture('bored')
-                };
 
-                sunFace = new THREE.Mesh(new THREE.PlaneGeometry(1, 1), new THREE.MeshBasicMaterial({ map: sunTextures['idle'],
-                    transparent: true, depthWrite: false }));
                 sunGroup = new THREE.Group();
-                sunGroup.add(sunFace);
+                sunGroup.add(create3DSun());
                 sunGroup.renderOrder = -8;
                 scene.add(sunGroup);
-                for (let i = 0; i < 5; i++) { const c = new THREE.Mesh(new THREE.PlaneGeometry(1, 0.5), new THREE
-                        .MeshBasicMaterial({ map: makeCloudTexture(1000 + i * 777), transparent: true, opacity: 0.95,
-                            depthWrite: false }));
+
+                for (let i = 0; i < 5; i++) {
+                    const c = create3DCloud();
                     c.renderOrder = -7;
-                    c.userData.speed = 0.25 + Math.random() * 0.45;
+                    c.userData.speed = 0.15 + Math.random() * 0.3;
                     c.userData.ny = 0.65 + Math.random() * 0.30;
                     scene.add(c);
-                    clouds.push(c); }
-                grassPlane = new THREE.Mesh(new THREE.PlaneGeometry(1, 1), new THREE.MeshBasicMaterial({ map: makeGrassTexture(),
-                    transparent: true, depthWrite: false }));
+                    clouds.push(c);
+                }
+
+                grassPlane = new THREE.Mesh(new THREE.PlaneGeometry(1, 1), new THREE.MeshBasicMaterial({ map: makeGrassTexture(), transparent: true, depthWrite: false }));
                 grassPlane.renderOrder = -5;
                 scene.add(grassPlane);
 
-                for (let i = 0; i < 10; i++) {
+                for (let i = 0; i < 15; i++) { // Lusher look
                     const fl = createDynamicFlower(i);
                     scene.add(fl);
                     flowers.push(fl);
@@ -1650,18 +1659,21 @@
                 const sSky = viewSizeAt(dSky);
                 skyPlane.position.copy(unprojectToDist(0, 0, dSky));
                 skyPlane.scale.set(sSky.w * 1.4, sSky.h * 1.4, 1);
+
                 const dSun = 40;
-                const sSun = viewSizeAt(dSun);
-                sunGroup.position.copy(unprojectToDist(-0.62, 0.94, dSun));
-                const sunSize = Math.min(sSun.w, sSun.h) * 0.26;
-                sunFace.scale.set(sunSize, sunSize, 1);
+                sunGroup.position.copy(unprojectToDist(-0.6, 0.85, dSun));
+                sunGroup.scale.setScalar(3.0);
+
                 const dCloud = 36;
                 const sCloud = viewSizeAt(dCloud);
                 cloudHalfW = sCloud.w * 0.75;
-                clouds.forEach(function(c, i) { const p = unprojectToDist(0, c.userData.ny, dCloud);
-                    c.position.set(p.x - sCloud.w * 0.6 + i * sCloud.w * 0.35, p.y, p.z); const cw = sCloud.w * (0.18 + (
-                        i % 3) * 0.05);
-                    c.scale.set(cw, cw * 0.5, 1); });
+                clouds.forEach(function(c, i) {
+                    const p = unprojectToDist(0, c.userData.ny, dCloud);
+                    c.position.set(p.x - sCloud.w * 0.6 + i * sCloud.w * 0.35, p.y, p.z);
+                    const cw = 1.0 + (i % 3) * 0.5;
+                    c.scale.setScalar(cw);
+                });
+
                 const dGrass = 20;
                 const sGrass = viewSizeAt(dGrass);
                 const gp = unprojectToDist(0, -0.5, dGrass);
@@ -2037,6 +2049,27 @@
             function announceMission(delay) { setTimeout(function() { reactionTime = 1.4;
                     showSpeech(TT().mission(levelTarget(level)), 4000); }, delay || 0); }
 
+            function updateMissionProgress() {
+                let maxVal = 2;
+                for(let c=0; c<COLS; c++) {
+                    for(let r=0; r<ROWS; r++) {
+                        if(grid[c] && grid[c][r]) {
+                            maxVal = Math.max(maxVal, grid[c][r].value);
+                        }
+                    }
+                }
+                const target = levelTarget(level);
+                const el = document.getElementById('missionTargetVal');
+                if (el) el.textContent = target;
+
+                let pct = (Math.log2(maxVal) / Math.log2(target)) * 100;
+                if (pct > 100) pct = 100;
+                if (pct < 0) pct = 0;
+
+                const fill = document.getElementById('missionBarFill');
+                if (fill) fill.style.width = pct + '%';
+            }
+
             let scene, camera, renderer, boardGroup, raycaster, pointer;
             let backMesh, cellMat, grid = [],
                 currentCube = null,
@@ -2214,6 +2247,7 @@
                 updateHUD(); for (let i = 0; i < levelPreset(level); i++) { const c = Math.floor(Math.random() * COLS); const r =
                         colHeight(c); if (r < 3) placeCube(c, r, [2, 4, 8, 16][Math.floor(Math.random() * 4)], true); }
                 spawnCurrent();
+                updateMissionProgress();
                 lastActionTime = performance.now(); }
 
             function colHeight(c) { let h = 0; while (h < ROWS && grid[c][h]) h++; return h; }
@@ -2267,6 +2301,7 @@
 
             function resolveMerges(queue) { return new Promise(function(resolveAll) {
                 (function next() { if (!queue.length) { persist();
+                        updateMissionProgress();
                         resolveAll(); return; } const item = queue.shift(); const c = item.c, r = item.r; const cell =
                         grid[c][r]; if (!cell) { next(); return; } const same = [{ c: c - 1, r: r }, { c: c + 1, r: r },
                         { c: c, r: r - 1 }, { c: c, r: r + 1 }
@@ -2538,7 +2573,9 @@
                 document.getElementById("hudScore").textContent = score;
                 document.getElementById("hudCoins").textContent = coins;
                 document.getElementById("miniScore").textContent = score;
-                document.getElementById("btnHammer").classList.toggle("armed", hammerMode); }
+                document.getElementById("btnHammer").classList.toggle("armed", hammerMode);
+                updateMissionProgress();
+            }
 
             function applyLang() { const t = TT();
                 document.documentElement.lang = lang;
@@ -2574,8 +2611,6 @@
                 'angry'; if (now - lastActionTime > 15000) return 'bored'; return 'idle'; }
 
             function onMoodChange(mood) { 
-                if (sunTextures[mood]) { sunFace.material.map = sunTextures[mood]; } else { sunFace.material.map = sunTextures['idle']; }
-                sunFace.material.needsUpdate = true;
                 if (mood === 'angry') { showSpeech(TT().angry, 2200);
                     angrySFX(); } if (mood === 'anxious') { showSpeech(TT().panic, 2200);
                     panicSFX(); } if (mood === 'bored') showSpeech(TT().bored, 2200); }
@@ -2589,14 +2624,14 @@
                 updateParticles(dt);
                 updateClouds(dt); 
                 
-                if (sunFace) { 
+                if (sunGroup) { 
                     let shake = 0;
                     if (girlMood === 'angry' || girlMood === 'anxious') {
                         shake = Math.sin(t * 0.05) * 0.05;
                     }
                     sunGroup.rotation.z = Math.sin(t * 0.0003) * 0.06 + shake; 
-                    const pulse = 1 + Math.sin(t * 0.0012) * 0.02;
-                    sunGroup.scale.set(pulse, pulse, 1); 
+                    const pulse = 3.0 + Math.sin(t * 0.0012) * 0.06;
+                    sunGroup.scale.setScalar(pulse);
                 } 
                 
                 flowers.forEach(function(fl) {
