@@ -41,45 +41,12 @@
             z-index: 0;
         }
 
-        /* Mission Rollup (αριστερά, κάθετο) */
-        #missionRollup {
-            position: fixed;
-            z-index: 20;
-            background: var(--panel-deep);
-            color: var(--cream);
-            font-weight: 800;
-            font-size: 14px;
-            padding: 12px 8px;
-            border-radius: 0 20px 20px 0;
-            cursor: pointer;
-            pointer-events: auto;
-            transition: all 0.25s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            letter-spacing: 1px;
-            -webkit-backdrop-filter: blur(6px);
-            backdrop-filter: blur(6px);
-            border: 2px solid rgba(255, 255, 255, 0.2);
-            writing-mode: vertical-rl;
-            text-orientation: mixed;
-            gap: 4px;
-            left: 0;
-            top: 50%;
-            transform: translateY(-50%);
-            min-height: 100px;
-            box-shadow: 4px 4px 12px rgba(0, 0, 0, 0.3);
-        }
-        #missionRollup:active {
-            transform: translateY(-50%) translateX(3px);
-            box-shadow: 2px 4px 12px rgba(0, 0, 0, 0.3);
-        }
-
+        /* Mission panel - σταθερό αριστερά */
         #missionPanel {
             position: fixed;
             left: 0;
             top: 50%;
-            transform: translateY(-50%) translateX(-110%);
+            transform: translateY(-50%);
             z-index: 19;
             background: rgba(255, 255, 255, 0.4);
             -webkit-backdrop-filter: blur(10px);
@@ -91,15 +58,10 @@
             flex-direction: column;
             align-items: center;
             gap: 8px;
-            transition: transform 0.35s cubic-bezier(0.22, 0.61, 0.36, 1);
             pointer-events: auto;
             box-shadow: 6px 4px 20px rgba(0, 0, 0, 0.25);
             min-width: 60px;
         }
-        #missionPanel.open {
-            transform: translateY(-50%) translateX(0);
-        }
-
         .mission-label {
             font-weight: 800;
             font-size: 14px;
@@ -282,6 +244,31 @@
         .shop-panel .chip.score-chip .big {
             font-size: 30px;
         }
+        /* Όλα τα chips ίδιου μεγέθους και στην ίδια σειρά */
+        .shop-panel .chip {
+            flex: 1 1 auto;
+            min-width: 60px;
+            justify-content: center;
+            padding: 8px 12px;
+            font-size: 16px;
+        }
+        .shop-panel .chip .big {
+            font-size: 20px;
+        }
+        .shop-panel .chip.score-chip {
+            padding: 8px 12px;
+            font-size: 16px;
+        }
+        .shop-panel .chip.score-chip .big {
+            font-size: 20px;
+        }
+        .shop-panel .chip.coin-chip {
+            padding: 8px 12px;
+            font-size: 16px;
+        }
+        .shop-panel .chip.coin-chip .big {
+            font-size: 20px;
+        }
         .shop-panel .hud-btn {
             background: var(--accent);
             border: none;
@@ -323,6 +310,7 @@
             box-shadow: 0 4px 0 #2d5a7a;
             padding: 10px 16px;
             animation: none;
+            min-width: 50px;
         }
 
         #helpRollup {
@@ -709,7 +697,6 @@
         }
 
         @media (max-width: 480px) {
-            #missionRollup { font-size: 12px; padding: 10px 6px; min-height: 80px; }
             #missionPanel { padding: 8px 6px; min-width: 50px; }
             .mission-label { font-size: 11px; }
             .mission-bar-bg { height: 120px; width: 12px; }
@@ -717,10 +704,12 @@
             #shopRollup { font-size: 16px; padding: 12px 22px; border-radius: 0 0 24px 24px; }
             #shopRollup .mini-score { font-size: 11px; }
             .shop-panel { padding: 8px 6px 6px; gap: 5px; }
-            .shop-panel .chip { font-size: 14px; padding: 6px 10px; border-radius: 10px; }
-            .shop-panel .chip .big { font-size: 18px; }
-            .shop-panel .chip.score-chip { font-size: 22px; padding: 6px 14px; }
-            .shop-panel .chip.score-chip .big { font-size: 24px; }
+            .shop-panel .chip { font-size: 12px; padding: 6px 8px; }
+            .shop-panel .chip .big { font-size: 16px; }
+            .shop-panel .chip.score-chip { font-size: 12px; padding: 6px 8px; }
+            .shop-panel .chip.score-chip .big { font-size: 16px; }
+            .shop-panel .chip.coin-chip { font-size: 12px; padding: 6px 8px; }
+            .shop-panel .chip.coin-chip .big { font-size: 16px; }
             .shop-panel .hud-btn { font-size: 14px; padding: 8px 12px; border-radius: 10px; }
             .help-panel .pbtn { width: 90px; height: 90px; font-size: 36px; border-radius: 22px; }
             .help-panel .pbtn .cost { font-size: 11px; }
@@ -733,10 +722,12 @@
             .shop-item h3 { font-size: 11px; }
         }
         @media (max-width: 380px) {
-            .shop-panel .chip { font-size: 11px; padding: 4px 8px; }
-            .shop-panel .chip .big { font-size: 15px; }
-            .shop-panel .chip.score-chip { font-size: 18px; padding: 5px 10px; }
-            .shop-panel .chip.score-chip .big { font-size: 20px; }
+            .shop-panel .chip { font-size: 11px; padding: 4px 6px; }
+            .shop-panel .chip .big { font-size: 14px; }
+            .shop-panel .chip.score-chip { font-size: 11px; padding: 4px 6px; }
+            .shop-panel .chip.score-chip .big { font-size: 14px; }
+            .shop-panel .chip.coin-chip { font-size: 11px; padding: 4px 6px; }
+            .shop-panel .chip.coin-chip .big { font-size: 14px; }
             .shop-panel .hud-btn { font-size: 12px; padding: 6px 10px; }
             .help-panel .pbtn { width: 72px; height: 72px; font-size: 30px; }
             #helpRollup.open { right: 100px; }
@@ -746,10 +737,9 @@
 <body>
     <canvas id="game"></canvas>
 
-    <!-- Mission Rollup (αριστερά) -->
-    <div class="rollup-tab" id="missionRollup">🎯 MISSION</div>
+    <!-- Mission Panel - σταθερό αριστερά -->
     <div id="missionPanel">
-        <div class="mission-label" id="missionLabel">MISSION: 128</div>
+        <div class="mission-label" id="missionLabel">MISSION: 64</div>
         <div class="mission-bar-bg">
             <div class="mission-bar-fill" id="missionBarFill"></div>
         </div>
@@ -762,7 +752,7 @@
     <div class="shop-panel" id="shopPanel">
         <div class="chip"><div><small id="lblLevel">LEVEL</small><span class="big" id="hudLevel">1</span></div></div>
         <div class="chip score-chip"><div><small id="lblScore">SCORE</small><span class="big" id="hudScore">0</span></div></div>
-        <div class="chip">🪙 <span class="big" id="hudCoins">0</span></div>
+        <div class="chip coin-chip">🪙 <span class="big" id="hudCoins">100</span></div>
         <button class="hud-btn icon-btn" id="btnSound">🔊</button>
         <button class="hud-btn icon-btn" id="btnLang">EN</button>
         <button class="hud-btn" id="btnShop">🛒</button>
@@ -809,7 +799,7 @@
             <div style="font-size:40px; margin-bottom:6px;">🎉</div>
             <h2 id="winTitle">Level Complete!</h2>
             <p id="winText"></p>
-            <button class="btn" id="btnNext">Watch an ad to continue</button>
+            <button class="btn" id="btnNext">Δείτε τη διαφήμιση για συνέχεια</button>
         </div>
     </div>
     <div class="overlay hidden win-lose-overlay" id="loseModal">
@@ -817,7 +807,7 @@
             <div style="font-size:40px; margin-bottom:6px;">😵</div>
             <h2 id="loseTitle">The board is full!</h2>
             <p id="loseText"></p>
-            <button class="btn" id="btnRevive" style="background:#5c7a3a; box-shadow: 0 4px 0 #3a4d25;">Watch an ad to continue</button>
+            <button class="btn" id="btnRevive" style="background:#5c7a3a; box-shadow: 0 4px 0 #3a4d25;">Δείτε τη διαφήμιση για συνέχεια</button>
         </div>
     </div>
 
@@ -846,8 +836,11 @@
             const BOARD_H = ROWS * (CELL + GAP) - GAP;
             const launchY = -BOARD_H / 2 - 0.4;
 
-            // Αποστολές ξεκινούν από 128 και διπλασιάζονται
-            function levelTarget(l) { return 128 * Math.pow(2, l); }
+            // Αποστολές ξεκινούν από 64, μετά 128, 256, 512, 1024, κλπ
+            function levelTarget(l) {
+                // l=0 -> 64, l=1 -> 128, l=2 -> 256, l=3 -> 512, l=4 -> 1024, κλπ
+                return 64 * Math.pow(2, l);
+            }
 
             function levelPreset(l) { return l === 0 ? 0 : Math.min(14, 2 + l * 2); }
 
@@ -873,9 +866,9 @@
                     sub_shoes: '👟 Shoes',
                     sub_props: '🎈 Item',
                     win_title: 'Level Complete!',
-                    win_btn: 'Watch an ad to continue',
+                    win_btn: 'Δείτε τη διαφήμιση για συνέχεια',
                     lose_title: 'Sorry',
-                    revive_btn: 'Watch an ad to continue',
+                    revive_btn: 'Δείτε τη διαφήμιση για συνέχεια',
                     win_text: function(t) { return 'You made ' + t + '!<br>+25 🪙<br>The game continues!'; },
                     lose_text: function(s) { return 'Score: <b>' + s + '</b>'; },
                     mission: function(t) { return '🎯 Mission: make a ' + t + ' cube!'; },
@@ -931,9 +924,9 @@
                     sub_shoes: '👟 Παπούτσια',
                     sub_props: '🎈 Αντικείμενο',
                     win_title: 'Level Complete!',
-                    win_btn: 'Watch an ad to continue',
+                    win_btn: 'Δείτε τη διαφήμιση για συνέχεια',
                     lose_title: 'Sorry',
-                    revive_btn: 'Watch an ad to continue',
+                    revive_btn: 'Δείτε τη διαφήμιση για συνέχεια',
                     win_text: function(t) { return 'Έφτιαξες ' + t + '!<br>+25 🪙<br>Το παιχνίδι συνεχίζεται!'; },
                     lose_text: function(s) { return 'Σκορ: <b>' + s + '</b>'; },
                     mission: function(t) { return '🎯 Αποστολή: φτιάξε κύβο ' + t + '!'; },
@@ -1084,7 +1077,7 @@
             let currentPetSubTab = 'pet_hair';
 
             const DEFAULT_SAVE = {
-                coins: 1000,
+                coins: 100, // ξεκινάμε με 100 coins
                 level: 0,
                 best: 0,
                 score: 0,
@@ -1533,7 +1526,6 @@
                 smile.position.set(0, 0, 0.98);
                 group.add(smile);
 
-                // Αποθήκευση αναφορών για αλλαγή χρώματος
                 group.userData.sunMeshes = [center, ...rays, eyeL, eyeR, cheekL, cheekR, smile];
                 group.userData.baseColor = new THREE.Color(0xFFD54F);
                 return group;
@@ -1561,18 +1553,18 @@
 
             function createDynamicFlower(index) {
                 const fGroup = new THREE.Group();
-                // Κοντός κορμός (0.2 - 0.5)
-                const stemLen = 0.2 + Math.random() * 0.3;
+                const stemLen = 0.2 + Math.random() * 0.3; // κοντός κορμός
                 const stem = new THREE.Mesh(new THREE.CylinderGeometry(0.04, 0.04, stemLen), new THREE.MeshLambertMaterial({color: 0x4CAF50}));
                 stem.position.y = stemLen / 2;
 
                 const head = new THREE.Group();
                 head.position.y = stemLen;
 
-                const center = new THREE.Mesh(new THREE.SphereGeometry(0.12), new THREE.MeshLambertMaterial({color: 0xFFC107}));
-                head.add(center);
-
-                const colors = [0xFF69B4, 0x2196F3, 0xFFEB3B, 0xF44336]; // Pink, Blue, Yellow, Red
+                // Λουλούδια με συγκεκριμένα emoji: 🌺 🌹 🌷
+                const flowerEmojis = ['🌺', '🌹', '🌷'];
+                const selectedEmoji = flowerEmojis[index % flowerEmojis.length];
+                // Δημιουργούμε απλά ένα χρωματιστό λουλούδι, αλλά το emoji θα το δείξουμε με sprite; αλλά αφού είναι 3D, θα χρησιμοποιήσουμε χρώματα που ταιριάζουν
+                const colors = [0xFF1493, 0xDC143C, 0xFF69B4]; // Rose, Crimson, HotPink
                 const pColor = colors[index % colors.length];
                 const pMat = new THREE.MeshLambertMaterial({color: pColor});
                 for(let i=0; i<8; i++) {
@@ -1666,7 +1658,6 @@
                     const u = fl.userData;
                     const spreadW = sGrass.w * 1.0;
                     const x = spreadW * u.nx;
-                    // Πιο χαμηλά, πάνω στο χορτάρι
                     const y = gp.y + 0.1 - u.nyOffset;
                     fl.position.set(x, y, gp.z + 0.2 + u.nz);
                 });
@@ -2615,12 +2606,11 @@
                     const pulse = 1.8 + Math.sin(t * 0.0012) * 0.06;
                     sunGroup.scale.setScalar(pulse);
 
-                    // Αλλαγή χρώματος ήλιου ανάλογα με την πληρότητα
                     const fill = boardFillRatio();
                     const sunMeshes = sunGroup.userData.sunMeshes;
                     if (sunMeshes) {
                         if (fill > 0.6) {
-                            const intensity = (fill - 0.6) / 0.4; // 0..1
+                            const intensity = (fill - 0.6) / 0.4;
                             const color = new THREE.Color().setHSL(0.05 - intensity * 0.05, 1, 0.5 + intensity * 0.3);
                             sunMeshes.forEach(m => {
                                 if (m.material) m.material.color.copy(color);
@@ -2770,20 +2760,7 @@
                 const shopPanel = document.getElementById('shopPanel');
                 const helpRollup = document.getElementById('helpRollup');
                 const helpPanel = document.getElementById('helpPanel');
-                const missionRollup = document.getElementById('missionRollup');
-                const missionPanel = document.getElementById('missionPanel');
-
-                // Mission rollup toggle
-                let missionPanelOpen = false;
-                missionRollup.onclick = function(e) {
-                    e.stopPropagation();
-                    missionPanelOpen = !missionPanelOpen;
-                    if (missionPanelOpen) {
-                        missionPanel.classList.add('open');
-                    } else {
-                        missionPanel.classList.remove('open');
-                    }
-                };
+                // Mission panel πάντα ορατό, δεν χρειάζεται rollup
 
                 shopRollup.onclick = function(e) {
                     e.stopPropagation();
@@ -2873,7 +2850,7 @@
                         announceMission(400); }, { passive: true }); }
 
                 loadSave();
-                coins = save.coins || 1000;
+                coins = save.coins || 100;
                 level = save.level || 0;
                 best = save.best || 0;
                 score = save.score || 0;
@@ -2899,7 +2876,7 @@
                 cvs.addEventListener("pointerdown", onTap); if (!window.PointerEvent) { cvs.addEventListener(
                     "touchstart", onTap, { passive: true }); }
 
-                // Win modal: μόνο ένα κουμπί για συνέχεια (χωρίς πραγματική διαφήμιση)
+                // Win modal: κουμπί για συνέχεια (χωρίς πραγματική διαφήμιση)
                 document.getElementById("btnNext").onclick = function() {
                     document.getElementById("winModal").classList.add("hidden");
                     level = level + 1;
@@ -2909,7 +2886,7 @@
                     announceMission(300);
                 };
 
-                // Lose modal: μόνο ένα κουμπί για revive (χωρίς πραγματική διαφήμιση)
+                // Lose modal: κουμπί για revive (χωρίς πραγματική διαφήμιση)
                 document.getElementById("btnRevive").onclick = function() {
                     if (busy) return;
                     document.getElementById("loseModal").classList.add("hidden");
