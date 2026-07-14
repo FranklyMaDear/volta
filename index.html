@@ -41,43 +41,93 @@
             z-index: 0;
         }
 
-        .mission-hud {
+        /* Mission Rollup (αριστερά, κάθετο) */
+        #missionRollup {
             position: fixed;
-            top: 55px;
-            left: 50%;
-            transform: translateX(-50%);
-            z-index: 15;
-            background: #4A3423;
-            color: #F7EFDC;
-            padding: 8px 16px;
-            border-radius: 20px;
-            border: 3px solid rgba(255,255,255,0.3);
-            text-align: center;
+            z-index: 20;
+            background: var(--panel-deep);
+            color: var(--cream);
             font-weight: 800;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-            pointer-events: none;
-            width: 250px;
-        }
-        .mission-label {
             font-size: 14px;
-            margin-bottom: 4px;
+            padding: 12px 8px;
+            border-radius: 0 20px 20px 0;
+            cursor: pointer;
+            pointer-events: auto;
+            transition: all 0.25s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             letter-spacing: 1px;
+            -webkit-backdrop-filter: blur(6px);
+            backdrop-filter: blur(6px);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            writing-mode: vertical-rl;
+            text-orientation: mixed;
+            gap: 4px;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            min-height: 100px;
+            box-shadow: 4px 4px 12px rgba(0, 0, 0, 0.3);
+        }
+        #missionRollup:active {
+            transform: translateY(-50%) translateX(3px);
+            box-shadow: 2px 4px 12px rgba(0, 0, 0, 0.3);
+        }
+
+        #missionPanel {
+            position: fixed;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%) translateX(-110%);
+            z-index: 19;
+            background: rgba(255, 255, 255, 0.4);
+            -webkit-backdrop-filter: blur(10px);
+            backdrop-filter: blur(10px);
+            border-radius: 0 20px 20px 0;
+            border: 2px solid rgba(255, 255, 255, 0.5);
+            padding: 12px 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            transition: transform 0.35s cubic-bezier(0.22, 0.61, 0.36, 1);
+            pointer-events: auto;
+            box-shadow: 6px 4px 20px rgba(0, 0, 0, 0.25);
+            min-width: 60px;
+        }
+        #missionPanel.open {
+            transform: translateY(-50%) translateX(0);
+        }
+
+        .mission-label {
+            font-weight: 800;
+            font-size: 14px;
+            writing-mode: vertical-rl;
+            letter-spacing: 1px;
+            color: var(--ink);
+            text-orientation: mixed;
+            margin-bottom: 4px;
+            text-align: center;
         }
         .mission-bar-bg {
-            background: rgba(0,0,0,0.5);
-            border-radius: 10px;
-            height: 12px;
-            width: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 6px;
+            width: 16px;
+            height: 180px;
             overflow: hidden;
             border: 2px solid #2F1B0D;
+            display: flex;
+            flex-direction: column-reverse;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.3);
         }
         .mission-bar-fill {
-            background: linear-gradient(90deg, #F5C542, #F2A03D);
-            height: 100%;
-            width: 0%;
-            border-radius: 10px;
-            transition: width 0.3s ease-out;
-            box-shadow: inset 0 -2px 0 rgba(0,0,0,0.2), inset 0 2px 0 rgba(255,255,255,0.3);
+            background: linear-gradient(180deg, #F5C542, #F2A03D);
+            width: 100%;
+            height: 0%;
+            border-radius: 6px;
+            transition: height 0.3s ease-out;
+            box-shadow: inset 0 -2px 0 rgba(0,0,0,0.2);
         }
 
         @keyframes rainbowGlow {
@@ -659,119 +709,47 @@
         }
 
         @media (max-width: 480px) {
-            .mission-hud { top: 45px; width: 200px; padding: 6px 12px; }
-            .mission-label { font-size: 12px; }
-            .rollup-tab {
-                font-size: 14px;
-                padding: 8px 14px;
-            }
-            #shopRollup {
-                font-size: 16px;
-                padding: 12px 22px;
-                border-radius: 0 0 24px 24px;
-            }
-            #shopRollup .mini-score {
-                font-size: 11px;
-            }
-            .shop-panel {
-                padding: 8px 6px 6px;
-                gap: 5px;
-            }
-            .shop-panel .chip {
-                font-size: 14px;
-                padding: 6px 10px;
-                border-radius: 10px;
-            }
-            .shop-panel .chip .big {
-                font-size: 18px;
-            }
-            .shop-panel .chip.score-chip {
-                font-size: 22px;
-                padding: 6px 14px;
-            }
-            .shop-panel .chip.score-chip .big {
-                font-size: 24px;
-            }
-            .shop-panel .hud-btn {
-                font-size: 14px;
-                padding: 8px 12px;
-                border-radius: 10px;
-            }
-            .help-panel .pbtn {
-                width: 90px;
-                height: 90px;
-                font-size: 36px;
-                border-radius: 22px;
-            }
-            .help-panel .pbtn .cost {
-                font-size: 11px;
-            }
-            #helpRollup {
-                font-size: 14px;
-                padding: 14px 7px;
-                letter-spacing: 2px;
-                min-height: 100px;
-            }
-            #helpRollup.open {
-                right: 120px;
-            }
-            .help-panel {
-                padding: 8px;
-                gap: 6px;
-            }
-            #speech {
-                font-size: 15px;
-                padding: 6px 14px;
-                border-radius: 16px;
-            }
-            #toast {
-                font-size: 12px;
-                padding: 6px 14px;
-                bottom: 80px;
-            }
-            .shop-items {
-                grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-                gap: 5px;
-            }
-            .shop-item h3 {
-                font-size: 11px;
-            }
+            #missionRollup { font-size: 12px; padding: 10px 6px; min-height: 80px; }
+            #missionPanel { padding: 8px 6px; min-width: 50px; }
+            .mission-label { font-size: 11px; }
+            .mission-bar-bg { height: 120px; width: 12px; }
+            .rollup-tab { font-size: 14px; padding: 8px 14px; }
+            #shopRollup { font-size: 16px; padding: 12px 22px; border-radius: 0 0 24px 24px; }
+            #shopRollup .mini-score { font-size: 11px; }
+            .shop-panel { padding: 8px 6px 6px; gap: 5px; }
+            .shop-panel .chip { font-size: 14px; padding: 6px 10px; border-radius: 10px; }
+            .shop-panel .chip .big { font-size: 18px; }
+            .shop-panel .chip.score-chip { font-size: 22px; padding: 6px 14px; }
+            .shop-panel .chip.score-chip .big { font-size: 24px; }
+            .shop-panel .hud-btn { font-size: 14px; padding: 8px 12px; border-radius: 10px; }
+            .help-panel .pbtn { width: 90px; height: 90px; font-size: 36px; border-radius: 22px; }
+            .help-panel .pbtn .cost { font-size: 11px; }
+            #helpRollup { font-size: 14px; padding: 14px 7px; letter-spacing: 2px; min-height: 100px; }
+            #helpRollup.open { right: 120px; }
+            .help-panel { padding: 8px; gap: 6px; }
+            #speech { font-size: 15px; padding: 6px 14px; border-radius: 16px; }
+            #toast { font-size: 12px; padding: 6px 14px; bottom: 80px; }
+            .shop-items { grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 5px; }
+            .shop-item h3 { font-size: 11px; }
         }
         @media (max-width: 380px) {
-            .shop-panel .chip {
-                font-size: 11px;
-                padding: 4px 8px;
-            }
-            .shop-panel .chip .big {
-                font-size: 15px;
-            }
-            .shop-panel .chip.score-chip {
-                font-size: 18px;
-                padding: 5px 10px;
-            }
-            .shop-panel .chip.score-chip .big {
-                font-size: 20px;
-            }
-            .shop-panel .hud-btn {
-                font-size: 12px;
-                padding: 6px 10px;
-            }
-            .help-panel .pbtn {
-                width: 72px;
-                height: 72px;
-                font-size: 30px;
-            }
-            #helpRollup.open {
-                right: 100px;
-            }
+            .shop-panel .chip { font-size: 11px; padding: 4px 8px; }
+            .shop-panel .chip .big { font-size: 15px; }
+            .shop-panel .chip.score-chip { font-size: 18px; padding: 5px 10px; }
+            .shop-panel .chip.score-chip .big { font-size: 20px; }
+            .shop-panel .hud-btn { font-size: 12px; padding: 6px 10px; }
+            .help-panel .pbtn { width: 72px; height: 72px; font-size: 30px; }
+            #helpRollup.open { right: 100px; }
         }
     </style>
 </head>
 <body>
     <canvas id="game"></canvas>
 
-    <div id="missionHUD" class="mission-hud">
-        <div class="mission-label">MISSION: <span id="missionTargetVal"></span></div>
+    <!-- Mission Rollup (αριστερά) -->
+    <div class="rollup-tab" id="missionRollup">🎯 MISSION</div>
+    <div id="missionPanel">
+        <div class="mission-label" id="missionLabel">MISSION: 128</div>
         <div class="mission-bar-bg">
             <div class="mission-bar-fill" id="missionBarFill"></div>
         </div>
@@ -831,7 +809,7 @@
             <div style="font-size:40px; margin-bottom:6px;">🎉</div>
             <h2 id="winTitle">Level Complete!</h2>
             <p id="winText"></p>
-            <button class="btn" id="btnNext">Continue ➜</button>
+            <button class="btn" id="btnNext">Watch an ad to continue</button>
         </div>
     </div>
     <div class="overlay hidden win-lose-overlay" id="loseModal">
@@ -839,8 +817,7 @@
             <div style="font-size:40px; margin-bottom:6px;">😵</div>
             <h2 id="loseTitle">The board is full!</h2>
             <p id="loseText"></p>
-            <button class="btn" id="btnRevive" style="background:#5c7a3a; box-shadow: 0 4px 0 #3a4d25; margin-bottom:10px;"><span id="lblRevive">📺 Revive</span></button>
-            <button class="btn cancel-btn" id="btnRetry">Try again</button>
+            <button class="btn" id="btnRevive" style="background:#5c7a3a; box-shadow: 0 4px 0 #3a4d25;">Watch an ad to continue</button>
         </div>
     </div>
 
@@ -869,7 +846,8 @@
             const BOARD_H = ROWS * (CELL + GAP) - GAP;
             const launchY = -BOARD_H / 2 - 0.4;
 
-            function levelTarget(l) { return 64 * Math.pow(2, l); }
+            // Αποστολές ξεκινούν από 128 και διπλασιάζονται
+            function levelTarget(l) { return 128 * Math.pow(2, l); }
 
             function levelPreset(l) { return l === 0 ? 0 : Math.min(14, 2 + l * 2); }
 
@@ -897,7 +875,6 @@
                     win_title: 'Level Complete!',
                     win_btn: 'Watch an ad to continue',
                     lose_title: 'Sorry',
-                    lose_btn: 'Try again',
                     revive_btn: 'Watch an ad to continue',
                     win_text: function(t) { return 'You made ' + t + '!<br>+25 🪙<br>The game continues!'; },
                     lose_text: function(s) { return 'Score: <b>' + s + '</b>'; },
@@ -956,7 +933,6 @@
                     win_title: 'Level Complete!',
                     win_btn: 'Watch an ad to continue',
                     lose_title: 'Sorry',
-                    lose_btn: 'Ξαναπροσπάθησε',
                     revive_btn: 'Watch an ad to continue',
                     win_text: function(t) { return 'Έφτιαξες ' + t + '!<br>+25 🪙<br>Το παιχνίδι συνεχίζεται!'; },
                     lose_text: function(s) { return 'Σκορ: <b>' + s + '</b>'; },
@@ -1521,12 +1497,14 @@
                 group.add(center);
 
                 const rayGeo = new THREE.ConeGeometry(0.25, 1, 16);
+                const rays = [];
                 for(let i=0; i<12; i++) {
                     const angle = (i/12) * Math.PI * 2;
                     const ray = new THREE.Mesh(rayGeo, yellow);
                     ray.position.set(Math.cos(angle)*1.3, Math.sin(angle)*1.3, 0);
                     ray.rotation.z = angle - Math.PI/2;
                     group.add(ray);
+                    rays.push(ray);
                 }
 
                 const eyeMat = new THREE.MeshBasicMaterial({color: 0x333333});
@@ -1555,6 +1533,9 @@
                 smile.position.set(0, 0, 0.98);
                 group.add(smile);
 
+                // Αποθήκευση αναφορών για αλλαγή χρώματος
+                group.userData.sunMeshes = [center, ...rays, eyeL, eyeR, cheekL, cheekR, smile];
+                group.userData.baseColor = new THREE.Color(0xFFD54F);
                 return group;
             }
 
@@ -1580,7 +1561,8 @@
 
             function createDynamicFlower(index) {
                 const fGroup = new THREE.Group();
-                const stemLen = 0.8 + Math.random() * 0.6;
+                // Κοντός κορμός (0.2 - 0.5)
+                const stemLen = 0.2 + Math.random() * 0.3;
                 const stem = new THREE.Mesh(new THREE.CylinderGeometry(0.04, 0.04, stemLen), new THREE.MeshLambertMaterial({color: 0x4CAF50}));
                 stem.position.y = stemLen / 2;
 
@@ -1642,7 +1624,7 @@
                 grassPlane.renderOrder = -5;
                 scene.add(grassPlane);
 
-                for (let i = 0; i < 15; i++) { // Lusher look
+                for (let i = 0; i < 15; i++) {
                     const fl = createDynamicFlower(i);
                     scene.add(fl);
                     flowers.push(fl);
@@ -1662,7 +1644,7 @@
 
                 const dSun = 40;
                 sunGroup.position.copy(unprojectToDist(-0.6, 0.85, dSun));
-                sunGroup.scale.setScalar(3.0);
+                sunGroup.scale.setScalar(1.8); // Μικρότερος ήλιος
 
                 const dCloud = 36;
                 const sCloud = viewSizeAt(dCloud);
@@ -1684,7 +1666,8 @@
                     const u = fl.userData;
                     const spreadW = sGrass.w * 1.0;
                     const x = spreadW * u.nx;
-                    const y = gp.y + 0.4 - u.nyOffset;
+                    // Πιο χαμηλά, πάνω στο χορτάρι
+                    const y = gp.y + 0.1 - u.nyOffset;
                     fl.position.set(x, y, gp.z + 0.2 + u.nz);
                 });
             }
@@ -2059,15 +2042,15 @@
                     }
                 }
                 const target = levelTarget(level);
-                const el = document.getElementById('missionTargetVal');
-                if (el) el.textContent = target;
+                const label = document.getElementById('missionLabel');
+                if (label) label.textContent = 'MISSION: ' + target;
 
                 let pct = (Math.log2(maxVal) / Math.log2(target)) * 100;
                 if (pct > 100) pct = 100;
                 if (pct < 0) pct = 0;
 
                 const fill = document.getElementById('missionBarFill');
-                if (fill) fill.style.width = pct + '%';
+                if (fill) fill.style.height = pct + '%';
             }
 
             let scene, camera, renderer, boardGroup, raycaster, pointer;
@@ -2588,8 +2571,7 @@
                 document.getElementById('winTitle').textContent = t.win_title;
                 document.getElementById('btnNext').textContent = t.win_btn;
                 document.getElementById('loseTitle').textContent = t.lose_title;
-                document.getElementById('btnRetry').textContent = t.lose_btn; 
-                if (document.getElementById('lblRevive')) document.getElementById('lblRevive').textContent = t.revive_btn;
+                document.getElementById('btnRevive').textContent = t.revive_btn;
                 const tabNames = { cubes: t.tab_cubes, boards: t.tab_boards, effects: t.tab_effects, sounds: t.tab_sounds, music: t.tab_music, pets: t.tab_pets };
                 document.querySelectorAll('.shop-tab').forEach(function(b) { b.textContent = tabNames[b.dataset.maintab] || b
                         .textContent; }); const subNames = { pet_hair: t.sub_hair, pet_clothes: t.sub_clothes, pet_shoes: t
@@ -2608,7 +2590,7 @@
                 toastTimer = setTimeout(function() { t.style.opacity = 0; }, 1800); }
 
             function computeMood(now) { const fill = boardFillRatio(); if (fill >= 0.8) return 'anxious'; if (fill >= 0.65) return
-                'angry'; if (now - lastActionTime > 15000) return 'bored'; return 'idle'; }
+                    'angry'; if (now - lastActionTime > 15000) return 'bored'; return 'idle'; }
 
             function onMoodChange(mood) { 
                 if (mood === 'angry') { showSpeech(TT().angry, 2200);
@@ -2630,8 +2612,26 @@
                         shake = Math.sin(t * 0.05) * 0.05;
                     }
                     sunGroup.rotation.z = Math.sin(t * 0.0003) * 0.06 + shake; 
-                    const pulse = 3.0 + Math.sin(t * 0.0012) * 0.06;
+                    const pulse = 1.8 + Math.sin(t * 0.0012) * 0.06;
                     sunGroup.scale.setScalar(pulse);
+
+                    // Αλλαγή χρώματος ήλιου ανάλογα με την πληρότητα
+                    const fill = boardFillRatio();
+                    const sunMeshes = sunGroup.userData.sunMeshes;
+                    if (sunMeshes) {
+                        if (fill > 0.6) {
+                            const intensity = (fill - 0.6) / 0.4; // 0..1
+                            const color = new THREE.Color().setHSL(0.05 - intensity * 0.05, 1, 0.5 + intensity * 0.3);
+                            sunMeshes.forEach(m => {
+                                if (m.material) m.material.color.copy(color);
+                            });
+                        } else {
+                            const base = sunGroup.userData.baseColor || new THREE.Color(0xFFD54F);
+                            sunMeshes.forEach(m => {
+                                if (m.material) m.material.color.copy(base);
+                            });
+                        }
+                    }
                 } 
                 
                 flowers.forEach(function(fl) {
@@ -2770,6 +2770,20 @@
                 const shopPanel = document.getElementById('shopPanel');
                 const helpRollup = document.getElementById('helpRollup');
                 const helpPanel = document.getElementById('helpPanel');
+                const missionRollup = document.getElementById('missionRollup');
+                const missionPanel = document.getElementById('missionPanel');
+
+                // Mission rollup toggle
+                let missionPanelOpen = false;
+                missionRollup.onclick = function(e) {
+                    e.stopPropagation();
+                    missionPanelOpen = !missionPanelOpen;
+                    if (missionPanelOpen) {
+                        missionPanel.classList.add('open');
+                    } else {
+                        missionPanel.classList.remove('open');
+                    }
+                };
 
                 shopRollup.onclick = function(e) {
                     e.stopPropagation();
@@ -2885,71 +2899,59 @@
                 cvs.addEventListener("pointerdown", onTap); if (!window.PointerEvent) { cvs.addEventListener(
                     "touchstart", onTap, { passive: true }); }
 
-                document.getElementById("btnRevive").onclick = function() {
-                    if (busy) return;
-                    showAd(function() {
-                        document.getElementById("loseModal").classList.add("hidden");
-                        busy = true;
-                        
-                        for(let c = 0; c < COLS; c++) {
-                            let count = 0;
-                            for(let r = ROWS - 1; r >= 0; r--) {
-                                if(grid[c][r] && count < 3) {
-                                    let m = grid[c][r].mesh;
-                                    if(m) {
-                                        boardGroup.remove(m);
-                                        spawnBurst(m.position.x, m.position.y, m.position.z, 'smoke', 10);
-                                    }
-                                    grid[c][r] = null;
-                                    count++;
-                                }
-                            }
-                        }
-                        for(let c = 0; c < COLS; c++) {
-                            let write = 0;
-                            for(let r = 0; r < ROWS; r++) {
-                                if(grid[c][r]) {
-                                    if(r !== write) {
-                                        grid[c][write] = grid[c][r];
-                                        grid[c][r] = null;
-                                        if(grid[c][write] && grid[c][write].mesh) {
-                                            tween(grid[c][write].mesh.position, { y: cellPos(c, write).y }, 0.15);
-                                        }
-                                    }
-                                    write++;
-                                }
-                            }
-                        }
-                        
-                        setTimeout(function() {
-                            busy = false;
-                            winShown = false;
-                            spawnCurrent();
-                            setAim(aimCol);
-                            updateHUD();
-                        }, 400);
-                    });
+                // Win modal: μόνο ένα κουμπί για συνέχεια (χωρίς πραγματική διαφήμιση)
+                document.getElementById("btnNext").onclick = function() {
+                    document.getElementById("winModal").classList.add("hidden");
+                    level = level + 1;
+                    winShown = false;
+                    busy = false;
+                    updateHUD();
+                    announceMission(300);
                 };
 
-                document.getElementById("btnNext").onclick = function() { 
-                    showAd(function() {
-                        document.getElementById("winModal").classList.add("hidden");
-                        level = level + 1;
-                        winShown = false;
+                // Lose modal: μόνο ένα κουμπί για revive (χωρίς πραγματική διαφήμιση)
+                document.getElementById("btnRevive").onclick = function() {
+                    if (busy) return;
+                    document.getElementById("loseModal").classList.add("hidden");
+                    busy = true;
+                    
+                    for(let c = 0; c < COLS; c++) {
+                        let count = 0;
+                        for(let r = ROWS - 1; r >= 0; r--) {
+                            if(grid[c][r] && count < 3) {
+                                let m = grid[c][r].mesh;
+                                if(m) {
+                                    boardGroup.remove(m);
+                                    spawnBurst(m.position.x, m.position.y, m.position.z, 'smoke', 10);
+                                }
+                                grid[c][r] = null;
+                                count++;
+                            }
+                        }
+                    }
+                    for(let c = 0; c < COLS; c++) {
+                        let write = 0;
+                        for(let r = 0; r < ROWS; r++) {
+                            if(grid[c][r]) {
+                                if(r !== write) {
+                                    grid[c][write] = grid[c][r];
+                                    grid[c][r] = null;
+                                    if(grid[c][write] && grid[c][write].mesh) {
+                                        tween(grid[c][write].mesh.position, { y: cellPos(c, write).y }, 0.15);
+                                    }
+                                }
+                                write++;
+                            }
+                        }
+                    }
+                    
+                    setTimeout(function() {
                         busy = false;
+                        winShown = false;
+                        spawnCurrent();
+                        setAim(aimCol);
                         updateHUD();
-                        announceMission(300); 
-                    });
-                };
-                
-                document.getElementById("btnRetry").onclick = function() { 
-                    showAd(function() {
-                        document.getElementById("loseModal").classList.add("hidden");
-                        busy = false;
-                        newBoard();
-                        winShown = false;
-                        announceMission(300); 
-                    });
+                    }, 400);
                 };
             })();
         })();
