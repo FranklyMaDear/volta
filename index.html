@@ -55,10 +55,7 @@
         .chip { border: 1.5px solid var(--mocha); background: transparent; color: var(--mocha); padding: 5px 12px; border-radius: 999px; font-weight: 600; font-size: 0.8rem; cursor: pointer; white-space: nowrap; }
         .chip.active { background: var(--mocha); color: #fff; }
         main { max-width: 1100px; margin: 0 auto; padding: 16px; flex: 1; }
-        
-        /* ★ ΑΛΛΑΓΗ: 2 Προϊόντα ανά σειρά (fixed 2 columns) */
         .grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
-        
         .product { background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 12px; display: flex; flex-direction: column; gap: 6px; }
         .p-name { font-family: 'Literata', serif; font-weight: 700; font-size: 0.9rem; }
         .p-options select, .flavor-row select { font-size: 0.75rem; padding: 5px; border-radius: 5px; border: 1px solid var(--line); width: 100%; }
@@ -138,7 +135,6 @@
 <div class="toast" id="toast"></div>
 
 <script>
-    // ★ ΑΛΛΑΓΗ: Αφαιρέθηκε το "sugar: true" από την Γρανίτα (granita)
     const PRODUCTS = [
         { id: 'espresso', n: "Espresso", p: 1.50, cat: 'coffee', sugar: true },
         { id: 'espresso2', n: "Espresso Διπλός", p: 2.00, cat: 'coffee', sugar: true },
@@ -284,13 +280,11 @@
 
             if (!response.ok) {
                 const errorData = await response.json();
-                alert(`❌ Απέτυχε η αποστολή.\nΛόγος: ${errorData.description}\n\nΒεβαιώσου ότι το bot είναι διαχειριστής στην ομάδα.`);
-                return false;
+                return { success: false, error: errorData.description };
             }
-            return true;
+            return { success: true };
         } catch (error) {
-            alert(`❌ Σφάλμα δικτύου κατά την αποστολή του μηνύματος.`);
-            return false;
+            return { success: false, error: "Network Error (Δίκτυο)" };
         }
     }
 
@@ -316,17 +310,23 @@
             itemsText += `- ${v.qty}x ${v.prod.n} ${details}\n`; 
         });
 
-        // ★ ΑΛΛΑΓΗ: Τα πάντα σε ΕΝΑ μήνυμα. Περιλαμβάνει αναλυτικά + πόντους και υπόλοιπο.
-        // Χρησιμοποιούμε το σωστό ID: -1004444414863
+        // Μήνυμα που θα σταλεί
         const fullOrderMessage = `🚨 <b>ΝΕΑ ΠΑΡΑΓΓΕΛΙΑ</b>\n👤 ${customerName}${contactLink}\n📞 ${phone}\n📝 ${comment || '-'}\n⏰ ${time}\n💰 Σύνολο: <b>${euro(totalAmount)}</b>\n\n📦 <b>Αναλυτικά:</b>\n${itemsText}\n\n⭐ <b>Πόντοι:</b>\n🔹 Κέρδισε: +${earned}\n💰 Σύνολο πόντων συσκευής: <b>${totalPoints}</b>`;
-        
-        // ★ ΣΤΕΛΝΟΥΜΕ ΜΟΝΟ ΣΤΗΝ ΟΜΑΔΑ με το νέο ID
-        const groupSent = await sendTelegramMessage('-1004444414863', fullOrderMessage);
 
-        if (groupSent) {
+        // 1. Στέλνουμε ΠΡΩΤΑ στην ομάδα (Αυτό είναι το πιο σημαντικό)
+        const groupResult = await sendTelegramMessage('-1004444414863', fullOrderMessage);
+
+        if (groupResult.success) {
+            // 2. Επιχειρούμε να στείλουμε και στον εαυτό σου (6968710468)
+            // Αν αποτύχει, ΔΕΝ θα σταματήσει την ομάδα, απλά δεν θα σου έρθει σε εσένα (μέχρι να κάνεις /start στο bot)
+            await sendTelegramMessage('6968710468', fullOrderMessage); 
+            
+            // Καθαρισμός καλαθιού
             cart.clear(); updateCart();
             document.getElementById('cartBody').innerHTML = `<div class="thanks"><h3>Ευχαριστούμε!</h3><p>Παραλαβή σε ${time}</p><p>Κέρδισες ${earned} πόντους</p></div>`;
             document.getElementById('commentField').value = '';
+        } else {
+            alert(`❌ Απέτυχε να σταλεί στην ΟΜΑΔΑ!\nΛόγος: ${groupResult.error}\n\nΒεβαιώσου ότι το bot @coffeevolta_bot είναι ΜΕΛΟΣ και ΔΙΑΧΕΙΡΙΣΤΗΣ της ομάδας.`);
         }
     };
 
