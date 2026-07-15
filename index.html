@@ -270,7 +270,30 @@
         updateCart();
     };
 
-    document.getElementById('checkout').onclick = () => {
+    // ★ ΝΕΑ ΣΥΝΑΡΤΗΣΗ: Στέλνει μήνυμα με έλεγχο σφαλμάτων και ειδοποίηση!
+    async function sendTelegramMessage(chatId, text) {
+        try {
+            const response = await fetch('https://api.telegram.org/bot8991103662:AAEkcD1qR10eG4lG3T3Hy_YU-9Sz8EiqKF4/sendMessage', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ chat_id: chatId, text: text, parse_mode: 'HTML' })
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                // Αν το bot δεν είναι στην ομάδα, εδώ θα δεις "Forbidden: bot is not a member of the chat"
+                alert(`❌ Απέτυχε η αποστολή στο ${chatId}.\nΛόγος: ${errorData.description}`);
+                return false;
+            }
+            return true;
+        } catch (error) {
+            alert(`❌ Σφάλμα δικτύου κατά την αποστολή του μηνύματος στο ${chatId}.`);
+            console.error(error);
+            return false;
+        }
+    }
+
+    document.getElementById('checkout').onclick = async () => {
         const phone = document.getElementById('phoneField').value.trim();
         if (!phone) { alert('Συμπληρώστε τηλέφωνο'); return; }
         saveData();
@@ -288,27 +311,24 @@
         let contactLink = tgUser ? (tgUser.username ? `\n💬 @${tgUser.username}` : `\n💬 <a href="tg://user?id=${tgUser.id}">Στείλε μήνυμα</a>`) : '';
         let itemsText = ''; cart.forEach(v => { itemsText += `- ${v.qty}x ${v.prod.n}\n`; });
 
-        // Μήνυμα παραγγελίας προς την ομάδα
-        const orderText = `🚨 <b>ΝΕΑ ΠΑΡΑΓΓΕΛΙΑ</b>\n👤 ${customerName}${contactLink}\n📞 ${phone}\n📝 ${comment || '-'}\n⏰ ${time}\n💰 Σύνολο: <b>${euro(totalAmount)}</b>`;
+        // ★ ΜΗΝΥΜΑ ΟΜΑΔΑΣ
+        const orderText = `🚨 <b>ΝΕΑ ΠΑΡΑΓΓΕΛΙΑ</b>\n👤 ${customerName}${contactLink}\n📞 ${phone}\n📝 ${comment || '-'}\n⏰ ${time}\n💰 Σύνολο: <b>${euro(totalAmount)}</b>\n\n📦 Αναλυτικά:\n${itemsText}`;
         
-        fetch('https://api.telegram.org/bot8991103662:AAEkcD1qR10eG4lG3T3Hy_YU-9Sz8EiqKF4/sendMessage', {
-            method: 'POST', headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ chat_id: '-5086360073', text: orderText, parse_mode: 'HTML' })
-        });
+        // Στέλνουμε στην ομάδα και περιμένουμε να ολοκληρωθεί
+        const groupSent = await sendTelegramMessage('-5086360073', orderText);
 
-        // Προσωπικό μήνυμα μόνο σε εσένα με τους πόντους
+        // ★ ΠΡΟΣΩΠΙΚΟ ΜΗΝΥΜΑ (ΜΟΝΟ ΓΙΑ ΕΣΕΝΑ)
         if (tgUser && earned > 0) {
             const pointsMsg = `⭐ <b>Πόντοι πελάτη</b>\n👤 ${customerName} (ID: ${tgUser.id})\n📱 Τηλ: ${phone}\n🔹 Κέρδισε: +${earned} πόντοι\n💰 Σύνολο πόντων στη συσκευή του: ${totalPoints}\n📅 ${new Date().toLocaleString('el-GR')}`;
-            
-            fetch('https://api.telegram.org/bot8991103662:AAEkcD1qR10eG4lG3T3Hy_YU-9Sz8EiqKF4/sendMessage', {
-                method: 'POST', headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ chat_id: '6968710468', text: pointsMsg, parse_mode: 'HTML' })
-            });
+            await sendTelegramMessage('6968710468', pointsMsg);
         }
 
-        cart.clear(); updateCart();
-        document.getElementById('cartBody').innerHTML = `<div class="thanks"><h3>Ευχαριστούμε!</h3><p>Παραλαβή σε ${time}</p><p>Κέρδισες ${earned} πόντους</p></div>`;
-        document.getElementById('commentField').value = '';
+        // Αν όλα πήγαν καλά, αδειάζουμε το καλάθι
+        if (groupSent) {
+            cart.clear(); updateCart();
+            document.getElementById('cartBody').innerHTML = `<div class="thanks"><h3>Ευχαριστούμε!</h3><p>Παραλαβή σε ${time}</p><p>Κέρδισες ${earned} πόντους</p></div>`;
+            document.getElementById('commentField').value = '';
+        }
     };
 
     function showToast(msg) {
