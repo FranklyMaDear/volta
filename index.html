@@ -78,6 +78,18 @@
         footer a { color: #fff; }
         .toast { position: fixed; left: 50%; bottom: 20px; transform: translate(-50%, 80px); background: var(--ink); color: #fff; padding: 8px 16px; border-radius: 999px; font-size: 0.8rem; z-index: 80; opacity: 0; transition: .25s; }
         .toast.show { transform: translate(-50%, 0); opacity: 1; }
+
+        /* ★ Δώρα / Εξαργύρωση πόντων */
+        .rewards-box { background: var(--soft); border: 1px solid var(--line); border-radius: 8px; padding: 10px; margin-bottom: 10px; }
+        .rewards-box h4 { font-family: 'Literata', serif; font-size: 0.85rem; margin-bottom: 6px; }
+        .reward-row { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 5px 0; font-size: 0.8rem; }
+        .reward-row .r-cost { color: var(--mocha); font-weight: 700; white-space: nowrap; }
+        .redeem-btn { border: 1.5px solid var(--mocha); background: transparent; color: var(--mocha); border-radius: 999px; padding: 3px 10px; cursor: pointer; font-weight: 600; font-size: 0.75rem; white-space: nowrap; }
+        .redeem-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+        .reward-active { background: #eaf6ea; border: 1px solid #9CCC9C; border-radius: 8px; padding: 8px 10px; margin-bottom: 10px; font-size: 0.8rem; display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+        .cancel-reward { border: none; background: transparent; color: #b00020; cursor: pointer; font-weight: 600; font-size: 0.75rem; text-decoration: underline; }
+        .totals { display: flex; justify-content: space-between; font-weight: 700; margin-bottom: 8px; }
+        .discount-line { display: flex; justify-content: space-between; color: #2e7d32; font-weight: 600; font-size: 0.85rem; margin-bottom: 4px; }
     </style>
 </head>
 <body>
@@ -94,7 +106,7 @@
 
 <section class="hero">
     <h1>Ο τέλειος καφές, <span class="stroll">έτοιμος πριν φτάσεις.</span></h1>
-    <p>Παράγγειλε online, κέρδισε 1 πόντο ανά 1€ και παρέλαβε χωρίς αναμονή.</p>
+    <p>Παράγγειλε online, κέρδισε 1 πόντο ανά 1€ και εξαργύρωσε δώρα: 15 πόντοι = παγωτό, 25 πόντοι = ρόφημα.</p>
 </section>
 
 <nav class="cats">
@@ -116,13 +128,12 @@
     <div class="drawer-head"><h2>Το καλάθι σου</h2><button id="closeCart">&times;</button></div>
     <div class="drawer-body" id="cartBody"></div>
     <div class="drawer-foot">
+
+        <!-- ★ Δώρα με πόντους -->
+        <div id="rewardsArea"></div>
+
+        <div class="discount-line" id="discountLine" style="display:none;"><span>🎁 Έκπτωση δώρου</span><span id="discountValue"></span></div>
         <div class="totals"><span>Σύνολο</span><span id="cartTotal">0,00 €</span></div>
-        
-        <!-- ★ Οθόνη 7ήμερης Πρόκλησης -->
-        <div id="weeklyRewardBox" style="display:none; background:#e8f0fe; border-radius:8px; padding:10px; margin-bottom:8px; border:1px solid var(--accent);">
-            <strong>🎉 7η μέρα!</strong> Κέρδισες <strong>1 ΔΩΡΕΑΝ ρόφημα</strong> (έκπτωση 2,80€)!
-            <button id="claimWeeklyReward" style="width:100%; margin-top:5px; background:#4CAF50; color:#fff; border:none; padding:5px; border-radius:5px; font-weight:bold; cursor:pointer;">Ναι, θέλω το δώρο μου!</button>
-        </div>
 
         <div class="reward-note" id="rewardNote" style="display:none;">🎁 Θα κερδίσεις <strong id="earnedPoints">0</strong> πόντους</div>
         <div class="form-group">
@@ -158,11 +169,19 @@
         { id: 'sokolatavien', n: "Σοκολάτα Βιεννουά", p: 3.00, cat: 'coffee', sugar: true },
         { id: 'kakao', n: "Κακάο", p: 2.20, cat: 'coffee', sugar: true },
         { id: 'tsai', n: "Τσάι", p: 2.00, cat: 'coffee', sugar: true },
-        { id: 'granita', n: "Γρανίτα", p: 2.50, cat: 'coffee' }, 
+        { id: 'granita', n: "Γρανίτα", p: 2.50, cat: 'coffee' },
         { id: 'icecone', n: "Παγωτό Χωνάκι (2 μπάλες)", p: 1.50, cat: 'icecream' },
         { id: 'icecup', n: "Παγωτό Κύπελλο (2 μπάλες)", p: 1.50, cat: 'icecream' }
     ];
     const FLAVORS = ['Βανίλια', 'Σοκολάτα', 'Φράουλα', 'Μπανάνα', 'Στρατσιατέλα', 'Καϊμάκι'];
+
+    // ★ Δώρα: ένα ανά παραγγελία. value = μέγιστη έκπτωση σε €.
+    const REWARDS = [
+        { id: 'gift-ice', name: 'Δωρεάν παγωτό (2 μπάλες)', cost: 15, value: 1.50 },
+        { id: 'gift-drink', name: 'Δωρεάν ρόφημα (έως 2,80€)', cost: 25, value: 2.80 }
+    ];
+    let activeReward = null;
+
     const euro = v => v.toFixed(2).replace('.', ',') + ' €';
     const cart = new Map();
 
@@ -170,15 +189,11 @@
     const ENC_TOKEN = "ODk5MTEwMzY2MjpBQUVrY0QxcVIxMGVHNGxHM1QzSHlfWVUtOVN6OEVpcUtGNA==";
 
     const LS_NAME = 'kv_name', LS_PHONE = 'kv_phone', LS_POINTS = 'kv_points';
-    // ★ Νέα κλειδιά για το εβδομαδιαίο σύστημα
-    const LS_WEEKLY_DAYS = 'kv_weekly_days';
-    const LS_WEEKLY_CLAIMED = 'kv_weekly_claimed';
 
     function loadData() {
         document.getElementById('nameField').value = localStorage.getItem(LS_NAME) || '';
         document.getElementById('phoneField').value = localStorage.getItem(LS_PHONE) || '';
         updatePointsDisplay();
-        checkWeeklyStreak(); // Έλεγχος κατά το άνοιγμα
     }
 
     function saveData() {
@@ -188,63 +203,12 @@
         if (p) localStorage.setItem(LS_PHONE, p);
     }
     function getPoints() { return parseInt(localStorage.getItem(LS_POINTS) || '0'); }
-    function addPoints(pts) { localStorage.setItem(LS_POINTS, getPoints() + pts); updatePointsDisplay(); }
+    function setPoints(v) { localStorage.setItem(LS_POINTS, Math.max(0, v)); updatePointsDisplay(); }
+    function addPoints(pts) { setPoints(getPoints() + pts); }
     function updatePointsDisplay() {
         const pts = getPoints();
         document.getElementById('pointsValue').textContent = pts;
         document.getElementById('pointsDisplay').style.display = pts > 0 ? 'flex' : 'none';
-    }
-
-    // ★ Σύστημα 7 ημερών
-    function getDayName() {
-        return ['Κυριακή', 'Δευτέρα', 'Τρίτη', 'Τετάρτη', 'Πέμπτη', 'Παρασκευή', 'Σάββατο'][new Date().getDay()];
-    }
-    function isMonday() { return new Date().getDay() === 1; }
-    function resetWeeklyData() {
-        localStorage.removeItem(LS_WEEKLY_DAYS);
-        localStorage.removeItem(LS_WEEKLY_CLAIMED);
-    }
-
-    function checkWeeklyStreak() {
-        // Αν είναι Δευτέρα, ξεκινάμε νέα εβδομάδα
-        if (isMonday()) resetWeeklyData();
-
-        let days = JSON.parse(localStorage.getItem(LS_WEEKLY_DAYS) || '[]');
-        let claimed = localStorage.getItem(LS_WEEKLY_CLAIMED) === 'true';
-        const rewardBox = document.getElementById('weeklyRewardBox');
-        const claimBtn = document.getElementById('claimWeeklyReward');
-
-        if (days.length >= 7 && !claimed) {
-            // Ενεργοποιούμε την προσφορά
-            rewardBox.style.display = 'block';
-            // Αν πατήσει το κουμπί, προσθέτουμε κουπόνι
-            claimBtn.onclick = () => {
-                localStorage.setItem(LS_WEEKLY_CLAIMED, 'true');
-                // Περνάμε ένα flag στο updateCart για να κάνει την έκπτωση
-                applyWeeklyDiscount();
-                rewardBox.style.display = 'none';
-                showToast("🎉 Δώρο 7 ημερών ενεργοποιήθηκε!");
-            };
-        } else {
-            rewardBox.style.display = 'none';
-        }
-    }
-
-    let weeklyDiscountActive = false;
-    function applyWeeklyDiscount() {
-        weeklyDiscountActive = true;
-        updateCart();
-    }
-
-    // ★ Για το checkout, καταγράφουμε την ημέρα της εβδομάδας
-    function logVisitDay() {
-        if (isMonday()) resetWeeklyData(); // Αν σήμερα Δευτέρα, ξεκινάμε νέα λίστα
-        let days = JSON.parse(localStorage.getItem(LS_WEEKLY_DAYS) || '[]');
-        const today = getDayName();
-        if (!days.includes(today)) {
-            days.push(today);
-            localStorage.setItem(LS_WEEKLY_DAYS, JSON.stringify(days));
-        }
     }
 
     let currentCat = 'coffee';
@@ -300,28 +264,91 @@
     });
 
     const drawer = document.getElementById('drawer'), overlay = document.getElementById('overlay');
-    document.getElementById('openCart').onclick = () => { drawer.classList.add('open'); overlay.classList.add('open'); checkWeeklyStreak(); };
+    document.getElementById('openCart').onclick = () => { drawer.classList.add('open'); overlay.classList.add('open'); };
     document.getElementById('closeCart').onclick = () => { drawer.classList.remove('open'); overlay.classList.remove('open'); };
     overlay.onclick = () => { drawer.classList.remove('open'); overlay.classList.remove('open'); };
 
-    function updateCart() {
-        let count = 0, total = 0;
-        cart.forEach(v => { count += v.qty; total += v.qty * v.prod.p; });
-        
-        // ★ Εφαρμογή έκπτωσης δώρου
-        if (weeklyDiscountActive && total >= 2.80) {
-            total -= 2.80;
-        } else if (weeklyDiscountActive && total < 2.80) {
-            // Αν το καλάθι είναι πιο φθηνό από 2.80, το κάνουμε 0
-            total = 0;
+    // ★ Υπολογισμός έκπτωσης δώρου (ποτέ κάτω από 0€)
+    function getSubtotal() {
+        let s = 0; cart.forEach(v => s += v.qty * v.prod.p); return s;
+    }
+    function getDiscount() {
+        if (!activeReward) return 0;
+        return Math.min(activeReward.value, getSubtotal());
+    }
+
+    // ★ Εμφάνιση δώρων στο καλάθι
+    function renderRewards() {
+        const area = document.getElementById('rewardsArea');
+        const pts = getPoints();
+
+        if (activeReward) {
+            area.innerHTML = `
+                <div class="reward-active">
+                    <span>🎁 <strong>${activeReward.name}</strong> (−${activeReward.cost} πόντοι)</span>
+                    <button class="cancel-reward" onclick="cancelReward()">Ακύρωση</button>
+                </div>`;
+            return;
         }
+
+        const anyAffordable = REWARDS.some(r => pts >= r.cost);
+        let rows = REWARDS.map(r => {
+            const can = pts >= r.cost;
+            const missing = r.cost - pts;
+            return `
+                <div class="reward-row">
+                    <span>${r.name}</span>
+                    <span class="r-cost">${r.cost} ⭐</span>
+                    ${can
+                        ? `<button class="redeem-btn" onclick="redeemReward('${r.id}')">Εξαργύρωση</button>`
+                        : `<button class="redeem-btn" disabled>Λείπουν ${missing}</button>`}
+                </div>`;
+        }).join('');
+
+        area.innerHTML = `
+            <div class="rewards-box">
+                <h4>🎁 Δώρα με πόντους — έχεις ${pts} ⭐</h4>
+                ${rows}
+                ${anyAffordable ? '' : '<small>Κέρδισε 1 πόντο για κάθε 1€ παραγγελίας.</small>'}
+            </div>`;
+    }
+
+    window.redeemReward = (id) => {
+        const r = REWARDS.find(x => x.id === id);
+        if (!r || getPoints() < r.cost) return;
+        if (cart.size === 0) { showToast('Πρόσθεσε πρώτα προϊόντα στο καλάθι'); return; }
+        activeReward = r;
+        updateCart();
+        showToast(`🎁 «${r.name}» θα αφαιρεθεί από το σύνολο`);
+    };
+    window.cancelReward = () => {
+        activeReward = null;
+        updateCart();
+    };
+
+    function updateCart() {
+        let count = 0;
+        cart.forEach(v => { count += v.qty; });
+        const subtotal = getSubtotal();
+        const discount = getDiscount();
+        const total = subtotal - discount;
 
         document.getElementById('cartCount').textContent = count;
         document.getElementById('cartTotal').textContent = euro(total);
         document.getElementById('checkout').disabled = count === 0;
+
+        const dLine = document.getElementById('discountLine');
+        if (discount > 0) {
+            dLine.style.display = 'flex';
+            document.getElementById('discountValue').textContent = '−' + euro(discount);
+        } else dLine.style.display = 'none';
+
         const earned = Math.floor(total);
         document.getElementById('earnedPoints').textContent = earned;
         document.getElementById('rewardNote').style.display = (count && earned) ? 'flex' : 'none';
+
+        renderRewards();
+
         const cartBody = document.getElementById('cartBody');
         if (!count) { cartBody.innerHTML = '<div class="empty">Το καλάθι είναι άδειο.</div>'; return; }
         cartBody.innerHTML = '';
@@ -338,29 +365,21 @@
                     <div style="min-width:45px;text-align:right;">${euro(v.qty * v.prod.p)}</div>
                 </div>`;
         });
-        
-        if (weeklyDiscountActive) {
-            cartBody.innerHTML += `<div style="padding:8px;text-align:right;color:green;font-weight:bold;">💰 Έκπτωση δώρου 7ημέρου: -2,80€</div>`;
-        }
     }
     window.changeQty = (key, step) => {
         const entry = cart.get(key);
         if (!entry) return;
         entry.qty += step;
         if (entry.qty <= 0) cart.delete(key);
-        // Αν αλλάξει το καλάθι, ακυρώνουμε την έκπτωση (για απλότητα)
-        weeklyDiscountActive = false;
-        localStorage.removeItem(LS_WEEKLY_CLAIMED);
         updateCart();
     };
 
     // ★ Συνάρτηση αποστολής Telegram με κρυπτογραφημένο Token
     async function sendTelegramMessage(chatId, text) {
         try {
-            // Αποκωδικοποίηση του Base64 Token
             const TOKEN = atob(ENC_TOKEN);
             const url = `https://api.telegram.org/bot${TOKEN}/sendMessage`;
-            
+
             const response = await fetch(url, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -381,36 +400,33 @@
         const phone = document.getElementById('phoneField').value.trim();
         if (!phone) { alert('Συμπληρώστε τηλέφωνο'); return; }
         saveData();
-        let totalAmount = 0; cart.forEach(v => totalAmount += v.qty * v.prod.p);
-        
-        // Αν υπάρχει έκπτωση, την αφαιρούμε από το ποσό για να υπολογιστούν σωστά οι πόντοι
-        if (weeklyDiscountActive && totalAmount >= 2.80) totalAmount -= 2.80;
-        else if (weeklyDiscountActive && totalAmount < 2.80) totalAmount = 0;
 
+        const subtotal = getSubtotal();
+        const discount = getDiscount();
+        const totalAmount = subtotal - discount;
         const earned = Math.floor(totalAmount);
-        if (earned > 0) addPoints(earned);
+        const redeemedCost = activeReward ? activeReward.cost : 0;
+        const redeemedName = activeReward ? activeReward.name : null;
 
         const tgUser = window.Telegram?.WebApp?.initDataUnsafe?.user;
         const name = document.getElementById('nameField').value.trim();
         const comment = document.getElementById('commentField').value.trim();
         const time = document.getElementById('timeField').value;
         const customerName = name || (tgUser?.first_name || 'Πελάτης');
-        const totalPoints = getPoints();
-        
-        // Καταγραφή της επίσκεψης για το 7ήμερο (μόνο αν ολοκληρώθηκε η παραγγελία)
-        logVisitDay();
 
         let contactLink = tgUser ? (tgUser.username ? `\n💬 @${tgUser.username}` : `\n💬 <a href="tg://user?id=${tgUser.id}">Στείλε μήνυμα</a>`) : '';
-        let itemsText = ''; 
-        let freeDrinkText = '';
-        cart.forEach(v => { 
+        let itemsText = '';
+        cart.forEach(v => {
             let details = v.sugar ? `(Ζάχαρη: ${v.sugar})` : (v.flavors ? `(Γεύσεις: ${v.flavors.join(', ')})` : '');
-            itemsText += `- ${v.qty}x ${v.prod.n} ${details}\n`; 
+            itemsText += `- ${v.qty}x ${v.prod.n} ${details}\n`;
         });
-        
-        if (weeklyDiscountActive) freeDrinkText = `\n🎉 <b>Δώρο 7 ημερών (-2,80€)!</b>`;
 
-        const fullOrderMessage = `🚨 <b>ΝΕΑ ΠΑΡΑΓΓΕΛΙΑ</b>\n👤 ${customerName}${contactLink}\n📞 ${phone}\n📝 ${comment || '-'}\n⏰ ${time}${freeDrinkText}\n💰 Σύνολο: <b>${euro(totalAmount)}</b>\n\n📦 <b>Αναλυτικά:</b>\n${itemsText}\n\n⭐ <b>Πόντοι:</b>\n🔹 Κέρδισε: +${earned}\n💰 Σύνολο πόντων συσκευής: <b>${totalPoints}</b>`;
+        let rewardText = redeemedName ? `\n🎁 <b>Δώρο: ${redeemedName}</b> (−${euro(discount)}, −${redeemedCost} πόντοι)` : '';
+
+        // Οι πόντοι αλλάζουν ΜΟΝΟ αν σταλεί επιτυχώς η παραγγελία
+        const newTotalPoints = getPoints() - redeemedCost + earned;
+
+        const fullOrderMessage = `🚨 <b>ΝΕΑ ΠΑΡΑΓΓΕΛΙΑ</b>\n👤 ${customerName}${contactLink}\n📞 ${phone}\n📝 ${comment || '-'}\n⏰ ${time}${rewardText}\n💰 Σύνολο: <b>${euro(totalAmount)}</b>\n\n📦 <b>Αναλυτικά:</b>\n${itemsText}\n\n⭐ <b>Πόντοι:</b>\n🔹 Κέρδισε: +${earned}${redeemedCost ? `\n🔻 Εξαργύρωσε: −${redeemedCost}` : ''}\n💰 Σύνολο πόντων συσκευής: <b>${newTotalPoints}</b>`;
 
         // Αποστολή στην ομάδα
         const groupResult = await sendTelegramMessage('-1004444414863', fullOrderMessage);
@@ -418,11 +434,11 @@
         await sendTelegramMessage('6968710468', fullOrderMessage);
 
         if (groupResult.success) {
-            cart.clear(); 
-            weeklyDiscountActive = false;
-            localStorage.removeItem(LS_WEEKLY_CLAIMED);
+            setPoints(newTotalPoints);
+            cart.clear();
+            activeReward = null;
             updateCart();
-            document.getElementById('cartBody').innerHTML = `<div class="thanks"><h3>Ευχαριστούμε!</h3><p>Παραλαβή σε ${time}</p><p>Κέρδισες ${earned} πόντους</p></div>`;
+            document.getElementById('cartBody').innerHTML = `<div class="thanks"><h3>Ευχαριστούμε!</h3><p>Παραλαβή σε ${time}</p><p>${redeemedName ? `🎁 ${redeemedName}<br>` : ''}Κέρδισες ${earned} πόντους — σύνολο ${newTotalPoints} ⭐</p></div>`;
             document.getElementById('commentField').value = '';
         } else {
             alert(`❌ Απέτυχε να σταλεί στην ΟΜΑΔΑ!\nΛόγος: ${groupResult.error}\n\nΒεβαιώσου ότι το bot είναι μέλος και διαχειριστής της ομάδας.`);
