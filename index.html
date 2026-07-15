@@ -30,7 +30,6 @@
             flex-direction: column;
         }
         h1,h2,h3 { font-family: 'Literata', serif; }
-
         .awning {
             height: 14px;
             background: repeating-linear-gradient(90deg, var(--mocha) 0 32px, var(--paper) 32px 64px);
@@ -47,17 +46,14 @@
         .points-badge { background: var(--accent); color: var(--ink); padding: 5px 10px; border-radius: 999px; font-weight: 700; font-size: 0.8rem; display: flex; align-items: center; gap: 4px; }
         .points-badge span { background: var(--mocha-dark); color: #fff; border-radius: 999px; padding: 1px 6px; font-size: 0.7rem; }
         .cart-btn { background: var(--mocha); color: #fff; border: none; cursor: pointer; padding: 7px 14px; border-radius: 999px; font-weight: 600; font-size: 0.85rem; }
-
         .hero { max-width: 1100px; margin: 0 auto; padding: 18px 16px 6px; }
         .hero h1 { font-size: clamp(1.5rem, 3.5vw, 2rem); font-weight: 900; }
         .hero .stroll { color: var(--mocha); font-style: italic; }
         .hero p { font-size: 0.85rem; color: #4d4336; margin-top: 4px; }
-
         .cats { position: sticky; top: 52px; z-index: 40; background: var(--paper); border-bottom: 1px solid var(--line); padding: 6px 0; }
         .cats-inner { max-width: 1100px; margin: 0 auto; padding: 0 16px; display: flex; gap: 6px; overflow-x: auto; }
         .chip { border: 1.5px solid var(--mocha); background: transparent; color: var(--mocha); padding: 5px 12px; border-radius: 999px; font-weight: 600; font-size: 0.8rem; cursor: pointer; white-space: nowrap; }
         .chip.active { background: var(--mocha); color: #fff; }
-
         main { max-width: 1100px; margin: 0 auto; padding: 16px; flex: 1; }
         .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 10px; }
         .product { background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 12px; display: flex; flex-direction: column; gap: 6px; }
@@ -67,21 +63,6 @@
         .p-foot { display: flex; align-items: center; justify-content: space-between; margin-top: 4px; }
         .p-price { font-weight: 700; color: var(--mocha); }
         .add { border: 1.5px solid var(--mocha); background: transparent; color: var(--mocha); border-radius: 999px; padding: 4px 10px; cursor: pointer; font-weight: 600; font-size: 0.75rem; }
-
-        /* Admin Panel */
-        .admin-panel {
-            position: fixed; bottom: 20px; right: 20px; width: 320px; max-height: 400px;
-            background: var(--mocha-dark); color: #fff; border-radius: 12px; padding: 16px;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.3); z-index: 100; overflow-y: auto;
-            display: none; /* κρυφό για όλους */
-        }
-        .admin-panel.visible { display: block; }
-        .admin-panel h3 { color: var(--latte); margin-bottom: 10px; }
-        .admin-panel table { width: 100%; font-size: 0.75rem; border-collapse: collapse; }
-        .admin-panel th, .admin-panel td { padding: 4px 6px; border-bottom: 1px solid #5a4a3a; text-align: left; }
-        .admin-close { background: none; border: none; color: #ccc; float: right; cursor: pointer; font-size: 1.2rem; }
-
-        /* Καλάθι κλπ. (πανομοιότυπο με πριν, συμπτύσσω για χώρο) */
         .overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.4); opacity: 0; pointer-events: none; z-index: 60; }
         .overlay.open { opacity: 1; pointer-events: auto; }
         .drawer { position: fixed; top: 0; right: 0; bottom: 0; width: min(360px, 100%); background: #fff; z-index: 70; display: flex; flex-direction: column; transform: translateX(100%); transition: .25s; box-shadow: -4px 0 15px rgba(0,0,0,0.1); }
@@ -113,7 +94,7 @@
 
 <section class="hero">
     <h1>Ο τέλειος καφές, <span class="stroll">έτοιμος πριν φτάσεις.</span></h1>
-    <p>Παράγγειλε online, κέρδισε πόντους (1 πόντος ανά 1€) και παρέλαβε χωρίς αναμονή.</p>
+    <p>Παράγγειλε online, κέρδισε 1 πόντο ανά 1€ και παρέλαβε χωρίς αναμονή.</p>
 </section>
 
 <nav class="cats">
@@ -130,14 +111,6 @@
     <p>📞 <a href="tel:2431052032">2431052032</a> | ⏰ 06:00 – 23:00</p>
 </footer>
 
-<!-- Admin Panel (κρυφό) -->
-<div class="admin-panel" id="adminPanel">
-    <button class="admin-close" id="adminClose">&times;</button>
-    <h3>📊 Πόντοι Πελατών</h3>
-    <table><thead><tr><th>Όνομα</th><th>Username</th><th>Πόντοι</th></tr></thead><tbody id="adminBody"></tbody></table>
-</div>
-
-<!-- Καλάθι drawer -->
 <div class="overlay" id="overlay"></div>
 <aside class="drawer" id="drawer">
     <div class="drawer-head"><h2>Το καλάθι σου</h2><button id="closeCart">&times;</button></div>
@@ -162,11 +135,6 @@
 <div class="toast" id="toast"></div>
 
 <script>
-    // Ρυθμίσεις
-    const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/ΕΔΩ_ΤΟ_URL/exec'; // <-- ΒΑΛΕ ΤΟ ΔΙΚΟ ΣΟΥ
-    const ADMIN_USER_ID = 123456789; // <-- ΤΟ ΔΙΚΟ ΣΟΥ TELEGRAM USER ID
-
-    // Προϊόντα (ίδια με πριν)
     const PRODUCTS = [
         { id: 'espresso', n: "Espresso", p: 1.50, cat: 'coffee', sugar: true },
         { id: 'espresso2', n: "Espresso Διπλός", p: 2.00, cat: 'coffee', sugar: true },
@@ -191,7 +159,6 @@
     const euro = v => v.toFixed(2).replace('.', ',') + ' €';
     const cart = new Map();
 
-    // Local Storage
     const LS_NAME = 'kv_name', LS_PHONE = 'kv_phone', LS_POINTS = 'kv_points';
     function loadData() {
         document.getElementById('nameField').value = localStorage.getItem(LS_NAME) || '';
@@ -212,7 +179,6 @@
         document.getElementById('pointsDisplay').style.display = pts > 0 ? 'flex' : 'none';
     }
 
-    // Κατηγορίες
     let currentCat = 'coffee';
     document.getElementById('categoryNav').addEventListener('click', e => {
         const chip = e.target.closest('.chip');
@@ -240,7 +206,6 @@
         });
     }
 
-    // Προσθήκη στο καλάθι (ίδιο)
     grid.addEventListener('click', e => {
         const btn = e.target.closest('.add');
         if (!btn) return;
@@ -248,7 +213,6 @@
         const prodName = card.querySelector('.p-name').textContent;
         const prod = PRODUCTS.find(p => p.n === prodName);
         if (!prod) return;
-
         if (prod.cat === 'icecream') {
             const f1 = card.querySelector('.flv1').value;
             const f2 = card.querySelector('.flv2').value;
@@ -263,12 +227,10 @@
         }
         updateCart();
         showToast(`«${prod.n}» προστέθηκε`);
-        btn.classList.add('added');
-        btn.textContent = '✓';
+        btn.classList.add('added'); btn.textContent = '✓';
         setTimeout(() => { btn.classList.remove('added'); btn.textContent = '+'; }, 800);
     });
 
-    // Καλάθι drawer (συμπτύσσω)
     const drawer = document.getElementById('drawer'), overlay = document.getElementById('overlay');
     document.getElementById('openCart').onclick = () => { drawer.classList.add('open'); overlay.classList.add('open'); };
     document.getElementById('closeCart').onclick = () => { drawer.classList.remove('open'); overlay.classList.remove('open'); };
@@ -283,14 +245,13 @@
         const earned = Math.floor(total);
         document.getElementById('earnedPoints').textContent = earned;
         document.getElementById('rewardNote').style.display = (count && earned) ? 'flex' : 'none';
-
         const cartBody = document.getElementById('cartBody');
         if (!count) { cartBody.innerHTML = '<div class="empty">Το καλάθι είναι άδειο.</div>'; return; }
         cartBody.innerHTML = '';
         cart.forEach((v, key) => {
             let desc = v.sugar ? `Ζάχαρη: ${v.sugar}` : (v.flavors ? `Γεύσεις: ${v.flavors.join(', ')}` : '');
             cartBody.innerHTML += `
-                <div class="cart-item" style="display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px dashed #ddd;">
+                <div style="display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px dashed #ddd;">
                     <div style="flex:1"><strong>${v.prod.n}</strong>${desc ? `<br><small>${desc}</small>` : ''}</div>
                     <div style="display:flex;align-items:center;gap:4px;">
                         <button onclick="changeQty('${key}', -1)">−</button>
@@ -309,7 +270,6 @@
         updateCart();
     };
 
-    // Checkout
     document.getElementById('checkout').onclick = () => {
         const phone = document.getElementById('phoneField').value.trim();
         if (!phone) { alert('Συμπληρώστε τηλέφωνο'); return; }
@@ -318,81 +278,38 @@
         const earned = Math.floor(totalAmount);
         if (earned > 0) addPoints(earned);
 
-        // Αποστολή στο Google Sheets για κεντρική αποθήκευση
         const tgUser = window.Telegram?.WebApp?.initDataUnsafe?.user;
-        if (tgUser) {
-            fetch(GOOGLE_SCRIPT_URL, {
-                method: 'POST',
-                body: JSON.stringify({
-                    userId: tgUser.id,
-                    firstName: tgUser.first_name,
-                    lastName: tgUser.last_name || '',
-                    username: tgUser.username || '',
-                    points: earned
-                })
-            }).catch(() => {});
-        }
-
-        // Μήνυμα Telegram (ίδιο)
         const name = document.getElementById('nameField').value.trim();
         const comment = document.getElementById('commentField').value.trim();
         const time = document.getElementById('timeField').value;
-        let customerName = name || (tgUser?.first_name || 'Πελάτης');
+        const customerName = name || (tgUser?.first_name || 'Πελάτης');
+        const totalPoints = getPoints();
+
         let contactLink = tgUser ? (tgUser.username ? `\n💬 @${tgUser.username}` : `\n💬 <a href="tg://user?id=${tgUser.id}">Στείλε μήνυμα</a>`) : '';
         let itemsText = ''; cart.forEach(v => { itemsText += `- ${v.qty}x ${v.prod.n}\n`; });
-        const orderText = `🚨 <b>ΝΕΑ ΠΑΡΑΓΓΕΛΙΑ</b>\n👤 ${customerName}${contactLink}\n📞 ${phone}\n📝 ${comment || '-'}\n⏰ ${time}\n💰 Σύνολο: <b>${euro(totalAmount)}</b>\n⭐ Πόντοι: +${earned}`;
 
+        // Μήνυμα παραγγελίας προς την ομάδα
+        const orderText = `🚨 <b>ΝΕΑ ΠΑΡΑΓΓΕΛΙΑ</b>\n👤 ${customerName}${contactLink}\n📞 ${phone}\n📝 ${comment || '-'}\n⏰ ${time}\n💰 Σύνολο: <b>${euro(totalAmount)}</b>`;
+        
         fetch('https://api.telegram.org/bot8991103662:AAEkcD1qR10eG4lG3T3Hy_YU-9Sz8EiqKF4/sendMessage', {
             method: 'POST', headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ chat_id: '6968710468', text: orderText, parse_mode: 'HTML' })
+            body: JSON.stringify({ chat_id: '-5086360073', text: orderText, parse_mode: 'HTML' })
         });
+
+        // Προσωπικό μήνυμα μόνο σε εσένα με τους πόντους
+        if (tgUser && earned > 0) {
+            const pointsMsg = `⭐ <b>Πόντοι πελάτη</b>\n👤 ${customerName} (ID: ${tgUser.id})\n📱 Τηλ: ${phone}\n🔹 Κέρδισε: +${earned} πόντοι\n💰 Σύνολο πόντων στη συσκευή του: ${totalPoints}\n📅 ${new Date().toLocaleString('el-GR')}`;
+            
+            fetch('https://api.telegram.org/bot8991103662:AAEkcD1qR10eG4lG3T3Hy_YU-9Sz8EiqKF4/sendMessage', {
+                method: 'POST', headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ chat_id: '6968710468', text: pointsMsg, parse_mode: 'HTML' })
+            });
+        }
 
         cart.clear(); updateCart();
         document.getElementById('cartBody').innerHTML = `<div class="thanks"><h3>Ευχαριστούμε!</h3><p>Παραλαβή σε ${time}</p><p>Κέρδισες ${earned} πόντους</p></div>`;
         document.getElementById('commentField').value = '';
     };
-
-    // Admin Panel
-    const adminPanel = document.getElementById('adminPanel');
-    const adminBody = document.getElementById('adminBody');
-
-    function checkAdmin() {
-        const user = window.Telegram?.WebApp?.initDataUnsafe?.user;
-        if (user && user.id === ADMIN_USER_ID) {
-            adminPanel.classList.add('visible');
-            loadAdminData();
-        }
-    }
-
-    async function loadAdminData() {
-        try {
-            const res = await fetch(GOOGLE_SCRIPT_URL);
-            const data = await res.json(); // όλες οι γραμμές του Sheet
-            // data[0] είναι headers, αγνοούμε
-            const rows = data.slice(1);
-            // Ομαδοποίηση ανά userId και άθροισμα πόντων
-            const map = new Map();
-            rows.forEach(row => {
-                const userId = row[1];
-                const firstName = row[2] || '';
-                const username = row[4] || '';
-                const points = parseInt(row[5]) || 0;
-                const key = userId;
-                if (!map.has(key)) {
-                    map.set(key, { firstName, username, points: 0 });
-                }
-                map.get(key).points += points;
-            });
-            adminBody.innerHTML = '';
-            map.forEach((v, k) => {
-                adminBody.innerHTML += `<tr><td>${v.firstName}</td><td>${v.username}</td><td>${v.points}</td></tr>`;
-            });
-        } catch (e) {
-            adminBody.innerHTML = '<tr><td colspan="3">Σφάλμα φόρτωσης</td></tr>';
-        }
-    }
-
-    document.getElementById('adminClose').onclick = () => adminPanel.classList.remove('visible');
 
     function showToast(msg) {
         const t = document.getElementById('toast');
@@ -400,12 +317,10 @@
         setTimeout(() => t.classList.remove('show'), 1500);
     }
 
-    // Εκκίνηση
     loadData();
     renderProducts();
     updateCart();
     updatePointsDisplay();
-    checkAdmin(); // έλεγχος αν είσαι εσύ
 </script>
 </body>
 </html>
