@@ -50,6 +50,12 @@
         .hero h1 { font-size: clamp(1.5rem, 3.5vw, 2rem); font-weight: 900; }
         .hero .stroll { color: var(--mocha); font-style: italic; }
         .hero p { font-size: 0.85rem; color: #4d4336; margin-top: 4px; }
+        /* ★ Μπάρα προσφορών */
+        .offers { max-width: 1100px; margin: 0 auto; padding: 10px 16px 4px; }
+        .offers-inner { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 4px; }
+        .offer-card { flex: 1; min-width: 110px; background: var(--soft); border: 1px solid var(--line); border-radius: 10px; padding: 10px; text-align: center; }
+        .offer-card .o-big { font-family: 'Literata', serif; font-weight: 900; color: var(--mocha); font-size: 1rem; white-space: nowrap; }
+        .offer-card .o-small { font-size: 0.7rem; color: #4d4336; margin-top: 2px; }
         .cats { position: sticky; top: 52px; z-index: 40; background: var(--paper); border-bottom: 1px solid var(--line); padding: 6px 0; }
         .cats-inner { max-width: 1100px; margin: 0 auto; padding: 0 16px; display: flex; gap: 6px; overflow-x: auto; }
         .chip { border: 1.5px solid var(--mocha); background: transparent; color: var(--mocha); padding: 5px 12px; border-radius: 999px; font-weight: 600; font-size: 0.8rem; cursor: pointer; white-space: nowrap; }
@@ -106,7 +112,25 @@
 
 <section class="hero">
     <h1>Ο τέλειος καφές, <span class="stroll">έτοιμος πριν φτάσεις.</span></h1>
-    <p>Παράγγειλε online, κέρδισε 1 πόντο ανά 1€ και εξαργύρωσε δώρα: 15 πόντοι = παγωτό, 25 πόντοι = ρόφημα.</p>
+    <p>Παράγγειλε online και παρέλαβε χωρίς αναμονή.</p>
+</section>
+
+<!-- ★ Μπάρα προσφορών -->
+<section class="offers">
+    <div class="offers-inner">
+        <div class="offer-card">
+            <div class="o-big">1€ = 1 ⭐</div>
+            <div class="o-small">Κάθε παραγγελία μαζεύει πόντους</div>
+        </div>
+        <div class="offer-card">
+            <div class="o-big">15 ⭐ = 🍦</div>
+            <div class="o-small">Δωρεάν παγωτό 2 μπάλες</div>
+        </div>
+        <div class="offer-card">
+            <div class="o-big">25 ⭐ = ☕</div>
+            <div class="o-small">Δωρεάν ρόφημα έως 2,80€</div>
+        </div>
+    </div>
 </section>
 
 <nav class="cats">
@@ -184,9 +208,6 @@
 
     const euro = v => v.toFixed(2).replace('.', ',') + ' €';
     const cart = new Map();
-
-    // ★ Κρυπτογραφημένο Token σε Base64
-    const ENC_TOKEN = "ODk5MTEwMzY2MjpBQUVrY0QxcVIxMGVHNGxHM1QzSHlfWVUtOVN6OEVpcUtGNA==";
 
     const LS_NAME = 'kv_name', LS_PHONE = 'kv_phone', LS_POINTS = 'kv_points';
 
@@ -374,21 +395,20 @@
         updateCart();
     };
 
-    // ★ Συνάρτηση αποστολής Telegram με κρυπτογραφημένο Token
-    async function sendTelegramMessage(chatId, text) {
-        try {
-            const TOKEN = atob(ENC_TOKEN);
-            const url = `https://api.telegram.org/bot${TOKEN}/sendMessage`;
+    // ★ Αποστολή παραγγελίας μέσω Cloudflare Worker (το token μένει κρυφό στον server)
+    // Βάλε εδώ τη διεύθυνση του Worker σου, π.χ. https://kafe-volta.xxxx.workers.dev
+    const WORKER_URL = "https://ΒΑΛΕ-ΕΔΩ-ΤΟ-WORKER-URL.workers.dev";
 
-            const response = await fetch(url, {
+    async function sendOrder(text) {
+        try {
+            const response = await fetch(WORKER_URL, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ chat_id: chatId, text: text, parse_mode: 'HTML' })
+                body: JSON.stringify({ text })
             });
-
-            if (!response.ok) {
-                const errorData = await response.json();
-                return { success: false, error: errorData.description };
+            const data = await response.json().catch(() => ({}));
+            if (!response.ok || !data.success) {
+                return { success: false, error: data.error || 'Σφάλμα server' };
             }
             return { success: true };
         } catch (error) {
@@ -428,10 +448,8 @@
 
         const fullOrderMessage = `🚨 <b>ΝΕΑ ΠΑΡΑΓΓΕΛΙΑ</b>\n👤 ${customerName}${contactLink}\n📞 ${phone}\n📝 ${comment || '-'}\n⏰ ${time}${rewardText}\n💰 Σύνολο: <b>${euro(totalAmount)}</b>\n\n📦 <b>Αναλυτικά:</b>\n${itemsText}\n\n⭐ <b>Πόντοι:</b>\n🔹 Κέρδισε: +${earned}${redeemedCost ? `\n🔻 Εξαργύρωσε: −${redeemedCost}` : ''}\n💰 Σύνολο πόντων συσκευής: <b>${newTotalPoints}</b>`;
 
-        // Αποστολή στην ομάδα
-        const groupResult = await sendTelegramMessage('-1004444414863', fullOrderMessage);
-        // Αποστολή σε εσένα (δεδομένου ότι έκανες /start στο bot)
-        await sendTelegramMessage('6968710468', fullOrderMessage);
+        // Αποστολή μέσω Worker (στέλνει και στην ομάδα και σε εσένα)
+        const groupResult = await sendOrder(fullOrderMessage);
 
         if (groupResult.success) {
             setPoints(newTotalPoints);
