@@ -1,461 +1,930 @@
 <!DOCTYPE html>
 <html lang="el">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Καφέ Βόλτα — Online Παραγγελίες</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Literata:opsz,wght@7..72,500;7..72,700;7..72,900&family=Commissioner:wght@400;500;600;700&display=swap&subset=greek" rel="stylesheet">
-<!-- Προσθήκη του Telegram Web App SDK -->
-<script src="https://telegram.org/js/telegram-web-app.js"></script>
-<style>
-  :root{
-    --paper:#FBF4E4;
-    --petrol:#0E5148;
-    --petrol-deep:#093B34;
-    --citrus:#F08B33;
-    --ink:#26201A;
-    --card:#FFFDF7;
-    --line:#E4D9BF;
-  }
-  *{margin:0;padding:0;box-sizing:border-box}
-  html{scroll-behavior:smooth}
-  body{
-    font-family:'Commissioner',system-ui,sans-serif;
-    background:var(--paper);
-    color:var(--ink);
-    -webkit-font-smoothing:antialiased;
-  }
-  h1,h2,h3,.display{font-family:'Literata',Georgia,serif}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Καφέ Βόλτα — Online Παραγγελίες</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Literata:opsz,wght@7..72,500;7..72,700;7..72,900&family=Commissioner:wght@400;500;600;700&display=swap&subset=greek" rel="stylesheet">
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        :root {
+            --paper: #FDF8F0;
+            --mocha: #5C3A21;
+            --mocha-dark: #3E2723;
+            --latte: #D4A373;
+            --ink: #2C1810;
+            --card: #FFFFFF;
+            --line: #E6D5C3;
+            --accent-gold: #C7956D;
+            --soft-bg: #FBF4E4;
+        }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        html {
+            scroll-behavior: smooth;
+        }
+        body {
+            font-family: 'Commissioner', system-ui, sans-serif;
+            background: var(--paper);
+            color: var(--ink);
+            -webkit-font-smoothing: antialiased;
+            line-height: 1.5;
+        }
+        h1, h2, h3, .display {
+            font-family: 'Literata', Georgia, serif;
+        }
 
-  /* ---------- Τέντα περιπτέρου ---------- */
-  .awning{
-    height:26px;
-    background:repeating-linear-gradient(90deg,
-      var(--petrol) 0 48px,
-      var(--paper) 48px 96px);
-    position:relative;
-  }
-  .awning::after{
-    content:"";
-    position:absolute;left:0;right:0;top:100%;height:14px;
-    background:
-      radial-gradient(circle at 24px -2px, var(--petrol) 13px, transparent 14px) 0 0/96px 14px repeat-x,
-      radial-gradient(circle at 24px -2px, var(--paper) 13px, transparent 14px) 48px 0/96px 14px repeat-x;
-  }
+        /* ---------- Τέντα περιπτέρου ---------- */
+        .awning {
+            height: 26px;
+            background: repeating-linear-gradient(90deg,
+                    var(--mocha) 0 48px,
+                    var(--paper) 48px 96px);
+            position: relative;
+        }
+        .awning::after {
+            content: "";
+            position: absolute;
+            left: 0;
+            right: 0;
+            top: 100%;
+            height: 14px;
+            background:
+                radial-gradient(circle at 24px -2px, var(--mocha) 13px, transparent 14px) 0 0/96px 14px repeat-x,
+                radial-gradient(circle at 24px -2px, var(--paper) 13px, transparent 14px) 48px 0/96px 14px repeat-x;
+        }
 
-  /* ---------- Header ---------- */
-  header{
-    position:sticky;top:0;z-index:50;
-    background:var(--paper);
-    border-bottom:1px solid var(--line);
-  }
-  .bar{
-    max-width:1120px;margin:0 auto;
-    display:flex;align-items:center;justify-content:space-between;
-    padding:14px 20px;gap:16px;
-  }
-  .logo{display:flex;align-items:baseline;gap:10px;text-decoration:none;color:var(--ink)}
-  .logo .name{font-family:'Literata',serif;font-weight:900;font-size:1.45rem;letter-spacing:.01em}
-  .logo .name em{font-style:italic;color:var(--petrol)}
-  .logo .tag{font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;color:#8a7a5e}
-  .cart-btn{
-    display:flex;align-items:center;gap:10px;
-    background:var(--petrol);color:#fff;border:none;cursor:pointer;
-    padding:10px 18px;border-radius:999px;
-    font:600 .92rem 'Commissioner',sans-serif;
-    transition:transform .15s ease, background .15s ease;
-  }
-  .cart-btn:hover{background:var(--petrol-deep);transform:translateY(-1px)}
-  .cart-count{
-    background:var(--citrus);color:var(--ink);
-    min-width:22px;height:22px;border-radius:999px;
-    display:grid;place-items:center;font-weight:700;font-size:.8rem;padding:0 6px;
-  }
+        /* ---------- Header ---------- */
+        header {
+            position: sticky;
+            top: 0;
+            z-index: 50;
+            background: var(--paper);
+            border-bottom: 1px solid var(--line);
+        }
+        .bar {
+            max-width: 1120px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 14px 20px;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+        .logo {
+            display: flex;
+            align-items: baseline;
+            gap: 10px;
+            text-decoration: none;
+            color: var(--ink);
+        }
+        .logo .name {
+            font-family: 'Literata', serif;
+            font-weight: 900;
+            font-size: 1.45rem;
+            letter-spacing: .01em;
+        }
+        .logo .name em {
+            font-style: italic;
+            color: var(--mocha);
+        }
+        .logo .tag {
+            font-size: .72rem;
+            letter-spacing: .14em;
+            text-transform: uppercase;
+            color: #8a7a5e;
+        }
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .points-badge {
+            background: var(--accent-gold);
+            color: var(--ink);
+            padding: 8px 14px;
+            border-radius: 999px;
+            font-weight: 700;
+            font-size: .85rem;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            white-space: nowrap;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+        }
+        .points-badge span {
+            background: var(--mocha-dark);
+            color: #fff;
+            border-radius: 999px;
+            padding: 2px 8px;
+            font-size: .8rem;
+        }
+        .cart-btn {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: var(--mocha);
+            color: #fff;
+            border: none;
+            cursor: pointer;
+            padding: 10px 18px;
+            border-radius: 999px;
+            font: 600 .92rem 'Commissioner', sans-serif;
+            transition: transform .15s ease, background .15s ease;
+            white-space: nowrap;
+        }
+        .cart-btn:hover {
+            background: var(--mocha-dark);
+            transform: translateY(-1px);
+        }
+        .cart-count {
+            background: var(--latte);
+            color: var(--ink);
+            min-width: 22px;
+            height: 22px;
+            border-radius: 999px;
+            display: grid;
+            place-items: center;
+            font-weight: 700;
+            font-size: .8rem;
+            padding: 0 6px;
+        }
 
-  /* ---------- Hero ---------- */
-  .hero{
-    max-width:1120px;margin:0 auto;
-    padding:56px 20px 40px;
-    display:grid;grid-template-columns:1.25fr .75fr;gap:40px;align-items:center;
-  }
-  .hero h1{
-    font-size:clamp(2.4rem,5.4vw,4.1rem);
-    font-weight:900;line-height:1.05;letter-spacing:-.01em;
-  }
-  .hero h1 .stroll{
-    display:inline-block;color:var(--petrol);font-style:italic;
-  }
-  .hero p{
-    margin-top:16px;max-width:46ch;font-size:1.05rem;line-height:1.6;color:#4d4336;
-  }
-  .hero-hours{
-    background:var(--petrol);color:var(--paper);border-radius:18px;
-    padding:26px 26px 22px;position:relative;overflow:hidden;
-  }
-  .hero-hours::before{
-    content:"";position:absolute;inset:0 0 auto 0;height:10px;
-    background:repeating-linear-gradient(90deg,var(--citrus) 0 22px,transparent 22px 44px);
-    opacity:.9;
-  }
-  .hero-hours h3{font-size:1.05rem;font-weight:700;margin-bottom:12px;margin-top:6px}
-  .hero-hours dl{display:grid;grid-template-columns:auto 1fr;gap:6px 16px;font-size:.92rem}
-  .hero-hours dt{color:#bcd9d0}
-  .hero-hours dd{text-align:right;font-variant-numeric:tabular-nums}
-  .hero-hours .note{margin-top:14px;font-size:.82rem;color:#bcd9d0}
+        /* ---------- Hero ---------- */
+        .hero {
+            max-width: 1120px;
+            margin: 0 auto;
+            padding: 56px 20px 40px;
+            display: grid;
+            grid-template-columns: 1.25fr .75fr;
+            gap: 40px;
+            align-items: center;
+        }
+        .hero h1 {
+            font-size: clamp(2.4rem, 5.4vw, 4.1rem);
+            font-weight: 900;
+            line-height: 1.05;
+            letter-spacing: -.01em;
+        }
+        .hero h1 .stroll {
+            display: inline-block;
+            color: var(--mocha);
+            font-style: italic;
+        }
+        .hero p {
+            margin-top: 16px;
+            max-width: 46ch;
+            font-size: 1.05rem;
+            line-height: 1.6;
+            color: #4d4336;
+        }
+        .hero-hours {
+            background: var(--mocha);
+            color: var(--paper);
+            border-radius: 18px;
+            padding: 26px 26px 22px;
+            position: relative;
+            overflow: hidden;
+        }
+        .hero-hours::before {
+            content: "";
+            position: absolute;
+            inset: 0 0 auto 0;
+            height: 10px;
+            background: repeating-linear-gradient(90deg, var(--latte) 0 22px, transparent 22px 44px);
+            opacity: .9;
+        }
+        .hero-hours h3 {
+            font-size: 1.05rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+            margin-top: 6px;
+        }
+        .hero-hours dl {
+            display: grid;
+            grid-template-columns: auto 1fr;
+            gap: 6px 16px;
+            font-size: .92rem;
+        }
+        .hero-hours dt {
+            color: #d4c4b0;
+        }
+        .hero-hours dd {
+            text-align: right;
+            font-variant-numeric: tabular-nums;
+        }
+        .hero-hours .note {
+            margin-top: 14px;
+            font-size: .82rem;
+            color: #d4c4b0;
+        }
 
-  /* ---------- Κατηγορίες ---------- */
-  .cats{
-    position:sticky;top:63px;z-index:40;
-    background:var(--paper);border-bottom:1px solid var(--line);
-  }
-  .cats-inner{
-    max-width:1120px;margin:0 auto;padding:12px 20px;
-    display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;
-  }
-  .chip{
-    flex:0 0 auto;border:1.5px solid var(--petrol);background:transparent;color:var(--petrol);
-    padding:8px 16px;border-radius:999px;font:600 .88rem 'Commissioner',sans-serif;white-space:nowrap;
-  }
-  .chip.active{background:var(--petrol);color:#fff}
+        /* ---------- Κατηγορίες ---------- */
+        .cats {
+            position: sticky;
+            top: 63px;
+            z-index: 40;
+            background: var(--paper);
+            border-bottom: 1px solid var(--line);
+        }
+        .cats-inner {
+            max-width: 1120px;
+            margin: 0 auto;
+            padding: 12px 20px;
+            display: flex;
+            gap: 8px;
+            overflow-x: auto;
+            scrollbar-width: none;
+        }
+        .chip {
+            flex: 0 0 auto;
+            border: 1.5px solid var(--mocha);
+            background: transparent;
+            color: var(--mocha);
+            padding: 8px 16px;
+            border-radius: 999px;
+            font: 600 .88rem 'Commissioner', sans-serif;
+            white-space: nowrap;
+        }
+        .chip.active {
+            background: var(--mocha);
+            color: #fff;
+        }
 
-  /* ---------- Προϊόντα ---------- */
-  main{max-width:1120px;margin:0 auto;padding:34px 20px 90px}
-  .grid{
-    display:grid;grid-template-columns:repeat(auto-fill,minmax(228px,1fr));gap:16px;
-    margin-top:20px;
-  }
-  .product{
-    background:var(--card);border:1px solid var(--line);border-radius:14px;
-    padding:18px 16px 16px;display:flex;flex-direction:column;gap:10px;
-    transition:transform .15s ease,box-shadow .15s ease;
-  }
-  .product:hover{transform:translateY(-3px);box-shadow:0 8px 20px rgba(38,32,26,.08)}
-  .p-name{font-family:'Literata',serif;font-weight:700;font-size:1.02rem;line-height:1.3;flex:1}
-  .p-foot{display:flex;align-items:center;justify-content:space-between;gap:10px}
-  .p-price{font-weight:700;font-size:1.02rem;color:var(--petrol);}
-  .add{
-    border:1.5px solid var(--petrol);background:transparent;color:var(--petrol);
-    border-radius:999px;padding:7px 14px;cursor:pointer;
-    font:600 .84rem 'Commissioner',sans-serif;
-  }
-  .add:hover{background:var(--petrol);color:#fff}
-  .add.added{background:var(--citrus);border-color:var(--citrus);color:var(--ink)}
+        /* ---------- Προϊόντα ---------- */
+        main {
+            max-width: 1120px;
+            margin: 0 auto;
+            padding: 34px 20px 90px;
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(228px, 1fr));
+            gap: 16px;
+            margin-top: 20px;
+        }
+        .product {
+            background: var(--card);
+            border: 1px solid var(--line);
+            border-radius: 14px;
+            padding: 18px 16px 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            transition: transform .15s ease, box-shadow .15s ease;
+        }
+        .product:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(44, 24, 16, .08);
+        }
+        .p-name {
+            font-family: 'Literata', serif;
+            font-weight: 700;
+            font-size: 1.02rem;
+            line-height: 1.3;
+            flex: 1;
+        }
+        .p-foot {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+        }
+        .p-price {
+            font-weight: 700;
+            font-size: 1.02rem;
+            color: var(--mocha);
+        }
+        .add {
+            border: 1.5px solid var(--mocha);
+            background: transparent;
+            color: var(--mocha);
+            border-radius: 999px;
+            padding: 7px 14px;
+            cursor: pointer;
+            font: 600 .84rem 'Commissioner', sans-serif;
+            transition: all .2s;
+        }
+        .add:hover {
+            background: var(--mocha);
+            color: #fff;
+        }
+        .add.added {
+            background: var(--latte);
+            border-color: var(--latte);
+            color: var(--ink);
+        }
 
-  /* ---------- Καλάθι & Φόρμα ---------- */
-  .overlay{
-    position:fixed;inset:0;background:rgba(38,32,26,.45);
-    opacity:0;pointer-events:none;transition:opacity .2s;z-index:60;
-  }
-  .overlay.open{opacity:1;pointer-events:auto}
-  .drawer{
-    position:fixed;top:0;right:0;bottom:0;width:min(400px,100%);
-    background:var(--card);z-index:70;display:flex;flex-direction:column;
-    transform:translateX(100%);transition:transform .25s ease;
-  }
-  .drawer.open{transform:translateX(0)}
-  .drawer-head{padding:20px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;}
-  .close{background:none;border:none;font-size:1.5rem;cursor:pointer;width:36px;height:36px;}
-  .drawer-body{flex:1;overflow-y:auto;padding:14px 20px}
-  
-  .empty{text-align:center;color:#8a7a5e;padding:60px 10px;line-height:1.6;}
-  .empty .big{font-size:2rem;display:block;margin-bottom:8px}
-  .line{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px dashed var(--line);}
-  .line-info{flex:1;min-width:0}
-  .line-name{font-weight:600;font-size:.92rem}
-  .line-price{font-size:.82rem;color:#8a7a5e;}
-  .qty{display:flex;align-items:center;gap:8px}
-  .qty button{width:28px;height:28px;border-radius:999px;border:1.5px solid var(--petrol);background:none;color:var(--petrol);cursor:pointer;font-weight:700;}
-  .qty span{min-width:20px;text-align:center;font-weight:600;}
-  .line-total{font-weight:700;min-width:56px;text-align:right;}
-  
-  .drawer-foot{border-top:1px solid var(--line);padding:18px 20px 22px;background:var(--paper);}
-  .totals{display:flex;justify-content:space-between;font-size:1.1rem;font-weight:700;margin-bottom:14px}
-  
-  /* Νέα πεδία φόρμας */
-  .form-group { display:flex; flex-direction:column; gap:8px; margin-bottom:16px; }
-  .form-group input, .form-group select {
-    width: 100%; padding: 12px; border-radius: 8px; 
-    border: 1px solid var(--line); font-family: inherit; font-size: .95rem;
-    background: #fff; color: var(--ink);
-  }
-  .form-group input:focus, .form-group select:focus {
-    outline: 2px solid var(--petrol);
-  }
+        /* ---------- Καλάθι & Φόρμα ---------- */
+        .overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(44, 24, 16, .45);
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity .2s;
+            z-index: 60;
+        }
+        .overlay.open {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        .drawer {
+            position: fixed;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            width: min(420px, 100%);
+            background: var(--card);
+            z-index: 70;
+            display: flex;
+            flex-direction: column;
+            transform: translateX(100%);
+            transition: transform .25s ease;
+            box-shadow: -4px 0 20px rgba(0,0,0,0.1);
+        }
+        .drawer.open {
+            transform: translateX(0);
+        }
+        .drawer-head {
+            padding: 20px;
+            border-bottom: 1px solid var(--line);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: var(--soft-bg);
+        }
+        .close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            width: 36px;
+            height: 36px;
+            color: var(--ink);
+        }
+        .drawer-body {
+            flex: 1;
+            overflow-y: auto;
+            padding: 14px 20px;
+        }
+        .empty {
+            text-align: center;
+            color: #8a7a5e;
+            padding: 60px 10px;
+            line-height: 1.6;
+        }
+        .empty .big {
+            font-size: 2rem;
+            display: block;
+            margin-bottom: 8px;
+        }
+        .line {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 0;
+            border-bottom: 1px dashed var(--line);
+        }
+        .line-info {
+            flex: 1;
+            min-width: 0;
+        }
+        .line-name {
+            font-weight: 600;
+            font-size: .92rem;
+        }
+        .line-price {
+            font-size: .82rem;
+            color: #8a7a5e;
+        }
+        .qty {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .qty button {
+            width: 28px;
+            height: 28px;
+            border-radius: 999px;
+            border: 1.5px solid var(--mocha);
+            background: none;
+            color: var(--mocha);
+            cursor: pointer;
+            font-weight: 700;
+        }
+        .qty span {
+            min-width: 20px;
+            text-align: center;
+            font-weight: 600;
+        }
+        .line-total {
+            font-weight: 700;
+            min-width: 56px;
+            text-align: right;
+        }
+        .drawer-foot {
+            border-top: 1px solid var(--line);
+            padding: 18px 20px 22px;
+            background: var(--soft-bg);
+        }
+        .totals {
+            display: flex;
+            justify-content: space-between;
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+        .reward-note {
+            font-size: .8rem;
+            color: var(--mocha);
+            margin-bottom: 14px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .reward-note strong {
+            color: var(--latte);
+            background: var(--mocha-dark);
+            padding: 2px 8px;
+            border-radius: 12px;
+        }
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 16px;
+        }
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid var(--line);
+            font-family: inherit;
+            font-size: .95rem;
+            background: #fff;
+            color: var(--ink);
+            resize: vertical;
+        }
+        .form-group textarea {
+            min-height: 70px;
+            max-height: 120px;
+        }
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: 2px solid var(--mocha);
+        }
+        .checkout {
+            width: 100%;
+            background: var(--mocha);
+            color: #fff;
+            border: none;
+            border-radius: 999px;
+            padding: 14px;
+            font: 700 1rem 'Commissioner', sans-serif;
+            cursor: pointer;
+            transition: background .2s;
+        }
+        .checkout:hover:not(:disabled) {
+            background: var(--mocha-dark);
+        }
+        .checkout:disabled {
+            opacity: .45;
+            cursor: not-allowed;
+        }
+        .thanks {
+            text-align: center;
+            padding: 50px 20px;
+            line-height: 1.7;
+        }
 
-  .checkout{
-    width:100%;background:var(--petrol);color:#fff;border:none;border-radius:999px;
-    padding:14px;font:700 1rem 'Commissioner',sans-serif;cursor:pointer;
-  }
-  .checkout:disabled{opacity:.45;cursor:not-allowed}
-  .thanks{text-align:center;padding:50px 20px;line-height:1.7;}
-  
-  /* ---------- Footer ---------- */
-  footer{background:var(--petrol);color:#cfe3dc; padding:34px 20px;}
-  .foot-inner{max-width:1120px;margin:0 auto; display:flex;flex-wrap:wrap;gap:20px;justify-content:space-between;align-items:center;font-size:.95rem;}
-  .foot-inner .fname{font-family:'Literata',serif;color:#fff;font-weight:700;font-size:1.2rem; margin-bottom:4px;}
-  .foot-details p { margin-bottom: 6px; display:flex; align-items:center; gap:8px; }
+        /* ---------- Footer ---------- */
+        footer {
+            background: var(--mocha-dark);
+            color: #d4c4b0;
+            padding: 34px 20px;
+        }
+        .foot-inner {
+            max-width: 1120px;
+            margin: 0 auto;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: space-between;
+            align-items: center;
+            font-size: .95rem;
+        }
+        .foot-inner .fname {
+            font-family: 'Literata', serif;
+            color: #fff;
+            font-weight: 700;
+            font-size: 1.2rem;
+            margin-bottom: 4px;
+        }
+        .foot-details p {
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
 
-  /* toast */
-  .toast{
-    position:fixed;left:50%;bottom:26px;transform:translate(-50%,80px);
-    background:var(--ink);color:var(--paper);padding:11px 20px;border-radius:999px;
-    font-size:.9rem;font-weight:600;z-index:80;opacity:0;transition:transform .25s ease,opacity .25s ease;
-  }
-  .toast.show{transform:translate(-50%,0);opacity:1}
-</style>
+        /* toast */
+        .toast {
+            position: fixed;
+            left: 50%;
+            bottom: 26px;
+            transform: translate(-50%, 80px);
+            background: var(--ink);
+            color: var(--paper);
+            padding: 11px 20px;
+            border-radius: 999px;
+            font-size: .9rem;
+            font-weight: 600;
+            z-index: 80;
+            opacity: 0;
+            transition: transform .25s ease, opacity .25s ease;
+        }
+        .toast.show {
+            transform: translate(-50%, 0);
+            opacity: 1;
+        }
+
+        @media (max-width: 700px) {
+            .hero {
+                grid-template-columns: 1fr;
+            }
+            .bar {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .header-actions {
+                width: 100%;
+                justify-content: space-between;
+            }
+        }
+    </style>
 </head>
 <body>
 
 <div class="awning" aria-hidden="true"></div>
 
 <header>
-  <div class="bar">
-    <a class="logo" href="#top">
-      <span class="name">Καφέ <em>Βόλτα</em></span>
-      <span class="tag">καφές · take away</span>
-    </a>
-    <button class="cart-btn" id="openCart">
-      🧺 Καλάθι <span class="cart-count" id="cartCount">0</span>
-    </button>
-  </div>
+    <div class="bar">
+        <a class="logo" href="#top">
+            <span class="name">Καφέ <em>Βόλτα</em></span>
+            <span class="tag">καφές · take away</span>
+        </a>
+        <div class="header-actions">
+            <div class="points-badge" id="pointsDisplay" title="Οι πόντοι ανταμοιβής σας">
+                ⭐ Πόντοι <span id="pointsValue">0</span>
+            </div>
+            <button class="cart-btn" id="openCart">
+                🧺 Καλάθι <span class="cart-count" id="cartCount">0</span>
+            </button>
+        </div>
+    </div>
 </header>
 
 <section class="hero" id="top">
-  <div>
-    <h1>Ο τέλειος καφές, έτοιμος πριν φτάσεις.</h1>
-    <p>Παράγγειλε online, διάλεξε την ώρα που σε βολεύει και πέρνα να πάρεις την παραγγελία σου χωρίς καμία αναμονή.</p>
-  </div>
-  <aside class="hero-hours">
-    <h3>Είμαστε ανοιχτά</h3>
-    <dl>
-      <dt>Καθημερινά</dt><dd>06:00 – 23:00</dd>
-    </dl>
-  </aside>
+    <div>
+        <h1>Ο τέλειος καφές,<br>έτοιμος πριν φτάσεις.</h1>
+        <p>Παράγγειλε online, διάλεξε την ώρα που σε βολεύει και πέρνα να πάρεις την παραγγελία σου χωρίς καμία αναμονή. Κέρδισε πόντους με κάθε αγορά!</p>
+    </div>
+    <aside class="hero-hours">
+        <h3>Είμαστε ανοιχτά</h3>
+        <dl>
+            <dt>Καθημερινά</dt><dd>06:00 – 23:00</dd>
+        </dl>
+        <div class="note">📍 Φήκη Τρικάλων<br>📞 2431052032</div>
+    </aside>
 </section>
 
 <nav class="cats">
-  <div class="cats-inner">
-    <div class="chip active">Καφέδες & Ροφήματα</div>
-  </div>
+    <div class="cats-inner">
+        <div class="chip active">Καφέδες & Ροφήματα</div>
+    </div>
 </nav>
 
 <main id="menu">
-  <div class="grid" id="productsGrid"></div>
+    <div class="grid" id="productsGrid"></div>
 </main>
 
 <footer>
-  <div class="foot-inner">
-    <div>
-      <div class="fname">Καφέ Βόλτα</div>
-      <div>Ο καφές της γειτονιάς, τώρα και online.</div>
+    <div class="foot-inner">
+        <div>
+            <div class="fname">Καφέ Βόλτα</div>
+            <div>Ο καφές της γειτονιάς, τώρα και online.</div>
+        </div>
+        <div class="foot-details">
+            <p>📍 <strong>Φήκη Τρικάλων</strong></p>
+            <p>📞 <strong>Τηλ: 2431052032</strong></p>
+            <p>⏰ Καθημερινά: 06:00 - 23:00</p>
+        </div>
     </div>
-    <div class="foot-details">
-      <p>📍 <strong>Φήκη Τρικάλων</strong></p>
-      <p>📞 <strong>Τηλ: 2310 000 000</strong></p>
-      <p>⏰ Καθημερινά: 06:00 - 23:00</p>
-    </div>
-  </div>
 </footer>
 
 <div class="overlay" id="overlay"></div>
 <aside class="drawer" id="drawer">
-  <div class="drawer-head">
-    <h2>Το καλάθι σου</h2>
-    <button class="close" id="closeCart">×</button>
-  </div>
-  <div class="drawer-body" id="cartBody"></div>
-  
-  <div class="drawer-foot" id="cartFoot">
-    <div class="totals"><span>Σύνολο</span><span id="cartTotal">0,00 €</span></div>
-    
-    <!-- Φόρμα Πελάτη -->
-    <div class="form-group">
-      <input type="text" id="cigField" placeholder="Μάρκα τσιγάρων (Προαιρετικό)">
-      <input type="tel" id="phoneField" placeholder="Τηλέφωνο Επικοινωνίας (Υποχρεωτικό)" required>
-      <select id="timeField">
-        <option value="Σε 5 λεπτά">Θα περάσω σε 5 λεπτά</option>
-        <option value="Σε 10 λεπτά" selected>Θα περάσω σε 10 λεπτά</option>
-        <option value="Σε 15 λεπτά">Θα περάσω σε 15 λεπτά</option>
-        <option value="Σε 20 λεπτά">Θα περάσω σε 20 λεπτά</option>
-      </select>
+    <div class="drawer-head">
+        <h2>Το καλάθι σου</h2>
+        <button class="close" id="closeCart">×</button>
     </div>
+    <div class="drawer-body" id="cartBody"></div>
 
-    <button class="checkout" id="checkout" disabled>Ολοκλήρωση παραγγελίας</button>
-  </div>
+    <div class="drawer-foot" id="cartFoot">
+        <div class="totals"><span>Σύνολο</span><span id="cartTotal">0,00 €</span></div>
+        <div class="reward-note" id="rewardNote" style="display: none;">
+            🎁 Με αυτή την παραγγελία θα κερδίσεις <strong id="earnedPoints">0</strong> πόντοι
+        </div>
+
+        <!-- Φόρμα Πελάτη -->
+        <div class="form-group">
+            <input type="text" id="nameField" placeholder="Ονοματεπώνυμο (Προαιρετικό)" autocomplete="name">
+            <input type="tel" id="phoneField" placeholder="Τηλέφωνο Επικοινωνίας *" required autocomplete="tel">
+            <textarea id="commentField" placeholder="Σχόλιο για την παραγγελία (π.χ. χωρίς ζάχαρη)"></textarea>
+            <select id="timeField">
+                <option value="Σε 5 λεπτά">Θα περάσω σε 5 λεπτά</option>
+                <option value="Σε 10 λεπτά" selected>Θα περάσω σε 10 λεπτά</option>
+                <option value="Σε 15 λεπτά">Θα περάσω σε 15 λεπτά</option>
+                <option value="Σε 20 λεπτά">Θα περάσω σε 20 λεπτά</option>
+            </select>
+        </div>
+
+        <button class="checkout" id="checkout" disabled>Ολοκλήρωση παραγγελίας</button>
+        <p style="font-size:0.7rem; color:#8a7a5e; margin-top:8px; text-align:center;">
+            * Το τηλέφωνο και οι πόντοι αποθηκεύονται στη συσκευή σας για μελλοντικές παραγγελίες.
+        </p>
+    </div>
 </aside>
 
 <div class="toast" id="toast">Προστέθηκε στο καλάθι</div>
 
 <script>
-// Κρατήσαμε μόνο τους καφέδες
-const PRODUCTS = [
-  {n:"Espresso",p:1.50},
-  {n:"Espresso Διπλός",p:2.00},
-  {n:"Freddo Espresso",p:2.50},
-  {n:"Freddo Espresso με γεύση",p:2.80},
-  {n:"Cappuccino",p:2.50},
-  {n:"Freddo Cappuccino",p:2.80},
-  {n:"Frappe",p:2.00},
-  {n:"Latte",p:2.80},
-  {n:"Nescafe",p:2.00},
-  {n:"Ελληνικός Μονός",p:1.50},
-  {n:"Ελληνικός Διπλός",p:2.00},
-  {n:"Γαλλικός",p:2.00},
-  {n:"Σοκολάτα",p:2.80},
-  {n:"Σοκολάτα Βιεννουά",p:3.00},
-  {n:"Κακάο",p:2.20},
-  {n:"Τσάι",p:2.00},
-  {n:"Ice Tea",p:2.20},
-  {n:"Γρανίτα",p:2.50},
-  {n:"Milkshake",p:3.50},
-  {n:"Smoothie",p:3.80}
-];
+    // ---------- Προϊόντα ----------
+    const PRODUCTS = [
+        {n:"Espresso", p:1.50},
+        {n:"Espresso Διπλός", p:2.00},
+        {n:"Freddo Espresso", p:2.50},
+        {n:"Freddo Espresso με γεύση", p:2.80},
+        {n:"Cappuccino", p:2.50},
+        {n:"Freddo Cappuccino", p:2.80},
+        {n:"Frappe", p:2.00},
+        {n:"Latte", p:2.80},
+        {n:"Nescafe", p:2.00},
+        {n:"Ελληνικός Μονός", p:1.50},
+        {n:"Ελληνικός Διπλός", p:2.00},
+        {n:"Γαλλικός", p:2.00},
+        {n:"Σοκολάτα", p:2.80},
+        {n:"Σοκολάτα Βιεννουά", p:3.00},
+        {n:"Κακάο", p:2.20},
+        {n:"Τσάι", p:2.00},
+        {n:"Ice Tea", p:2.20},
+        {n:"Γρανίτα", p:2.50},
+        {n:"Milkshake", p:3.50},
+        {n:"Smoothie", p:3.80}
+    ];
 
-const euro = v => v.toFixed(2).replace(".", ",") + " €";
-const cart = new Map(); 
+    const euro = v => v.toFixed(2).replace(".", ",") + " €";
+    const cart = new Map();
 
-// Εμφάνιση προϊόντων
-const gridEl = document.getElementById("productsGrid");
-PRODUCTS.forEach((p, idx) => {
-  const card = document.createElement("article");
-  card.className = "product";
-  card.innerHTML = `
-    <div class="p-name">${p.n}</div>
-    <div class="p-foot">
-      <div class="p-price">${euro(p.p)}</div>
-      <button class="add" data-idx="${idx}">+ Προσθήκη</button>
-    </div>`;
-  gridEl.appendChild(card);
-});
+    // ---------- LocalStorage keys ----------
+    const LS_NAME = 'kafeVolta_customerName';
+    const LS_PHONE = 'kafeVolta_customerPhone';
+    const LS_POINTS = 'kafeVolta_rewardPoints';
 
-// Προσθήκη στο καλάθι
-gridEl.addEventListener("click", e => {
-  const btn = e.target.closest(".add");
-  if(!btn) return;
-  const idx = +btn.dataset.idx;
-  cart.set(idx, (cart.get(idx)||0)+1);
-  btn.classList.add("added");
-  btn.textContent = "✓ Μπήκε";
-  setTimeout(()=>{ btn.classList.remove("added"); btn.textContent = "+ Προσθήκη"; }, 900);
-  updateCartUI();
-  showToast(`«${PRODUCTS[idx].n}» προστέθηκε`);
-});
-
-// UI Λειτουργίες
-function showToast(msg){
-  const toast = document.getElementById("toast");
-  toast.textContent = msg;
-  toast.classList.add("show");
-  setTimeout(()=>toast.classList.remove("show"), 1600);
-}
-
-const drawer = document.getElementById("drawer");
-const overlay = document.getElementById("overlay");
-const cartBody = document.getElementById("cartBody");
-const checkoutBtn = document.getElementById("checkout");
-
-document.getElementById("openCart").onclick = () => { drawer.classList.add("open"); overlay.classList.add("open"); }
-document.getElementById("closeCart").onclick = () => { drawer.classList.remove("open"); overlay.classList.remove("open"); }
-overlay.onclick = () => { drawer.classList.remove("open"); overlay.classList.remove("open"); }
-
-function updateCartUI(){
-  let count = 0, total = 0;
-  cart.forEach((q,idx)=>{ count += q; total += q * PRODUCTS[idx].p; });
-  document.getElementById("cartCount").textContent = count;
-  document.getElementById("cartTotal").textContent = euro(total);
-  checkoutBtn.disabled = count === 0;
-
-  if(count === 0){
-    cartBody.innerHTML = `<div class="empty"><span class="big">🧺</span>Το καλάθι είναι άδειο.<br>Διάλεξε τον καφέ σου!</div>`;
-    return;
-  }
-  cartBody.innerHTML = "";
-  cart.forEach((q,idx)=>{
-    const p = PRODUCTS[idx];
-    cartBody.innerHTML += `
-      <div class="line">
-        <div class="line-info"><div class="line-name">${p.n}</div></div>
-        <div class="qty">
-          <button onclick="changeQty(${idx}, -1)">−</button>
-          <span>${q}</span>
-          <button onclick="changeQty(${idx}, 1)">+</button>
-        </div>
-        <div class="line-total">${euro(q*p.p)}</div>
-      </div>`;
-  });
-}
-
-window.changeQty = (idx, step) => {
-  let q = cart.get(idx) || 0;
-  q += step;
-  if(q <= 0) cart.delete(idx); else cart.set(idx, q);
-  updateCartUI();
-};
-
-// Αποστολή στο Telegram
-checkoutBtn.onclick = () => {
-  const phone = document.getElementById("phoneField").value.trim();
-  
-  // Έλεγχος υποχρεωτικού τηλεφώνου
-  if(!phone) {
-    alert("Παρακαλώ συμπληρώστε το τηλέφωνο επικοινωνίας σας!");
-    return;
-  }
-
-  checkoutBtn.disabled = true;
-  checkoutBtn.textContent = "Αποστολή...";
-
-  const total = document.getElementById("cartTotal").textContent;
-  const cigs = document.getElementById("cigField").value.trim();
-  const pickupTime = document.getElementById("timeField").value;
-  
-  const cigText = cigs ? `\n🚬 Τσιγάρα: ${cigs}` : "";
-
-  let customerName = "Πελάτης";
-  let contactLink = "";
-  if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.initDataUnsafe.user) {
-    const tUser = window.Telegram.WebApp.initDataUnsafe.user;
-    customerName = tUser.first_name;
-    contactLink = tUser.username ? `\n💬 Chat: @${tUser.username}` : `\n💬 Chat: <a href="tg://user?id=${tUser.id}">Στείλε Μήνυμα</a>`;
-  }
-
-  let orderText = `🚨 <b>ΝΕΑ ΠΑΡΑΓΓΕΛΙΑ</b>\n👤 Από: ${customerName}${contactLink}\n📞 Τηλ: ${phone}\n\n`;
-  cart.forEach((q, idx) => { orderText += `- ${q}x ${PRODUCTS[idx].n}\n`; });
-  orderText += `${cigText}\n\n💰 Σύνολο: <b>${total}</b>\n⏰ Παραλαβή: <b>${pickupTime}</b>`;
-
-  fetch(`https://api.telegram.org/bot8991103662:AAEkcD1qR10eG4lG3T3Hy_YU-9Sz8EiqKF4/sendMessage`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ chat_id: '6968710468', text: orderText, parse_mode: 'HTML' })
-  })
-  .then(response => response.json())
-  .then(data => {
-    if (data.ok) {
-      cart.clear();
-      updateCartUI();
-      // Καθαρισμός πεδίων
-      document.getElementById("phoneField").value = '';
-      document.getElementById("cigField").value = '';
-      
-      cartBody.innerHTML = `<div class="thanks">
-        <h3>Ευχαριστούμε ${customerName}! 🎉</h3>
-        Η παραγγελία καταχωρήθηκε.<br>Θα είναι έτοιμη: <strong>${pickupTime}</strong>.
-      </div>`;
-    } else {
-      alert("Σφάλμα Telegram, δοκίμασε ξανά.");
-      checkoutBtn.disabled = false;
-      checkoutBtn.textContent = "Ολοκλήρωση παραγγελίας";
+    // ---------- Φόρτωση αποθηκευμένων δεδομένων ----------
+    function loadSavedData() {
+        const savedName = localStorage.getItem(LS_NAME) || '';
+        const savedPhone = localStorage.getItem(LS_PHONE) || '';
+        document.getElementById('nameField').value = savedName;
+        document.getElementById('phoneField').value = savedPhone;
+        updatePointsDisplay();
     }
-  })
-  .catch(error => {
-    alert("Σφάλμα σύνδεσης.");
-    checkoutBtn.disabled = false;
-    checkoutBtn.textContent = "Ολοκλήρωση παραγγελίας";
-  });
-};
 
-updateCartUI();
+    function saveCustomerData(name, phone) {
+        if (name.trim()) localStorage.setItem(LS_NAME, name.trim());
+        if (phone.trim()) localStorage.setItem(LS_PHONE, phone.trim());
+    }
+
+    function getRewardPoints() {
+        return parseInt(localStorage.getItem(LS_POINTS) || '0', 10);
+    }
+
+    function addRewardPoints(pts) {
+        const current = getRewardPoints();
+        localStorage.setItem(LS_POINTS, current + pts);
+        updatePointsDisplay();
+    }
+
+    function updatePointsDisplay() {
+        const pts = getRewardPoints();
+        document.getElementById('pointsValue').textContent = pts;
+        if (pts > 0) {
+            document.getElementById('pointsDisplay').style.display = 'flex';
+        } else {
+            document.getElementById('pointsDisplay').style.display = 'none';
+        }
+    }
+
+    // ---------- Εμφάνιση προϊόντων ----------
+    const gridEl = document.getElementById("productsGrid");
+    PRODUCTS.forEach((p, idx) => {
+        const card = document.createElement("article");
+        card.className = "product";
+        card.innerHTML = `
+            <div class="p-name">${p.n}</div>
+            <div class="p-foot">
+                <div class="p-price">${euro(p.p)}</div>
+                <button class="add" data-idx="${idx}">+ Προσθήκη</button>
+            </div>`;
+        gridEl.appendChild(card);
+    });
+
+    // Προσθήκη στο καλάθι
+    gridEl.addEventListener("click", e => {
+        const btn = e.target.closest(".add");
+        if (!btn) return;
+        const idx = +btn.dataset.idx;
+        cart.set(idx, (cart.get(idx) || 0) + 1);
+        btn.classList.add("added");
+        btn.textContent = "✓ Μπήκε";
+        setTimeout(() => {
+            btn.classList.remove("added");
+            btn.textContent = "+ Προσθήκη";
+        }, 900);
+        updateCartUI();
+        showToast(`«${PRODUCTS[idx].n}» προστέθηκε`);
+    });
+
+    // Toast
+    function showToast(msg) {
+        const toast = document.getElementById("toast");
+        toast.textContent = msg;
+        toast.classList.add("show");
+        setTimeout(() => toast.classList.remove("show"), 1600);
+    }
+
+    // ---------- Drawer ----------
+    const drawer = document.getElementById("drawer");
+    const overlay = document.getElementById("overlay");
+    const cartBody = document.getElementById("cartBody");
+    const checkoutBtn = document.getElementById("checkout");
+
+    document.getElementById("openCart").onclick = () => {
+        drawer.classList.add("open");
+        overlay.classList.add("open");
+    };
+    document.getElementById("closeCart").onclick = () => {
+        drawer.classList.remove("open");
+        overlay.classList.remove("open");
+    };
+    overlay.onclick = () => {
+        drawer.classList.remove("open");
+        overlay.classList.remove("open");
+    };
+
+    function updateCartUI() {
+        let count = 0, total = 0;
+        cart.forEach((q, idx) => {
+            count += q;
+            total += q * PRODUCTS[idx].p;
+        });
+        document.getElementById("cartCount").textContent = count;
+        document.getElementById("cartTotal").textContent = euro(total);
+        checkoutBtn.disabled = count === 0;
+
+        // Υπολογισμός πόντων (1 πόντος για κάθε 1€, στρογγυλοποίηση προς τα κάτω)
+        const earned = Math.floor(total);
+        document.getElementById("earnedPoints").textContent = earned;
+        const rewardNote = document.getElementById("rewardNote");
+        if (count > 0 && earned > 0) {
+            rewardNote.style.display = 'flex';
+        } else {
+            rewardNote.style.display = 'none';
+        }
+
+        if (count === 0) {
+            cartBody.innerHTML = `<div class="empty"><span class="big">🧺</span>Το καλάθι είναι άδειο.<br>Διάλεξε τον καφέ σου!</div>`;
+            return;
+        }
+        cartBody.innerHTML = "";
+        cart.forEach((q, idx) => {
+            const p = PRODUCTS[idx];
+            cartBody.innerHTML += `
+                <div class="line">
+                    <div class="line-info"><div class="line-name">${p.n}</div></div>
+                    <div class="qty">
+                        <button onclick="changeQty(${idx}, -1)">−</button>
+                        <span>${q}</span>
+                        <button onclick="changeQty(${idx}, 1)">+</button>
+                    </div>
+                    <div class="line-total">${euro(q * p.p)}</div>
+                </div>`;
+        });
+    }
+
+    window.changeQty = (idx, step) => {
+        let q = cart.get(idx) || 0;
+        q += step;
+        if (q <= 0) cart.delete(idx);
+        else cart.set(idx, q);
+        updateCartUI();
+    };
+
+    // ---------- Αποστολή παραγγελίας ----------
+    checkoutBtn.onclick = () => {
+        const phone = document.getElementById("phoneField").value.trim();
+        const name = document.getElementById("nameField").value.trim();
+        const comment = document.getElementById("commentField").value.trim();
+        const pickupTime = document.getElementById("timeField").value;
+
+        if (!phone) {
+            alert("Παρακαλώ συμπληρώστε το τηλέφωνο επικοινωνίας σας!");
+            return;
+        }
+
+        // Αποθήκευση στοιχείων στο localStorage
+        saveCustomerData(name, phone);
+
+        // Υπολογισμός πόντων και αποθήκευση
+        let totalAmount = 0;
+        cart.forEach((q, idx) => { totalAmount += q * PRODUCTS[idx].p; });
+        const earnedPoints = Math.floor(totalAmount);
+        if (earnedPoints > 0) {
+            addRewardPoints(earnedPoints);
+        }
+
+        checkoutBtn.disabled = true;
+        checkoutBtn.textContent = "Αποστολή...";
+
+        const totalStr = euro(totalAmount);
+        const nameText = name ? `\n👤 Ονοματεπώνυμο: ${name}` : "";
+        const commentText = comment ? `\n📝 Σχόλιο: ${comment}` : "";
+
+        let customerName = name || "Πελάτης";
+        let contactLink = "";
+        if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.initDataUnsafe.user) {
+            const tUser = window.Telegram.WebApp.initDataUnsafe.user;
+            if (!name) customerName = tUser.first_name || "Πελάτης";
+            contactLink = tUser.username
+                ? `\n💬 Chat: @${tUser.username}`
+                : `\n💬 Chat: <a href="tg://user?id=${tUser.id}">Στείλε Μήνυμα</a>`;
+        }
+
+        let orderText = `🚨 <b>ΝΕΑ ΠΑΡΑΓΓΕΛΙΑ</b>\n👤 Από: ${customerName}${contactLink}\n📞 Τηλ: ${phone}${nameText}${commentText}\n\n`;
+        cart.forEach((q, idx) => {
+            orderText += `- ${q}x ${PRODUCTS[idx].n}\n`;
+        });
+        orderText += `\n💰 Σύνολο: <b>${totalStr}</b>\n⏰ Παραλαβή: <b>${pickupTime}</b>\n⭐ Πόντοι που κερδήθηκαν: ${earnedPoints}`;
+
+        fetch(`https://api.telegram.org/bot8991103662:AAEkcD1qR10eG4lG3T3Hy_YU-9Sz8EiqKF4/sendMessage`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                chat_id: '6968710468',
+                text: orderText,
+                parse_mode: 'HTML'
+            })
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.ok) {
+                    cart.clear();
+                    updateCartUI();
+                    document.getElementById("commentField").value = '';
+
+                    cartBody.innerHTML = `<div class="thanks">
+                        <h3>Ευχαριστούμε${name ? ' ' + name : ''}! 🎉</h3>
+                        <p>Η παραγγελία καταχωρήθηκε.<br>Θα είναι έτοιμη: <strong>${pickupTime}</strong>.</p>
+                        <p style="margin-top:12px; color:var(--mocha);">Κέρδισες <strong>${earnedPoints} πόντους</strong>!<br>Σύνολο πόντων: <strong>${getRewardPoints()}</strong></p>
+                    </div>`;
+                    document.getElementById("phoneField").value = localStorage.getItem(LS_PHONE) || '';
+                    document.getElementById("nameField").value = localStorage.getItem(LS_NAME) || '';
+                } else {
+                    alert("Σφάλμα αποστολής στο Telegram. Δοκιμάστε ξανά.");
+                    checkoutBtn.disabled = false;
+                    checkoutBtn.textContent = "Ολοκλήρωση παραγγελίας";
+                }
+            })
+            .catch(error => {
+                alert("Σφάλμα σύνδεσης. Ελέγξτε το δίκτυό σας.");
+                checkoutBtn.disabled = false;
+                checkoutBtn.textContent = "Ολοκλήρωση παραγγελίας";
+            });
+    };
+
+    // ---------- Αρχικοποίηση ----------
+    loadSavedData();
+    updateCartUI();
+    updatePointsDisplay();
 </script>
 </body>
 </html>
