@@ -284,7 +284,7 @@
 
             if (!response.ok) {
                 const errorData = await response.json();
-                alert(`❌ Απέτυχε η αποστολή.\nΛόγος: ${errorData.description}\n\nΣυνήθως το chat_id χρειάζεται να ξεκινάει με -100...`);
+                alert(`❌ Απέτυχε η αποστολή.\nΛόγος: ${errorData.description}\n\nΒεβαιώσου ότι το bot είναι διαχειριστής στην ομάδα.`);
                 return false;
             }
             return true;
@@ -317,12 +317,11 @@
         });
 
         // ★ ΑΛΛΑΓΗ: Τα πάντα σε ΕΝΑ μήνυμα. Περιλαμβάνει αναλυτικά + πόντους και υπόλοιπο.
+        // Χρησιμοποιούμε το σωστό ID: -1004444414863
         const fullOrderMessage = `🚨 <b>ΝΕΑ ΠΑΡΑΓΓΕΛΙΑ</b>\n👤 ${customerName}${contactLink}\n📞 ${phone}\n📝 ${comment || '-'}\n⏰ ${time}\n💰 Σύνολο: <b>${euro(totalAmount)}</b>\n\n📦 <b>Αναλυτικά:</b>\n${itemsText}\n\n⭐ <b>Πόντοι:</b>\n🔹 Κέρδισε: +${earned}\n💰 Σύνολο πόντων συσκευής: <b>${totalPoints}</b>`;
         
-        // ★ ΣΤΕΛΝΟΥΜΕ ΜΟΝΟ ΣΤΗΝ ΟΜΑΔΑ, με το σωστό ID που θα βρεις (σημείωση εδώ)
-        // ⚠️ ΣΗΜΑΝΤΙΚΟ: Αντικατέστησε το -5086360073 με το σωστό ID που ξεκινάει με -100...
-        // (π.χ. -1001234567890) αφού το βρεις.
-        const groupSent = await sendTelegramMessage('-5086360073', fullOrderMessage);
+        // ★ ΣΤΕΛΝΟΥΜΕ ΜΟΝΟ ΣΤΗΝ ΟΜΑΔΑ με το νέο ID
+        const groupSent = await sendTelegramMessage('-1004444414863', fullOrderMessage);
 
         if (groupSent) {
             cart.clear(); updateCart();
