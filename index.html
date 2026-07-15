@@ -4,8 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Drop 5096 · Aziram</title>
-    <!-- YouTube Game SDK (Διαφημιστικό κομμάτι) -->
-    <script src="https://www.youtube.com/game_api/v1"></script>
     <style>
         :root {
             --bg: #87CEEB;
@@ -761,27 +759,14 @@
         (function() {
             'use strict';
 
-            // ==================== YouTube SDK Integration ====================
-            const YT = (typeof ytgame !== 'undefined' && ytgame !== null) ? ytgame : null;
-            let sdkPaused = false;
-            let _adCallback = null;
-
-            if (YT && YT.system) {
-                if (typeof YT.system.onPause === 'function') {
-                    YT.system.onPause(() => { sdkPaused = true; });
-                }
-                if (typeof YT.system.onResume === 'function') {
-                    YT.system.onResume(() => { sdkPaused = false; });
-                }
-            }
-            // ===============================================================
-
             const COLS = 5, ROWS = 6, CELL = 1.0, GAP = 0.12;
             const BOARD_W = COLS * (CELL + GAP) - GAP;
             const BOARD_H = ROWS * (CELL + GAP) - GAP;
             const launchY = -BOARD_H / 2 - 0.4;
 
+            // Updated base mission target to 128
             function levelTarget(l) { return 128 * Math.pow(2, l); }
+
             function levelPreset(l) { return l === 0 ? 0 : Math.min(14, 2 + l * 2); }
 
             const I18N = {
@@ -819,6 +804,7 @@
                 }
             };
             let lang = 'el';
+
             function TT() { return I18N[lang]; }
             function itemName(item) { return lang === 'en' ? item.en : item.el; }
 
@@ -1623,6 +1609,13 @@
                     playWinSound(); winTime = 6.0; showSpeech(TT().win_speech, 3800); speak(TT().win_say);
                     if (winTimer) clearTimeout(winTimer);
                     winTimer = setTimeout(function() {
+                        adContinueCallback = function() {
+                            level = level + 1;
+                            winShown = false;
+                            busy = false;
+                            updateHUD();
+                            announceMission(300);
+                        };
                         document.getElementById('adContinueModal').classList.remove('hidden');
                         winTimer = null;
                     }, 3500);
@@ -1632,6 +1625,12 @@
 
             function gameOver() {
                 busy = true; best = Math.max(best, score); save.best = best; save.score = 0; persist(); showSpeech(TT().lose_speech, 2500); speak(TT().lose_say);
+                adContinueCallback = function() {
+                    busy = false;
+                    newBoard();
+                    winShown = false;
+                    announceMission(300);
+                };
                 document.getElementById('adContinueModal').classList.remove('hidden');
             }
 
@@ -1646,321 +1645,70 @@
                 setAim(c, true); launch();
             }
 
-            // ==================== NEW AD SYSTEM WITH YOUTUBE SDK ====================
-            function showAd(callback) {
-                document.getElementById('adModal').classList.remove('hidden');
-                document.getElementById('adBar').style.width = '0%';
-                document.getElementById('adTitle').textContent = TT().ad_title;
-                document.getElementById('adText').textContent = TT().ad_text;
-                document.getElementById('btnStartAd').textContent = TT().ad_btn;
-                document.getElementById('btnCancelAd').textContent = TT().ad_cancel;
-                document.getElementById('btnStartAd').style.display = 'block';
-                
-                // Store the callback to be executed after the ad
-                _adCallback = callback;
-            }
-
-            document.getElementById('btnStartAd').onclick = function() {
-                // YouTube Rewarded Ad
-                if (YT && YT.game && typeof YT.game.showRewardedAd === 'function') {
-                    YT.game.showRewardedAd().then(() => {
-                        document.getElementById('adModal').classList.add('hidden');
-                        if (_adCallback) {
-                            const cb = _adCallback;
-                            _adCallback = null;
-                            cb();
-                        }
-                    }).catch(() => {
-                        document.getElementById('adModal').classList.add('hidden');
-                        _adCallback = null;
-                        toast('Ad failed or skipped.');
-                    });
-                } else {
-                    // Fallback for testing (or no SDK)
-                    startAdProgress();
-                }
-            };
-
-            document.getElementById('btnCancelAd').onclick = function() {
-                document.getElementById('adModal').classList.add('hidden');
-                if (_adTimer) { clearInterval(_adTimer); _adTimer = null; }
-                _adCallback = null;
-            };
-            // =========================================================================
-
-            // Ad simulation/fallback
             let adCallback = null;
             let adTimer = null;
 
-            function startAdProgress() {
-                document.getElementById('btnStartAd').style.display = 'none';
-                const bar = document.getElementById('adBar');
-                let progress = 0;
-                if (adTimer) clearInterval(adTimer);
-                adTimer = setInterval(function() {
-                    progress += 5;
-                    bar.style.width = progress + '%';
-                    if (progress >= 100) {
-                        clearInterval(adTimer);
-                        adTimer = null;
-                        completeAd();
-                    }
-                }, 100);
+            function showAd(callback) {
+                adCallback = callback; document.getElementById('adModal').classList.remove('hidden'); document.getElementById('adBar').style.width = '0%';
+                document.getElementById('adTitle').textContent = TT().ad_title; document.getElementById('adText').textContent = TT().ad_text; document.getElementById('btnStartAd').textContent = TT().ad_btn; document.getElementById('btnCancelAd').textContent = TT().ad_cancel;
+                document.getElementById('btnStartAd').style.display = ''; if (adTimer) clearInterval(adTimer);
             }
 
-            function completeAd() {
-                document.getElementById('adModal').classList.add('hidden');
-                if (adTimer) { clearInterval(adTimer); adTimer = null; }
-                if (_adCallback) {
-                    const cb = _adCallback;
-                    _adCallback = null;
+            function startAdProgress() { document.getElementById('btnStartAd').style.display = 'none'; const bar = document.getElementById('adBar'); let progress = 0; if (adTimer) clearInterval(adTimer); adTimer = setInterval(function() { progress += 5; bar.style.width = progress + '%'; if (progress >= 100) { clearInterval(adTimer); adTimer = null; completeAd(); } }, 100); }
+            function completeAd() { document.getElementById('adModal').classList.add('hidden'); if (adTimer) { clearInterval(adTimer); adTimer = null; } if (adCallback) { const cb = adCallback; adCallback = null; cb(); } }
+
+            document.getElementById('btnStartAd').onclick = function() { startAdProgress(); };
+            document.getElementById('btnCancelAd').onclick = function() { document.getElementById('adModal').classList.add('hidden'); if (adTimer) { clearInterval(adTimer); adTimer = null; } adCallback = null; };
+
+            document.getElementById('btnAdContinue').onclick = function() {
+                document.getElementById('adContinueModal').classList.add('hidden');
+                if (adContinueCallback) {
+                    const cb = adContinueCallback;
+                    adContinueCallback = null;
                     cb();
                 }
-            }
-
-            // ========== BOOSTER / HELPERS (Ads) ==========
-            document.getElementById("btnHammer").onclick = function() {
-                if (busy) return;
-                showAd(function() {
-                    hammerMode = true;
-                    updateHUD();
-                    toast(TT().hammer_toast);
-                    playSound('hammer');
-                });
             };
 
-            document.getElementById("btnShuffle").onclick = function() {
-                if (busy || !currentCube) return;
-                showAd(function() {
-                    boardGroup.remove(currentCube);
-                    currentCube = null;
-                    spawnCurrent();
-                    setAim(aimCol);
-                    updateHUD();
-                    playSound('shuffle');
-                });
-            };
-
+            document.getElementById("btnHammer").onclick = function() { if (busy) return; showAd(function() { hammerMode = true; updateHUD(); toast(TT().hammer_toast); playSound('hammer'); }); };
+            document.getElementById("btnShuffle").onclick = function() { if (busy || !currentCube) return; showAd(function() { boardGroup.remove(currentCube); currentCube = null; spawnCurrent(); setAim(aimCol); updateHUD(); playSound('shuffle'); }); };
             document.getElementById("btnMagnet").onclick = function() {
-                if (busy) return;
-                showAd(function() {
-                    let tilesByVal = {};
-                    for (let c = 0; c < COLS; c++)
-                        for (let r = 0; r < ROWS; r++)
-                            if (grid[c][r]) {
-                                let v = grid[c][r].value;
-                                if (!tilesByVal[v]) tilesByVal[v] = [];
-                                tilesByVal[v].push({ c: c, r: r, cell: grid[c][r] });
-                            }
-                    let mg = Object.keys(tilesByVal).map(function(k) { return tilesByVal[k]; }).filter(function(g) { return g.length > 1; });
-                    if (!mg.length) { toast(TT().no_pairs); return; }
-                    busy = true;
-                    playSound('magnet');
-                    let animsP = 0;
-                    mg.forEach(function(group) {
-                        const trg = group[0];
-                        trg.newVal = trg.cell.value * Math.pow(2, group.length - 1);
-                        group.slice(1).forEach(function(t) {
-                            const m = t.cell.mesh;
-                            grid[t.c][t.r] = null;
-                            const tp = cellPos(trg.c, trg.r);
-                            animsP++;
-                            tween(m.position, { x: tp.x, y: tp.y, z: 1.0 }, 0.35, null, function() {
-                                boardGroup.remove(m);
-                                if (--animsP === 0) finMagnet(mg);
-                            });
-                            tween(m.scale, { x: 0.3, y: 0.3, z: 0.3 }, 0.35);
-                        });
-                    });
+                if (busy) return; showAd(function() {
+                    let tilesByVal = {}; for (let c = 0; c < COLS; c++) for (let r = 0; r < ROWS; r++) if (grid[c][r]) { let v = grid[c][r].value; if (!tilesByVal[v]) tilesByVal[v] = []; tilesByVal[v].push({ c: c, r: r, cell: grid[c][r] }); }
+                    let mg = Object.keys(tilesByVal).map(function(k) { return tilesByVal[k]; }).filter(function(g) { return g.length > 1; }); if (!mg.length) { toast(TT().no_pairs); return; }
+                    busy = true; playSound('magnet'); let animsP = 0;
+                    mg.forEach(function(group) { const trg = group[0]; trg.newVal = trg.cell.value * Math.pow(2, group.length - 1); group.slice(1).forEach(function(t) { const m = t.cell.mesh; grid[t.c][t.r] = null; const tp = cellPos(trg.c, trg.r); animsP++; tween(m.position, { x: tp.x, y: tp.y, z: 1.0 }, 0.35, null, function() { boardGroup.remove(m); if (--animsP === 0) finMagnet(mg); }); tween(m.scale, { x: 0.3, y: 0.3, z: 0.3 }, 0.35); }); });
                 });
             };
 
             function finMagnet(mg) {
-                playSound('merge');
-                mg.forEach(function(g) {
-                    const trg = g[0];
-                    boardGroup.remove(trg.cell.mesh);
-                    grid[trg.c][trg.r] = null;
-                    score += trg.newVal;
-                    save.score = score;
-                    const up = placeCube(trg.c, trg.r, trg.newVal);
-                    up.mesh.scale.set(1.5, 1.5, 1.5);
-                    tween(up.mesh.scale, { x: 1, y: 1, z: 1 }, 0.25);
-                });
-                setTimeout(function() {
-                    resolveMerges([]).then(function() {
-                        busy = false;
-                        updateHUD();
-                        persist();
-                    });
-                }, 250);
+                playSound('merge'); mg.forEach(function(g) { const trg = g[0]; boardGroup.remove(trg.cell.mesh); grid[trg.c][trg.r] = null; score += trg.newVal; save.score = score; const up = placeCube(trg.c, trg.r, trg.newVal); up.mesh.scale.set(1.5, 1.5, 1.5); tween(up.mesh.scale, { x: 1, y: 1, z: 1 }, 0.25); });
+                setTimeout(function() { resolveMerges([]).then(function() { busy = false; updateHUD(); persist(); }); }, 250);
             }
 
-            // ========== CONTINUE / REVIVE (Ad) ==========
-            document.getElementById('btnAdContinue').onclick = function() {
-                document.getElementById('adContinueModal').classList.add('hidden');
-                // Trigger an ad before continuing
-                if (YT && YT.game && typeof YT.game.showRewardedAd === 'function') {
-                    YT.game.showRewardedAd().then(() => {
-                        if (adContinueCallback) {
-                            const cb = adContinueCallback;
-                            adContinueCallback = null;
-                            cb();
-                        }
-                    }).catch(() => {
-                        toast('Ad failed or skipped.');
-                    });
-                } else {
-                    // Fallback: no ad SDK
-                    if (adContinueCallback) {
-                        const cb = adContinueCallback;
-                        adContinueCallback = null;
-                        cb();
-                    }
-                }
-            };
-
-            // ========== SHOP SYSTEM (Ads) ==========
-            function getShopProperties(tab) {
-                const map = {
-                    cubes: { owned: 'ownedCubes', equip: 'equippedCube' },
-                    boards: { owned: 'ownedBoards', equip: 'equippedBoard' },
-                    effects: { owned: 'ownedEffects', equip: 'equippedEffect' },
-                    sounds: { owned: 'ownedSounds', equip: 'equippedSound' },
-                    music: { owned: 'ownedMusic', equip: 'equippedMusic' },
-                    pet_hair: { owned: 'ownedHair', equip: 'equippedHair' },
-                    pet_clothes: { owned: 'ownedClothes', equip: 'equippedClothes' },
-                    pet_shoes: { owned: 'ownedShoes', equip: 'equippedShoes' },
-                    pet_props: { owned: 'ownedProps', equip: 'equippedProps' }
-                };
-                return map[tab] || { owned: '', equip: '' };
-            }
+            function getShopProperties(tab) { const map = { cubes: { owned: 'ownedCubes', equip: 'equippedCube' }, boards: { owned: 'ownedBoards', equip: 'equippedBoard' }, effects: { owned: 'ownedEffects', equip: 'equippedEffect' }, sounds: { owned: 'ownedSounds', equip: 'equippedSound' }, music: { owned: 'ownedMusic', equip: 'equippedMusic' }, pet_hair: { owned: 'ownedHair', equip: 'equippedHair' }, pet_clothes: { owned: 'ownedClothes', equip: 'equippedClothes' }, pet_shoes: { owned: 'ownedShoes', equip: 'equippedShoes' }, pet_props: { owned: 'ownedProps', equip: 'equippedProps' } }; return map[tab] || { owned: '', equip: '' }; }
 
             function renderShop() {
-                const petSubTabs = document.getElementById('petSubTabs');
-                if (currentMainTab === 'pets') petSubTabs.classList.add('active');
-                else petSubTabs.classList.remove('active');
-                const activeTab = currentMainTab === 'pets' ? currentPetSubTab : currentMainTab;
-                const container = document.getElementById('shopContainer');
-                container.innerHTML = '';
-                const arr = SHOP[activeTab] || [];
-                const props = getShopProperties(activeTab);
+                const petSubTabs = document.getElementById('petSubTabs'); if (currentMainTab === 'pets') petSubTabs.classList.add('active'); else petSubTabs.classList.remove('active'); const activeTab = currentMainTab === 'pets' ? currentPetSubTab : currentMainTab; const container = document.getElementById('shopContainer'); container.innerHTML = ''; const arr = SHOP[activeTab] || []; const props = getShopProperties(activeTab);
                 arr.forEach(function(item) {
-                    const isOwned = save[props.owned] && save[props.owned].indexOf(item.id) !== -1;
-                    const isEquipped = save[props.equip] === item.id;
-                    const nm = itemName(item);
-                    const el = document.createElement('div');
+                    const isOwned = save[props.owned] && save[props.owned].indexOf(item.id) !== -1; const isEquipped = save[props.equip] === item.id; const nm = itemName(item); const el = document.createElement('div');
                     el.className = 'shop-item ' + (isOwned ? 'owned' : '') + ' ' + (isEquipped ? 'equipped' : '');
                     el.innerHTML = '<div style="font-size:32px; margin-bottom:3px;">' + item.icon + '</div><h3>' + nm + '</h3><div class="price">' + (isEquipped ? TT().selected : isOwned ? TT().select : item.price === 0 ? TT().free : item.price + ' 🪙') + '</div>';
-                    if (!isOwned && item.price > 0) {
-                        const adBtn = document.createElement('button');
-                        adBtn.className = 'ad-btn';
-                        adBtn.textContent = TT().ad_free;
-                        adBtn.onclick = function(e) {
-                            e.stopPropagation();
-                            showAd(function() {
-                                save[props.owned].push(item.id);
-                                save[props.equip] = item.id;
-                                persist();
-                                updateHUD();
-                                renderShop();
-                                applyShopChanges(activeTab);
-                                toast(TT().bought(nm));
-                            });
-                        };
-                        el.appendChild(adBtn);
-                    }
-                    el.onclick = function() {
-                        if (isOwned) {
-                            save[props.equip] = item.id;
-                            persist();
-                            renderShop();
-                            applyShopChanges(activeTab);
-                            toast(TT().picked(nm));
-                        } else if (coins >= item.price) {
-                            coins -= item.price;
-                            save.coins = coins;
-                            save[props.owned].push(item.id);
-                            save[props.equip] = item.id;
-                            persist();
-                            updateHUD();
-                            renderShop();
-                            applyShopChanges(activeTab);
-                            toast(TT().bought(nm));
-                        } else {
-                            toast(TT().not_enough);
-                        }
-                    };
+                    if (!isOwned && item.price > 0) { const adBtn = document.createElement('button'); adBtn.className = 'ad-btn'; adBtn.textContent = TT().ad_free; adBtn.onclick = function(e) { e.stopPropagation(); showAd(function() { save[props.owned].push(item.id); save[props.equip] = item.id; persist(); updateHUD(); renderShop(); applyShopChanges(activeTab); toast(TT().bought(nm)); }); }; el.appendChild(adBtn); }
+                    el.onclick = function() { if (isOwned) { save[props.equip] = item.id; persist(); renderShop(); applyShopChanges(activeTab); toast(TT().picked(nm)); } else if (coins >= item.price) { coins -= item.price; save.coins = coins; save[props.owned].push(item.id); save[props.equip] = item.id; persist(); updateHUD(); renderShop(); applyShopChanges(activeTab); toast(TT().bought(nm)); } else { toast(TT().not_enough); } };
                     container.appendChild(el);
                 });
             }
 
-            function applyShopChanges(tabChanged) {
-                if (tabChanged === 'boards') updateBoardColorsLive();
-                if (tabChanged === 'cubes') {
-                    for (let c = 0; c < COLS; c++)
-                        for (let r = 0; r < ROWS; r++)
-                            if (grid[c][r]) {
-                                const m = grid[c][r].mesh;
-                                m.material.map = numberTexture(grid[c][r].value);
-                                m.material.needsUpdate = true;
-                            }
-                    if (currentCube) {
-                        currentCube.material.map = numberTexture(currentCube.userData.value);
-                        currentCube.material.needsUpdate = true;
-                    }
-                    toast(TT().cube_changed);
-                }
-                if (tabChanged === 'pet_hair') buildHair(save.equippedHair);
-                if (tabChanged === 'pet_clothes') equipClothes(save.equippedClothes);
-                if (tabChanged === 'pet_shoes') { equipShoes(save.equippedShoes);
-                    toast(TT().shoes_changed); }
-                if (tabChanged === 'pet_props') equipProp(save.equippedProps);
-                if (tabChanged === 'effects') toast(TT().effect_changed);
-                if (tabChanged === 'sounds') toast(TT().sound_changed);
-                if (tabChanged === 'music') { toast(TT().music_changed); if (musicStarted) scheduleMusicLoop(); }
-            }
+            function applyShopChanges(tabChanged) { if (tabChanged === 'boards') updateBoardColorsLive(); if (tabChanged === 'cubes') { for (let c = 0; c < COLS; c++) for (let r = 0; r < ROWS; r++) if (grid[c][r]) { const m = grid[c][r].mesh; m.material.map = numberTexture(grid[c][r].value); m.material.needsUpdate = true; } if (currentCube) { currentCube.material.map = numberTexture(currentCube.userData.value); currentCube.material.needsUpdate = true; } toast(TT().cube_changed); } if (tabChanged === 'pet_hair') buildHair(save.equippedHair); if (tabChanged === 'pet_clothes') equipClothes(save.equippedClothes); if (tabChanged === 'pet_shoes') { equipShoes(save.equippedShoes); toast(TT().shoes_changed); } if (tabChanged === 'pet_props') equipProp(save.equippedProps); if (tabChanged === 'effects') toast(TT().effect_changed); if (tabChanged === 'sounds') toast(TT().sound_changed); if (tabChanged === 'music') { toast(TT().music_changed); if (musicStarted) scheduleMusicLoop(); } }
 
-            document.querySelectorAll('.shop-tab').forEach(function(btn) {
-                btn.onclick = function(e) {
-                    document.querySelectorAll('.shop-tab').forEach(function(b) { b.classList.remove('active'); });
-                    e.target.classList.add('active');
-                    currentMainTab = e.target.dataset.maintab;
-                    renderShop();
-                };
-            });
-            document.querySelectorAll('.pet-subtab').forEach(function(btn) {
-                btn.onclick = function(e) {
-                    document.querySelectorAll('.pet-subtab').forEach(function(b) { b.classList.remove('active'); });
-                    e.target.classList.add('active');
-                    currentPetSubTab = e.target.dataset.subtab;
-                    renderShop();
-                };
-            });
+            document.querySelectorAll('.shop-tab').forEach(function(btn) { btn.onclick = function(e) { document.querySelectorAll('.shop-tab').forEach(function(b) { b.classList.remove('active'); }); e.target.classList.add('active'); currentMainTab = e.target.dataset.maintab; renderShop(); }; });
+            document.querySelectorAll('.pet-subtab').forEach(function(btn) { btn.onclick = function(e) { document.querySelectorAll('.pet-subtab').forEach(function(b) { b.classList.remove('active'); }); e.target.classList.add('active'); currentPetSubTab = e.target.dataset.subtab; renderShop(); }; });
 
-            function updateHUD() {
-                document.getElementById("hudLevel").textContent = level + 1;
-                document.getElementById("hudScore").textContent = score;
-                document.getElementById("hudCoins").textContent = coins;
-                document.getElementById("miniScore").textContent = score;
-                document.getElementById("btnHammer").classList.toggle("armed", hammerMode);
-                updateMissionProgress();
-            }
+            function updateHUD() { document.getElementById("hudLevel").textContent = level + 1; document.getElementById("hudScore").textContent = score; document.getElementById("hudCoins").textContent = coins; document.getElementById("miniScore").textContent = score; document.getElementById("btnHammer").classList.toggle("armed", hammerMode); updateMissionProgress(); }
 
             function applyLang() {
-                const t = TT();
-                document.documentElement.lang = lang;
-                document.getElementById('lblLevel').textContent = t.level;
-                document.getElementById('lblScore').textContent = t.score;
-                document.getElementById('btnLang').textContent = lang === 'en' ? 'EN' : 'ΕΛ';
-                document.getElementById('micCost').textContent = t.talk;
-                document.getElementById('shopTitle').textContent = t.customize;
-                document.getElementById('btnCloseShop').textContent = t.close;
-                const tabNames = { cubes: t.tab_cubes, boards: t.tab_boards, effects: t.tab_effects, sounds: t.tab_sounds, music: t.tab_music, pets: t.tab_pets };
-                document.querySelectorAll('.shop-tab').forEach(function(b) { b.textContent = tabNames[b.dataset.maintab] || b.textContent; });
-                const subNames = { pet_hair: t.sub_hair, pet_clothes: t.sub_clothes, pet_shoes: t.sub_shoes, pet_props: t.sub_props };
-                document.querySelectorAll('.pet-subtab').forEach(function(b) { b.textContent = subNames[b.dataset.subtab] || b.textContent; });
-                if (!document.getElementById('shopModal').classList.contains('hidden')) renderShop();
+                const t = TT(); document.documentElement.lang = lang; document.getElementById('lblLevel').textContent = t.level; document.getElementById('lblScore').textContent = t.score; document.getElementById('btnLang').textContent = lang === 'en' ? 'EN' : 'ΕΛ'; document.getElementById('micCost').textContent = t.talk; document.getElementById('shopTitle').textContent = t.customize; document.getElementById('btnCloseShop').textContent = t.close;
+                const tabNames = { cubes: t.tab_cubes, boards: t.tab_boards, effects: t.tab_effects, sounds: t.tab_sounds, music: t.tab_music, pets: t.tab_pets }; document.querySelectorAll('.shop-tab').forEach(function(b) { b.textContent = tabNames[b.dataset.maintab] || b.textContent; }); const subNames = { pet_hair: t.sub_hair, pet_clothes: t.sub_clothes, pet_shoes: t.sub_shoes, pet_props: t.sub_props }; document.querySelectorAll('.pet-subtab').forEach(function(b) { b.textContent = subNames[b.dataset.subtab] || b.textContent; }); if (!document.getElementById('shopModal').classList.contains('hidden')) renderShop();
             }
 
             function updateSoundBtn() { document.getElementById('btnSound').textContent = muted ? '🔇' : '🔊'; }
@@ -1970,31 +1718,19 @@
 
             function computeMood(now) { const fill = boardFillRatio(); if (fill >= 0.8) return 'anxious'; if (fill >= 0.65) return 'angry'; if (now - lastActionTime > 15000) return 'bored'; return 'idle'; }
 
-            function onMoodChange(mood) { if (mood === 'angry') { showSpeech(TT().angry, 2200);
-                    angrySFX(); } if (mood === 'anxious') { showSpeech(TT().panic, 2200);
-                    panicSFX(); } if (mood === 'bored') showSpeech(TT().bored, 2200); }
+            function onMoodChange(mood) { if (mood === 'angry') { showSpeech(TT().angry, 2200); angrySFX(); } if (mood === 'anxious') { showSpeech(TT().panic, 2200); panicSFX(); } if (mood === 'bored') showSpeech(TT().bored, 2200); }
 
             let lastT = 0, stepAccum = 0;
 
             function loop(t) {
-                // -------------------- SDK PAUSE HANDLING --------------------
-                if (sdkPaused) {
-                    requestAnimationFrame(loop);
-                    return;
-                }
-                // -----------------------------------------------------------
-
-                const dt = Math.min(0.05, (t - lastT) / 1000);
-                lastT = t;
-                if (!lastActionTime) lastActionTime = performance.now();
-                stepAnims(dt);
-                updateParticles(dt);
-                updateClouds(dt);
+                const dt = Math.min(0.05, (t - lastT) / 1000); lastT = t; if (!lastActionTime) lastActionTime = performance.now();
+                stepAnims(dt); updateParticles(dt); updateClouds(dt);
 
                 if (sunGroup) {
                     let shake = 0;
                     if (girlMood === 'angry' || girlMood === 'anxious') {
                         shake = Math.sin(t * 0.05) * 0.05;
+                        // Sun turns red and changes colors
                         sunGroup.userData.sunMat.color.setHSL((t * 0.001) % 1, 1, 0.5);
                     } else {
                         sunGroup.userData.sunMat.color.setHex(0xFFD54F);
@@ -2005,128 +1741,25 @@
                 }
 
                 flowers.forEach(function(fl) {
-                    const u = fl.userData;
-                    let sway = Math.sin(t * 0.002 * u.speed + u.phase);
-                    let droop = 0;
-                    let shake = 0;
-                    if (girlMood === 'angry') { shake = Math.sin(t * 0.04) * 0.15;
-                        sway *= 0.5; } else if (girlMood === 'anxious') { shake = Math.sin(t * 0.06) * 0.2; } else if (girlMood === 'bored') { droop = 0.8;
-                        sway *= 0.2; } else if (winTime > 0) { sway = Math.sin(t * 0.005 * u.speed + u.phase) * 1.5; }
-                    u.pivot.rotation.z = sway * 0.2 + shake;
-                    u.pivot.rotation.x = droop + shake * 0.5;
+                    const u = fl.userData; let sway = Math.sin(t * 0.002 * u.speed + u.phase); let droop = 0; let shake = 0;
+                    if (girlMood === 'angry') { shake = Math.sin(t * 0.04) * 0.15; sway *= 0.5; } else if (girlMood === 'anxious') { shake = Math.sin(t * 0.06) * 0.2; } else if (girlMood === 'bored') { droop = 0.8; sway *= 0.2; } else if (winTime > 0) { sway = Math.sin(t * 0.005 * u.speed + u.phase) * 1.5; }
+                    u.pivot.rotation.z = sway * 0.2 + shake; u.pivot.rotation.x = droop + shake * 0.5;
                 });
 
                 if (girl) {
                     const core = girlCore;
-                    if (winTime > 0) {
-                        winTime -= dt;
-                        const hop = Math.abs(Math.sin(t * 0.01));
-                        core.position.y = hop * 1.3;
-                        core.scale.y = 1 + Math.sin(t * 0.01) * 0.08;
-                        core.scale.x = 1 - Math.sin(t * 0.01) * 0.05;
-                        girl.rotation.y = -0.2 + Math.sin(t * 0.004) * 0.5;
-                        sockets.handL.rotation.z = 2.6 + Math.sin(t * 0.02) * 0.3;
-                        sockets.handR.rotation.z = -2.6 - Math.sin(t * 0.02) * 0.3;
-                        (hairGroup.userData.tails || []).forEach(function(tail, i) {
-                            tail.rotation.z = (i === 0 ? -0.3 : 0.3) + Math.sin(t * 0.012 + i) * 0.35;
-                        });
-                        mouthMesh.scale.set(0.95, 0.8, 0.35);
-                        eyeL.scale.set(1, 0.35, 1);
-                        eyeR.scale.set(1, 0.35, 1);
-                        if (winTime <= 0) { sockets.handL.rotation.z = 0.35;
-                            sockets.handR.rotation.z = -0.35;
-                            core.position.y = 0; }
-                    } else if (reactionTime > 0) {
-                        reactionTime -= dt;
-                        core.position.y = 0.15 * Math.abs(Math.sin(t * 0.015));
-                        girl.rotation.y = -0.2 + Math.sin(t * 0.01) * 0.12;
-                        sockets.handL.rotation.z = 0.35 + Math.sin(t * 0.02) * 0.6;
-                        sockets.handR.rotation.z = -0.35 - Math.sin(t * 0.02) * 0.6;
-                        mouthMesh.scale.set(0.75, 0.65, 0.35);
-                        eyeL.scale.set(1.1, 1.1, 1.1);
-                        eyeR.scale.set(1.1, 1.1, 1.1);
-                        browL.visible = false;
-                        browR.visible = false;
-                    } else {
-                        const now = performance.now();
-                        girlMood = computeMood(now);
-                        if (girlMood !== prevMood) { onMoodChange(girlMood);
-                            prevMood = girlMood; }
-                        if (girlMood === 'angry' || girlMood === 'anxious') { if (petState === 'walk') { petState = 'stand';
-                                petStateTimer = 2; } } else { petStateTimer -= dt; if (petStateTimer <= 0) pickNextState(); }
-                        if (petState === 'walk') {
-                            const dir = Math.sign(wanderTargetX - girlNdcX);
-                            if (dir !== 0) faceDir = dir;
-                            girlNdcX += dir * 0.11 * dt;
-                            stepAccum += dt;
-                            if (stepAccum > 0.36) { stepAccum = 0;
-                                stepSFX(); }
-                            if (Math.abs(wanderTargetX - girlNdcX) < 0.02) { petState = 'stand';
-                                petStateTimer = 1.5 + Math.random() * 2.5; }
-                        }
-                        updateGirlScreenPosition();
-                        core.position.x = 0;
-                        girl.rotation.x = 0.12;
-                        if (petState === 'hop') {
-                            girl.rotation.y += (-0.2 - girl.rotation.y) * 0.1;
-                            core.position.y = Math.abs(Math.sin(t * 0.012)) * 0.5;
-                            sockets.handL.rotation.z = 0.35 + Math.abs(Math.sin(t * 0.012)) * 0.9;
-                            sockets.handR.rotation.z = -0.35 - Math.abs(Math.sin(t * 0.012)) * 0.9;
-                            (hairGroup.userData.tails || []).forEach(function(tail, i) {
-                                tail.rotation.z = (i === 0 ? -0.3 : 0.3) + Math.sin(t * 0.012 + i) * 0.3;
-                            });
-                            eyeL.scale.set(1, 1, 1);
-                            eyeR.scale.set(1, 1, 1);
-                            if (!isTalking) mouthMesh.scale.set(0.8, 0.5, 0.35);
-                            browL.visible = false;
-                            browR.visible = false;
-                        } else if (petState === 'walk') {
-                            girl.rotation.y += ((faceDir > 0 ? 0.65 : -0.9) - girl.rotation.y) * 0.08;
-                            core.position.y = Math.abs(Math.sin(t * 0.012)) * 0.09;
-                            sockets.footL.rotation.x = Math.sin(t * 0.012) * 0.6;
-                            sockets.footR.rotation.x = -Math.sin(t * 0.012) * 0.6;
-                            sockets.handL.rotation.x = -Math.sin(t * 0.012) * 0.5;
-                            sockets.handR.rotation.x = Math.sin(t * 0.012) * 0.5;
-                            (hairGroup.userData.tails || []).forEach(function(tail, i) {
-                                tail.rotation.x = Math.sin(t * 0.012 + i * 0.8) * 0.18;
-                            });
-                            eyeL.scale.set(1, 1, 1);
-                            eyeR.scale.set(1, 1, 1);
-                            if (!isTalking) mouthMesh.scale.set(1, 0.3, 0.3);
-                            browL.visible = false;
-                            browR.visible = false;
-                        } else {
-                            girl.rotation.y += (-0.2 - girl.rotation.y) * 0.1;
-                            core.scale.y = 1 + Math.sin(t * 0.004) * 0.02;
-                            core.position.y = Math.sin(t * 0.002) * 0.06;
-                            sockets.footL.rotation.x += (0 - sockets.footL.rotation.x) * 0.1;
-                            sockets.footR.rotation.x += (0 - sockets.footR.rotation.x) * 0.1;
-                            sockets.handL.rotation.x = 0;
-                            sockets.handR.rotation.x = 0;
-                            sockets.handL.rotation.z = 0.35 + Math.sin(t * 0.003) * 0.08;
-                            sockets.handR.rotation.z = -0.35 - Math.cos(t * 0.003) * 0.08;
-                            (hairGroup.userData.tails || []).forEach(function(tail, i) {
-                                tail.rotation.x = Math.sin(t * 0.0025 + i * 1.5) * 0.08;
-                            });
-                            const showBrows = girlMood === 'angry';
-                            browL.visible = showBrows;
-                            browR.visible = showBrows;
-                            if (showBrows) { browL.rotation.z = -0.4;
-                                browR.rotation.z = 0.4; }
-                            if (girlMood === 'angry') { eyeL.scale.set(1, 0.7, 1);
-                                eyeR.scale.set(1, 0.7, 1); if (!isTalking) mouthMesh.scale.set(0.8, 0.12, 0.3); } else if (girlMood === 'anxious') { eyeL.scale.set(1.3, 1.3, 1.3);
-                                eyeR.scale.set(1.3, 1.3, 1.3); if (!isTalking) mouthMesh.scale.set(0.5, 0.55, 0.35);
-                                girl.position.x += (Math.random() - 0.5) * 0.05;
-                                girl.position.y += (Math.random() - 0.5) * 0.05; } else if (girlMood === 'bored') { eyeL.scale.set(1, 0.35, 1);
-                                eyeR.scale.set(1, 0.35, 1);
-                                girl.rotation.z = Math.sin(t * 0.0008) * 0.1; const yawn = Math.max(0, Math.sin(t * 0.0012)); if (!isTalking) mouthMesh.scale.set(0.55 + yawn * 0.2, 0.2 + yawn * 0.55, 0.35); } else { girl.rotation.z += (0 - girl.rotation.z) * 0.1;
-                                eyeL.scale.set(1, 1, 1);
-                                eyeR.scale.set(1, 1, 1); const blink = Math.sin(t * 0.0035); if (blink > 0.985) { eyeL.scale.y = 0.1;
-                                    eyeR.scale.y = 0.1; } if (!isTalking) mouthMesh.scale.set(1, 0.3, 0.3); }
-                        }
+                    if (winTime > 0) { winTime -= dt; const hop = Math.abs(Math.sin(t * 0.01)); core.position.y = hop * 1.3; core.scale.y = 1 + Math.sin(t * 0.01) * 0.08; core.scale.x = 1 - Math.sin(t * 0.01) * 0.05; girl.rotation.y = -0.2 + Math.sin(t * 0.004) * 0.5; sockets.handL.rotation.z = 2.6 + Math.sin(t * 0.02) * 0.3; sockets.handR.rotation.z = -2.6 - Math.sin(t * 0.02) * 0.3; (hairGroup.userData.tails || []).forEach(function(tail, i) { tail.rotation.z = (i === 0 ? -0.3 : 0.3) + Math.sin(t * 0.012 + i) * 0.35; }); mouthMesh.scale.set(0.95, 0.8, 0.35); eyeL.scale.set(1, 0.35, 1); eyeR.scale.set(1, 0.35, 1); if (winTime <= 0) { sockets.handL.rotation.z = 0.35; sockets.handR.rotation.z = -0.35; core.position.y = 0; } }
+                    else if (reactionTime > 0) { reactionTime -= dt; core.position.y = 0.15 * Math.abs(Math.sin(t * 0.015)); girl.rotation.y = -0.2 + Math.sin(t * 0.01) * 0.12; sockets.handL.rotation.z = 0.35 + Math.sin(t * 0.02) * 0.6; sockets.handR.rotation.z = -0.35 - Math.sin(t * 0.02) * 0.6; mouthMesh.scale.set(0.75, 0.65, 0.35); eyeL.scale.set(1.1, 1.1, 1.1); eyeR.scale.set(1.1, 1.1, 1.1); browL.visible = false; browR.visible = false; }
+                    else {
+                        const now = performance.now(); girlMood = computeMood(now); if (girlMood !== prevMood) { onMoodChange(girlMood); prevMood = girlMood; }
+                        if (girlMood === 'angry' || girlMood === 'anxious') { if (petState === 'walk') { petState = 'stand'; petStateTimer = 2; } } else { petStateTimer -= dt; if (petStateTimer <= 0) pickNextState(); }
+                        if (petState === 'walk') { const dir = Math.sign(wanderTargetX - girlNdcX); if (dir !== 0) faceDir = dir; girlNdcX += dir * 0.11 * dt; stepAccum += dt; if (stepAccum > 0.36) { stepAccum = 0; stepSFX(); } if (Math.abs(wanderTargetX - girlNdcX) < 0.02) { petState = 'stand'; petStateTimer = 1.5 + Math.random() * 2.5; } }
+                        updateGirlScreenPosition(); core.position.x = 0; girl.rotation.x = 0.12;
+                        if (petState === 'hop') { girl.rotation.y += (-0.2 - girl.rotation.y) * 0.1; core.position.y = Math.abs(Math.sin(t * 0.012)) * 0.5; sockets.handL.rotation.z = 0.35 + Math.abs(Math.sin(t * 0.012)) * 0.9; sockets.handR.rotation.z = -0.35 - Math.abs(Math.sin(t * 0.012)) * 0.9; (hairGroup.userData.tails || []).forEach(function(tail, i) { tail.rotation.z = (i === 0 ? -0.3 : 0.3) + Math.sin(t * 0.012 + i) * 0.3; }); eyeL.scale.set(1, 1, 1); eyeR.scale.set(1, 1, 1); if (!isTalking) mouthMesh.scale.set(0.8, 0.5, 0.35); browL.visible = false; browR.visible = false; }
+                        else if (petState === 'walk') { girl.rotation.y += ((faceDir > 0 ? 0.65 : -0.9) - girl.rotation.y) * 0.08; core.position.y = Math.abs(Math.sin(t * 0.012)) * 0.09; sockets.footL.rotation.x = Math.sin(t * 0.012) * 0.6; sockets.footR.rotation.x = -Math.sin(t * 0.012) * 0.6; sockets.handL.rotation.x = -Math.sin(t * 0.012) * 0.5; sockets.handR.rotation.x = Math.sin(t * 0.012) * 0.5; (hairGroup.userData.tails || []).forEach(function(tail, i) { tail.rotation.x = Math.sin(t * 0.012 + i * 0.8) * 0.18; }); eyeL.scale.set(1, 1, 1); eyeR.scale.set(1, 1, 1); if (!isTalking) mouthMesh.scale.set(1, 0.3, 0.3); browL.visible = false; browR.visible = false; }
+                        else { girl.rotation.y += (-0.2 - girl.rotation.y) * 0.1; core.scale.y = 1 + Math.sin(t * 0.004) * 0.02; core.position.y = Math.sin(t * 0.002) * 0.06; sockets.footL.rotation.x += (0 - sockets.footL.rotation.x) * 0.1; sockets.footR.rotation.x += (0 - sockets.footR.rotation.x) * 0.1; sockets.handL.rotation.x = 0; sockets.handR.rotation.x = 0; sockets.handL.rotation.z = 0.35 + Math.sin(t * 0.003) * 0.08; sockets.handR.rotation.z = -0.35 - Math.cos(t * 0.003) * 0.08; (hairGroup.userData.tails || []).forEach(function(tail, i) { tail.rotation.x = Math.sin(t * 0.0025 + i * 1.5) * 0.08; }); const showBrows = girlMood === 'angry'; browL.visible = showBrows; browR.visible = showBrows; if (showBrows) { browL.rotation.z = -0.4; browR.rotation.z = 0.4; } if (girlMood === 'angry') { eyeL.scale.set(1, 0.7, 1); eyeR.scale.set(1, 0.7, 1); if (!isTalking) mouthMesh.scale.set(0.8, 0.12, 0.3); } else if (girlMood === 'anxious') { eyeL.scale.set(1.3, 1.3, 1.3); eyeR.scale.set(1.3, 1.3, 1.3); if (!isTalking) mouthMesh.scale.set(0.5, 0.55, 0.35); girl.position.x += (Math.random() - 0.5) * 0.05; girl.position.y += (Math.random() - 0.5) * 0.05; } else if (girlMood === 'bored') { eyeL.scale.set(1, 0.35, 1); eyeR.scale.set(1, 0.35, 1); girl.rotation.z = Math.sin(t * 0.0008) * 0.1; const yawn = Math.max(0, Math.sin(t * 0.0012)); if (!isTalking) mouthMesh.scale.set(0.55 + yawn * 0.2, 0.2 + yawn * 0.55, 0.35); } else { girl.rotation.z += (0 - girl.rotation.z) * 0.1; eyeL.scale.set(1, 1, 1); eyeR.scale.set(1, 1, 1); const blink = Math.sin(t * 0.0035); if (blink > 0.985) { eyeL.scale.y = 0.1; eyeR.scale.y = 0.1; } if (!isTalking) mouthMesh.scale.set(1, 0.3, 0.3); } }
                     }
-                    if (isTalking && mouthMesh) { mouthMesh.scale.y = 0.25 + Math.abs(Math.sin(t * 0.025)) * 0.55;
-                        mouthMesh.scale.x = 0.7 + Math.abs(Math.cos(t * 0.02)) * 0.2; }
+                    if (isTalking && mouthMesh) { mouthMesh.scale.y = 0.25 + Math.abs(Math.sin(t * 0.025)) * 0.55; mouthMesh.scale.x = 0.7 + Math.abs(Math.cos(t * 0.02)) * 0.2; }
                     girlCore.traverse(function(child) { if (child.userData && child.userData.onUpdate) child.userData.onUpdate(t); });
                 }
                 if (currentCube && !busy) currentCube.rotation.y = Math.sin(t * 0.002) * 0.12;
@@ -2135,143 +1768,52 @@
             }
 
             (function() {
-                const shopRollup = document.getElementById('shopRollup');
-                const shopPanel = document.getElementById('shopPanel');
-                const helpRollup = document.getElementById('helpRollup');
-                const helpPanel = document.getElementById('helpPanel');
-                const missionRollup = document.getElementById('missionRollup');
-                const missionPanel = document.getElementById('missionPanel');
+                const shopRollup = document.getElementById('shopRollup'); const shopPanel = document.getElementById('shopPanel');
+                const helpRollup = document.getElementById('helpRollup'); const helpPanel = document.getElementById('helpPanel');
+                const missionRollup = document.getElementById('missionRollup'); const missionPanel = document.getElementById('missionPanel');
 
                 shopRollup.onclick = function(e) {
-                    e.stopPropagation();
-                    shopPanelOpen = !shopPanelOpen;
-                    if (shopPanelOpen) { shopPanel.classList.add('open');
-                        shopRollup.style.opacity = '0';
-                        shopRollup.style.pointerEvents = 'none'; } else { shopPanel.classList.remove('open');
-                        shopRollup.style.opacity = '1';
-                        shopRollup.style.pointerEvents = 'auto'; }
-                    if (helpPanelOpen) { helpPanelOpen = false;
-                        helpPanel.classList.remove('open');
-                        helpRollup.classList.remove('open'); }
-                    if (missionPanelOpen) { missionPanelOpen = false;
-                        missionPanel.classList.remove('open');
-                        missionRollup.classList.remove('open'); }
+                    e.stopPropagation(); shopPanelOpen = !shopPanelOpen;
+                    if (shopPanelOpen) { shopPanel.classList.add('open'); shopRollup.style.opacity = '0'; shopRollup.style.pointerEvents = 'none'; } else { shopPanel.classList.remove('open'); shopRollup.style.opacity = '1'; shopRollup.style.pointerEvents = 'auto'; }
+                    if (helpPanelOpen) { helpPanelOpen = false; helpPanel.classList.remove('open'); helpRollup.classList.remove('open'); }
+                    if (missionPanelOpen) { missionPanelOpen = false; missionPanel.classList.remove('open'); missionRollup.classList.remove('open'); }
                 };
 
                 helpRollup.onclick = function(e) {
-                    e.stopPropagation();
-                    helpPanelOpen = !helpPanelOpen;
-                    if (helpPanelOpen) { helpPanel.classList.add('open');
-                        helpRollup.classList.add('open'); } else { helpPanel.classList.remove('open');
-                        helpRollup.classList.remove('open'); }
-                    if (shopPanelOpen) { shopPanelOpen = false;
-                        shopPanel.classList.remove('open');
-                        shopRollup.style.opacity = '1';
-                        shopRollup.style.pointerEvents = 'auto'; }
-                    if (missionPanelOpen) { missionPanelOpen = false;
-                        missionPanel.classList.remove('open');
-                        missionRollup.classList.remove('open'); }
+                    e.stopPropagation(); helpPanelOpen = !helpPanelOpen;
+                    if (helpPanelOpen) { helpPanel.classList.add('open'); helpRollup.classList.add('open'); } else { helpPanel.classList.remove('open'); helpRollup.classList.remove('open'); }
+                    if (shopPanelOpen) { shopPanelOpen = false; shopPanel.classList.remove('open'); shopRollup.style.opacity = '1'; shopRollup.style.pointerEvents = 'auto'; }
+                    if (missionPanelOpen) { missionPanelOpen = false; missionPanel.classList.remove('open'); missionRollup.classList.remove('open'); }
                 };
 
                 missionRollup.onclick = function(e) {
-                    e.stopPropagation();
-                    missionPanelOpen = !missionPanelOpen;
-                    if (missionPanelOpen) { missionPanel.classList.add('open');
-                        missionRollup.classList.add('open'); } else { missionPanel.classList.remove('open');
-                        missionRollup.classList.remove('open'); }
-                    if (helpPanelOpen) { helpPanelOpen = false;
-                        helpPanel.classList.remove('open');
-                        helpRollup.classList.remove('open'); }
-                    if (shopPanelOpen) { shopPanelOpen = false;
-                        shopPanel.classList.remove('open');
-                        shopRollup.style.opacity = '1';
-                        shopRollup.style.pointerEvents = 'auto'; }
+                    e.stopPropagation(); missionPanelOpen = !missionPanelOpen;
+                    if (missionPanelOpen) { missionPanel.classList.add('open'); missionRollup.classList.add('open'); } else { missionPanel.classList.remove('open'); missionRollup.classList.remove('open'); }
+                    if (helpPanelOpen) { helpPanelOpen = false; helpPanel.classList.remove('open'); helpRollup.classList.remove('open'); }
+                    if (shopPanelOpen) { shopPanelOpen = false; shopPanel.classList.remove('open'); shopRollup.style.opacity = '1'; shopRollup.style.pointerEvents = 'auto'; }
                 };
 
                 document.getElementById('game').addEventListener('pointerdown', function(e) {
-                    if (shopPanelOpen) { shopPanelOpen = false;
-                        shopPanel.classList.remove('open');
-                        shopRollup.style.opacity = '1';
-                        shopRollup.style.pointerEvents = 'auto'; }
-                    if (helpPanelOpen) { helpPanelOpen = false;
-                        helpPanel.classList.remove('open');
-                        helpRollup.classList.remove('open'); }
-                    if (missionPanelOpen) { missionPanelOpen = false;
-                        missionPanel.classList.remove('open');
-                        missionRollup.classList.remove('open'); }
+                    if (shopPanelOpen) { shopPanelOpen = false; shopPanel.classList.remove('open'); shopRollup.style.opacity = '1'; shopRollup.style.pointerEvents = 'auto'; }
+                    if (helpPanelOpen) { helpPanelOpen = false; helpPanel.classList.remove('open'); helpRollup.classList.remove('open'); }
+                    if (missionPanelOpen) { missionPanelOpen = false; missionPanel.classList.remove('open'); missionRollup.classList.remove('open'); }
                 });
 
-                document.getElementById('btnShop').onclick = function() {
-                    renderShop();
-                    document.getElementById('shopModal').classList.remove('hidden');
-                    if (shopPanelOpen) { shopPanelOpen = false;
-                        shopPanel.classList.remove('open');
-                        shopRollup.style.opacity = '1';
-                        shopRollup.style.pointerEvents = 'auto'; }
-                };
+                document.getElementById('btnShop').onclick = function() { renderShop(); document.getElementById('shopModal').classList.remove('hidden'); if (shopPanelOpen) { shopPanelOpen = false; shopPanel.classList.remove('open'); shopRollup.style.opacity = '1'; shopRollup.style.pointerEvents = 'auto'; } };
                 document.getElementById('btnCloseShop').onclick = function() { document.getElementById('shopModal').classList.add('hidden'); };
-                document.getElementById('btnSound').onclick = function() {
-                    muted = !muted;
-                    save.muted = muted;
-                    persist();
-                    updateSoundBtn();
-                    if (muted) { try { speechSynthesis.cancel(); } catch (e) {} isTalking = false; }
-                    toast(muted ? TT().muted : TT().unmuted);
-                };
-                document.getElementById('btnLang').onclick = function() {
-                    lang = lang === 'en' ? 'el' : 'en';
-                    save.lang = lang;
-                    persist();
-                    applyLang();
-                };
+                document.getElementById('btnSound').onclick = function() { muted = !muted; save.muted = muted; persist(); updateSoundBtn(); if (muted) { try { speechSynthesis.cancel(); } catch (e) {} isTalking = false; } toast(muted ? TT().muted : TT().unmuted); };
+                document.getElementById('btnLang').onclick = function() { lang = lang === 'en' ? 'el' : 'en'; save.lang = lang; persist(); applyLang(); };
 
                 let firstInteraction = false;
-                document.addEventListener('pointerdown', function() {
-                    if (firstInteraction) return;
-                    firstInteraction = true;
-                    if (audioCtx.state === 'suspended') audioCtx.resume();
-                    try { const u = new SpeechSynthesisUtterance(' ');
-                        u.volume = 0;
-                        speechSynthesis.speak(u); } catch (e) {}
-                    startMusic();
-                    announceMission(400);
-                });
-                if (!window.PointerEvent) {
-                    document.addEventListener('touchstart', function() {
-                        if (firstInteraction) return;
-                        firstInteraction = true;
-                        if (audioCtx.state === 'suspended') audioCtx.resume();
-                        startMusic();
-                        announceMission(400);
-                    }, { passive: true });
-                }
+                document.addEventListener('pointerdown', function() { if (firstInteraction) return; firstInteraction = true; if (audioCtx.state === 'suspended') audioCtx.resume(); try { const u = new SpeechSynthesisUtterance(' '); u.volume = 0; speechSynthesis.speak(u); } catch (e) {} startMusic(); announceMission(400); });
+                if (!window.PointerEvent) { document.addEventListener('touchstart', function() { if (firstInteraction) return; firstInteraction = true; if (audioCtx.state === 'suspended') audioCtx.resume(); startMusic(); announceMission(400); }, { passive: true }); }
 
                 loadSave();
-                coins = save.coins || 1000;
-                level = save.level || 0;
-                best = save.best || 0;
-                score = save.score || 0;
-                lang = save.lang || 'el';
-                muted = !!save.muted;
-                initThree();
-                if (!renderer) return;
-                newBoard();
-                updateHUD();
-                applyLang();
-                updateSoundBtn();
-                initMic();
-                buildHair(save.equippedHair || 'hair_pigtails');
-                equipClothes(save.equippedClothes || 'cl_none');
-                equipShoes(save.equippedShoes || 'shoe_wood');
-                equipProp(save.equippedProps || 'prop_none');
+                coins = save.coins || 1000; level = save.level || 0; best = save.best || 0; score = save.score || 0; lang = save.lang || 'el'; muted = !!save.muted;
+                initThree(); if (!renderer) return; newBoard(); updateHUD(); applyLang(); updateSoundBtn(); initMic(); buildHair(save.equippedHair || 'hair_pigtails'); equipClothes(save.equippedClothes || 'cl_none'); equipShoes(save.equippedShoes || 'shoe_wood'); equipProp(save.equippedProps || 'prop_none');
 
                 const cvs = document.getElementById("game");
-                cvs.addEventListener("pointermove", function(e) {
-                    if (busy || !currentCube) return;
-                    const cx = (e.touches && e.touches[0]) ? e.touches[0].clientX : e.clientX;
-                    const col = Math.floor(cx / innerWidth * COLS);
-                    setAim(col);
-                });
+                cvs.addEventListener("pointermove", function(e) { if (busy || !currentCube) return; const cx = (e.touches && e.touches[0]) ? e.touches[0].clientX : e.clientX; const col = Math.floor(cx / innerWidth * COLS); setAim(col); });
                 cvs.addEventListener("pointerdown", onTap);
                 if (!window.PointerEvent) { cvs.addEventListener("touchstart", onTap, { passive: true }); }
             })();
