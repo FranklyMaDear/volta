@@ -66,20 +66,14 @@
         .cart-btn:hover { background: var(--mocha-dark); transform: translateY(-1px); }
         .cart-count { background: var(--latte); color: var(--ink); min-width: 22px; height: 22px; border-radius: 999px; display: grid; place-items: center; font-weight: 700; font-size: .8rem; padding: 0 6px; }
 
+        /* Hero μικρότερο */
         .hero {
-            max-width: 1120px; margin: 0 auto; padding: 56px 20px 40px;
-            display: grid; grid-template-columns: 1.25fr .75fr; gap: 40px; align-items: center;
+            max-width: 1120px; margin: 0 auto; padding: 40px 20px 30px;
+            display: flex; flex-direction: column; gap: 16px;
         }
-        .hero h1 { font-size: clamp(2.4rem, 5.4vw, 4.1rem); font-weight: 900; line-height: 1.05; letter-spacing: -.01em; }
+        .hero h1 { font-size: clamp(1.8rem, 3.5vw, 2.4rem); font-weight: 900; line-height: 1.2; letter-spacing: -.01em; }
         .hero h1 .stroll { display: inline-block; color: var(--mocha); font-style: italic; }
-        .hero p { margin-top: 16px; max-width: 46ch; font-size: 1.05rem; line-height: 1.6; color: #4d4336; }
-        .hero-hours { background: var(--mocha); color: var(--paper); border-radius: 18px; padding: 26px 26px 22px; position: relative; overflow: hidden; }
-        .hero-hours::before { content: ""; position: absolute; inset: 0 0 auto 0; height: 10px; background: repeating-linear-gradient(90deg, var(--latte) 0 22px, transparent 22px 44px); opacity: .9; }
-        .hero-hours h3 { font-size: 1.05rem; font-weight: 700; margin-bottom: 12px; margin-top: 6px; }
-        .hero-hours dl { display: grid; grid-template-columns: auto 1fr; gap: 6px 16px; font-size: .92rem; }
-        .hero-hours dt { color: #d4c4b0; }
-        .hero-hours dd { text-align: right; font-variant-numeric: tabular-nums; }
-        .hero-hours .note { margin-top: 14px; font-size: .82rem; color: #d4c4b0; }
+        .hero p { max-width: 60ch; font-size: .95rem; line-height: 1.5; color: #4d4336; }
 
         .cats { position: sticky; top: 63px; z-index: 40; background: var(--paper); border-bottom: 1px solid var(--line); }
         .cats-inner { max-width: 1120px; margin: 0 auto; padding: 12px 20px; display: flex; gap: 8px; overflow-x: auto; scrollbar-width: none; }
@@ -95,7 +89,9 @@
         .product:hover { transform: translateY(-3px); box-shadow: 0 8px 20px rgba(44, 24, 16, .08); }
         .p-name { font-family: 'Literata', serif; font-weight: 700; font-size: 1.02rem; line-height: 1.3; flex: 1; }
         .p-options { display: flex; flex-direction: column; gap: 8px; margin: 4px 0; }
-        .p-options select, .p-options .ice-cream-choices { font-size: .85rem; padding: 6px 8px; border-radius: 6px; border: 1px solid var(--line); background: #fff; font-family: inherit; }
+        .p-options select, .p-options .flavor-select-area { font-size: .85rem; }
+        .flavor-select-area { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+        .flavor-select-area select { padding: 6px 8px; border-radius: 6px; border: 1px solid var(--line); background: #fff; font-family: inherit; }
         .p-foot { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-top: 4px; }
         .p-price { font-weight: 700; font-size: 1.02rem; color: var(--mocha); }
         .add {
@@ -133,7 +129,7 @@
         .form-group { display: flex; flex-direction: column; gap: 10px; margin-bottom: 16px; }
         .form-group input, .form-group select, .form-group textarea {
             width: 100%; padding: 12px; border-radius: 8px; border: 1px solid var(--line);
-            font-family: inherit; font-size: .95rem; background: #fff; color: var(--ink; resize: vertical;
+            font-family: inherit; font-size: .95rem; background: #fff; color: var(--ink); resize: vertical;
         }
         .form-group textarea { min-height: 70px; max-height: 120px; }
         .form-group input:focus, .form-group select:focus, .form-group textarea:focus { outline: 2px solid var(--mocha); }
@@ -142,10 +138,18 @@
         .checkout:disabled { opacity: .45; cursor: not-allowed; }
         .thanks { text-align: center; padding: 50px 20px; line-height: 1.7; }
 
-        footer { background: var(--mocha-dark); color: #d4c4b0; padding: 34px 20px; }
-        .foot-inner { max-width: 1120px; margin: 0 auto; display: flex; flex-wrap: wrap; gap: 20px; justify-content: space-between; align-items: center; font-size: .95rem; }
-        .foot-inner .fname { font-family: 'Literata', serif; color: #fff; font-weight: 700; font-size: 1.2rem; margin-bottom: 4px; }
-        .foot-details p { margin-bottom: 6px; display: flex; align-items: center; gap: 8px; }
+        /* Footer / bottom info */
+        .bottom-info {
+            background: var(--mocha); color: #f0e2d0; padding: 28px 20px; margin-top: 30px;
+            border-radius: 18px 18px 0 0; max-width: 1120px; margin-left: auto; margin-right: auto;
+        }
+        .bottom-inner { display: flex; flex-wrap: wrap; gap: 24px; justify-content: space-between; align-items: center; }
+        .bottom-inner h3 { color: #fff; margin-bottom: 8px; font-size: 1.1rem; }
+        .bottom-inner dl { display: grid; grid-template-columns: auto 1fr; gap: 4px 16px; font-size: .92rem; }
+        .bottom-inner dt { color: #d4c4b0; }
+        .bottom-inner dd { text-align: right; }
+        .bottom-inner a { color: #f0e2d0; text-decoration: underline; }
+        .bottom-inner .phone-link { font-weight: 700; font-size: 1.1rem; }
 
         .toast {
             position: fixed; left: 50%; bottom: 26px; transform: translate(-50%, 80px);
@@ -154,33 +158,7 @@
         }
         .toast.show { transform: translate(-50%, 0); opacity: 1; }
 
-        /* Ice cream flavor modal */
-        .flavor-modal {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5);
-            display: flex; align-items: center; justify-content: center; z-index: 100;
-            visibility: hidden; opacity: 0; transition: visibility 0s .2s, opacity .2s;
-        }
-        .flavor-modal.open { visibility: visible; opacity: 1; transition-delay: 0s; }
-        .flavor-content {
-            background: #fff; border-radius: 16px; padding: 24px; max-width: 340px; width: 90%;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
-        }
-        .flavor-content h3 { margin-bottom: 12px; }
-        .flavor-grid { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
-        .flavor-chip {
-            border: 1.5px solid var(--line); border-radius: 999px; padding: 6px 14px;
-            font-size: .85rem; cursor: pointer; background: #fff; transition: all .15s;
-        }
-        .flavor-chip.selected { background: var(--mocha); color: #fff; border-color: var(--mocha); }
-        .flavor-actions { display: flex; gap: 10px; justify-content: flex-end; }
-        .flavor-actions button {
-            padding: 8px 16px; border-radius: 999px; border: 1.5px solid var(--mocha);
-            background: transparent; color: var(--mocha); font-weight: 600; cursor: pointer;
-        }
-        .flavor-actions button.primary { background: var(--mocha); color: #fff; }
-
         @media (max-width: 700px) {
-            .hero { grid-template-columns: 1fr; }
             .bar { flex-direction: column; align-items: flex-start; }
             .header-actions { width: 100%; justify-content: space-between; }
         }
@@ -208,15 +186,8 @@
 </header>
 
 <section class="hero" id="top">
-    <div>
-        <h1>Ο τέλειος καφές,<br>έτοιμος πριν φτάσεις.</h1>
-        <p>Παράγγειλε online, διάλεξε την ώρα που σε βολεύει και πέρνα να πάρεις την παραγγελία σου χωρίς καμία αναμονή. Κέρδισε πόντους με κάθε αγορά!</p>
-    </div>
-    <aside class="hero-hours">
-        <h3>Είμαστε ανοιχτά</h3>
-        <dl><dt>Καθημερινά</dt><dd>06:00 – 23:00</dd></dl>
-        <div class="note">📍 Φήκη Τρικάλων<br>📞 2431052032</div>
-    </aside>
+    <h1>Ο τέλειος καφές, <span class="stroll">έτοιμος πριν φτάσεις.</span></h1>
+    <p>Παράγγειλε online, διάλεξε την ώρα που σε βολεύει και πέρνα να πάρεις την παραγγελία σου χωρίς καμία αναμονή. Κέρδισε πόντους με κάθε αγορά!</p>
 </section>
 
 <nav class="cats">
@@ -230,16 +201,20 @@
     <div class="grid" id="productsGrid"></div>
 </main>
 
-<footer>
-    <div class="foot-inner">
-        <div><div class="fname">Καφέ Βόλτα</div><div>Ο καφές της γειτονιάς, τώρα και online.</div></div>
-        <div class="foot-details">
-            <p>📍 <strong>Φήκη Τρικάλων</strong></p>
-            <p>📞 <strong>Τηλ: 2431052032</strong></p>
-            <p>⏰ Καθημερινά: 06:00 - 23:00</p>
+<!-- Κάτω μέρος με ωράριο & τηλέφωνο (αντικαθιστά το footer) -->
+<div class="bottom-info">
+    <div class="bottom-inner">
+        <div>
+            <h3>Καφέ Βόλτα</h3>
+            <p>📍 Φήκη Τρικάλων</p>
+            <p>📞 <a href="tel:2431052032" class="phone-link">2431052032</a></p>
+        </div>
+        <div>
+            <h3>Είμαστε ανοιχτά</h3>
+            <dl><dt>Καθημερινά</dt><dd>06:00 – 23:00</dd></dl>
         </div>
     </div>
-</footer>
+</div>
 
 <div class="overlay" id="overlay"></div>
 <aside class="drawer" id="drawer">
@@ -267,25 +242,10 @@
     </div>
 </aside>
 
-<!-- Modal για επιλογή γεύσεων παγωτού -->
-<div class="flavor-modal" id="flavorModal">
-    <div class="flavor-content">
-        <h3>Επίλεξε έως 2 γεύσεις</h3>
-        <div class="flavor-grid" id="flavorGrid"></div>
-        <p style="font-size:0.8rem; color:#8a7a5e; margin-bottom:12px;" id="flavorCount">0/2 γεύσεις</p>
-        <div class="flavor-actions">
-            <button id="cancelFlavor">Άκυρο</button>
-            <button id="confirmFlavor" class="primary" disabled>Προσθήκη</button>
-        </div>
-    </div>
-</div>
-
 <div class="toast" id="toast">Προστέθηκε στο καλάθι</div>
 
 <script>
-    // ---------- Προϊόντα ----------
     const PRODUCTS = [
-        // Καφέδες & Ροφήματα (hasSugarOption: true)
         { id: 'espresso', n: "Espresso", p: 1.50, cat: 'coffee', sugar: true },
         { id: 'espresso2', n: "Espresso Διπλός", p: 2.00, cat: 'coffee', sugar: true },
         { id: 'freddo', n: "Freddo Espresso", p: 2.50, cat: 'coffee', sugar: true },
@@ -302,16 +262,14 @@
         { id: 'kakao', n: "Κακάο", p: 2.20, cat: 'coffee', sugar: true },
         { id: 'tsai', n: "Τσάι", p: 2.00, cat: 'coffee', sugar: true },
         { id: 'granita', n: "Γρανίτα", p: 2.50, cat: 'coffee', sugar: true },
-        // Παγωτά (χωρίς ζάχαρη, αλλά με επιλογή χωνάκι/κύπελλο και γεύσεις)
-        { id: 'icecone', n: "Παγωτό Χωνάκι (2 μπάλες)", p: 1.50, cat: 'icecream', sugar: false, iceCreamType: 'cone' },
-        { id: 'icecup', n: "Παγωτό Κύπελλο (2 μπάλες)", p: 1.50, cat: 'icecream', sugar: false, iceCreamType: 'cup' }
+        { id: 'icecone', n: "Παγωτό Χωνάκι (2 μπάλες)", p: 1.50, cat: 'icecream', sugar: false },
+        { id: 'icecup', n: "Παγωτό Κύπελλο (2 μπάλες)", p: 1.50, cat: 'icecream', sugar: false }
     ];
 
     const ICE_FLAVORS = ['Βανίλια', 'Σοκολάτα', 'Φράουλα', 'Μπανάνα', 'Στρατσιατέλα', 'Καϊμάκι'];
     const euro = v => v.toFixed(2).replace(".", ",") + " €";
-    const cart = new Map(); // key: productId_sugar_flavors, value: { qty, product, sugar, flavors }
+    const cart = new Map();
 
-    // ---------- LocalStorage ----------
     const LS_NAME = 'kafeVolta_customerName';
     const LS_PHONE = 'kafeVolta_customerPhone';
     const LS_POINTS = 'kafeVolta_rewardPoints';
@@ -333,7 +291,6 @@
         document.getElementById('pointsDisplay').style.display = pts > 0 ? 'flex' : 'none';
     }
 
-    // ---------- Ρύθμιση κατηγοριών ----------
     let currentCategory = 'coffee';
     document.getElementById('categoryNav').addEventListener('click', e => {
         const chip = e.target.closest('.chip');
@@ -348,13 +305,29 @@
 
     function renderProducts() {
         gridEl.innerHTML = '';
-        PRODUCTS.filter(p => p.cat === currentCategory).forEach((p, idx) => {
+        PRODUCTS.filter(p => p.cat === currentCategory).forEach(p => {
             const card = document.createElement('article');
             card.className = 'product';
             card.dataset.pid = p.id;
+
+            let optionsHtml = '';
+            if (p.sugar) {
+                optionsHtml = `<div class="p-options"><select class="sugar-select"><option value="σκέτο">Σκέτο</option><option value="μέτριο" selected>Μέτριο</option><option value="γλυκό">Γλυκό</option></select></div>`;
+            } else if (p.cat === 'icecream') {
+                // Δύο dropdown για γεύσεις (ίδια γεύση επιτρέπεται)
+                const flavorOpts = ICE_FLAVORS.map(f => `<option value="${f}">${f}</option>`).join('');
+                optionsHtml = `
+                    <div class="p-options">
+                        <div class="flavor-select-area">
+                            <select class="flavor1">${flavorOpts}</select>
+                            <select class="flavor2">${flavorOpts}</select>
+                        </div>
+                    </div>`;
+            }
+
             card.innerHTML = `
                 <div class="p-name">${p.n}</div>
-                ${p.sugar ? `<div class="p-options"><select class="sugar-select"><option value="σκέτο">Σκέτο</option><option value="μέτριο" selected>Μέτριο</option><option value="γλυκό">Γλυκό</option></select></div>` : ''}
+                ${optionsHtml}
                 <div class="p-foot">
                     <div class="p-price">${euro(p.p)}</div>
                     <button class="add">+ Προσθήκη</button>
@@ -362,65 +335,6 @@
             gridEl.appendChild(card);
         });
     }
-
-    // Διαχείριση προσθήκης στο καλάθι (παγωτό με modal)
-    let pendingIceCream = null; // { product, sugar, flavors: [] }
-    const flavorModal = document.getElementById('flavorModal');
-    const flavorGrid = document.getElementById('flavorGrid');
-    const flavorCountSpan = document.getElementById('flavorCount');
-    const confirmFlavorBtn = document.getElementById('confirmFlavor');
-    let selectedFlavors = [];
-
-    function openFlavorModal(product) {
-        pendingIceCream = { product, flavors: [] };
-        selectedFlavors = [];
-        renderFlavorGrid();
-        flavorModal.classList.add('open');
-        confirmFlavorBtn.disabled = true;
-    }
-
-    function renderFlavorGrid() {
-        flavorGrid.innerHTML = '';
-        ICE_FLAVORS.forEach(f => {
-            const chip = document.createElement('div');
-            chip.className = 'flavor-chip' + (selectedFlavors.includes(f) ? ' selected' : '');
-            chip.textContent = f;
-            chip.addEventListener('click', () => {
-                if (selectedFlavors.includes(f)) {
-                    selectedFlavors = selectedFlavors.filter(x => x !== f);
-                } else {
-                    if (selectedFlavors.length < 2) selectedFlavors.push(f);
-                    else return; // ήδη 2 επιλεγμένα
-                }
-                renderFlavorGrid();
-                flavorCountSpan.textContent = `${selectedFlavors.length}/2 γεύσεις`;
-                confirmFlavorBtn.disabled = selectedFlavors.length !== 2;
-            });
-            flavorGrid.appendChild(chip);
-        });
-        flavorCountSpan.textContent = `${selectedFlavors.length}/2 γεύσεις`;
-    }
-
-    document.getElementById('cancelFlavor').addEventListener('click', () => {
-        flavorModal.classList.remove('open');
-        pendingIceCream = null;
-    });
-    confirmFlavorBtn.addEventListener('click', () => {
-        if (selectedFlavors.length !== 2 || !pendingIceCream) return;
-        const prod = pendingIceCream.product;
-        const flavorsKey = selectedFlavors.sort().join(',');
-        const cartKey = `${prod.id}::${flavorsKey}`;
-        const existing = cart.get(cartKey);
-        if (existing) {
-            existing.qty += 1;
-        } else {
-            cart.set(cartKey, { qty: 1, product: prod, sugar: null, flavors: [...selectedFlavors] });
-        }
-        flavorModal.classList.remove('open');
-        pendingIceCream = null;
-        updateCartUI();
-        showToast(`Παγωτό με ${selectedFlavors.join(', ')} προστέθηκε`);
-    });
 
     gridEl.addEventListener('click', e => {
         const btn = e.target.closest('.add');
@@ -431,21 +345,28 @@
         if (!product) return;
 
         if (product.cat === 'icecream') {
-            // Άνοιγμα modal για γεύσεις
-            openFlavorModal(product);
-            return;
+            const f1 = card.querySelector('.flavor1')?.value || 'Βανίλια';
+            const f2 = card.querySelector('.flavor2')?.value || 'Σοκολάτα';
+            const flavorsKey = [f1, f2].sort().join(',');
+            const cartKey = `${product.id}::${flavorsKey}`;
+            const existing = cart.get(cartKey);
+            if (existing) {
+                existing.qty += 1;
+            } else {
+                cart.set(cartKey, { qty: 1, product, sugar: null, flavors: [f1, f2] });
+            }
+        } else {
+            const sugarSelect = card.querySelector('.sugar-select');
+            const sugar = sugarSelect ? sugarSelect.value : null;
+            const cartKey = `${product.id}::${sugar || 'nosugar'}`;
+            const existing = cart.get(cartKey);
+            if (existing) {
+                existing.qty += 1;
+            } else {
+                cart.set(cartKey, { qty: 1, product, sugar, flavors: [] });
+            }
         }
 
-        // Κανονικό ρόφημα με ζάχαρη
-        const sugarSelect = card.querySelector('.sugar-select');
-        const sugar = sugarSelect ? sugarSelect.value : null;
-        const cartKey = `${product.id}::${sugar || 'nosugar'}`;
-        const existing = cart.get(cartKey);
-        if (existing) {
-            existing.qty += 1;
-        } else {
-            cart.set(cartKey, { qty: 1, product, sugar, flavors: [] });
-        }
         updateCartUI();
         showToast(`«${product.n}» προστέθηκε`);
         btn.classList.add('added');
@@ -460,7 +381,6 @@
         setTimeout(() => toast.classList.remove('show'), 1600);
     }
 
-    // ---------- Drawer ----------
     const drawer = document.getElementById('drawer');
     const overlay = document.getElementById('overlay');
     const cartBody = document.getElementById('cartBody');
@@ -472,7 +392,7 @@
 
     function updateCartUI() {
         let count = 0, total = 0;
-        cart.forEach((entry, key) => { count += entry.qty; total += entry.qty * entry.product.p; });
+        cart.forEach(entry => { count += entry.qty; total += entry.qty * entry.product.p; });
         document.getElementById('cartCount').textContent = count;
         document.getElementById('cartTotal').textContent = euro(total);
         checkoutBtn.disabled = count === 0;
@@ -515,7 +435,6 @@
         updateCartUI();
     };
 
-    // ---------- Checkout ----------
     checkoutBtn.onclick = () => {
         const phone = document.getElementById('phoneField').value.trim();
         const name = document.getElementById('nameField').value.trim();
@@ -577,7 +496,6 @@
         });
     };
 
-    // Αρχικοποίηση
     loadSavedData();
     renderProducts();
     updateCartUI();
