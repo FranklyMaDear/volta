@@ -1,4 +1,4 @@
-<!DOCTYPE html> 
+<!DOCTYPE html>
 <html lang="el">
 <head>
     <meta charset="UTF-8">
@@ -204,7 +204,21 @@
         { id: 'gift-ice', name: 'Δωρεάν παγωτό (2 μπάλες)', cost: 15, value: 1.50 },
         { id: 'gift-drink', name: 'Δωρεάν ρόφημα (έως 2,80€)', cost: 25, value: 2.80 }
     ];
-    let activeReward = null;
+    // ★ Εξαργυρώσεις: id → ποσότητα (μπορεί πολλά δώρα μαζί, όσα φτάνουν οι πόντοι)
+    const redeemed = new Map();
+    function redeemedCostTotal() {
+        let c = 0; redeemed.forEach((qty, id) => { const r = REWARDS.find(x => x.id === id); if (r) c += r.cost * qty; });
+        return c;
+    }
+    function redeemedValueTotal() {
+        let v = 0; redeemed.forEach((qty, id) => { const r = REWARDS.find(x => x.id === id); if (r) v += r.value * qty; });
+        return v;
+    }
+    function redeemedList() {
+        const out = [];
+        redeemed.forEach((qty, id) => { const r = REWARDS.find(x => x.id === id); if (r) out.push({ ...r, qty }); });
+        return out;
+    }
 
     const euro = v => v.toFixed(2).replace('.', ',') + ' €';
     const cart = new Map();
@@ -294,56 +308,53 @@
         let s = 0; cart.forEach(v => s += v.qty * v.prod.p); return s;
     }
     function getDiscount() {
-        if (!activeReward) return 0;
-        return Math.min(activeReward.value, getSubtotal());
+        return Math.min(redeemedValueTotal(), getSubtotal());
     }
 
-    // ★ Εμφάνιση δώρων στο καλάθι
+    // ★ Εμφάνιση δώρων στο καλάθι (με +/− για πολλαπλές εξαργυρώσεις)
     function renderRewards() {
         const area = document.getElementById('rewardsArea');
         const pts = getPoints();
+        const spent = redeemedCostTotal();
+        const left = pts - spent;
 
-        if (activeReward) {
-            area.innerHTML = `
-                <div class="reward-active">
-                    <span>🎁 <strong>${activeReward.name}</strong> (−${activeReward.cost} πόντοι)</span>
-                    <button class="cancel-reward" onclick="cancelReward()">Ακύρωση</button>
-                </div>`;
-            return;
-        }
-
-        const anyAffordable = REWARDS.some(r => pts >= r.cost);
         let rows = REWARDS.map(r => {
-            const can = pts >= r.cost;
-            const missing = r.cost - pts;
+            const qty = redeemed.get(r.id) || 0;
+            const canAdd = left >= r.cost;
+            const missing = r.cost - left;
             return `
                 <div class="reward-row">
-                    <span>${r.name}</span>
-                    <span class="r-cost">${r.cost} ⭐</span>
-                    ${can
-                        ? `<button class="redeem-btn" onclick="redeemReward('${r.id}')">Εξαργύρωση</button>`
-                        : `<button class="redeem-btn" disabled>Λείπουν ${missing}</button>`}
+                    <span>${r.name}<br><span class="r-cost">${r.cost} ⭐</span></span>
+                    <span style="display:flex;align-items:center;gap:6px;">
+                        ${qty > 0 ? `<button class="redeem-btn" onclick="redeemReward('${r.id}', -1)">−</button><strong>${qty}</strong>` : ''}
+                        ${canAdd
+                            ? `<button class="redeem-btn" onclick="redeemReward('${r.id}', 1)">${qty > 0 ? '+' : 'Εξαργύρωση'}</button>`
+                            : (qty > 0 ? '' : `<button class="redeem-btn" disabled>Λείπουν ${missing}</button>`)}
+                    </span>
                 </div>`;
         }).join('');
 
+        const anyAffordable = REWARDS.some(r => left >= r.cost) || spent > 0;
         area.innerHTML = `
             <div class="rewards-box">
-                <h4>🎁 Δώρα με πόντους — έχεις ${pts} ⭐</h4>
+                <h4>🎁 Δώρα με πόντους — έχεις ${pts} ⭐${spent ? ` (θα ξοδέψεις ${spent})` : ''}</h4>
                 ${rows}
                 ${anyAffordable ? '' : '<small>Κέρδισε 1 πόντο για κάθε 1€ παραγγελίας.</small>'}
             </div>`;
     }
 
-    window.redeemReward = (id) => {
+    window.redeemReward = (id, step) => {
         const r = REWARDS.find(x => x.id === id);
-        if (!r || getPoints() < r.cost) return;
-        if (cart.size === 0) { showToast('Πρόσθεσε πρώτα προϊόντα στο καλάθι'); return; }
-        activeReward = r;
-        updateCart();
-        showToast(`🎁 «${r.name}» θα αφαιρεθεί από το σύνολο`);
-    };
-    window.cancelReward = () => {
-        activeReward = null;
+        if (!r) return;
+        const qty = redeemed.get(id) || 0;
+        if (step > 0) {
+            if (cart.size === 0) { showToast('Πρόσθεσε πρώτα προϊόντα στο καλάθι'); return; }
+            if (getPoints() - redeemedCostTotal() < r.cost) return;
+            redeemed.set(id, qty + 1);
+            showToast(`🎁 «${r.name}» προστέθηκε στα δώρα`);
+        } else {
+            if (qty <= 1) redeemed.delete(id); else redeemed.set(id, qty - 1);
+        }
         updateCart();
     };
 
@@ -397,7 +408,7 @@
 
     // ★ Αποστολή παραγγελίας μέσω Cloudflare Worker (το token μένει κρυφό στον server)
     // Βάλε εδώ τη διεύθυνση του Worker σου, π.χ. https://kafe-volta.xxxx.workers.dev
-    const WORKER_URL = "https://ΒΑΛΕ-ΕΔΩ-ΤΟ-WORKER-URL.workers.dev";
+    const WORKER_URL = "https://billowing-dust-55d0.kafevolta.workers.dev";
 
     async function sendOrder(text) {
         try {
@@ -425,8 +436,8 @@
         const discount = getDiscount();
         const totalAmount = subtotal - discount;
         const earned = Math.floor(totalAmount);
-        const redeemedCost = activeReward ? activeReward.cost : 0;
-        const redeemedName = activeReward ? activeReward.name : null;
+        const redeemedCost = redeemedCostTotal();
+        const gifts = redeemedList();
 
         const tgUser = window.Telegram?.WebApp?.initDataUnsafe?.user;
         const name = document.getElementById('nameField').value.trim();
@@ -441,7 +452,9 @@
             itemsText += `- ${v.qty}x ${v.prod.n} ${details}\n`;
         });
 
-        let rewardText = redeemedName ? `\n🎁 <b>Δώρο: ${redeemedName}</b> (−${euro(discount)}, −${redeemedCost} πόντοι)` : '';
+        let rewardText = gifts.length
+            ? `\n🎁 <b>Δώρα:</b> ${gifts.map(g => `${g.qty}x ${g.name}`).join(', ')} (−${euro(discount)}, −${redeemedCost} πόντοι)`
+            : '';
 
         // Οι πόντοι αλλάζουν ΜΟΝΟ αν σταλεί επιτυχώς η παραγγελία
         const newTotalPoints = getPoints() - redeemedCost + earned;
@@ -454,9 +467,9 @@
         if (groupResult.success) {
             setPoints(newTotalPoints);
             cart.clear();
-            activeReward = null;
+            redeemed.clear();
             updateCart();
-            document.getElementById('cartBody').innerHTML = `<div class="thanks"><h3>Ευχαριστούμε!</h3><p>Παραλαβή σε ${time}</p><p>${redeemedName ? `🎁 ${redeemedName}<br>` : ''}Κέρδισες ${earned} πόντους — σύνολο ${newTotalPoints} ⭐</p></div>`;
+            document.getElementById('cartBody').innerHTML = `<div class="thanks"><h3>Ευχαριστούμε!</h3><p>Παραλαβή σε ${time}</p><p>${gifts.length ? `🎁 ${gifts.map(g => `${g.qty}x ${g.name}`).join(', ')}<br>` : ''}Κέρδισες ${earned} πόντους — σύνολο ${newTotalPoints} ⭐</p></div>`;
             document.getElementById('commentField').value = '';
         } else {
             alert(`❌ Απέτυχε να σταλεί στην ΟΜΑΔΑ!\nΛόγος: ${groupResult.error}\n\nΒεβαιώσου ότι το bot είναι μέλος και διαχειριστής της ομάδας.`);
