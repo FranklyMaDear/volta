@@ -513,7 +513,7 @@
             if (!response.ok || !data.success) {
                 return { success: false, error: data.error || 'Σφάλμα server' };
             }
-            return { success: true, receiptSent: data.receiptSent, receiptError: data.receiptError };
+            return { success: true, receiptSent: data.receiptSent, receiptError: data.receiptError, points: data.points };
         } catch (error) {
             return { success: false, error: "Network Error (Δίκτυο)" };
         }
@@ -553,25 +553,31 @@
 
         const fullOrderMessage = `🚨 <b>ΝΕΑ ΠΑΡΑΓΓΕΛΙΑ</b>\n👤 ${customerName}${contactLink}\n📞 ${phone}\n📝 ${comment || '-'}\n⏰ ${time}${rewardText}\n💰 Σύνολο: <b>${euro(totalAmount)}</b>\n\n📦 <b>Αναλυτικά:</b>\n${itemsText}\n\n⭐ <b>Πόντοι:</b>\n🔹 Κέρδισε: +${earned}${redeemedCost ? `\n🔻 Εξαργύρωσε: −${redeemedCost}` : ''}\n💰 Σύνολο πόντων συσκευής: <b>${newTotalPoints}</b>`;
 
-        // ★ Απόδειξη για τον πελάτη (στο προσωπικό του chat με το bot)
-        const receipt = `✅ <b>Καφέ Βόλτα — Η παραγγελία σου καταχωρήθηκε!</b>\n⏰ Παραλαβή: ${time}\n\n📦 <b>Η παραγγελία σου:</b>\n${itemsText}${gifts.length ? `🎁 Δώρα: ${gifts.map(g => `${g.qty}x ${g.name}`).join(', ')}\n` : ''}💰 Σύνολο: <b>${euro(totalAmount)}</b>\n\n⭐ Κέρδισες <b>+${earned}</b> πόντους${redeemedCost ? ` (εξαργύρωσες ${redeemedCost})` : ''}\n💰 Σύνολο πόντων σου: <b>${newTotalPoints}</b>\n\nΣε ευχαριστούμε! ☕`;
+        // ★ Απόδειξη για τον πελάτη — το {POINTS} το συμπληρώνει ο server με το κεντρικό σύνολο
+        const receipt = `✅ <b>Καφέ Βόλτα — Η παραγγελία σου καταχωρήθηκε!</b>\n⏰ Παραλαβή: ${time}\n\n📦 <b>Η παραγγελία σου:</b>\n${itemsText}${gifts.length ? `🎁 Δώρα: ${gifts.map(g => `${g.qty}x ${g.name}`).join(', ')}\n` : ''}💰 Σύνολο: <b>${euro(totalAmount)}</b>\n\n⭐ Κέρδισες <b>+${earned}</b> πόντους${redeemedCost ? ` (εξαργύρωσες ${redeemedCost})` : ''}\n💰 Σύνολο πόντων σου: <b>{POINTS}</b>\n\nΣε ευχαριστούμε! ☕`;
 
-        // Αποστολή μέσω Worker (ομάδα + διαχειριστής + απόδειξη στον πελάτη)
+        // Αποστολή μέσω Worker (ομάδα + διαχειριστής + απόδειξη + ενημέρωση κεντρικών πόντων)
         const groupResult = await sendOrder({
             text: fullOrderMessage,
             customerId: tgUser?.id || null,
-            receipt: receipt
+            receipt: receipt,
+            earned: earned,
+            redeemedCost: redeemedCost,
+            customerName: customerName,
+            phone: phone,
+            username: tgUser?.username || ''
         });
 
         if (groupResult.success) {
-            setPoints(newTotalPoints);
+            const finalPts = (typeof groupResult.points === 'number') ? groupResult.points : newTotalPoints;
+            setPoints(finalPts);
             cart.clear();
             redeemed.clear();
             updateCart();
             const receiptNote = groupResult.receiptSent
                 ? '<br>📩 Σου στείλαμε απόδειξη στο Telegram!'
                 : `<br><small>ℹ️ Η απόδειξη δεν στάλθηκε${groupResult.receiptError ? ` (${groupResult.receiptError})` : ''}. Πάτησε Start στο @coffeevolta_bot για να λαμβάνεις αποδείξεις.</small>`;
-            document.getElementById('cartBody').innerHTML = `<div class="thanks"><h3>Ευχαριστούμε!</h3><p>Παραλαβή σε ${time}</p><p>${gifts.length ? `🎁 ${gifts.map(g => `${g.qty}x ${g.name}`).join(', ')}<br>` : ''}Κέρδισες ${earned} πόντους — σύνολο ${newTotalPoints} ⭐${receiptNote}</p></div>`;
+            document.getElementById('cartBody').innerHTML = `<div class="thanks"><h3>Ευχαριστούμε!</h3><p>Παραλαβή σε ${time}</p><p>${gifts.length ? `🎁 ${gifts.map(g => `${g.qty}x ${g.name}`).join(', ')}<br>` : ''}Κέρδισες ${earned} πόντους — σύνολο ${finalPts} ⭐${receiptNote}</p></div>`;
             document.getElementById('commentField').value = '';
         } else {
             alert(`❌ Απέτυχε να σταλεί στην ΟΜΑΔΑ!\nΛόγος: ${groupResult.error}\n\nΒεβαιώσου ότι το bot είναι μέλος και διαχειριστής της ομάδας.`);
@@ -603,6 +609,20 @@
     renderProducts();
     updateCart();
     updatePointsDisplay();
+
+    // ★ Συγχρονισμός πόντων από τον server (κεντρικό σύστημα)
+    (async () => {
+        const tgId = window.Telegram?.WebApp?.initDataUnsafe?.user?.id;
+        if (!tgId) return;
+        try {
+            const r = await fetch(`${WORKER_URL}/points?id=${tgId}`);
+            const d = await r.json();
+            if (d.success && typeof d.points === 'number') {
+                setPoints(d.points);
+                updateCart();
+            }
+        } catch (e) { /* offline: μένουν οι τοπικοί πόντοι */ }
+    })();
 </script>
 </body>
 </html>
