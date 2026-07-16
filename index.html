@@ -56,6 +56,22 @@
         .offer-card { flex: 1; min-width: 110px; background: var(--soft); border: 1px solid var(--line); border-radius: 10px; padding: 10px; text-align: center; }
         .offer-card .o-big { font-family: 'Literata', serif; font-weight: 900; color: var(--mocha); font-size: 1rem; white-space: nowrap; }
         .offer-card .o-small { font-size: 0.7rem; color: #4d4336; margin-top: 2px; }
+        /* ★ Τιμοκατάλογος */
+        .pricelist-btn { margin-top: 10px; border: 1.5px solid var(--mocha); background: transparent; color: var(--mocha); border-radius: 999px; padding: 6px 14px; font-weight: 600; font-size: 0.85rem; cursor: pointer; font-family: 'Commissioner', sans-serif; }
+        .pl-overlay { position: fixed; inset: 0; background: rgba(44,24,16,0.55); z-index: 90; display: none; align-items: center; justify-content: center; padding: 16px; }
+        .pl-overlay.open { display: flex; }
+        .pl-box { background: var(--paper); border-radius: 12px; width: min(420px, 100%); max-height: 85vh; display: flex; flex-direction: column; box-shadow: 0 10px 40px rgba(0,0,0,0.3); border: 2px solid var(--mocha); }
+        .pl-head { padding: 12px 16px; border-bottom: 2px solid var(--mocha); display: flex; align-items: center; justify-content: space-between; }
+        .pl-head h2 { font-size: 1.1rem; font-weight: 900; }
+        .pl-head em { font-style: italic; color: var(--mocha); }
+        .pl-close { border: none; background: transparent; font-size: 1.6rem; cursor: pointer; color: var(--mocha); line-height: 1; }
+        .pl-body { overflow-y: auto; padding: 10px 18px; -webkit-overflow-scrolling: touch; }
+        .pl-cat { font-family: 'Literata', serif; font-weight: 900; color: var(--mocha); font-size: 0.95rem; margin: 12px 0 4px; border-bottom: 1px solid var(--line); padding-bottom: 3px; }
+        .pl-row { display: flex; align-items: baseline; gap: 6px; font-size: 0.85rem; padding: 2px 0; }
+        .pl-row .dots { flex: 1; border-bottom: 1.5px dotted var(--latte); transform: translateY(-3px); }
+        .pl-row .price { font-weight: 700; color: var(--mocha); white-space: nowrap; }
+        .pl-note { font-size: 0.7rem; color: #6b5d4d; font-style: italic; margin-top: 2px; }
+        .pl-foot { padding: 10px 16px; border-top: 1px solid var(--line); text-align: center; font-size: 0.75rem; color: #4d4336; background: var(--soft); border-radius: 0 0 10px 10px; }
         .cats { position: sticky; top: 52px; z-index: 40; background: var(--paper); border-bottom: 1px solid var(--line); padding: 6px 0; }
         .cats-inner { max-width: 1100px; margin: 0 auto; padding: 0 16px; display: flex; gap: 6px; overflow-x: auto; }
         .chip { border: 1.5px solid var(--mocha); background: transparent; color: var(--mocha); padding: 5px 12px; border-radius: 999px; font-weight: 600; font-size: 0.8rem; cursor: pointer; white-space: nowrap; }
@@ -113,7 +129,20 @@
 <section class="hero">
     <h1>Ο τέλειος καφές, <span class="stroll">έτοιμος πριν φτάσεις.</span></h1>
     <p>Παράγγειλε online και παρέλαβε χωρίς αναμονή.</p>
+    <button class="pricelist-btn" id="openPricelist">📋 Τιμοκατάλογος</button>
 </section>
+
+<!-- ★ Αναδυόμενος Τιμοκατάλογος -->
+<div class="pl-overlay" id="plOverlay">
+    <div class="pl-box">
+        <div class="pl-head">
+            <h2>Καφέ <em>Βόλτα</em> — Τιμοκατάλογος</h2>
+            <button class="pl-close" id="closePricelist">&times;</button>
+        </div>
+        <div class="pl-body" id="plBody"></div>
+        <div class="pl-foot">📞 2431052032 · ⏰ 06:00 – 23:00 · Φήκη Τρικάλων</div>
+    </div>
+</div>
 
 <!-- ★ Μπάρα προσφορών -->
 <section class="offers">
@@ -128,14 +157,19 @@
         </div>
         <div class="offer-card">
             <div class="o-big">25 ⭐ = ☕</div>
-            <div class="o-small">Δωρεάν ρόφημα έως 2,80€</div>
+            <div class="o-small">Δωρεάν ρόφημα έως 2,20€</div>
         </div>
     </div>
 </section>
 
 <nav class="cats">
     <div class="cats-inner" id="categoryNav">
-        <div class="chip active" data-cat="coffee">Καφέδες & Ροφήματα</div>
+        <div class="chip active" data-cat="coffee">Καφέδες</div>
+        <div class="chip" data-cat="soft">Αναψυκτικά</div>
+        <div class="chip" data-cat="icetea">Ice Tea</div>
+        <div class="chip" data-cat="juice">Χυμοί Κλιάφα</div>
+        <div class="chip" data-cat="granita">Γρανίτες</div>
+        <div class="chip" data-cat="crepe">Κρέπες</div>
         <div class="chip" data-cat="icecream">Παγωτό</div>
     </div>
 </nav>
@@ -178,31 +212,67 @@
 
 <script>
     const PRODUCTS = [
+        // Καφές
+        { id: 'ellinikos', n: "Ελληνικός Μονός", p: 1.50, cat: 'coffee', sugar: true },
+        { id: 'ellinikos2', n: "Ελληνικός Διπλός", p: 1.50, cat: 'coffee', sugar: true },
+        { id: 'nescafe', n: "Nescafé", p: 1.50, cat: 'coffee', sugar: true },
+        { id: 'gallikos', n: "Γαλλικός", p: 1.50, cat: 'coffee', sugar: true },
+        { id: 'sokolata', n: "Σοκολάτα", p: 1.50, cat: 'coffee', sugar: true },
+        { id: 'tsai', n: "Τσάι", p: 1.50, cat: 'coffee', sugar: true },
+        { id: 'kakao', n: "Κακάο", p: 1.50, cat: 'coffee', sugar: true },
         { id: 'espresso', n: "Espresso", p: 1.50, cat: 'coffee', sugar: true },
         { id: 'espresso2', n: "Espresso Διπλός", p: 2.00, cat: 'coffee', sugar: true },
-        { id: 'freddo', n: "Freddo Espresso", p: 2.50, cat: 'coffee', sugar: true },
-        { id: 'cappuccino', n: "Cappuccino", p: 2.50, cat: 'coffee', sugar: true },
-        { id: 'freddocap', n: "Freddo Cappuccino", p: 2.80, cat: 'coffee', sugar: true },
-        { id: 'frappe', n: "Frappe", p: 2.00, cat: 'coffee', sugar: true },
-        { id: 'latte', n: "Latte", p: 2.80, cat: 'coffee', sugar: true },
-        { id: 'nescafe', n: "Nescafe", p: 2.00, cat: 'coffee', sugar: true },
-        { id: 'ellinikos', n: "Ελληνικός Μονός", p: 1.50, cat: 'coffee', sugar: true },
-        { id: 'ellinikos2', n: "Ελληνικός Διπλός", p: 2.00, cat: 'coffee', sugar: true },
-        { id: 'gallikos', n: "Γαλλικός", p: 2.00, cat: 'coffee', sugar: true },
-        { id: 'sokolata', n: "Σοκολάτα", p: 2.80, cat: 'coffee', sugar: true },
-        { id: 'sokolatavien', n: "Σοκολάτα Βιεννουά", p: 3.00, cat: 'coffee', sugar: true },
-        { id: 'kakao', n: "Κακάο", p: 2.20, cat: 'coffee', sugar: true },
-        { id: 'tsai', n: "Τσάι", p: 2.00, cat: 'coffee', sugar: true },
-        { id: 'granita', n: "Γρανίτα", p: 2.50, cat: 'coffee' },
+        { id: 'frappe', n: "Frappe", p: 1.50, cat: 'coffee', sugar: true },
+        { id: 'cappuccino', n: "Cappuccino", p: 2.00, cat: 'coffee', sugar: true },
+        { id: 'freddo', n: "Freddo Espresso", p: 2.00, cat: 'coffee', sugar: true },
+        { id: 'freddocap', n: "Freddo Cappuccino", p: 2.00, cat: 'coffee', sugar: true },
+        { id: 'latte', n: "Latte", p: 2.00, cat: 'coffee', sugar: true },
+        { id: 'sokolatavien', n: "Σοκολάτα Βιεννουά", p: 2.20, cat: 'coffee', sugar: true },
+        // Αναψυκτικά
+        { id: 'cola', n: "Coca Cola", p: 1.50, cat: 'soft' },
+        { id: 'portokalada', n: "Πορτοκαλάδα", p: 1.50, cat: 'soft' },
+        { id: 'lemonada', n: "Λεμονάδα", p: 1.50, cat: 'soft' },
+        { id: 'soda', n: "Σόδα", p: 1.50, cat: 'soft' },
+        { id: 'gazoza', n: "Γκαζόζα", p: 1.50, cat: 'soft' },
+        { id: 'vyssinada', n: "Βυσσινάδα", p: 1.50, cat: 'soft' },
+        // Ice Tea
+        { id: 'icetea-lemoni', n: "Ice Tea Λεμόνι", p: 1.50, cat: 'icetea' },
+        { id: 'icetea-rodakino', n: "Ice Tea Ροδάκινο", p: 1.50, cat: 'icetea' },
+        // Χυμοί Κλιάφα
+        { id: 'xymos-portokali', n: "Χυμός Πορτοκάλι", p: 1.50, cat: 'juice' },
+        { id: 'xymos-rodakino', n: "Χυμός Ροδάκινο", p: 1.50, cat: 'juice' },
+        { id: 'xymos-anameiktos', n: "Χυμός Ανάμεικτος", p: 1.50, cat: 'juice' },
+        { id: 'xymos-vyssino', n: "Χυμός Βύσσινο", p: 1.50, cat: 'juice' },
+        // Γρανίτα
+        { id: 'granita-fraoula', n: "Γρανίτα Φράουλα", p: 1.50, cat: 'granita' },
+        { id: 'granita-karpouzi', n: "Γρανίτα Καρπούζι", p: 1.50, cat: 'granita' },
+        { id: 'granita-lemoni', n: "Γρανίτα Λεμόνι", p: 1.50, cat: 'granita' },
+        // Κρέπα
+        { id: 'crepa-sok', n: "Κρέπα Σοκολάτα", p: 2.70, cat: 'crepe' },
+        { id: 'crepa-sok-bisk', n: "Κρέπα Σοκολάτα + Μπισκότο", p: 3.20, cat: 'crepe' },
+        { id: 'crepa-fraoula', n: "Κρέπα Φράουλα", p: 2.70, cat: 'crepe' },
+        { id: 'crepa-fraoula-bisk', n: "Κρέπα Φράουλα + Μπισκότο", p: 3.20, cat: 'crepe' },
+        { id: 'crepa-bueno', n: "Κρέπα Bueno", p: 2.70, cat: 'crepe' },
+        { id: 'crepa-bueno-bisk', n: "Κρέπα Bueno + Μπισκότο", p: 3.20, cat: 'crepe' },
+        // Παγωτό
         { id: 'icecone', n: "Παγωτό Χωνάκι (2 μπάλες)", p: 1.50, cat: 'icecream' },
         { id: 'icecup', n: "Παγωτό Κύπελλο (2 μπάλες)", p: 1.50, cat: 'icecream' }
     ];
+    const CAT_NAMES = {
+        coffee: 'Καφές & Ροφήματα',
+        soft: 'Αναψυκτικά',
+        icetea: 'Ice Tea',
+        juice: 'Χυμοί Κλιάφα',
+        granita: 'Γρανίτες',
+        crepe: 'Κρέπες',
+        icecream: 'Παγωτό'
+    };
     const FLAVORS = ['Βανίλια', 'Σοκολάτα', 'Φράουλα', 'Μπανάνα', 'Στρατσιατέλα', 'Καϊμάκι'];
 
     // ★ Δώρα: ένα ανά παραγγελία. value = μέγιστη έκπτωση σε €.
     const REWARDS = [
         { id: 'gift-ice', name: 'Δωρεάν παγωτό (2 μπάλες)', cost: 15, value: 1.50 },
-        { id: 'gift-drink', name: 'Δωρεάν ρόφημα (έως 2,80€)', cost: 25, value: 2.80 }
+        { id: 'gift-drink', name: 'Δωρεάν ρόφημα (έως 2,20€)', cost: 25, value: 2.20 }
     ];
     // ★ Εξαργυρώσεις: id → ποσότητα (μπορεί πολλά δώρα μαζί, όσα φτάνουν οι πόντοι)
     const redeemed = new Map();
@@ -247,6 +317,28 @@
     }
 
     let currentCat = 'coffee';
+
+    // ★ Τιμοκατάλογος: χτίζεται αυτόματα από τη λίστα προϊόντων
+    function buildPricelist() {
+        const order = ['coffee', 'soft', 'icetea', 'juice', 'granita', 'crepe', 'icecream'];
+        let html = '';
+        order.forEach(cat => {
+            const items = PRODUCTS.filter(p => p.cat === cat);
+            if (!items.length) return;
+            html += `<div class="pl-cat">${CAT_NAMES[cat]}</div>`;
+            items.forEach(p => {
+                html += `<div class="pl-row"><span>${p.n}</span><span class="dots"></span><span class="price">${euro(p.p)}</span></div>`;
+            });
+            if (cat === 'coffee') html += `<div class="pl-note">Όλα τα ροφήματα: σκέτο, μέτριο ή γλυκό</div>`;
+            if (cat === 'icecream') html += `<div class="pl-note">Γεύσεις: ${FLAVORS.join(', ')}</div>`;
+        });
+        document.getElementById('plBody').innerHTML = html;
+    }
+    const plOverlay = document.getElementById('plOverlay');
+    document.getElementById('openPricelist').onclick = () => { buildPricelist(); plOverlay.classList.add('open'); };
+    document.getElementById('closePricelist').onclick = () => plOverlay.classList.remove('open');
+    plOverlay.addEventListener('click', e => { if (e.target === plOverlay) plOverlay.classList.remove('open'); });
+
     document.getElementById('categoryNav').addEventListener('click', e => {
         const chip = e.target.closest('.chip');
         if (!chip) return;
