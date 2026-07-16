@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Καφέ Βόλτα — Διαχείριση</title>
+<link href="https://fonts.googleapis.com/css2?family=Literata:opsz,wght@7..72,700;7..72,900&family=Commissioner:wght@400;600;700&display=swap&subset=greek" rel="stylesheet">
+<style>
+:root { --paper:#FDF8F0; --mocha:#5C3A21; --mocha-dark:#3E2723; --ink:#2C1810; --line:#E6D5C3; --soft:#FBF4E4; --accent:#C7956D; }
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:'Commissioner',sans-serif; background:var(--paper); color:var(--ink); min-height:100vh; padding:16px; }
+h1 { font-family:'Literata',serif; font-weight:900; font-size:1.3rem; margin-bottom:4px; }
+h1 em { font-style:italic; color:var(--mocha); }
+.sub { font-size:0.8rem; color:#6b5d4d; margin-bottom:14px; }
+.login, .toolbar { background:#fff; border:1px solid var(--line); border-radius:10px; padding:14px; max-width:520px; margin-bottom:12px; }
+input[type=password], input[type=number] { padding:9px; border:1px solid var(--line); border-radius:6px; font-size:16px; font-family:inherit; }
+input[type=password] { width:100%; margin-bottom:8px; }
+button { border:none; background:var(--mocha); color:#fff; border-radius:999px; padding:8px 16px; font-weight:700; cursor:pointer; font-family:inherit; font-size:0.85rem; }
+button.ghost { background:transparent; border:1.5px solid var(--mocha); color:var(--mocha); padding:4px 10px; font-size:0.8rem; }
+button:disabled { opacity:0.5; }
+.cards { display:flex; flex-direction:column; gap:10px; max-width:520px; }
+.cust { background:#fff; border:1px solid var(--line); border-radius:10px; padding:12px; }
+.cust .top { display:flex; justify-content:space-between; align-items:baseline; gap:8px; flex-wrap:wrap; }
+.cust .name { font-family:'Literata',serif; font-weight:700; }
+.cust .pts { font-weight:900; color:var(--mocha); font-size:1.1rem; white-space:nowrap; }
+.cust .meta { font-size:0.75rem; color:#6b5d4d; margin:2px 0 8px; }
+.cust .actions { display:flex; gap:6px; flex-wrap:wrap; align-items:center; }
+.cust .actions input { width:70px; }
+.msg { max-width:520px; padding:10px 14px; border-radius:8px; margin-bottom:12px; font-size:0.85rem; display:none; }
+.msg.ok { display:block; background:#eaf6ea; border:1px solid #9CCC9C; }
+.msg.err { display:block; background:#fdecea; border:1px solid #f5b5b0; }
+.hint { font-size:0.75rem; color:#6b5d4d; margin-top:8px; }
+.empty { color:#6b5d4d; font-size:0.9rem; padding:20px; text-align:center; }
+</style>
+</head>
+<body>
+<h1>Καφέ <em>Βόλτα</em> — Πίνακας Διαχείρισης</h1>
+<p class="sub">Πόντοι πελατών · προσθήκη / αφαίρεση / διόρθωση</p>
+
+<div class="msg" id="msg"></div>
+
+<div class="login" id="loginBox">
+    <input type="password" id="adminKey" placeholder="Κωδικός διαχειριστή (ADMIN_KEY)">
+    <button id="loginBtn">Σύνδεση</button>
+    <p class="hint">Ο κωδικός είναι αυτός που όρισες ως secret ADMIN_KEY στον Cloudflare Worker.</p>
+</div>
+
+<div class="toolbar" id="toolbar" style="display:none;">
+    <button id="refreshBtn">🔄 Ανανέωση λίστας</button>
+    <button class="ghost" id="logoutBtn">Αποσύνδεση</button>
+</div>
+
+<div class="cards" id="cards"></div>
+
+<script>
+const WORKER_URL = "https://coffee.kafevolta.workers.dev";
+const LS_KEY = 'kv_admin_key';
+let adminKey = sessionStorage.getItem(LS_KEY) || '';
+
+const $ = id => document.getElementById(id);
+function showMsg(text, ok) {
+    const m = $('msg');
+    m.textContent = text;
+    m.className = 'msg ' + (ok ? 'ok' : 'err');
+    setTimeout(() => { m.className = 'msg'; }, 4000);
+}
+
+async function api(path, opts = {}) {
+    const r = await fetch(WORKER_URL + path, {
+        ...opts,
+        headers: { 'Content-Type': 'application/json', 'X-Admin-Key': adminKey, ...(opts.headers || {}) }
+    });
+    return r.json();
+}
+
+function fmtDate(iso) {
+    if (!iso) return '—';
+    const d = new Date(iso);
+    return d.toLocaleDateString('el-GR') + ' ' + d.toLocaleTimeString('el-GR', { hour: '2-digit', minute: '2-digit' });
+}
+
+async function loadCustomers() {
+    $('cards').innerHTML = '<div class="empty">Φόρτωση...</div>';
+    try {
+        const d = await api('/admin/customers');
+        if (!d.success) { showMsg(d.error || 'Σφάλμα', false); logout(); return; }
+        $('loginBox').style.display = 'none';
+        $('toolbar').style.display = 'block';
+        renderCustomers(d.customers || []);
+    } catch (e) {
+        showMsg('Σφάλμα δικτύου', false);
+    }
+}
+
+function renderCustomers(list) {
+    const c = $('cards');
+    if (!list.length) {
+        c.innerHTML = '<div class="empty">Δεν υπάρχουν ακόμα πελάτες.<br>Η λίστα γεμίζει αυτόματα με κάθε παραγγελία.</div>';
+        return;
+    }
+    c.innerHTML = '';
+    list.forEach(cu => {
+        const div = document.createElement('div');
+        div.className = 'cust';
+        div.innerHTML = `
+            <div class="top">
+                <span class="name">${esc(cu.name || 'Πελάτης')} ${cu.username ? `<small>@${esc(cu.username)}</small>` : ''}</span>
+                <span class="pts" id="pts-${cu.id}">${cu.points ?? 0} ⭐</span>
+            </div>
+            <div class="meta">📞 ${esc(cu.phone || '—')} · 🧾 ${cu.orders || 0} παραγγελίες · 🕐 ${fmtDate(cu.lastOrder)}</div>
+            <div class="actions">
+                <button class="ghost" onclick="adjust('${cu.id}', -5)">−5</button>
+                <button class="ghost" onclick="adjust('${cu.id}', -1)">−1</button>
+                <button class="ghost" onclick="adjust('${cu.id}', 1)">+1</button>
+                <button class="ghost" onclick="adjust('${cu.id}', 5)">+5</button>
+                <input type="number" min="0" id="set-${cu.id}" placeholder="π.χ. 20">
+                <button class="ghost" onclick="setPts('${cu.id}')">Ορισμός</button>
+            </div>`;
+        c.appendChild(div);
+    });
+}
+
+function esc(s) { return String(s).replace(/[&<>"']/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[m])); }
+
+window.adjust = async (id, delta) => {
+    try {
+        const d = await api('/admin/adjust', { method: 'POST', body: JSON.stringify({ id, delta }) });
+        if (d.success) { $('pts-' + id).textContent = d.points + ' ⭐'; showMsg(`Έγινε: ${delta > 0 ? '+' : ''}${delta} πόντοι`, true); }
+        else showMsg(d.error || 'Σφάλμα', false);
+    } catch { showMsg('Σφάλμα δικτύου', false); }
+};
+
+window.setPts = async (id) => {
+    const v = parseInt($('set-' + id).value);
+    if (isNaN(v) || v < 0) { showMsg('Βάλε έγκυρο αριθμό', false); return; }
+    try {
+        const d = await api('/admin/adjust', { method: 'POST', body: JSON.stringify({ id, set: v }) });
+        if (d.success) { $('pts-' + id).textContent = d.points + ' ⭐'; $('set-' + id).value = ''; showMsg('Οι πόντοι ορίστηκαν σε ' + d.points, true); }
+        else showMsg(d.error || 'Σφάλμα', false);
+    } catch { showMsg('Σφάλμα δικτύου', false); }
+};
+
+function logout() {
+    adminKey = '';
+    sessionStorage.removeItem(LS_KEY);
+    $('loginBox').style.display = 'block';
+    $('toolbar').style.display = 'none';
+    $('cards').innerHTML = '';
+}
+
+$('loginBtn').onclick = () => {
+    adminKey = $('adminKey').value.trim();
+    if (!adminKey) { showMsg('Βάλε τον κωδικό', false); return; }
+    sessionStorage.setItem(LS_KEY, adminKey);
+    loadCustomers();
+};
+$('refreshBtn').onclick = loadCustomers;
+$('logoutBtn').onclick = logout;
+
+if (adminKey) loadCustomers();
+</script>
+</body>
+</html>
