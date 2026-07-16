@@ -421,7 +421,7 @@
             if (!response.ok || !data.success) {
                 return { success: false, error: data.error || 'Σφάλμα server' };
             }
-            return { success: true };
+            return { success: true, receiptSent: data.receiptSent, receiptError: data.receiptError };
         } catch (error) {
             return { success: false, error: "Network Error (Δίκτυο)" };
         }
@@ -476,7 +476,10 @@
             cart.clear();
             redeemed.clear();
             updateCart();
-            document.getElementById('cartBody').innerHTML = `<div class="thanks"><h3>Ευχαριστούμε!</h3><p>Παραλαβή σε ${time}</p><p>${gifts.length ? `🎁 ${gifts.map(g => `${g.qty}x ${g.name}`).join(', ')}<br>` : ''}Κέρδισες ${earned} πόντους — σύνολο ${newTotalPoints} ⭐</p></div>`;
+            const receiptNote = groupResult.receiptSent
+                ? '<br>📩 Σου στείλαμε απόδειξη στο Telegram!'
+                : `<br><small>ℹ️ Η απόδειξη δεν στάλθηκε${groupResult.receiptError ? ` (${groupResult.receiptError})` : ''}. Πάτησε Start στο @coffeevolta_bot για να λαμβάνεις αποδείξεις.</small>`;
+            document.getElementById('cartBody').innerHTML = `<div class="thanks"><h3>Ευχαριστούμε!</h3><p>Παραλαβή σε ${time}</p><p>${gifts.length ? `🎁 ${gifts.map(g => `${g.qty}x ${g.name}`).join(', ')}<br>` : ''}Κέρδισες ${earned} πόντους — σύνολο ${newTotalPoints} ⭐${receiptNote}</p></div>`;
             document.getElementById('commentField').value = '';
         } else {
             alert(`❌ Απέτυχε να σταλεί στην ΟΜΑΔΑ!\nΛόγος: ${groupResult.error}\n\nΒεβαιώσου ότι το bot είναι μέλος και διαχειριστής της ομάδας.`);
