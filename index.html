@@ -68,6 +68,9 @@
         .omen-btn { text-decoration: none; border-color: #7b4fb5; color: #5b3a8a; background: linear-gradient(135deg, #f3e8ff, #e8dff5); display: inline-flex; flex-direction: column; align-items: center; line-height: 1.2; padding: 5px 14px; }
         .omen-btn small { font-size: 0.6rem; font-weight: 500; color: #7a6699; }
         .channel-btn { text-decoration: none; border-color: #2AABEE; color: #1a7fbc; background: #e7f3fb; display: inline-flex; align-items: center; }
+        .call-btn { display: inline-block; background: #fff; color: var(--mocha-dark); text-decoration: none; border-radius: 999px; padding: 8px 18px; font-weight: 700; margin-bottom: 6px; }
+        .closed-banner { max-width: 1100px; margin: 8px auto 0; padding: 0 16px; }
+        .closed-banner-inner { background: #fdecea; border: 1px solid #f5b5b0; color: #8a2f26; border-radius: 10px; padding: 10px 12px; font-size: 0.82rem; font-weight: 600; }
         @media (max-width: 560px) {
             .hero-btns { flex-wrap: nowrap; gap: 6px; }
             .hero-btns .pricelist-btn { flex: 1; font-size: 0.68rem; padding: 6px 2px; display: inline-flex; align-items: center; justify-content: center; white-space: nowrap; text-align: center; }
@@ -160,8 +163,12 @@
             <button class="pl-close" id="closePricelist">&times;</button>
         </div>
         <div class="pl-body" id="plBody"></div>
-        <div class="pl-foot">📞 2431052032 · ⏰ 06:00 – 23:00 · Φήκη Τρικάλων</div>
+        <div class="pl-foot">📞 2431052032 · ⏰ 06:00 – 22:00 · Φήκη Τρικάλων</div>
     </div>
+</div>
+
+<div class="closed-banner" id="closedBanner" style="display:none;">
+    <div class="closed-banner-inner">🌙 Είμαστε κλειστά αυτή τη στιγμή. Ωράριο παραγγελιών: 06:00 – 22:00. Μπορείς να δεις τον κατάλογο — οι παραγγελίες ενεργοποιούνται όταν ανοίξουμε!</div>
 </div>
 
 <!-- ★ Μπάρα προσφορών -->
@@ -210,7 +217,8 @@
 
 <footer>
     <p><strong>Καφέ Βόλτα</strong> – Φήκη Τρικάλων</p>
-    <p>📞 <a href="tel:2431052032">2431052032</a> | ⏰ 06:00 – 23:00</p>
+    <p><a class="call-btn" href="tel:2431052032">📞 Κάλεσέ μας: 2431052032</a></p>
+    <p>⏰ 06:00 – 22:00</p>
     <p>📣 <a href="https://t.me/kafevolta" target="_blank">t.me/kafevolta</a> — Νέα & Προσφορές</p>
 </footer>
 
@@ -506,6 +514,15 @@
         updateCart();
     };
 
+    // ★ Ωράριο καταστήματος: 06:00 – 22:00
+    function isOpen() {
+        const h = new Date().getHours();
+        return h >= 6 && h < 22;
+    }
+    function refreshOpenState() {
+        document.getElementById('closedBanner').style.display = isOpen() ? 'none' : 'block';
+    }
+
     function updateCart() {
         let count = 0;
         cart.forEach(v => { count += v.qty; });
@@ -515,7 +532,9 @@
 
         document.getElementById('cartCount').textContent = count;
         document.getElementById('cartTotal').textContent = euro(total);
-        document.getElementById('checkout').disabled = count === 0;
+        const checkoutBtn = document.getElementById('checkout');
+        checkoutBtn.disabled = count === 0 || !isOpen();
+        checkoutBtn.textContent = isOpen() ? 'Ολοκλήρωση παραγγελίας' : 'Κλειστά τώρα (06:00–22:00)';
 
         const dLine = document.getElementById('discountLine');
         if (discount > 0) {
@@ -584,6 +603,7 @@
     }
 
     document.getElementById('checkout').onclick = async () => {
+        if (!isOpen()) { alert('🌙 Είμαστε κλειστά αυτή τη στιγμή.\nΩράριο παραγγελιών: 06:00 – 22:00'); return; }
         const phone = document.getElementById('phoneField').value.trim();
         if (!phone) { alert('Συμπληρώστε τηλέφωνο'); return; }
         saveData();
@@ -676,6 +696,8 @@
     renderProducts();
     updateCart();
     updatePointsDisplay();
+    refreshOpenState();
+    setInterval(() => { refreshOpenState(); updateCart(); }, 60000);
 
     // ★ Εκτός Telegram: δείξε την προτροπή για παραγγελία μέσω bot
     const isInTelegram = !!window.Telegram?.WebApp?.initDataUnsafe?.user;
