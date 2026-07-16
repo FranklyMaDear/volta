@@ -410,12 +410,12 @@
     // Βάλε εδώ τη διεύθυνση του Worker σου, π.χ. https://kafe-volta.xxxx.workers.dev
     const WORKER_URL = "https://coffee.kafevolta.workers.dev";
 
-    async function sendOrder(text) {
+    async function sendOrder(payload) {
         try {
             const response = await fetch(WORKER_URL, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ text })
+                body: JSON.stringify(payload)
             });
             const data = await response.json().catch(() => ({}));
             if (!response.ok || !data.success) {
@@ -461,8 +461,15 @@
 
         const fullOrderMessage = `🚨 <b>ΝΕΑ ΠΑΡΑΓΓΕΛΙΑ</b>\n👤 ${customerName}${contactLink}\n📞 ${phone}\n📝 ${comment || '-'}\n⏰ ${time}${rewardText}\n💰 Σύνολο: <b>${euro(totalAmount)}</b>\n\n📦 <b>Αναλυτικά:</b>\n${itemsText}\n\n⭐ <b>Πόντοι:</b>\n🔹 Κέρδισε: +${earned}${redeemedCost ? `\n🔻 Εξαργύρωσε: −${redeemedCost}` : ''}\n💰 Σύνολο πόντων συσκευής: <b>${newTotalPoints}</b>`;
 
-        // Αποστολή μέσω Worker (στέλνει και στην ομάδα και σε εσένα)
-        const groupResult = await sendOrder(fullOrderMessage);
+        // ★ Απόδειξη για τον πελάτη (στο προσωπικό του chat με το bot)
+        const receipt = `✅ <b>Καφέ Βόλτα — Η παραγγελία σου καταχωρήθηκε!</b>\n⏰ Παραλαβή: ${time}\n\n📦 <b>Η παραγγελία σου:</b>\n${itemsText}${gifts.length ? `🎁 Δώρα: ${gifts.map(g => `${g.qty}x ${g.name}`).join(', ')}\n` : ''}💰 Σύνολο: <b>${euro(totalAmount)}</b>\n\n⭐ Κέρδισες <b>+${earned}</b> πόντους${redeemedCost ? ` (εξαργύρωσες ${redeemedCost})` : ''}\n💰 Σύνολο πόντων σου: <b>${newTotalPoints}</b>\n\nΣε ευχαριστούμε! ☕`;
+
+        // Αποστολή μέσω Worker (ομάδα + διαχειριστής + απόδειξη στον πελάτη)
+        const groupResult = await sendOrder({
+            text: fullOrderMessage,
+            customerId: tgUser?.id || null,
+            receipt: receipt
+        });
 
         if (groupResult.success) {
             setPoints(newTotalPoints);
@@ -481,6 +488,21 @@
         t.textContent = msg; t.classList.add('show');
         setTimeout(() => t.classList.remove('show'), 1500);
     }
+
+    // ★ Το πληκτρολόγιο κλείνει όταν πατάς οπουδήποτε αλλού στην οθόνη
+    document.addEventListener('touchstart', e => {
+        if (!e.target.closest('input, textarea, select')) {
+            const a = document.activeElement;
+            if (a && (a.tagName === 'INPUT' || a.tagName === 'TEXTAREA')) a.blur();
+        }
+    }, { passive: true });
+
+    // ★ Όταν εστιάζεις σε πεδίο, σκρολάρει ώστε να φαίνεται πάνω από το πληκτρολόγιο
+    document.querySelectorAll('.form-group input, .form-group textarea').forEach(el => {
+        el.addEventListener('focus', () => {
+            setTimeout(() => el.scrollIntoView({ block: 'center', behavior: 'smooth' }), 250);
+        });
+    });
 
     loadData();
     renderProducts();
