@@ -171,6 +171,10 @@
             <div class="o-big">25 ⭐ = ☕</div>
             <div class="o-small">Δωρεάν ρόφημα έως 2,20€</div>
         </div>
+        <div class="offer-card">
+            <div class="o-big">3 🥞 = +1</div>
+            <div class="o-small">3 κρέπες = ΔΩΡΟ κρέπα σοκολάτα-μπισκότο</div>
+        </div>
     </div>
 </section>
 
@@ -268,13 +272,10 @@
         { id: 'granita-fraoula', n: "Γρανίτα Φράουλα", p: 1.50, cat: 'granita' },
         { id: 'granita-karpouzi', n: "Γρανίτα Καρπούζι", p: 1.50, cat: 'granita' },
         { id: 'granita-lemoni', n: "Γρανίτα Λεμόνι", p: 1.50, cat: 'granita' },
-        // Κρέπα
-        { id: 'crepa-sok', n: "Κρέπα Σοκολάτα", p: 2.70, cat: 'crepe' },
-        { id: 'crepa-sok-bisk', n: "Κρέπα Σοκολάτα + Μπισκότο", p: 3.20, cat: 'crepe' },
-        { id: 'crepa-fraoula', n: "Κρέπα Φράουλα", p: 2.70, cat: 'crepe' },
-        { id: 'crepa-fraoula-bisk', n: "Κρέπα Φράουλα + Μπισκότο", p: 3.20, cat: 'crepe' },
-        { id: 'crepa-bueno', n: "Κρέπα Bueno", p: 2.70, cat: 'crepe' },
-        { id: 'crepa-bueno-bisk', n: "Κρέπα Bueno + Μπισκότο", p: 3.20, cat: 'crepe' },
+        // Κρέπα (βάση 2,70€ · +0,50€ μπισκότο · +0,50€ μπάλα παγωτό)
+        { id: 'crepa-sok', n: "Κρέπα Σοκολάτα", p: 2.70, cat: 'crepe', crepe: true },
+        { id: 'crepa-fraoula', n: "Κρέπα Φράουλα", p: 2.70, cat: 'crepe', crepe: true },
+        { id: 'crepa-bueno', n: "Κρέπα Bueno", p: 2.70, cat: 'crepe', crepe: true },
         // Παγωτό
         { id: 'icecone', n: "Παγωτό Χωνάκι (2 μπάλες)", p: 1.50, cat: 'icecream' },
         { id: 'icecup', n: "Παγωτό Κύπελλο (2 μπάλες)", p: 1.50, cat: 'icecream' }
@@ -351,6 +352,7 @@
                 html += `<div class="pl-row"><span>${p.n}</span><span class="dots"></span><span class="price">${euro(p.p)}</span></div>`;
             });
             if (cat === 'coffee') html += `<div class="pl-note">Όλα τα ροφήματα: σκέτο, μέτριο ή γλυκό</div>`;
+            if (cat === 'crepe') html += `<div class="pl-note">+0,50€ μπισκότο · +0,50€ μπάλα παγωτό (σοκολάτα ή βανίλια) · Προσφορά: 3 κρέπες = ΔΩΡΟ 1 κρέπα σοκολάτα-μπισκότο!</div>`;
             if (cat === 'icecream') html += `<div class="pl-note">Γεύσεις: ${FLAVORS.join(', ')}</div>`;
         });
         document.getElementById('plBody').innerHTML = html;
@@ -377,6 +379,13 @@
             card.className = 'product';
             let opts = '';
             if (p.sugar) opts = `<div class="p-options"><select class="sugar"><option value="σκέτο">Σκέτο</option><option value="μέτριο" selected>Μέτριο</option><option value="γλυκό">Γλυκό</option></select></div>`;
+            else if (p.crepe) {
+                opts = `<div class="p-options">
+                    <div class="flavor-row">
+                        <select class="crx-bisc"><option value="no">Χωρίς μπισκότο</option><option value="yes">+ Μπισκότο (0,50€)</option></select>
+                        <select class="crx-ice"><option value="no">Χωρίς παγωτό</option><option value="Σοκολάτα">+ Παγωτό Σοκολάτα (0,50€)</option><option value="Βανίλια">+ Παγωτό Βανίλια (0,50€)</option></select>
+                    </div></div>`;
+            }
             else if (p.cat === 'icecream') {
                 const fl = FLAVORS.map(f => `<option>${f}</option>`).join('');
                 opts = `<div class="p-options"><div class="flavor-row"><select class="flv1">${fl}</select><select class="flv2">${fl}</select></div></div>`;
@@ -393,7 +402,18 @@
         const prodName = card.querySelector('.p-name').textContent;
         const prod = PRODUCTS.find(p => p.n === prodName);
         if (!prod) return;
-        if (prod.cat === 'icecream') {
+        if (prod.crepe) {
+            const bisc = card.querySelector('.crx-bisc').value === 'yes';
+            const ice = card.querySelector('.crx-ice').value; // 'no' | 'Σοκολάτα' | 'Βανίλια'
+            const extra = (bisc ? 0.50 : 0) + (ice !== 'no' ? 0.50 : 0);
+            const parts = [];
+            if (bisc) parts.push('Μπισκότο');
+            if (ice !== 'no') parts.push(`Παγωτό ${ice}`);
+            const extrasDesc = parts.length ? '+ ' + parts.join(', ') : '';
+            const key = `${prod.id}::${bisc ? 'b' : ''}${ice}`;
+            const existing = cart.get(key);
+            if (existing) existing.qty++; else cart.set(key, { qty: 1, prod, extra, extrasDesc });
+        } else if (prod.cat === 'icecream') {
             const f1 = card.querySelector('.flv1').value;
             const f2 = card.querySelector('.flv2').value;
             const key = `${prod.id}::${f1},${f2}`;
@@ -416,9 +436,15 @@
     document.getElementById('closeCart').onclick = () => { drawer.classList.remove('open'); overlay.classList.remove('open'); };
     overlay.onclick = () => { drawer.classList.remove('open'); overlay.classList.remove('open'); };
 
-    // ★ Υπολογισμός έκπτωσης δώρου (ποτέ κάτω από 0€)
+    // ★ Τιμή γραμμής (βάση + έξτρα κρέπας)
+    function itemPrice(v) { return v.prod.p + (v.extra || 0); }
     function getSubtotal() {
-        let s = 0; cart.forEach(v => s += v.qty * v.prod.p); return s;
+        let s = 0; cart.forEach(v => s += v.qty * itemPrice(v)); return s;
+    }
+    // ★ Προσφορά 3+1: κάθε 3 κρέπες → δώρο 1 Κρέπα Σοκολάτα + Μπισκότο
+    function freeCrepes() {
+        let n = 0; cart.forEach(v => { if (v.prod.cat === 'crepe') n += v.qty; });
+        return Math.floor(n / 3);
     }
     function getDiscount() {
         return Math.min(redeemedValueTotal(), getSubtotal());
@@ -498,7 +524,7 @@
         if (!count) { cartBody.innerHTML = '<div class="empty">Το καλάθι είναι άδειο.</div>'; return; }
         cartBody.innerHTML = '';
         cart.forEach((v, key) => {
-            let desc = v.sugar ? `Ζάχαρη: ${v.sugar}` : (v.flavors ? `Γεύσεις: ${v.flavors.join(', ')}` : '');
+            let desc = v.sugar ? `Ζάχαρη: ${v.sugar}` : (v.flavors ? `Γεύσεις: ${v.flavors.join(', ')}` : (v.extrasDesc || ''));
             cartBody.innerHTML += `
                 <div style="display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px dashed #ddd;">
                     <div style="flex:1"><strong>${v.prod.n}</strong>${desc ? `<br><small>${desc}</small>` : ''}</div>
@@ -507,9 +533,17 @@
                         <span>${v.qty}</span>
                         <button onclick="changeQty('${key}', 1)">+</button>
                     </div>
-                    <div style="min-width:45px;text-align:right;">${euro(v.qty * v.prod.p)}</div>
+                    <div style="min-width:45px;text-align:right;">${euro(v.qty * itemPrice(v))}</div>
                 </div>`;
         });
+        const fc = freeCrepes();
+        if (fc > 0) {
+            cartBody.innerHTML += `
+                <div style="display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px dashed #ddd;color:#2e7d32;">
+                    <div style="flex:1"><strong>🥞 ΔΩΡΟ 3+1: ${fc}x Κρέπα Σοκολάτα + Μπισκότο</strong></div>
+                    <div style="min-width:45px;text-align:right;font-weight:700;">0,00 €</div>
+                </div>`;
+        }
     }
     window.changeQty = (key, step) => {
         const entry = cart.get(key);
@@ -561,9 +595,11 @@
         let contactLink = tgUser ? (tgUser.username ? `\n💬 @${tgUser.username}` : `\n💬 <a href="tg://user?id=${tgUser.id}">Στείλε μήνυμα</a>`) : '';
         let itemsText = '';
         cart.forEach(v => {
-            let details = v.sugar ? `(Ζάχαρη: ${v.sugar})` : (v.flavors ? `(Γεύσεις: ${v.flavors.join(', ')})` : '');
+            let details = v.sugar ? `(Ζάχαρη: ${v.sugar})` : (v.flavors ? `(Γεύσεις: ${v.flavors.join(', ')})` : (v.extrasDesc ? `(${v.extrasDesc})` : ''));
             itemsText += `- ${v.qty}x ${v.prod.n} ${details}\n`;
         });
+        const fcCheckout = freeCrepes();
+        if (fcCheckout > 0) itemsText += `- ${fcCheckout}x Κρέπα Σοκολάτα + Μπισκότο 🥞 (ΔΩΡΟ 3+1)\n`;
 
         let rewardText = gifts.length
             ? `\n🎁 <b>Δώρα:</b> ${gifts.map(g => `${g.qty}x ${g.name}`).join(', ')} (−${euro(discount)}, −${redeemedCost} πόντοι)`
