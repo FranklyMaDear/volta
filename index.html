@@ -75,7 +75,18 @@
         .events-btn { border-color: #d4899f; color: #8a3b5c; background: linear-gradient(135deg, #fff3e0, #ffe4ec); width: 100%; text-align: center; }
         .ev-intro { font-size: 0.85rem; margin-top: 8px; }
         .ev-text { font-size: 0.8rem; color: #4d4336; margin: 2px 0 6px; }
-        .msg-btn { display: block; background: #2AABEE; color: #fff; text-align: center; border-radius: 999px; padding: 12px; font-weight: 700; text-decoration: none; margin: 14px 0 10px; font-size: 0.95rem; }
+        .msg-btn { display: block; background: #2AABEE; color: #fff; text-align: center; border-radius: 999px; padding: 12px; font-weight: 700; text-decoration: none; margin: 14px 0 10px; font-size: 0.95rem; border: none; width: 100%; cursor: pointer; font-family: 'Commissioner', sans-serif; }
+        .msg-btn-alt { background: transparent; color: #1a7fbc; border: 1.5px solid #2AABEE; }
+        .ev-foot .msg-btn { margin: 6px 0; padding: 10px; }
+        .ev-contact { text-align: center; font-size: 0.72rem; color: #4d4336; margin-top: 6px; }
+        .ev-sec { border-bottom: 1px solid var(--line); padding: 4px 0; }
+        .ev-sec summary { font-family: 'Literata', serif; font-weight: 900; color: var(--mocha); font-size: 0.92rem; padding: 8px 0; cursor: pointer; list-style: none; }
+        .ev-sec summary::before { content: '▸ '; }
+        .ev-sec[open] summary::before { content: '▾ '; }
+        .ev-note { font-size: 0.7rem; color: #6b5d4d; font-style: italic; margin: 6px 0; }
+        .bk-form label { display: flex; flex-direction: column; gap: 3px; font-size: 0.78rem; font-weight: 600; color: var(--mocha-dark); }
+        .bk-row { display: flex; gap: 8px; }
+        .bk-row label { flex: 1; }
         /* ★ Προτροπή Telegram */
         .tg-banner { max-width: 1100px; margin: 0 auto; padding: 6px 16px 0; }
         .tg-banner-inner { background: #e7f3fb; border: 1px solid #a9d3ee; border-radius: 10px; padding: 10px 12px; font-size: 0.8rem; display: flex; flex-direction: column; gap: 8px; }
@@ -252,21 +263,116 @@
 <div class="pl-overlay" id="evOverlay">
     <div class="pl-box">
         <div class="pl-head">
-            <h2>🏡 Ο χώρος μας, <em>δικός σας!</em></h2>
+            <h2>🎉 Εκδηλώσεις στο Καφέ <em>Βόλτα</em></h2>
             <button class="pl-close" id="closeEvents">&times;</button>
         </div>
         <div class="pl-body">
-            <p class="ev-intro">Στο <strong>Καφέ Βόλτα</strong> διαμορφώσαμε τον χώρο μας για να φιλοξενεί με άνεση τις δικές σας ξεχωριστές στιγμές.</p>
-            <div class="pl-cat">🎂 Παιδικά Πάρτυ & Γενέθλια</div>
-            <p class="ev-text">Ασφαλής καταπράσινη αυλή με γκαζόν, κούνιες και τραμπολίνο — τα παιδιά παίζουν, εσείς απολαμβάνετε!</p>
-            <div class="pl-cat">🤝 Συναντήσεις & Κοινωνικές Συγκεντρώσεις</div>
-            <p class="ev-text">Άνετος στεγασμένος χώρος για παρέες, συλλόγους, ομάδες και οικογενειακές γιορτές — με κάθε καιρό.</p>
-            <div class="pl-cat">🎤 Ομιλίες & Παρουσιάσεις</div>
-            <p class="ev-text">Οργανωμένο περιβάλλον για εκδηλώσεις, ενημερώσεις και παρουσιάσεις.</p>
-            <p class="ev-text" style="margin-top:10px;"><strong>Πείτε μας τι σχεδιάζετε — θα το κανονίσουμε μαζί!</strong></p>
-            <a class="msg-btn" href="https://t.me/kafevolta?direct" target="_blank">💬 Στείλε μας μήνυμα</a>
+            <p class="ev-intro">Ο ιδανικός χώρος για τις στιγμές σας! Προσεγμένος <strong>στεγασμένος χώρος 50 ατόμων</strong> και μεγάλη καταπράσινη αυλή — συνολικά άνετη φιλοξενία <strong>80+ ατόμων</strong>.</p>
+
+            <details class="ev-sec" open>
+                <summary>🎈 Παιδικά Πάρτυ Γενεθλίων</summary>
+                <p class="ev-text">Χαρίστε στα παιδιά σας ένα αξέχαστο πάρτυ! Μεγάλος εξωτερικός χώρος με γκαζόν, κούνιες και μεγάλο τραμπολίνο, όπου οι μικροί μας φίλοι παίζουν ελεύθερα και με ασφάλεια. Οι γονείς χαλαρώνουν με τον καφέ τους στον στεγασμένο χώρο, με άμεση οπτική επαφή με τα παιδιά.</p>
+            </details>
+
+            <details class="ev-sec">
+                <summary>👧👦 Μενού για τους Μικρούς μας Φίλους</summary>
+                <p class="ev-text">Ατομικά γεύματα που τα παιδιά λατρεύουν — κάθε μενού περιλαμβάνει ατομικό χυμό, αναψυκτικό ή νερό:</p>
+                <p class="ev-text">🍞 <strong>Μενού 1 «Το Κλασικό»:</strong> Ζεστό τοστ (τυρί & ζαμπόν ή γαλοπούλα) με τραγανά πατατάκια</p>
+                <p class="ev-text">🍕 <strong>Μενού 2 «Pizza Party»:</strong> 2 μεγάλα κομμάτια πίτσας (μαργαρίτα ή ζαμπόν-τυρί) με πατατάκια</p>
+                <p class="ev-text">🍗 <strong>Μενού 3 «Το Χορταστικό»:</strong> Τραγανές κοτομπουκιές (4-5 τεμ.) με πατατάκια</p>
+                <p class="ev-note">Η χρέωση για τα παιδικά μενού υπολογίζεται ανά παιδί.</p>
+            </details>
+
+            <details class="ev-sec">
+                <summary>☕ Μενού Γονέων & Συνοδών</summary>
+                <p class="ev-text">Πέρα από ροφήματα και καφέδες, χορταστικές πιατέλες για το τραπέζι (κάθε πιατέλα για 4-5 άτομα):</p>
+                <p class="ev-text">🥐 <strong>Πιατέλα Σφολιατοειδών:</strong> Ζεστά τυροπιτάκια, λουκανοπιτάκια & σπανακοπιτάκια</p>
+                <p class="ev-text">🥪 <strong>Πιατέλα Club Sandwich:</strong> Κλασικό club (γαλοπούλα ή ζαμπόν, τυρί, μπέικον, ντομάτα, μαρούλι, μαγιονέζα) σε μικρά τρίγωνα, με πατατάκια</p>
+                <p class="ev-text">🍕 <strong>Οικογενειακή Πίτσα (8 κομ.):</strong> Χειροποίητη, Special ή Μαργαρίτα</p>
+            </details>
+
+            <details class="ev-sec">
+                <summary>🎂 Χρήσιμες Πληροφορίες</summary>
+                <p class="ev-text">🍰 <strong>Τούρτα:</strong> Συνεργαζόμαστε με το Ζαχαροπλαστείο «Μέλισσα» — αλλά φυσικά μπορείτε να φέρετε τούρτα από όπου επιθυμείτε! Αναλαμβάνουμε το σερβίρισμα με όλο τον εξοπλισμό (πιατάκια, κουταλάκια, κοπή).</p>
+                <p class="ev-text">🎤 <strong>Μουσική:</strong> Φέρτε το δικό σας ηχείο ή καραόκε και δημιουργήστε την ατμόσφαιρα που σας αρέσει!</p>
+                <p class="ev-text">☕ <strong>Ροφήματα ενηλίκων:</strong> Καφέδες, αναψυκτικά & ποτά σερβίρονται και χρεώνονται κανονικά βάσει καταλόγου.</p>
+            </details>
+
+            <details class="ev-sec">
+                <summary>🎤 Ομιλίες, Παρουσιάσεις & Συναντήσεις</summary>
+                <p class="ev-text">Ο ήσυχος στεγασμένος χώρος μας για επαγγελματικές παρουσιάσεις, ομιλίες, σεμινάρια ή συναντήσεις συλλόγων — με 2 ευέλικτες επιλογές:</p>
+                <p class="ev-text">🔑 <strong>Επιλογή 1 — Ενοικίαση Χώρου (50–70€):</strong> Αποκλειστική χρήση του στεγασμένου χώρου. Απόλυτη ελευθερία να φέρετε δικό σας μπουφέ και εδέσματα, χωρίς καμία δέσμευση κατανάλωσης.</p>
+                <p class="ev-text">🤝 <strong>Επιλογή 2 — Δωρεάν Παραχώρηση:</strong> Ο χώρος εντελώς δωρεάν! Μοναδική προϋπόθεση: κατανάλωση τουλάχιστον ενός είδους από τον κατάλογο (καφές, ρόφημα, αναψυκτικό κ.λπ.) για κάθε παρευρισκόμενο.</p>
+            </details>
+
+            <p class="ev-note">ℹ️ Ο χώρος διατίθεται αποκλειστικά για παιδικά πάρτυ, φιλικές συγκεντρώσεις και επαγγελματικές/συλλογικές παρουσιάσεις. Δεν αναλαμβάνουμε δεξιώσεις μυστηρίων (γάμοι, βαπτίσεις).</p>
         </div>
-        <div class="pl-foot">📞 2431052032 · ⏰ 06:00 – 22:00 · Φήκη Τρικάλων</div>
+        <div class="pl-foot ev-foot">
+            <button class="msg-btn bk-open" id="openBooking">📝 Αίτημα Κράτησης</button>
+            <a class="msg-btn msg-btn-alt" href="https://t.me/kafevolta?direct" target="_blank">💬 Στείλε μας μήνυμα</a>
+            <div class="ev-contact">📞 2431052032 · ⏰ 06:00 – 22:00 · Φήκη Τρικάλων</div>
+        </div>
+    </div>
+</div>
+
+<!-- ★ Φόρμα Αιτήματος Κράτησης -->
+<div class="pl-overlay" id="bkOverlay">
+    <div class="pl-box">
+        <div class="pl-head">
+            <h2>📝 Αίτημα <em>Κράτησης</em></h2>
+            <button class="pl-close" id="closeBooking">&times;</button>
+        </div>
+        <div class="pl-body" id="bkBody">
+            <div class="form-group bk-form">
+                <label>Είδος εκδήλωσης
+                    <select id="bkType">
+                        <option value="Παιδικό πάρτυ γενεθλίων">🎈 Παιδικό πάρτυ γενεθλίων</option>
+                        <option value="Φιλική / κοινωνική συγκέντρωση">🤝 Φιλική / κοινωνική συγκέντρωση</option>
+                        <option value="Ομιλία / Παρουσίαση / Σεμινάριο">🎤 Ομιλία / Παρουσίαση / Σεμινάριο</option>
+                    </select>
+                </label>
+                <label>Ημερομηνία
+                    <input type="date" id="bkDate">
+                </label>
+                <label>Επιθυμητή ώρα
+                    <input type="time" id="bkTime">
+                </label>
+                <div class="bk-row">
+                    <label>Παιδιά
+                        <input type="number" id="bkKids" min="0" placeholder="π.χ. 15">
+                    </label>
+                    <label>Ενήλικες
+                        <input type="number" id="bkAdults" min="0" placeholder="π.χ. 20">
+                    </label>
+                </div>
+                <label id="bkMenuWrap">Ενδιαφέρον για παιδικό μενού
+                    <select id="bkMenu">
+                        <option value="Θα το δούμε μαζί">Θα το δούμε μαζί</option>
+                        <option value="Μενού 1 «Το Κλασικό»">🍞 Μενού 1 «Το Κλασικό»</option>
+                        <option value="Μενού 2 «Pizza Party»">🍕 Μενού 2 «Pizza Party»</option>
+                        <option value="Μενού 3 «Το Χορταστικό»">🍗 Μενού 3 «Το Χορταστικό»</option>
+                        <option value="Συνδυασμός μενού">Συνδυασμός μενού</option>
+                    </select>
+                </label>
+                <label id="bkSpaceWrap" style="display:none;">Επιλογή φιλοξενίας
+                    <select id="bkSpace">
+                        <option value="Δωρεάν παραχώρηση (με κατανάλωση)">🤝 Δωρεάν παραχώρηση (με κατανάλωση)</option>
+                        <option value="Ενοικίαση χώρου (50–70€)">🔑 Ενοικίαση χώρου (50–70€)</option>
+                    </select>
+                </label>
+                <label>Ονοματεπώνυμο *
+                    <input type="text" id="bkName" placeholder="Το όνομά σας">
+                </label>
+                <label>Τηλέφωνο *
+                    <input type="tel" id="bkPhone" placeholder="Για να επικοινωνήσουμε μαζί σας">
+                </label>
+                <label>Σχόλια / λεπτομέρειες
+                    <textarea id="bkComment" placeholder="Ό,τι άλλο θέλετε να μας πείτε..."></textarea>
+                </label>
+                <button class="msg-btn" id="bkSubmit">📨 Αποστολή αιτήματος</button>
+                <p class="ev-note">Θα επικοινωνήσουμε μαζί σας το συντομότερο για να τα κανονίσουμε όλα!</p>
+            </div>
+        </div>
     </div>
 </div>
 
@@ -432,6 +538,51 @@
     document.getElementById('openEvents').onclick = () => evOverlay.classList.add('open');
     document.getElementById('closeEvents').onclick = () => evOverlay.classList.remove('open');
     evOverlay.addEventListener('click', e => { if (e.target === evOverlay) evOverlay.classList.remove('open'); });
+
+    // ★ Φόρμα Αιτήματος Κράτησης
+    const bkOverlay = document.getElementById('bkOverlay');
+    document.getElementById('openBooking').onclick = () => { evOverlay.classList.remove('open'); bkOverlay.classList.add('open'); };
+    document.getElementById('closeBooking').onclick = () => bkOverlay.classList.remove('open');
+    bkOverlay.addEventListener('click', e => { if (e.target === bkOverlay) bkOverlay.classList.remove('open'); });
+
+    // Εναλλαγή πεδίων ανάλογα με το είδος εκδήλωσης
+    document.getElementById('bkType').addEventListener('change', function () {
+        const isTalk = this.value.startsWith('Ομιλία');
+        document.getElementById('bkMenuWrap').style.display = isTalk ? 'none' : 'flex';
+        document.getElementById('bkSpaceWrap').style.display = isTalk ? 'flex' : 'none';
+    });
+
+    document.getElementById('bkSubmit').onclick = async function () {
+        const type = document.getElementById('bkType').value;
+        const date = document.getElementById('bkDate').value;
+        const time = document.getElementById('bkTime').value;
+        const kids = document.getElementById('bkKids').value;
+        const adults = document.getElementById('bkAdults').value;
+        const menu = document.getElementById('bkMenu').value;
+        const space = document.getElementById('bkSpace').value;
+        const name = document.getElementById('bkName').value.trim();
+        const phone = document.getElementById('bkPhone').value.trim();
+        const comment = document.getElementById('bkComment').value.trim();
+
+        if (!name || !phone) { alert('Συμπληρώστε ονοματεπώνυμο και τηλέφωνο'); return; }
+
+        const isTalk = type.startsWith('Ομιλία');
+        const tgU = window.Telegram?.WebApp?.initDataUnsafe?.user;
+        const contact = tgU ? (tgU.username ? `\n💬 @${tgU.username}` : `\n💬 <a href="tg://user?id=${tgU.id}">Στείλε μήνυμα</a>`) : '';
+        const dateText = date ? new Date(date + 'T00:00').toLocaleDateString('el-GR') : 'Δεν ορίστηκε';
+
+        const reqText = `🎉 <b>ΝΕΟ ΑΙΤΗΜΑ ΕΚΔΗΛΩΣΗΣ</b>\n👤 ${name}${contact}\n📞 ${phone}\n\n🎯 <b>Είδος:</b> ${type}\n📅 <b>Ημερομηνία:</b> ${dateText}${time ? ` · ⏰ ${time}` : ''}\n👥 <b>Άτομα:</b> ${kids || 0} παιδιά, ${adults || 0} ενήλικες${isTalk ? `\n🏡 <b>Φιλοξενία:</b> ${space}` : `\n🍽 <b>Παιδικό μενού:</b> ${menu}`}\n📝 <b>Σχόλια:</b> ${comment || '-'}`;
+
+        this.disabled = true; this.textContent = 'Αποστολή...';
+        const result = await sendOrder({ text: reqText });
+        this.disabled = false; this.textContent = '📨 Αποστολή αιτήματος';
+
+        if (result.success) {
+            document.getElementById('bkBody').innerHTML = `<div class="thanks" style="text-align:center;padding:24px 10px;"><h3>🎉 Το αίτημά σας εστάλη!</h3><p style="margin-top:8px;">Θα επικοινωνήσουμε μαζί σας το συντομότερο στο <strong>${phone}</strong> για να τα κανονίσουμε όλα.</p><p style="margin-top:8px;">Ευχαριστούμε! ☕</p></div>`;
+        } else {
+            alert(`❌ Κάτι πήγε στραβά (${result.error}).\nΔοκιμάστε ξανά ή καλέστε μας στο 2431052032.`);
+        }
+    };
 
     document.getElementById('categoryNav').addEventListener('click', e => {
         const chip = e.target.closest('.chip');
