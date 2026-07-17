@@ -16,6 +16,9 @@
     <meta name="twitter:title" content="Καφέ Βόλτα ☕ Online Παραγγελίες & Πόντοι">
     <meta name="twitter:description" content="Παράγγειλε online & κέρδισε πόντους! 15⭐ παγωτό · 25⭐ ρόφημα · 3 κρέπες = +1 ΔΩΡΟ">
     <meta name="twitter:image" content="https://volta.franklymadear.com/og-image.jpg">
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#5C3A21">
+    <link rel="apple-touch-icon" href="icon-192.png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Literata:opsz,wght@7..72,500;7..72,700;7..72,900&family=Commissioner:wght@400;500;600;700&display=swap&subset=greek" rel="stylesheet">
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
@@ -93,6 +96,11 @@
         .tg-btn { align-self: flex-start; background: #2AABEE; color: #fff; text-decoration: none; border-radius: 999px; padding: 6px 14px; font-weight: 700; font-size: 0.8rem; }
         .tg-note { background: #e7f3fb; border: 1px solid #a9d3ee; border-radius: 8px; padding: 8px 10px; font-size: 0.75rem; margin-bottom: 10px; }
         .tg-note a { color: #1a7fbc; font-weight: 700; }
+        /* ★ Προσθήκη στην αρχική οθόνη */
+        .a2hs { max-width: 1100px; margin: 8px auto 0; padding: 8px 12px; background: var(--mocha); color: #fff; border-radius: 10px; display: flex; align-items: center; gap: 8px; font-size: 0.8rem; margin-left: 16px; margin-right: 16px; }
+        .a2hs span { flex: 1; }
+        .a2hs-btn { background: #fff; color: var(--mocha); border: none; border-radius: 999px; padding: 5px 12px; font-weight: 700; font-size: 0.75rem; cursor: pointer; font-family: 'Commissioner', sans-serif; }
+        .a2hs-close { background: transparent; border: none; color: #e7d7c4; font-size: 1.2rem; cursor: pointer; line-height: 1; }
         /* ★ Τιμοκατάλογος */
         .hero-btns { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; align-items: stretch; }
         .pricelist-btn { border: 1.5px solid var(--mocha); background: transparent; color: var(--mocha); border-radius: 999px; padding: 6px 14px; font-weight: 600; font-size: 0.85rem; cursor: pointer; font-family: 'Commissioner', sans-serif; }
@@ -175,6 +183,13 @@
         </div>
     </div>
 </header>
+
+<!-- ★ Προσθήκη στην αρχική οθόνη -->
+<div class="a2hs" id="a2hsBanner" style="display:none;">
+    <span>📲 Βάλε το <strong>Καφέ Βόλτα</strong> στην αρχική σου οθόνη!</span>
+    <button class="a2hs-btn" id="a2hsBtn">Προσθήκη</button>
+    <button class="a2hs-close" id="a2hsClose">&times;</button>
+</div>
 
 <section class="hero">
     <h1>Ο τέλειος καφές, <span class="stroll">έτοιμος πριν φτάσεις.</span></h1>
@@ -921,6 +936,53 @@
     if (!isInTelegram) {
         document.getElementById('tgBanner').style.display = 'block';
         document.getElementById('tgNote').style.display = 'block';
+    }
+
+    // ★ Προσθήκη στην αρχική οθόνη (Telegram / Android / iOS)
+    (function () {
+        const banner = document.getElementById('a2hsBanner');
+        const btn = document.getElementById('a2hsBtn');
+        const closeBtn = document.getElementById('a2hsClose');
+        const LS_A2HS = 'kv_a2hs_dismissed';
+        if (localStorage.getItem(LS_A2HS)) return;
+
+        const tg = window.Telegram?.WebApp;
+        let deferredPrompt = null;
+        const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
+        const inStandalone = window.matchMedia('(display-mode: standalone)').matches || navigator.standalone;
+
+        function show() { banner.style.display = 'flex'; }
+
+        if (tg && typeof tg.addToHomeScreen === 'function' && isInTelegram) {
+            // Μέσα στο Telegram: native προσθήκη του mini app
+            if (typeof tg.checkHomeScreenStatus === 'function') {
+                tg.checkHomeScreenStatus(status => { if (status !== 'added') show(); });
+            } else show();
+            btn.onclick = () => { tg.addToHomeScreen(); };
+        } else if (!isInTelegram && !inStandalone) {
+            // Web: Android (PWA prompt) ή iOS (οδηγίες)
+            window.addEventListener('beforeinstallprompt', e => {
+                e.preventDefault();
+                deferredPrompt = e;
+                show();
+            });
+            if (isIOS) {
+                show();
+                btn.onclick = () => alert('📲 Για να προσθέσεις το Καφέ Βόλτα στην αρχική οθόνη:\n\n1. Πάτα το κουμπί Κοινοποίησης (τετράγωνο με βελάκι ↑) στο Safari\n2. Διάλεξε «Προσθήκη στην οθόνη Αφετηρίας»\n3. Πάτα «Προσθήκη»');
+            } else {
+                btn.onclick = () => {
+                    if (deferredPrompt) { deferredPrompt.prompt(); deferredPrompt = null; banner.style.display = 'none'; }
+                    else alert('📲 Άνοιξε το μενού του browser (⋮) και διάλεξε «Προσθήκη στην αρχική οθόνη».');
+                };
+            }
+        }
+
+        closeBtn.onclick = () => { banner.style.display = 'none'; localStorage.setItem(LS_A2HS, '1'); };
+    })();
+
+    // ★ Service worker για εγκατάσταση ως εφαρμογή (Android)
+    if ('serviceWorker' in navigator && !isInTelegram) {
+        navigator.serviceWorker.register('sw.js').catch(() => {});
     }
 
     // ★ Συγχρονισμός πόντων από τον server (κεντρικό σύστημα)
