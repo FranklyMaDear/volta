@@ -72,6 +72,10 @@
         a.games-card .o-big { color: #2e7d32; }
         .games-btn { text-decoration: none; border-color: #4CAF50; color: #2e7d32; background: linear-gradient(135deg, #e8f8e8, #d8f0dc); display: inline-flex; align-items: center; justify-content: center; width: 100%; text-align: center; }
         .hero-btns + .hero-btns { margin-top: 6px; }
+        .events-btn { border-color: #d4899f; color: #8a3b5c; background: linear-gradient(135deg, #fff3e0, #ffe4ec); width: 100%; text-align: center; }
+        .ev-intro { font-size: 0.85rem; margin-top: 8px; }
+        .ev-text { font-size: 0.8rem; color: #4d4336; margin: 2px 0 6px; }
+        .msg-btn { display: block; background: #2AABEE; color: #fff; text-align: center; border-radius: 999px; padding: 12px; font-weight: 700; text-decoration: none; margin: 14px 0 10px; font-size: 0.95rem; }
         /* ★ Προτροπή Telegram */
         .tg-banner { max-width: 1100px; margin: 0 auto; padding: 6px 16px 0; }
         .tg-banner-inner { background: #e7f3fb; border: 1px solid #a9d3ee; border-radius: 10px; padding: 10px 12px; font-size: 0.8rem; display: flex; flex-direction: column; gap: 8px; }
@@ -170,6 +174,9 @@
         <a class="pricelist-btn channel-btn" href="https://t.me/kafevolta" target="_blank">📣 Νέα & Προσφορές</a>
     </div>
     <div class="hero-btns">
+        <button class="pricelist-btn events-btn" id="openEvents">🎉 Πάρτυ Γενεθλίων · Ομιλίες · Παρουσιάσεις · Συναντήσεις</button>
+    </div>
+    <div class="hero-btns">
         <a class="pricelist-btn games-btn" href="https://t.me/Franklygames_bot/games" target="_blank">🎮 Games — Παίξε καθημερινά & κέρδισε σε εβδομαδιαίες κληρώσεις!</a>
     </div>
 </section>
@@ -240,6 +247,28 @@
     <p>⏰ 06:00 – 22:00</p>
     <p>📣 <a href="https://t.me/kafevolta" target="_blank">t.me/kafevolta</a> — Νέα & Προσφορές</p>
 </footer>
+
+<!-- ★ Αναδυόμενο παράθυρο Εκδηλώσεων -->
+<div class="pl-overlay" id="evOverlay">
+    <div class="pl-box">
+        <div class="pl-head">
+            <h2>🏡 Ο χώρος μας, <em>δικός σας!</em></h2>
+            <button class="pl-close" id="closeEvents">&times;</button>
+        </div>
+        <div class="pl-body">
+            <p class="ev-intro">Στο <strong>Καφέ Βόλτα</strong> διαμορφώσαμε τον χώρο μας για να φιλοξενεί με άνεση τις δικές σας ξεχωριστές στιγμές.</p>
+            <div class="pl-cat">🎂 Παιδικά Πάρτυ & Γενέθλια</div>
+            <p class="ev-text">Ασφαλής καταπράσινη αυλή με γκαζόν, κούνιες και τραμπολίνο — τα παιδιά παίζουν, εσείς απολαμβάνετε!</p>
+            <div class="pl-cat">🤝 Συναντήσεις & Κοινωνικές Συγκεντρώσεις</div>
+            <p class="ev-text">Άνετος στεγασμένος χώρος για παρέες, συλλόγους, ομάδες και οικογενειακές γιορτές — με κάθε καιρό.</p>
+            <div class="pl-cat">🎤 Ομιλίες & Παρουσιάσεις</div>
+            <p class="ev-text">Οργανωμένο περιβάλλον για εκδηλώσεις, ενημερώσεις και παρουσιάσεις.</p>
+            <p class="ev-text" style="margin-top:10px;"><strong>Πείτε μας τι σχεδιάζετε — θα το κανονίσουμε μαζί!</strong></p>
+            <a class="msg-btn" href="https://t.me/kafevolta?direct" target="_blank">💬 Στείλε μας μήνυμα</a>
+        </div>
+        <div class="pl-foot">📞 2431052032 · ⏰ 06:00 – 22:00 · Φήκη Τρικάλων</div>
+    </div>
+</div>
 
 <div class="overlay" id="overlay"></div>
 <aside class="drawer" id="drawer">
@@ -397,6 +426,12 @@
     document.getElementById('openPricelist').onclick = () => { buildPricelist(); plOverlay.classList.add('open'); };
     document.getElementById('closePricelist').onclick = () => plOverlay.classList.remove('open');
     plOverlay.addEventListener('click', e => { if (e.target === plOverlay) plOverlay.classList.remove('open'); });
+
+    // ★ Παράθυρο Εκδηλώσεων
+    const evOverlay = document.getElementById('evOverlay');
+    document.getElementById('openEvents').onclick = () => evOverlay.classList.add('open');
+    document.getElementById('closeEvents').onclick = () => evOverlay.classList.remove('open');
+    evOverlay.addEventListener('click', e => { if (e.target === evOverlay) evOverlay.classList.remove('open'); });
 
     document.getElementById('categoryNav').addEventListener('click', e => {
         const chip = e.target.closest('.chip');
