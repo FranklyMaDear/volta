@@ -905,6 +905,17 @@
     refreshOpenState();
     setInterval(() => { refreshOpenState(); updateCart(); }, 60000);
 
+    // ★ Deep link: άνοιγμα κατευθείαν στις Εκδηλώσεις
+    // Telegram: t.me/coffeevolta_bot/app?startapp=events · Web: .../#events
+    (function () {
+        const startParam = window.Telegram?.WebApp?.initDataUnsafe?.start_param
+            || new URLSearchParams(location.search).get('tgWebAppStartParam')
+            || (location.hash ? location.hash.slice(1) : '');
+        if (['events', 'party', 'ekdiloseis'].includes((startParam || '').toLowerCase())) {
+            evOverlay.classList.add('open');
+        }
+    })();
+
     // ★ Εκτός Telegram: δείξε την προτροπή για παραγγελία μέσω bot
     const isInTelegram = !!window.Telegram?.WebApp?.initDataUnsafe?.user;
     if (!isInTelegram) {
