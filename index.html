@@ -77,7 +77,7 @@
         .offer-card { flex: 0 0 auto; min-width: 115px; padding: 14px 12px; background: #FAF3E8; border: 1px solid #EADDCD; border-radius: 12px; text-align: center; box-shadow: 0 2px 6px rgba(92,58,33,0.04); display: flex; flex-direction: column; justify-content: center; align-items: center; }
         .offer-card .o-big { font-family: 'Commissioner', sans-serif; font-weight: 900; color: #5C3A21; font-size: 1.1rem; white-space: nowrap; }
         
-        /* ★ Νέο Φωτογραφικό Banner Προσφορών */
+        /* ★ Φωτογραφικό Banner Προσφορών */
         .promo-banner { max-width: 1100px; margin: 0 auto 8px; padding: 0 16px; }
         .promo-banner-inner { position: relative; background-image: linear-gradient(rgba(92, 58, 33, 0.75), rgba(92, 58, 33, 0.85)), url('https://images.unsplash.com/photo-1551024601-bec78aea704b?auto=format&fit=crop&w=600&q=80'); background-size: cover; background-position: center; border-radius: 12px; padding: 14px 16px; color: #fff; text-align: center; box-shadow: 0 4px 12px rgba(92, 58, 33, 0.15); }
         .promo-title { font-family: 'Literata', serif; font-weight: 900; font-size: 0.95rem; margin-bottom: 4px; color: #FDF8F0; text-transform: uppercase; letter-spacing: 0.5px; }
@@ -211,7 +211,7 @@
     <button class="a2hs-close" id="a2hsClose">&times;</button>
 </div>
 
-<!-- ★ Hero Section (Χωρίς Τίτλο, Μόνο τα 2 Μεγάλα Κουμπιά) -->
+<!-- ★ Hero Section -->
 <section class="hero">
     <div class="hero-btns-top">
         <button class="pricelist-btn" id="openPricelist">📋 Τιμοκατάλογος</button>
@@ -234,7 +234,7 @@
     </div>
 </section>
 
-<!-- ★ Νέο Φωτογραφικό Banner Προσφορών -->
+<!-- ★ Φωτογραφικό Banner Προσφορών -->
 <section class="promo-banner">
     <div class="promo-banner-inner">
         <div class="promo-title">Προσφορές Εβδομάδας</div>
@@ -320,17 +320,18 @@
     </div>
 </section>
 
+<!-- ★ Κατηγορίες: Όλα, Αγαπημένα, Κρέπες, Καφέδες, Παγωτό ... -->
 <nav class="cats">
     <div class="cats-inner" id="categoryNav">
         <div class="chip active" data-cat="all">🛒 Όλα</div>
         <div class="chip" data-cat="favorites">❤️ Αγαπημένα</div>
+        <div class="chip" data-cat="crepe">🥞 Κρέπες</div>
         <div class="chip" data-cat="coffee">☕ Καφέδες</div>
+        <div class="chip" data-cat="icecream">🍦 Παγωτό</div>
         <div class="chip" data-cat="rofimata">🥤 Ροφήματα</div>
         <div class="chip" data-cat="soft">🥤 Αναψυκτικά</div>
         <div class="chip" data-cat="icetea">🧃 Ice Tea</div>
         <div class="chip" data-cat="juice">🍊 Χυμοί Κλιάφα</div>
-        <div class="chip" data-cat="crepe">🥞 Κρέπες</div>
-        <div class="chip" data-cat="icecream">🍦 Παγωτό</div>
     </div>
 </nav>
 
@@ -663,7 +664,7 @@
     let currentCat = 'all';
 
     function buildPricelist() {
-        const order = ['coffee', 'rofimata', 'soft', 'icetea', 'juice', 'crepe', 'icecream'];
+        const order = ['crepe', 'coffee', 'icecream', 'rofimata', 'soft', 'icetea', 'juice'];
         let html = '';
         order.forEach(cat => {
             const items = PRODUCTS.filter(p => p.cat === cat);
@@ -778,7 +779,7 @@
                 items.forEach(p => grid.appendChild(createProductCard(p, favs)));
             }
         } else if (currentCat === 'all') {
-            const catsOrder = ['coffee', 'rofimata', 'soft', 'icetea', 'juice', 'crepe', 'icecream'];
+            const catsOrder = ['crepe', 'coffee', 'icecream', 'rofimata', 'soft', 'icetea', 'juice'];
             catsOrder.forEach(cat => {
                 const items = PRODUCTS.filter(p => p.cat === cat);
                 if (items.length > 0) {
