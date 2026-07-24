@@ -64,19 +64,25 @@
         .points-badge span { background: var(--mocha-dark); color: #fff; border-radius: 999px; padding: 1px 6px; font-size: 0.7rem; }
         .cart-btn { background: var(--mocha); color: #fff; border: none; cursor: pointer; padding: 7px 14px; border-radius: 999px; font-weight: 600; font-size: 0.85rem; }
         
-        /* ★ Νέο Hero Section (Χωρίς τίτλο, με μεγάλα κουμπιά) */
+        /* ★ Hero Section */
         .hero { max-width: 1100px; margin: 0 auto; padding: 16px 16px 8px; }
         .hero-btns-top { display: flex; gap: 12px; }
         .hero-btns-top .pricelist-btn { flex: 1; padding: 12px 8px; font-size: 1rem; border-radius: 999px; border: 2px solid var(--mocha); background: #fff; color: var(--mocha); font-weight: 700; cursor: pointer; box-shadow: 0 4px 10px rgba(92,58,33,0.06); display: flex; align-items: center; justify-content: center; gap: 6px; transition: transform 0.2s, background 0.2s; font-family: 'Commissioner', sans-serif; }
         .hero-btns-top .pricelist-btn:active { transform: scale(0.98); background: var(--soft); }
         
-        /* ★ Νέα Πλαίσια Προσφορών */
-        .offers { max-width: 1100px; margin: 0 auto; padding: 8px 16px; }
+        /* ★ Πλαίσια Πόντων */
+        .offers { max-width: 1100px; margin: 0 auto; padding: 8px 16px 4px; }
         .offers-inner { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 8px; scrollbar-width: none; -ms-overflow-style: none; }
         .offers-inner::-webkit-scrollbar { display: none; }
         .offer-card { flex: 0 0 auto; min-width: 115px; padding: 14px 12px; background: #FAF3E8; border: 1px solid #EADDCD; border-radius: 12px; text-align: center; box-shadow: 0 2px 6px rgba(92,58,33,0.04); display: flex; flex-direction: column; justify-content: center; align-items: center; }
         .offer-card .o-big { font-family: 'Commissioner', sans-serif; font-weight: 900; color: #5C3A21; font-size: 1.1rem; white-space: nowrap; }
-        .offer-card .o-small { font-size: 0.75rem; color: #7A6A5A; margin-top: 4px; font-weight: 700; line-height: 1.15; }
+        
+        /* ★ Νέο Φωτογραφικό Banner Προσφορών */
+        .promo-banner { max-width: 1100px; margin: 0 auto 8px; padding: 0 16px; }
+        .promo-banner-inner { position: relative; background-image: linear-gradient(rgba(92, 58, 33, 0.75), rgba(92, 58, 33, 0.85)), url('https://images.unsplash.com/photo-1551024601-bec78aea704b?auto=format&fit=crop&w=600&q=80'); background-size: cover; background-position: center; border-radius: 12px; padding: 14px 16px; color: #fff; text-align: center; box-shadow: 0 4px 12px rgba(92, 58, 33, 0.15); }
+        .promo-title { font-family: 'Literata', serif; font-weight: 900; font-size: 0.95rem; margin-bottom: 4px; color: #FDF8F0; text-transform: uppercase; letter-spacing: 0.5px; }
+        .promo-text { font-size: 0.75rem; font-weight: 500; color: #E6D5C3; line-height: 1.5; }
+        .promo-text strong { color: #fff; font-size: 0.85rem; font-weight: 700; }
         
         /* ★ Grid Ψυχαγωγίας & Events */
         .entertainment-grid { max-width: 1100px; margin: 4px auto 8px; padding: 0 16px; display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
@@ -180,6 +186,11 @@
         .redeem-btn:disabled { opacity: 0.4; cursor: not-allowed; }
         .totals { display: flex; justify-content: space-between; font-weight: 700; margin-bottom: 8px; font-size: 1.05rem; color: var(--ink); }
         .discount-line { display: flex; justify-content: space-between; color: #2e7d32; font-weight: 600; font-size: 0.85rem; margin-bottom: 4px; }
+        
+        @media (max-width: 560px) {
+            .hero-btns-top { flex-wrap: nowrap; gap: 10px; }
+            .hero-btns-top .pricelist-btn { flex: 1; font-size: 0.9rem; padding: 10px 4px; }
+        }
     </style>
 </head>
 <body>
@@ -208,7 +219,7 @@
     </div>
 </section>
 
-<!-- ★ Τα 5 Πλαίσια των Προσφορών / Κανόνων -->
+<!-- ★ Τα 3 Πλαίσια των Πόντων (Αστέρια) -->
 <section class="offers">
     <div class="offers-inner">
         <div class="offer-card">
@@ -220,13 +231,16 @@
         <div class="offer-card">
             <div class="o-big">25 ⭐ = 2 ☕</div>
         </div>
-        <div class="offer-card">
-            <div class="o-big">2+1 ΔΩΡΟ</div>
-            <div class="o-small">Γρανίτες / Milkshake</div>
-        </div>
-        <div class="offer-card">
-            <div class="o-big">3+1 ΔΩΡΟ</div>
-            <div class="o-small">Κρέπες με έξτρα</div>
+    </div>
+</section>
+
+<!-- ★ Νέο Φωτογραφικό Banner Προσφορών -->
+<section class="promo-banner">
+    <div class="promo-banner-inner">
+        <div class="promo-title">Προσφορές Εβδομάδας</div>
+        <div class="promo-text">
+            <strong>2+1 ΔΩΡΟ</strong> Γρανίτες & Milkshake <br>
+            <strong>3+1 ΔΩΡΟ</strong> Κρέπες (με έξτρα υλικό)
         </div>
     </div>
 </section>
@@ -438,7 +452,7 @@
         <div id="rewardsArea"></div>
 
         <div class="discount-line" id="discountLine" style="display:none;"><span>🎁 Έκπτωση δώρου</span><span id="discountValue"></span></div>
-        <div class="discount-line" id="extraDiscountLine" style="display:none; color:#e65100;"><span>🎁 Προσφορά 2+1</span><span id="extraDiscountValue"></span></div>
+        <div class="discount-line" id="extraDiscountLine" style="display:none; color:#e65100;"><span>🎁 Προσφορά</span><span id="extraDiscountValue"></span></div>
         <div class="totals"><span>Σύνολο</span><span id="cartTotal">0,00 €</span></div>
 
         <div class="reward-note" id="rewardNote" style="display:none; font-size: 0.8rem; margin-bottom: 10px; color: #4d4336;">🎁 Θα κερδίσεις <strong id="earnedPoints">0</strong> πόντους</div>
