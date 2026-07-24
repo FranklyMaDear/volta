@@ -1,4 +1,4 @@
-<!DOCTYPE html> 
+<!DOCTYPE html>
 <html lang="el">
 <head>
     <meta charset="UTF-8">
@@ -67,7 +67,7 @@
         /* ★ Hero Section */
         .hero { max-width: 1100px; margin: 0 auto; padding: 16px 16px 8px; }
         .hero-btns-top { display: flex; gap: 12px; }
-        .hero-btns-top .pricelist-btn { flex: 1; padding: 12px 8px; font-size: 1rem; border-radius: 999px; border: 2px solid var(--mocha); background: #fff; color: var(--mocha); font-weight: 700; cursor: pointer; box-shadow: 0 4px 10px rgba(92,58,33,0.06); display: flex; align-items: center; justify-content: center; gap: 6px; transition: transform 0.2s, background 0.2s; font-family: 'Commissioner', sans-serif; }
+        .hero-btns-top .pricelist-btn { flex: 1; padding: 12px 8px; font-size: 1rem; border-radius: 999px; border: 2px solid var(--mocha); background: #fff; color: var(--mocha); font-weight: 700; cursor: pointer; box-shadow: 0 4px 10px rgba(92,58,33,0.06); display: flex; align-items: center; justify-content: center; flex-wrap: nowrap; white-space: nowrap; gap: 6px; transition: transform 0.2s, background 0.2s; font-family: 'Commissioner', sans-serif; }
         .hero-btns-top .pricelist-btn:active { transform: scale(0.98); background: var(--soft); }
         
         /* ★ Πλαίσια Πόντων */
@@ -189,7 +189,7 @@
         
         @media (max-width: 560px) {
             .hero-btns-top { flex-wrap: nowrap; gap: 10px; }
-            .hero-btns-top .pricelist-btn { flex: 1; font-size: 0.9rem; padding: 10px 4px; }
+            .hero-btns-top .pricelist-btn { flex: 1; font-size: 0.85rem; padding: 10px 4px; }
         }
     </style>
 </head>
@@ -320,15 +320,14 @@
     </div>
 </section>
 
-<!-- ★ Κατηγορίες: Όλα, Αγαπημένα, Κρέπες, Καφέδες, Παγωτό ... -->
 <nav class="cats">
     <div class="cats-inner" id="categoryNav">
         <div class="chip active" data-cat="all">🛒 Όλα</div>
         <div class="chip" data-cat="favorites">❤️ Αγαπημένα</div>
-        <div class="chip" data-cat="crepe">🥞 Κρέπες</div>
         <div class="chip" data-cat="coffee">☕ Καφέδες</div>
-        <div class="chip" data-cat="icecream">🍦 Παγωτό</div>
         <div class="chip" data-cat="rofimata">🥤 Ροφήματα</div>
+        <div class="chip" data-cat="crepe">🥞 Κρέπες</div>
+        <div class="chip" data-cat="icecream">🍦 Παγωτό</div>
         <div class="chip" data-cat="soft">🥤 Αναψυκτικά</div>
         <div class="chip" data-cat="icetea">🧃 Ice Tea</div>
         <div class="chip" data-cat="juice">🍊 Χυμοί Κλιάφα</div>
@@ -664,7 +663,7 @@
     let currentCat = 'all';
 
     function buildPricelist() {
-        const order = ['crepe', 'coffee', 'icecream', 'rofimata', 'soft', 'icetea', 'juice'];
+        const order = ['coffee', 'rofimata', 'crepe', 'icecream', 'soft', 'icetea', 'juice'];
         let html = '';
         order.forEach(cat => {
             const items = PRODUCTS.filter(p => p.cat === cat);
@@ -678,6 +677,7 @@
             if (cat === 'icecream') html += `<div class="pl-note">Γεύσεις: ${FLAVORS.join(', ')}</div>`;
             if (cat === 'rofimata') html += `<div class="pl-note">Επιλογή γεύσης κατά την παραγγελία</div>`;
         });
+        html += `<div style="margin-top: 16px; padding-top: 12px; border-top: 1px solid var(--line); font-size: 0.75rem; color: #6b5d4d; text-align: center;">Στις τιμές συμπεριλαμβάνονται όλες οι νόμιμες επιβαρύνσεις και ο Φ.Π.Α. (13% ή 24% ανάλογα με το είδος).</div>`;
         document.getElementById('plBody').innerHTML = html;
     }
     
@@ -779,7 +779,7 @@
                 items.forEach(p => grid.appendChild(createProductCard(p, favs)));
             }
         } else if (currentCat === 'all') {
-            const catsOrder = ['crepe', 'coffee', 'icecream', 'rofimata', 'soft', 'icetea', 'juice'];
+            const catsOrder = ['coffee', 'rofimata', 'crepe', 'icecream', 'soft', 'icetea', 'juice'];
             catsOrder.forEach(cat => {
                 const items = PRODUCTS.filter(p => p.cat === cat);
                 if (items.length > 0) {
